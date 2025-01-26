@@ -1,0 +1,11 @@
+On an e-commerce website, several types of components could be passing props. Some examples include:
+
+Product Component: This component could receive props such as product details (name, price, description), images, and availability status. These props can be passed from a parent component that handles the data retrieval and the product list.
+
+Cart Component: This component could receive props like the cart items, the total price, and the quantity of items. These props can be passed from a parent component that manages the state of the shopping cart.
+
+Checkout Component: This component could receive props such as the user's shipping address, payment details, and items to purchase. These props can be passed from a parent component that manages the checkout process and user input.
+
+Order History Component: This component could receive props like the user's order history, including details like order ID, date, items purchased, and status. These props can be passed from a parent component that handles API calls to fetch the user's order data.
+
+In general, any component that needs to display specific data or interact with user input within an e-commerce website can utilize props to pass relevant information from parent components.

@@ -1,0 +1,176 @@
+:root {
+
+    /* === Core Brand Colors === */
+  /* Primary Colors - Laser Green */
+  --brand-100: #ecf5e4;  /* Lightest */
+  --brand-200: #d1e7bc;
+  --brand-300: #a3d77a;  /* Light accent */
+  --brand-400: #8ac644;
+  --brand-500: #72B01D;  /* Primary */
+  --brand-600: #5c8d17;
+  --brand-700: #467314;  /* Dark */
+  --brand-800: #2f4d0e;
+  --brand-900: #1a2c08;  /* Darkest */
+
+  
+  /* === Core Colors === */
+  /* These are our raw color values - not to be used directly in components */
+  
+  /* Primary Brand Colors - Crystal Green */
+  --crystal-100: #e4f7f5;
+  --crystal-200: #baf2ea;
+  --crystal-300: #a1e2de;
+  --crystal-400: #2bb6ac;
+  --crystal-500: #038179;
+  --crystal-600: #025f59;
+  --crystal-700: #064c47;
+  --crystal-800: #032b2b;
+  --crystal-900: #051f1f;
+
+  /* Neutral Colors - Bone */
+  --neutral-50: #fdfbf7;
+  --neutral-100: #f6f3ee;
+  --neutral-200: #eae6e1;
+  --neutral-300: #ded5c9;
+  --neutral-400: #aca295;
+  --neutral-500: #7a7166;
+  --neutral-600: #5b5249;
+  --neutral-700: #434038;
+  --neutral-800: #262626;
+  --neutral-900: #1a1a19;
+
+  /* Accent Colors - Laser */
+  --laser-green: #72B01D;
+  --laser-bright: #A3D77A;
+  --laser-dark: #3F7D20;
+
+  /* Feedback Colors */
+  --success-light: #90BE6D;
+  --success-dark: #567314;
+  --error-light: #F94144;
+  --error-dark: #cb3455;
+
+  /* === Theme Tokens === */
+  /* Semantic tokens - use these in components */
+  
+  /* Brand Colors */
+  --primary: var(--laser-green);
+  --primary-light: var(--laser-bright);
+  --primary-dark: var(--laser-dark);
+  
+  /* Background Colors */
+  --bg-body: var(--neutral-900);
+  --bg-surface: var(--neutral-800);
+  --bg-elevated: var(--neutral-700);
+  --bg-overlay: rgba(26, 26, 25, 0.8);
+  
+  /* Text Colors */
+  --text-primary: var(--neutral-50);
+  --text-secondary: var(--neutral-200);
+  --text-muted: var(--neutral-400);
+  --text-bright: var(--crystal-200);
+  
+  /* Interactive Colors */
+  --interactive-primary: var(--laser-green);
+  --interactive-hover: var(--laser-bright);
+  --interactive-active: var(--laser-dark);
+  
+  /* Border Colors */
+  --border-subtle: var(--neutral-700);
+  --border-strong: var(--neutral-900);
+
+  /* Dark Context (default) */
+  --dark-bg: var(--bg-body);
+  --dark-text: var(--text-primary);
+  --dark-text-secondary: var(--text-secondary);
+  
+  /* Light Context */
+  --light-bg: var(--neutral-50);
+  --light-text: var(--neutral-900);
+  --light-text-secondary: var(--neutral-700);
+
+  /* Component Context */
+  --component-dark-bg: var(--dark-bg);
+  --component-dark-text: var(--dark-text);
+  --component-light-bg: var(--light-bg);
+  --component-light-text: var(--light-text);
+
+  /* Effect Colors */
+  --glow-subtle: rgba(114, 176, 29, 0.2);
+  --glow-strong: rgba(114, 176, 29, 0.4);
+
+  /* === Typography Scale === */
+  /* Keep existing font scale but organize better */
+  --scale-base: 1rem;
+  
+  /* Heading Scales */
+  --h1: var(--font-scale-43-62); /* Hero/Display */
+  --h2: var(--font-scale-33-46); /* Section */
+  --h3: var(--font-scale-27-36); /* Card/Feature */
+  --h4: var(--font-scale-23-29); /* Subsection */
+  --h5: var(--font-scale-20-24); /* Caption */
+  --h6: var(--font-scale-17-20); /* Small Caption */
+  
+  /* Text Scales */
+  --text-lg: var(--font-scale-17-20);
+  --text-base: var(--font-scale-15-18);
+  --text-sm: var(--font-scale-13-14);
+  
+  /* === Effects === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  --glow-effect: 0 0 10px var(--glow-subtle),
+                 0 0 20px var(--glow-strong);
+  
+  /* === Animation === */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  --font-size-62: 3.875rem;
+  --font-size-58: 3.625rem;
+  --font-size-55: 3.4375rem;
+  --font-size-52: 3.25rem;
+  --font-size-49: 3.0625rem;
+  --font-size-46: 2.875rem;
+  --font-size-43: 2.6875rem;
+  --font-size-41: 2.5625rem;
+  --font-size-38: 2.375rem;
+  --font-size-36: 2.25rem;
+  --font-size-33: 2.0625rem;
+  --font-size-30: 1.875rem;
+  --font-size-29: 1.8125rem;
+  --font-size-27: 1.6875rem;
+  --font-size-26: 1.625rem;
+  --font-size-25: 1.5625rem;
+  --font-size-24: 1.5rem;
+  --font-size-23: 1.4375rem;
+  --font-size-21: 1.3125rem;
+  --font-size-20: 1.25rem;
+  --font-size-19: 1.1875rem;
+  --font-size-18: 1.125rem;
+  --font-size-17: 1.0625rem;
+  --font-size-16: 1rem;
+  --font-size-15: 0.9375rem;
+  --font-size-14: 0.875rem;
+  --font-size-13: 0.8125rem;
+  --font-scale-13-14: clamp(var(--font-size-13),calc(0.12vw + 0.7688rem),var(--font-size-14));
+  --font-scale-15-16: clamp(var(--font-size-15),calc(0.12vw + 0.8938rem),var(--font-size-16));
+  --font-scale-15-18: clamp(var(--font-size-15),calc(0.36vw + 0.8064rem),var(--font-size-18));
+  --font-scale-16-19: clamp(var(--font-size-16),calc(0.36vw + 0.8689rem),var(--font-size-19));
+  --font-scale-17-20: clamp(var(--font-size-17),calc(0.36vw + 0.9314rem),var(--font-size-20));
+  --font-scale-20-24: clamp(var(--font-size-20),calc(0.49vw + 1.0752rem),var(--font-size-24));
+  --font-scale-20-26: clamp(var(--font-size-20),calc(0.73vw + 0.9879rem),var(--font-size-26));
+  --font-scale-21-25: clamp(var(--font-size-21),calc(0.49vw + 1.1377rem),var(--font-size-25));
+  --font-scale-23-29: clamp(var(--font-size-23),calc(0.73vw + 1.1754rem),var(--font-size-29));
+  --font-scale-24-30: clamp(var(--font-size-24),calc(0.73vw + 1.2379rem),var(--font-size-30));
+  --font-scale-27-36: clamp(var(--font-size-27),calc(1.09vw + 1.2943rem),var(--font-size-36));
+  --font-scale-29-41: clamp(var(--font-size-29),calc(1.46vw + 1.2882rem),var(--font-size-41));
+  --font-scale-33-46: clamp(var(--font-size-33),calc(1.58vw + 1.4945rem),var(--font-size-46));
+  --font-scale-36-52: clamp(var(--font-size-36),calc(1.94vw + 1.5510rem),var(--font-size-52));
+  --font-scale-38-55: clamp(var(--font-size-38),calc(2.06vw + 1.6323rem),var(--font-size-55));
+  --font-scale-41-58: clamp(var(--font-size-41),calc(2.06vw + 1.8198rem),var(--font-size-58));
+  --font-scale-43-62: clamp(var(--font-size-43),calc(2.32vw + 1.8574rem),var(--font-size-62));
+}

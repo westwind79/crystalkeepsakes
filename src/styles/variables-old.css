@@ -1,0 +1,151 @@
+:root {
+
+  --primary-green: #72B01D;
+  --dark-green: #567314;
+  --light-green-accent: #A3D77A;
+  --dark-gray: #1C1C1C;
+  --light-gray: #E5E5E5;
+  --secondary-accent: #FFD966;
+  --neutral-white: #FFFFFF;
+
+  --color-red: #F94144;
+  --color-orange-dark: #F3722C;
+  --color-orange: #F8961E;
+  --color-orange-light: #F9844A;
+  --color-yellow: #F9C74F;
+  --color-green: #90BE6D;
+  --color-turquoise: #43AA8B;
+  --color-blue-light: #4D908E;
+  --color-blue-dark: #577590;
+  --color-blue: #277DA1;
+
+  /*https://coolors.co/palette/0d0a0b-454955-f3eff5-72b01d-3f7d20*/
+  --palette2-color1: #0D0A0B;
+  --palette2-color2: #454955;
+  --palette2-color3: #F3EFF5;
+  --palette2-color4: #72B01D;
+  --palette2-color5: #3F7D20;
+
+  --emerald-900: #051f1f;
+  --emerald-800: #032b2b;
+  --emerald-700: #064c47;
+  --emerald-600: #025f59;
+  --emerald-500: #038179;
+  --emerald-400: #2bb6ac;
+  --emerald-300: #a1e2de;
+  --emerald-200: #baf2ea;
+  --emerald-100: #e4f7f5;
+  --emerald-50: #f5ffff;
+  --crimson-900: #2c0c14;
+  --crimson-800: #4d1420;
+  --crimson-700: #6f1f32;
+  --crimson-600: #96273f;
+  --crimson-500: #cb3455;
+  --crimson-400: #d86981;
+  --crimson-300: #e59aaa;
+  --crimson-200: #eebec9;
+  --crimson-100: #f5dbe0;
+  --crimson-50: #faf0f1;
+  --bone-900: #1a1a19;
+  --bone-800: #262626;
+  --bone-700: #434038;
+  --bone-600: #5b5249;
+  --bone-500: #7a7166;
+  --bone-400: #aca295;
+  --bone-300: #ded5c9;
+  --bone-200: #eae6e1;
+  --bone-100: #f6f3ee;
+  --bone-50: #fdfbf7;
+  --cadet-900: #0e171b;
+  --cadet-800: #1c2c30;
+  --cadet-700: #2a4046;
+  --cadet-600: #3a565f;
+  --cadet-500: #4e737e;
+  --cadet-400: #6493a0;
+  --cadet-300: #90b3bb;
+  --cadet-200: #b7ced2;
+  --cadet-100: #d9e4e8;
+  --cadet-50: #eef2f6;
+
+
+  --font-size-62: 3.875rem;
+  --font-size-58: 3.625rem;
+  --font-size-55: 3.4375rem;
+  --font-size-52: 3.25rem;
+  --font-size-49: 3.0625rem;
+  --font-size-46: 2.875rem;
+  --font-size-43: 2.6875rem;
+  --font-size-41: 2.5625rem;
+  --font-size-38: 2.375rem;
+  --font-size-36: 2.25rem;
+  --font-size-33: 2.0625rem;
+  --font-size-30: 1.875rem;
+  --font-size-29: 1.8125rem;
+  --font-size-27: 1.6875rem;
+  --font-size-26: 1.625rem;
+  --font-size-25: 1.5625rem;
+  --font-size-24: 1.5rem;
+  --font-size-23: 1.4375rem;
+  --font-size-21: 1.3125rem;
+  --font-size-20: 1.25rem;
+  --font-size-19: 1.1875rem;
+  --font-size-18: 1.125rem;
+  --font-size-17: 1.0625rem;
+  --font-size-16: 1rem;
+  --font-size-15: 0.9375rem;
+  --font-size-14: 0.875rem;
+  --font-size-13: 0.8125rem;
+  --font-scale-13-14: clamp(var(--font-size-13),calc(0.12vw + 0.7688rem),var(--font-size-14));
+  --font-scale-15-16: clamp(var(--font-size-15),calc(0.12vw + 0.8938rem),var(--font-size-16));
+  --font-scale-15-18: clamp(var(--font-size-15),calc(0.36vw + 0.8064rem),var(--font-size-18));
+  --font-scale-16-19: clamp(var(--font-size-16),calc(0.36vw + 0.8689rem),var(--font-size-19));
+  --font-scale-17-20: clamp(var(--font-size-17),calc(0.36vw + 0.9314rem),var(--font-size-20));
+  --font-scale-20-24: clamp(var(--font-size-20),calc(0.49vw + 1.0752rem),var(--font-size-24));
+  --font-scale-20-26: clamp(var(--font-size-20),calc(0.73vw + 0.9879rem),var(--font-size-26));
+  --font-scale-21-25: clamp(var(--font-size-21),calc(0.49vw + 1.1377rem),var(--font-size-25));
+  --font-scale-23-29: clamp(var(--font-size-23),calc(0.73vw + 1.1754rem),var(--font-size-29));
+  --font-scale-24-30: clamp(var(--font-size-24),calc(0.73vw + 1.2379rem),var(--font-size-30));
+  --font-scale-27-36: clamp(var(--font-size-27),calc(1.09vw + 1.2943rem),var(--font-size-36));
+  --font-scale-29-41: clamp(var(--font-size-29),calc(1.46vw + 1.2882rem),var(--font-size-41));
+  --font-scale-33-46: clamp(var(--font-size-33),calc(1.58vw + 1.4945rem),var(--font-size-46));
+  --font-scale-36-52: clamp(var(--font-size-36),calc(1.94vw + 1.5510rem),var(--font-size-52));
+  --font-scale-38-55: clamp(var(--font-size-38),calc(2.06vw + 1.6323rem),var(--font-size-55));
+  --font-scale-41-58: clamp(var(--font-size-41),calc(2.06vw + 1.8198rem),var(--font-size-58));
+  --font-scale-43-62: clamp(var(--font-size-43),calc(2.32vw + 1.8574rem),var(--font-size-62));
+  
+  /* Status Colors */
+  --success: var(--emerald-400);
+  --error: var(--crimson-500);
+ /* Brand Colors */
+  --primary: var(--emerald-400);
+  --primary-light: var(--emerald-300);
+  --primary-dark: var(--emerald-500);
+  
+  /* Background Colors */
+  --bg-dark: var(--bone-900);
+  --bg-main: var(--bone-800);
+  --bg-light: var(--bone-50);
+  
+  /* Text Colors */
+  --text-primary: var(--bone-50);
+  --text-secondary: var(--bone-300);
+  --text-muted: var(--bone-600);
+  
+  /* Accent Colors */
+  --accent: var(--palette2-color4);
+  --accent-light: var(--palette2-color3);
+  --accent-dark: var(--palette2-color5);
+  
+  /* Interactive States */
+  --hover-glow: 0 0 10px var(--primary-light);
+  
+  /* Typography Scale - Mobile First */
+  --h1: var(--font-scale-43-62); /* Page titles */
+  --h2: var(--font-scale-33-46); /* Section headers */
+  --h3: var(--font-scale-27-36); /* Card titles */
+  --h4: var(--font-scale-23-29); /* Subsections */
+  --h5: var(--font-scale-20-24); /* Small headers */
+  --h6: var(--font-scale-17-20); /* Minor headers */
+  --body: var(--font-scale-15-18); /* Body text */
+  --small: var(--font-scale-13-14); /* Small text */
+}

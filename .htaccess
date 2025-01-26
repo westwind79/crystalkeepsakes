@@ -1,0 +1,22 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the correct base for your subdirectory
+RewriteBase /fancyfleetlimos
+
+# If the request is for an actual file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise, rewrite to index.html
+RewriteRule ^ index.html [QSA,L]
+
+# Properly handle static assets
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js)$">
+    RewriteEngine Off
+</FilesMatch>
+
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"

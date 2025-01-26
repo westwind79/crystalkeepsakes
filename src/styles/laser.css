@@ -1,0 +1,114 @@
+
+.laser-simple {
+  position: relative;
+  width: 2px;
+  height: 100px;
+  background-color: var(--emerald-300);
+  box-shadow: 
+    0 0 5px var(--emerald-300),
+    0 0 10px var(--emerald-400),
+    0 0 15px var(--emerald-500);
+}
+
+.laser-pulse {
+  position: relative;
+  width: 2px;
+  height: 100px;
+  background-color: var(--emerald-300);
+  animation: laserPulse 1.5s infinite;
+}
+
+@keyframes laserPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 5px var(--emerald-300),
+      0 0 10px var(--emerald-400);
+  }
+  50% {
+    box-shadow: 
+      0 0 10px var(--emerald-300),
+      0 0 20px var(--emerald-400),
+      0 0 30px var(--emerald-500);
+  }
+}
+
+.laser-beam {
+  position: relative;
+  width: 4px;
+  height: 100px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--emerald-300) 40%,
+    var(--emerald-400) 50%,
+    var(--emerald-300) 60%,
+    transparent 100%
+  );
+}
+
+.laser-advanced {
+  position: relative;
+  width: 2px;
+  height: 100px;
+  background-color: var(--emerald-300);
+  animation: laserPulse 1.5s infinite;
+}
+
+.laser-advanced::before,
+.laser-advanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background: var(--emerald-400);
+  filter: blur(5px);
+  animation: laserGlow 2s infinite;
+}
+
+@keyframes laserGlow {
+  0%, 100% { opacity: 0.5; width: 100%; }
+  50% { opacity: 1; width: 200%; }
+}
+
+.laser-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.laser-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--laser-core);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.laser-hover:hover {
+  color: var(--text-primary);
+  text-shadow: 0 0 5px var(--laser-core);
+}
+
+.laser-hover:hover::before {
+  opacity: 0.15;
+  box-shadow: 
+    0 0 10px var(--laser-core),
+    0 0 20px var(--laser-glow),
+    0 0 30px var(--laser-outer);
+  filter: blur(2px);
+}
+
+/* Variant for buttons */
+.btn.laser-hover {
+  border: 1px solid var(--brand-primary);
+}
+
+.btn.laser-hover:hover {
+  border-color: transparent;
+  background: var(--brand-primary);
+  box-shadow: var(--hover-glow);
+}
