@@ -14,6 +14,10 @@ export function Navigation({ onNavLinkClick }) {
     const cleanImageName = imageName.replace(/^\//, '');
     return `${import.meta.env.BASE_URL}${cleanImageName}`;
   };
+
+  const isProductsActive = () => {
+    return location.pathname.startsWith('/product');
+  };
   
   return (
     <nav className="navbar navbar-expand-lg">       
@@ -39,7 +43,7 @@ export function Navigation({ onNavLinkClick }) {
                 to="/products"
                 onClick={onNavLinkClick}
                 className={({ isActive }) => 
-                  isActive ? "nav-link active" : "nav-link"
+                  isActive || isProductsActive() ? "nav-link active" : "nav-link"
                 }
               >
                 Products
