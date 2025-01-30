@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Prevent duplicate content issues with pre-rendered pages
+Disallow: /index.html
+Disallow: /*.html$
+
+# Add sitemap location
+Sitemap: https://crystalkeepsakes.com/sitemap.xml

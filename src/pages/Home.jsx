@@ -13,14 +13,9 @@ import { ProductCard } from '../components/product/ProductCard';
 import { CategoryNav } from '../components/layout/CategoryNav';
 import { ContactCTA } from '../components/layout/ContactCTA';
 import { ProcessSection } from '../components/layout/ProcessSection';
+import { getImagePath } from '../utils/imageUtils';
 
 export function Home({ product }) {
-  
-  const getImagePath = (imageName) => {
-    // Remove any leading slash from imageName
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
-  };
 
   return (
   	<PageLayout 
@@ -31,8 +26,8 @@ export function Home({ product }) {
 
     <section className="hero">
       <Container>
-        <Row className="align-items-center min-vh-80">
-          <Col lg={6} className="hero-content">
+        <Row className="align-items-center mt-4 mb-3">
+          <div className="hero-content col-12 col-sm-12 col-md-6 col-lg-5">
             <h1 className="display-4 mb-4">Memories Preserved in Crystal</h1>
             <p className="lead mb-4">
               Transform your cherished photos into stunning 3D crystal art pieces. 
@@ -46,17 +41,17 @@ export function Home({ product }) {
                 Learn More
               </Link>
             </div>
-          </Col>
-          <Col lg={6} className="hero-image">
+          </div>
+          <div className="hero-image col-12 col-sm-12 col-md-6 col-lg-7">
             <div className="crystal-showcase">
               <img 
-                src="/img/products/3dc_rectanglewide.jpg" 
+                src={getImagePath('img/products/3dc_rectanglewide.jpg')} 
                 alt="3D Crystal Art Example" 
-                className="img-fluid crystal-hero-image"
+                className="img-fluid rounded crystal-hero-image"
               />
-              <div className="crystal-glow"></div>
+              {/*<div className="crystal-glow"></div>*/}
             </div>
-          </Col>
+          </div>
         </Row>
       </Container>
     </section>
@@ -97,7 +92,7 @@ export function Home({ product }) {
 	        </Col>
 	        <Col md={4}>
 	          <div className="text-center"> 
-	           <img src="https://picsum.photos/seed/picsum/1024/1024" className="img-fluid rounded-4 shadow" alt="" />        
+	           <img src={getImagePath('img/noahs-keepsake-1.png')} className="img-fluid rounded-4 shadow" alt="" />        
 	          </div>
 	        </Col>
 	      </Row>

@@ -3,11 +3,12 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  background: var(--bone-50);
+  background: var(--surface-800);
   border-radius: 0.5rem;
 }
 
 .category-filter__item {
+  cursor: pointer;
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -18,13 +19,13 @@
 }
 
 .category-filter__item:hover {
-  border-color: var(--palette2-color4);
-    background: rgba(13, 253, 110, 0.05);
+  border-color: var(--brand-500);
+  background: rgba(13, 253, 110, 0.05);
 }
 
 .category-filter__item--active {
-  border-color: var(--palette2-color4);
-    background: rgba(13, 253, 110, 0.05);
+  border-color: var(--brand-400);
+  background: rgba(13, 253, 110, 0.05);
 }
 
 .category-filter__checkbox {
@@ -32,6 +33,6 @@
 }
 
 .category-filter__label {
-  color: var(--bone-900);
+  color: var(--surface-50);
   font-size: 0.875rem;
 }

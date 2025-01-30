@@ -8,7 +8,7 @@ export const products = [
     categories: ["anniversary", "birthday", "weddings"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/3d_crystal_heart.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg', isMain: true},
@@ -16,9 +16,9 @@ export const products = [
       {id: '3', src: '/img/products/3dc_prestige.jpg'}, 
     ],
     sizes: [
-      { id: 'small', name: 'Small (2")', price: 0 },
-      { id: 'medium', name: 'Medium (3")', price: 20 },
-      { id: 'large', name: 'Large (4")', price: 40 }
+      { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },
+      { id: 'medium', name: 'Medium (3")', price: 20, faces: '1-3' },
+      { id: 'large', name: 'Large (4")', price: 40, faces: '1-4' }
     ],
     backgroundOptions: [
       { id: 'rm', name: 'Remove Backdrop', price: 0 },
@@ -31,11 +31,10 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    }
+    textOptions: [
+      { id: 'none', name: 'No Text', price: 0 },
+      { id: 'customText', name: 'Custom Text', price: 9.50 }
+    ]
   },
   {
     id: 2,
@@ -45,7 +44,7 @@ export const products = [
     categories: ["birthday", "weddings","memorial"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/3d_crystal_picture.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg'},
@@ -70,11 +69,6 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    },
     textOptions: [
       { id: 'none', name: 'No Text', price: 0 },
       { id: 'customText', name: 'Custom Text', price: 9.50 }
@@ -88,7 +82,7 @@ export const products = [
     categories: ["pet"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/3d_dogbone_horizontal.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg', isMain: true},
@@ -96,9 +90,9 @@ export const products = [
       {id: '3', src: '/img/products/3dc_prestige.jpg'}, 
     ],
     sizes: [
-      { id: 'small', name: 'Small (2")', price: 0 },
-      { id: 'medium', name: 'Medium (3")', price: 20 },
-      { id: 'large', name: 'Large (4")', price: 40 }
+      { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },
+      { id: 'medium', name: 'Medium (3")', price: 20, faces: '1-3' },
+      { id: 'large', name: 'Large (4")', price: 40, faces: '1-4' }
     ],
     backgroundOptions: [
       { id: 'rm', name: 'Remove Backdrop', price: 0 },
@@ -111,11 +105,10 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    }
+    textOptions: [
+      { id: 'none', name: 'No Text', price: 0 },
+      { id: 'customText', name: 'Custom Text', price: 9.50 }
+    ]
   },
   {
     id: 4,
@@ -125,7 +118,7 @@ export const products = [
     categories: ["pet"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/3d_dogbone_vertical.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg', isMain: true},
@@ -133,9 +126,9 @@ export const products = [
       {id: '3', src: '/img/products/3dc_prestige.jpg'}, 
     ],
     sizes: [
-      { id: 'small', name: 'Small (2")', price: 0 },
-      { id: 'medium', name: 'Medium (3")', price: 20 },
-      { id: 'large', name: 'Large (4")', price: 40 }
+      { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },
+      { id: 'medium', name: 'Medium (3")', price: 20, faces: '1-3' },
+      { id: 'large', name: 'Large (4")', price: 40, faces: '1-4' }
     ],
     backgroundOptions: [
       { id: 'rm', name: 'Remove Backdrop', price: 0 },
@@ -148,31 +141,28 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    }
+    textOptions: [
+      { id: 'none', name: 'No Text', price: 0 },
+      { id: 'customText', name: 'Custom Text', price: 9.50 }
+    ]
   }, 
   {
     id: 5,
     name: "3D Prestige",
-    slug: "crystal-cat",
+    slug: "prestige",
     basePrice: 89.99,
     categories: ["anniversary", "birthday", "weddings","memorial"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/3d_crystal_large_prestige_iceberg_1_1.png'}
     ],
     images: [
-      {id: '1', src: '/img/products/3d_heart.jpg'},
-      {id: '2', src: '/img/products/01_dogbonehorizontal.jpg'},
-      {id: '3', src: '/img/products/3dc_prestige.jpg', isMain: true}, 
+      {id: '1', src: '/img/products/3dc_prestige.jpg', isMain: true}      
     ],
     sizes: [
-      { id: 'small', name: 'Small (2")', price: 0 },
-      { id: 'medium', name: 'Medium (3")', price: 20 },
-      { id: 'large', name: 'Large (4")', price: 40 }
+      { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },
+      { id: 'medium', name: 'Medium (3")', price: 20, faces: '1-3'},
+      { id: 'large', name: 'Large (4")', price: 40, faces: '1-4' }
     ],
     backgroundOptions: [
       { id: 'rm', name: 'Remove Backdrop', price: 0 },
@@ -185,21 +175,20 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    }
+    textOptions: [
+      { id: 'none', name: 'No Text', price: 0 },
+      { id: 'customText', name: 'Custom Text', price: 9.50 }
+    ]
   },
   {
     id: 6,
     name: "3D Crystal Cat",
     slug: "crystal-cat",
     basePrice: 89.99,
-    categories: ["anniversary","birthday","pet"],
+    categories: ["pet"],
     description: "Beautiful crystal heart, perfect for capturing memories",
     productMask: [
-      {src: '/img/products/prestige-mask.png'}
+      {src: '/img/masks/cat_shape_large.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg'},
@@ -207,9 +196,9 @@ export const products = [
       {id: '3', src: '/img/products/3dc_prestige.jpg', isMain: true}, 
     ],
     sizes: [
-      { id: 'small', name: 'Small (2")', price: 0 },
-      { id: 'medium', name: 'Medium (3")', price: 20 },
-      { id: 'large', name: 'Large (4")', price: 40 }
+      { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },
+      { id: 'medium', name: 'Medium (3")', price: 20, faces: '1-3' },
+      { id: 'large', name: 'Large (4")', price: 40, faces: '1-4' }
     ],
     backgroundOptions: [
       { id: 'rm', name: 'Remove Backdrop', price: 0 },
@@ -222,11 +211,10 @@ export const products = [
       { id: 'premium', name: 'Premium RGB Base', price: 40 }
     ],
     requiresImage: true,
-    maxFaces: {
-      's': 1,
-      'm': 2,
-      'l': 3
-    }
+    textOptions: [
+      { id: 'none', name: 'No Text', price: 0 },
+      { id: 'customText', name: 'Custom Text', price: 9.50 }
+    ]
   },
    
   // More products...

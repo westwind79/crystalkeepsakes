@@ -1,13 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs-extra'
+import path from 'path'
 
 // Copy function for API folder
 const copyAPI = () => ({
   name: 'copy-api',
   closeBundle: async () => {
-    await fs.copy('api', 'dist/api'),
-    await fs.copy('.htaccess', 'dist/')
+    await fs.ensureDir('dist')    
+    // Copy API folder
+    await fs.copy('api', 'dist/api')    
+    // Copy .htaccess file to specific path
+    await fs.copy('.htaccess', path.join('dist', '.htaccess'))
   }
 })
 

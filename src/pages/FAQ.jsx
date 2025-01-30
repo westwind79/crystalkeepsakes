@@ -29,7 +29,7 @@ export function FAQ() {
     <section className="about-preview py-5" >
       <Container>
         <Row className="align-items-center">
-          <Col xs={12} className="">
+          <Col className="col-sm-8 mx-auto">
             <h2>What’s a 3D Photo Crystal?</h2>
             <p>We’re thrilled you asked! A 3D Photo Crystal is the most innovative way to preserve and showcase a physical representation of your favorite photo. At CrystalKeepsakes, we blend cutting-edge digital technology with expert craftsmanship to create intricate 2D or 3D laser engravings within durable crystal keepsakes. Our creations protect your cherished images and transform them into breathtaking 3D art. Simply put, we make memories last forever.</p>
             <p>We didn’t invent crystal art; we perfected it.</p>

@@ -2,6 +2,7 @@
 import { loadStripe } from '@stripe/stripe-js'
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { getImagePath } from '../utils/imageUtils';
 
 const stripePromise = loadStripe('your_publishable_key')
 
@@ -25,11 +26,11 @@ export function Checkout() {
     })
   }
   
-  const getImagePath = (imageName) => {
-    // Remove any leading slash from imageName
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
-  };
+  // const getImagePath = (imageName) => {
+  //   // Remove any leading slash from imageName
+  //   const cleanImageName = imageName.replace(/^\//, '');
+  //   return `${import.meta.env.BASE_URL}${cleanImageName}`;
+  // };
 
   return (
     // Checkout UI

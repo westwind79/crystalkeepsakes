@@ -15,15 +15,11 @@ import ProductGallery from '../components/product/ProductGallery';
 
 import { PageLayout } from '../components/layout/PageLayout';
 import { Check, User } from 'lucide-react'; 
+import { getImagePath } from '../utils/imageUtils';
+
 
 export function ProductDetail() {
   
-  const getImagePath = (imageName) => {
-    // Remove any leading slash from imageName
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
-  };
-
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -294,7 +290,8 @@ export function ProductDetail() {
     }
     // Single charge for custom text when enabled
     if (showCustomText) {
-      const textOption = product.textOptions[1]
+     const textOption = product.textOptions[1]
+     // const textOption = { price: 10 } 
       price += textOption.price
     }
 
@@ -316,7 +313,7 @@ export function ProductDetail() {
   }
   
   const mainImage = product.images.find(img => img.isMain) || product.images[0];
-  const imageMask = product.productMask[0];
+  const imageMask = product.productMask && product.productMask[0] ? product.productMask[0] : null;
 
   return (
     <PageLayout 
@@ -422,7 +419,7 @@ export function ProductDetail() {
                     )}
                     {product.sizes.map(size => (
                       <label key={size.id} className="crystal-radio">
-                        <span><User size={18} /> {size.faces}</span>&nbsp;<span>{product.name}</span>
+                        <span className="product-faces"><User size={18} /><br/>{size.faces}</span>  &nbsp;<span>{product.name}</span>
 
                         <span dangerouslySetInnerHTML={ProductSizeComponent(size.name)} />
                         <br/>
@@ -457,21 +454,20 @@ export function ProductDetail() {
                           })}
                         />
 
-                        <span className="radio-checkmark"><Check size={18} /></span>
+                        {/*<span className="radio-checkmark"><Check size={18} /></span>*/}
                       </label>
                     ))}
                   </Form.Group>
 
                   {/* Custom Text Fields */}
                   <Form.Group className="product-option pt-2 mt-2">
-                    <Form.Label className="d-flex justify-content-start align-items-center">                     
-                      
+                    <Form.Label className="d-flex justify-content-start align-items-center">
                       <Form.Check
                         type="checkbox"
-                        label={`(+$${product.textOptions[1].price.toFixed(2)})`}
+                        label={``}
                         checked={showCustomText}
                         onChange={(e) => setShowCustomText(e.target.checked)}
-                      />&nbsp;Add Custom Text
+                      /> Add Custom Text (+${product.textOptions[1].price.toFixed(2)}) 
                     </Form.Label>
                     
                     {showCustomText && (

@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet-async';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
  
 import { PageLayout } from '../components/layout/PageLayout';
-  
+import { getImagePath } from '../utils/imageUtils';  
 
 export function Cart() {
   const { cartItems, removeFromCart, clearCart } = useCart();
@@ -49,30 +49,31 @@ export function Cart() {
         }))
       };
 
+      // Store cart info BEFORE processing - used for both dev and prod
+      const orderData = {
+        cartItems: cartData.cartItems,
+        cartTotal: cartItems.reduce((total, item) => total + item.price, 0),
+        timestamp: new Date().toISOString()
+      };
+      sessionStorage.setItem('pendingOrder', JSON.stringify(orderData));
+
       // Development Mode
       if (import.meta.env.DEV) {
         console.log('Development mode - simulating payment flow');
         console.log('Cart data:', JSON.stringify(cartData, null, 2));
 
-        // Store cart info
-        sessionStorage.setItem('pendingOrder', JSON.stringify({
-          cartItems: cartData.cartItems,
-          cartTotal,
-          timestamp: new Date().toISOString()
-        }));
-
         // Simulate processing time
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Redirect to local order confirmation
+        // NOTE: We don't clear cart here - that happens after success confirmation
         window.location.href = '/order-confirmation?status=success';
         return;
       }
 
       // Production Mode
       console.log('Production mode - processing payment');
-      console.log('Sending cart data:', JSON.stringify(cartData, null, 2));
-
+      
       const response = await fetch('./api/create-payment.php', {
         method: 'POST',
         headers: {
@@ -94,9 +95,6 @@ export function Cart() {
         throw new Error('Invalid response format from server');
       }
 
-      console.log('Parsed response:', result);
-
-      // Validate response
       if (!result.success) {
         throw new Error(result.error || 'Payment creation failed');
       }
@@ -105,21 +103,16 @@ export function Cart() {
         throw new Error('Invalid payment link structure');
       }
 
-      // Store cart info
-      sessionStorage.setItem('pendingOrder', JSON.stringify({
-        cartItems: cartData.cartItems,
-        cartTotal,
-        timestamp: new Date().toISOString()
-      }));
-
       // Redirect to Square payment page
+      // NOTE: Cart clearing happens in OrderConfirmation.jsx after success
       window.location.href = result.payment_link.url;
 
     } catch (error) {
       console.error('Checkout error:', error);
-      setCheckoutError(
-        error.message || 'Failed to process checkout. Please try again.'
-      );
+      // On error, don't clear cart and show error message
+      setCheckoutError(error.message || 'Failed to process checkout. Please try again.');
+      // Clear pending order on error
+      sessionStorage.removeItem('pendingOrder');
     } finally {
       setIsProcessing(false);
     }
@@ -181,13 +174,6 @@ export function Cart() {
    return <LoadingSpinner />
   }
 
-  
-  const getImagePath = (imageName) => {
-    // Remove any leading slash from imageName
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
-  };
-
   // Show empty cart message when no items
   if (!loadingStates.cart && cartItems.length === 0) {
     const getImagePath = (imageName) => {
@@ -208,8 +194,16 @@ export function Cart() {
             <p className="mt-3">Add some beautiful crystals to get started!</p>
           </div>
         </section>
-        
-
+        <Container className="mt-5 mb-5">
+          <Row>
+            <Col className="text-center col-sm-8 mx-auto">
+              <p>Did you forget something?</p>
+              <p>
+                <Link className="btn btn-primary" to="/products">Choose a Crystal</Link>
+              </p>
+            </Col>
+          </Row>
+        </Container>
       </PageLayout>
     );
   }

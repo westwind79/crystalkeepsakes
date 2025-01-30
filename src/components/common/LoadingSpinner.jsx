@@ -1,8 +1,8 @@
 export function LoadingSpinner() {
   return (
-    <div className="d-flex justify-content-center py-5">
-      <div className="spinner-border text-primary" role="status">
-        <span className="visually-hidden">Loading...</span>
+    <div className="loading-screen">
+      <div className="spinner-border" role="status">
+        <span className="spinner visually-hidden">Loading...</span>
       </div>
     </div>
   )

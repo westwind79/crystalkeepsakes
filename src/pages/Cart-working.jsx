@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
- 
+ import { getImagePath } from '../utils/imageUtils';
   
 
 // Create specific error types

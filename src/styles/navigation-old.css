@@ -1,0 +1,63 @@
+.navbar {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1rem 2rem;
+  transition: background var(--transition-base);
+}
+
+.navbar-brand {
+  color: var(--text-bright) !important;
+  font-size: var(--text-lg);
+  transition: color var(--transition-fast);
+}
+
+.navbar-brand:hover {
+  color: var(--interactive-hover) !important;
+}
+
+.nav-link {
+  color: var(--surface-200) !important;
+  position: relative;
+  transition: color var(--transition-fast);
+  padding: 0.5rem 1rem;
+  cursor: pointer;  
+  transition: color var(--transition-base) ease;
+}
+
+.nav-link:hover {
+/*  color: var(--interactive-primary) !important;*/
+  color: var(--brand-400) !important;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--interactive-primary);
+  transition: all var(--transition-base);
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: var(--primary) !important;
+}
+
+.nav-link.active::after {
+  width: 100%;
+  background: var(--primary);
+}
+.navbar-toggler {
+  color: var(--brand-500);
+  background-color: var(--brand-400);
+  border: none transparent;
+}
+.navbar-toggler {
+  border: none transparent;
+}
