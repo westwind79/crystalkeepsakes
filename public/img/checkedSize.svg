@@ -12,6 +12,6 @@
       }
     </style>
   </defs>
-  <polygon class="st1" points="0 24 0 0 24 0 0 24"/>
-  <path class="st0" d="M6.2,9.5l-2.7-2.6.9-.9,1.7,1.7,4.4-4.2.9.9-5.3,5.1Z"/>
+  <polygon className="st1" points="0 24 0 0 24 0 0 24"/>
+  <path className="st0" d="M6.2,9.5l-2.7-2.6.9-.9,1.7,1.7,4.4-4.2.9.9-5.3,5.1Z"/>
 </svg>

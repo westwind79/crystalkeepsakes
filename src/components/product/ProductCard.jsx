@@ -14,19 +14,19 @@ export function ProductCard({ product }) {
   return (
     <div className="crystal-product">
 
-      <div className="crystal-product-image">
- 
-          <Link 
-            to={`/product/${product.slug}`} 
-            className=""
-          >
-            <img src={mainImage.src} alt={product.name} />
-          </Link>   
-
-      </div>
-
+      <Link to={`/product/${product.slug}`}
+        className="crystal-product-image" 
+        style={{ 
+          backgroundImage: `url(${mainImage.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/*<img src={mainImage.src} alt={product.name} />*/}
+      </Link>
+      
       <div className="crystal-product-info">
-
         <h3>
           <Link 
             to={`/product/${product.slug}`} 

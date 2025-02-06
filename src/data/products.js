@@ -12,8 +12,8 @@ export const products = [
     ],
     images: [
       {id: '1', src: '/img/products/3d_heart.jpg', isMain: true},
-      {id: '2', src: '/img/products/01_dogbonehorizontal.jpg'},
-      {id: '3', src: '/img/products/3dc_prestige.jpg'}, 
+      // {id: '2', src: '/img/products/01_dogbonehorizontal.jpg'},
+      // {id: '3', src: '/img/products/3dc_prestige.jpg'}, 
     ],
     sizes: [
       { id: 'small', name: 'Small (2")', price: 0, faces: '1-2' },

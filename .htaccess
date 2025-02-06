@@ -1,29 +1,35 @@
-# Disable MultiViews to prevent Apache from adding extensions automatically
-Options -MultiViews
+# Enable RewriteEngine
+RewriteEngine On
 
-# Enable Rewrite Engine
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-    
-    # Handle Authorization Header
-    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
-    
-    # Redirect www to non-www
-    RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
-    
-    # Serve pre-rendered HTML files for static routes
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME}.html -f
-    RewriteRule ^(.*)$ $1.html [L]
-    
-    # For all other routes, serve index.html
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ index.html [QSA,L]
-</IfModule>
+# Handle Authorization Header
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Set environment variables
+SetEnv SQUARE_APPLICATION_ID sandbox-sq0idb-xeQzkR1UU5sS3aapMpPacQ
+SetEnv SQUARE_ENVIRONMENT sandbox
+SetEnv SQUARE_ACCESS_TOKEN EAAAl7t4u29Qkr1jCgqNwDqBFL-WHjbjz_sPXRpz5vjln7sfCQ12DnWZb6ZkCzGC 
+SetEnv SQUARE_LOCATION_ID LSVZHFQ2F7DBF
+SetEnv SITE_URL https://crystalkeepsakes.com/
+
+# Prevent .env file access
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Redirect www to non-www
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# If the request is not for a valid file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# If the request is not for the API
+RewriteCond %{REQUEST_URI} !^/api/
+
+# Rewrite all requests to index.html
+RewriteRule ^ index.html [L]
 
 # Set correct MIME types
 AddType application/javascript .js
@@ -37,17 +43,29 @@ AddType application/x-web-app-manifest+json .webmanifest
     AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
 </IfModule>
 
-# Set caching headers
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType text/html "access plus 0 seconds"
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType application/json "access plus 0 seconds"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
+# Force no caching during development
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
 </IfModule>
 
-# Enable CORS if needed (commented out by default)
-#Header set Access-Control-Allow-Origin "*"
+# Set caching headers
+#<IfModule mod_expires.c>
+#    ExpiresActive On
+#    ExpiresByType text/html "access plus 0 seconds"
+#    ExpiresByType text/css "access plus 1 year"
+#    ExpiresByType application/javascript "access plus 1 year"
+#    ExpiresByType application/json "access plus 0 seconds"
+#    ExpiresByType image/jpeg "access plus 1 year"
+#    ExpiresByType image/png "access plus 1 year"
+#    ExpiresByType image/svg+xml "access plus 1 year"
+#</IfModule>
+
+# Set security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

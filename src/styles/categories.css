@@ -5,6 +5,8 @@
   padding: 1rem;
   background: var(--surface-800);
   border-radius: 0.5rem;
+  position: sticky;
+  top: 1em;
 }
 
 .category-filter__item {

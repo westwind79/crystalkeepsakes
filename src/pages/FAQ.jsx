@@ -46,7 +46,7 @@ export function FAQ() {
             <p>Think of our website as an extension of our team, here to guide you through the process even when we’re not available in person. Have questions? Check out our FAQ page or reach out to us directly. We’re here to help!</p>*/}
           </Col>           
         </Row>
-        <div class="spacer-gradient mb-5 mt-5"></div>    
+        <div className="spacer-gradient mb-5 mt-5"></div>    
       </Container>
     </section>
    </PageLayout>

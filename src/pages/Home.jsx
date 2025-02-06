@@ -6,7 +6,6 @@ import { gsap, ScrollTrigger, Draggable } from 'gsap/all';
 // import { Truck, ShoppingBag, ImageUp, Gem } from 'lucide-react'; 
 
 import { PageLayout } from '../components/layout/PageLayout';
-import { ParticleBackground } from '../components/effects/ParticleBackground';
 
 import { products } from '../data/products';
 import { ProductCard } from '../components/product/ProductCard';
