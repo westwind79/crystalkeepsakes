@@ -355,7 +355,11 @@ header {
   font-weight: bold;
   overflow: hidden;
 }
-
+.crystal-radio {
+  .product-faces {
+    margin-right: 0.25em;
+  }
+}
 
 /* Hide default radio button */
 .custom-checkbox-label input[type="checkbox"],

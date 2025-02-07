@@ -33,7 +33,7 @@ export function ProductCard({ product }) {
             className=""
           >{product.name}</Link>
         </h3>
-        <p>{product.description}</p>
+        <p>{product.shortDescription}</p>
 
         <div className="crystal-product-price">
           From ${product.basePrice.toFixed(2)}

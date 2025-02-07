@@ -2,44 +2,34 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 
 const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
-  // State for tracking image position and scale
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
-  // Refs for accessing DOM elements
   const containerRef = useRef(null);
   const imageRef = useRef(null);
   const maskRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // State to track container and mask dimensions
-  const [dimensions, setDimensions] = useState({
-    container: { width: 0, height: 0 },
-    mask: { width: 0, height: 0 }
-  });
-
-  // Effect to initialize mask dimensions when image loads
+  // Load and store the mask image dimensions
+  const [maskDimensions, setMaskDimensions] = useState({ width: 0, height: 0 });
+  
   useEffect(() => {
-    if (maskRef.current) {
-      const maskImg = new Image();
-      maskImg.onload = () => {
-        setDimensions(prev => ({
-          ...prev,
-          mask: {
-            width: maskImg.naturalWidth,
-            height: maskImg.naturalHeight
-          }
-        }));
+    if (maskImage) {
+      const img = new Image();
+      img.onload = () => {
+        setMaskDimensions({
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        });
       };
-      maskImg.src = maskImage;
+      img.src = maskImage;
     }
   }, [maskImage]);
 
-  // Handle mouse wheel for zooming
-const handleWheel = (e) => {
-    if (e.cancelable) e.preventDefault(); // ✅ Only prevent default when allowed
+  const handleWheel = (e) => {
+    if (e.cancelable) e.preventDefault();
     
     if (!imageRef.current || !containerRef.current) return;
 
@@ -50,7 +40,6 @@ const handleWheel = (e) => {
     const scaleFactor = 0.1;
     const newScale = Math.max(0.1, Math.min(5, scale + Math.sign(-e.deltaY) * scaleFactor));
 
-    // Adjust zoom to center on the cursor
     const factor = newScale / scale;
     const newX = position.x - cursorX * (factor - 1);
     const newY = position.y - cursorY * (factor - 1);
@@ -59,8 +48,6 @@ const handleWheel = (e) => {
     setPosition({ x: newX, y: newY });
   };
 
-
-  // Handle mouse down for starting drag
   const handleMouseDown = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -70,7 +57,6 @@ const handleWheel = (e) => {
     });
   };
 
-  // Handle mouse move for dragging
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     
@@ -80,88 +66,118 @@ const handleWheel = (e) => {
     setPosition({ x: newX, y: newY });
   };
 
-  // Handle mouse up to end dragging
   const handleMouseUp = () => {
     setIsDragging(false);
   };
 
-  // Function to save the edited image
-  const handleSave = () => {
-    if (!uploadedImage || !maskImage) return;
+  const handleReset = () => {
+    setPosition({ x: 0, y: 0 });
+    setScale(1);
+  };
+  
+  const handleSave = async () => {
+    if (!uploadedImage || !maskImage || !imageRef.current || !maskRef.current) {
+      console.error('Missing required elements for saving');
+      return;
+    }
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    try {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
 
-    const uploadedImg = new Image();
-    const maskImg = new Image();
-
-    Promise.all([
-        new Promise(resolve => {
-            uploadedImg.onload = resolve;
-            uploadedImg.src = uploadedImage;
+      // Load images
+      const [uploadedImg, maskImg] = await Promise.all([
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = uploadedImage;
         }),
-        new Promise(resolve => {
-            maskImg.onload = resolve;
-            maskImg.src = maskImage;
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = maskImage;
         })
-    ]).then(() => {
-        // Set canvas size to match mask
-        canvas.width = maskImg.width;
-        canvas.height = maskImg.height;
+      ]);
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Get rendered dimensions of the mask
+      const maskRect = maskRef.current.getBoundingClientRect();
 
-        // Scale and position uploaded image to fit inside the mask
-        let scaledWidth, scaledHeight;
-        const aspectRatio = uploadedImg.width / uploadedImg.height;
+      // Set canvas to mask's natural dimensions
+      canvas.width = maskImg.naturalWidth;
+      canvas.height = maskImg.naturalHeight;
 
-        if (aspectRatio > 1) { // Landscape image
-            scaledWidth = maskImg.width;
-            scaledHeight = scaledWidth / aspectRatio;
-        } else { // Portrait or square image
-            scaledHeight = maskImg.height;
-            scaledWidth = scaledHeight * aspectRatio;
-        }
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Center the scaled image within the mask
-        const offsetX = (maskImg.width - scaledWidth) / 2;
-        const offsetY = (maskImg.height - scaledHeight) / 2;
+      // Calculate scaling factors to map rendered coordinates to intrinsic coordinates
+      const scaleFactorX = maskImg.naturalWidth / maskRect.width;
+      const scaleFactorY = maskImg.naturalHeight / maskRect.height;
 
-        // Clip the image using the mask
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(0, 0, maskImg.width, maskImg.height);
-        ctx.clip();
+      // Calculate the scaled dimensions of the uploaded image
+      const scaledWidth = imageRef.current.width * scale * scaleFactorX;
+      const scaledHeight = imageRef.current.height * scale * scaleFactorY;
 
-        // Draw the uploaded image at the correct scale and position
-        ctx.drawImage(uploadedImg, offsetX, offsetY, scaledWidth, scaledHeight);
+      // Calculate the position relative to the mask's intrinsic size
+      const canvasX = position.x * scaleFactorX;
+      const canvasY = position.y * scaleFactorY;
 
-        // Restore canvas clipping
-        ctx.restore();
+      // Save context state
+      ctx.save();
 
-        // Draw the mask over the image
-        ctx.drawImage(maskImg, 0, 0, maskImg.width, maskImg.height);
+      // Create clipping mask using the mask dimensions
+      ctx.beginPath();
+      ctx.rect(0, 0, maskImg.naturalWidth, maskImg.naturalHeight);
+      ctx.clip();
 
-        // Save final image
-        const finalImage = canvas.toDataURL('image/png');
-        onSave(finalImage);
-        onHide();
-    });
+      // Draw the uploaded image
+      ctx.drawImage(
+        uploadedImg,
+        canvasX, canvasY,
+        scaledWidth, scaledHeight
+      );
+
+      // Restore context
+      ctx.restore();
+
+      // Draw the mask on top
+      ctx.drawImage(maskImg, 0, 0);
+
+      // Convert to data URL
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+
+      // Validate data URL
+      if (dataUrl === 'data:,') {
+        throw new Error('Generated data URL is invalid');
+      }
+
+      onSave(dataUrl);
+      onHide();
+
+    } catch (error) {
+      console.error('Error saving image:', error);
+    }
   };
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const handleWheelEvent = (e) => handleWheel(e);
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, [scale, position]);
 
-    // ✅ Add event listener with `{ passive: false }`
-    container.addEventListener("wheel", handleWheelEvent, { passive: false });
-
-    return () => {
-        container.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, []);
+  useEffect(() => {
+    if (maskRef.current) {
+      const maskRect = maskRef.current.getBoundingClientRect();
+      const workspace = containerRef.current;
+      if (workspace) {
+        workspace.style.width = `${maskRect.width}px`;
+        workspace.style.height = `${maskRect.height}px`;
+      }
+    }
+  }, [maskImage]);
 
   return (
     <Modal 
@@ -178,50 +194,29 @@ const handleWheel = (e) => {
         <div 
           ref={containerRef}
           className="editor-workspace"
-          style={{ 
-            width: '80vw',
-            height: '80vh',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
-          onWheel={(e) => {
-            e.stopPropagation();  // Add this
-            handleWheel(e);
-          }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
-          {/* Uploaded image */}
           <img
             ref={imageRef}
             src={uploadedImage}
             alt="Upload"
+            className="uploaded-image"
             style={{
-              position: 'absolute',
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              transformOrigin: '0 0',
-              userSelect: 'none'
+              transformOrigin: '0 0'
             }}
           />
           
-          {/* Mask overlay */}
           <img
             ref={maskRef}
             src={maskImage}
             alt="Mask"
             className="mask-image"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              pointerEvents: 'none'
-            }}
           />
           
-          {/* Hidden canvas for final image generation */}
           <canvas
             ref={canvasRef}
             style={{ display: 'none' }}
@@ -232,6 +227,9 @@ const handleWheel = (e) => {
       <Modal.Footer>
         <button className="btn btn-secondary" onClick={onHide}>
           Cancel
+        </button>
+        <button className="btn btn-secondary" onClick={handleReset}>
+          Reset
         </button>
         <button className="btn btn-primary" onClick={handleSave}>
           Save

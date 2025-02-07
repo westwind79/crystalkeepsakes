@@ -364,16 +364,20 @@ export function ProductDetail() {
         <Row>
           <div className="col-12 col-sm-12 col-md-5 col-lg-5">
 
-            <div className="product-preview">
-              <ProductGallery images={product.images} />
-              <br/>
+            <div className="product-preview mb-5">
+              {/*<ProductGallery images={product.images} />*/}
               {finalImage && (
                 <div className="saved-image-preview">
                   <h4>Saved Image Preview:</h4>
                   <img src={finalImage} alt="Final design" className="img-fluid" />
                 </div>
+              ) || (
+
+                <ProductGallery images={product.images} /> 
               )}
-        
+              <div className="spacer-gradient mt-4"></div>
+              <div className="pt-3 prodct__long-description" dangerouslySetInnerHTML={ProductSizeComponent(product.longDescription)}>                
+              </div>
             </div>
             {/* Uploaded Image Preview -- build it overlay later */}
             {/*<div className="image-upload-preview mb-4">
@@ -404,20 +408,19 @@ export function ProductDetail() {
           <div className="col-12 col-sm-12 col-md-7 col-lg-6">
           
             <div className="total-price mb-4">
-              <h2>Total: ${totalPrice.toFixed(2)}</h2>
+              <h2 className="h1">Total: ${totalPrice.toFixed(2)}</h2>
             </div>
 
             <Form className="product-options" onSubmit={handleSubmit}> 
 
              {/* Image Upload */} 
              <Form.Group className="product-option mb-4">
-              <Form.Label>Upload Your Image <span className="text-danger">*</span></Form.Label>
+              <Form.Label className="h3">Upload Your Image <span className="text-danger">*</span></Form.Label>
               {formErrors.image && (
                 <div className="alert-danger text-danger small">{formErrors.image}</div>
               )}
 
-     
-              <Form.Control
+             <Form.Control
                 type="file"
                 required
                 accept="image/jpeg,image/png,image/gif"
@@ -452,12 +455,14 @@ export function ProductDetail() {
                 )}
                 {product.sizes.map(size => (
                   <label key={size.id} className="crystal-radio">
-                    <span className="product-faces"><User size={18} /><br/>{size.faces}</span>  &nbsp;<span>{product.name}</span>
 
-                    <span dangerouslySetInnerHTML={ProductSizeComponent(size.name)} />
+                    <span className="product-faces"><User size={18} /><br/>{size.faces}</span>
+
+                    <span className="h5">{product.name} - <span dangerouslySetInnerHTML={ProductSizeComponent(size.name)} /></span>
+
                     <br/>
                     <span className="option-price">
-                      <span className="option-price__wrapper">
+                      <span className="option-price__wrapper h5">
                         {size.price === 0 ? (
                           <span className="option-price__included">
                             <span className="option-price__paren">(</span>
@@ -465,12 +470,9 @@ export function ProductDetail() {
                             <span className="option-price__paren">)</span>
                           </span>
                         ) : (
-                          <span className="option-price__additional">
-                            <span className="option-price__paren">(</span>
-                            <span className="option-price__prefix">+</span>
+                          <span className="option-price__additional">                         
                             <span className="option-price__currency">$</span>
-                            <span className="option-price__value">{size.price}</span>
-                            <span className="option-price__paren">)</span>
+                            <span className="option-price__value">{size.price}</span>                        
                           </span>
                         )}
                       </span>
@@ -486,8 +488,6 @@ export function ProductDetail() {
                         size: size.id
                       })}
                     />
-
-                    {/*<span className="radio-checkmark"><Check size={18} /></span>*/}
                   </label>
                 ))}
               </Form.Group>
@@ -631,8 +631,8 @@ export function ProductDetail() {
                 ))}
               </Form.Group>
               <div className="sticky-price">
-                <div className="total-price mb-4">
-                  <h3>Total: ${totalPrice.toFixed(2)}</h3>
+                <div className="total-price my-5">
+                  <h2>Total: ${totalPrice.toFixed(2)}</h2>
                 </div>
                 {cartError && (
                   <Alert variant="danger" className="mb-4" onClose={() => setCartError(null)} dismissible>
