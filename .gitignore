@@ -17,6 +17,7 @@
 /dist
 /build
 /vendor
+
 # Misc
 .DS_Store
 *.pem

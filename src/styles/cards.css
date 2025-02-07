@@ -1,16 +1,22 @@
 
 /* Crystal Product Card */
 .crystal-product {
-  background: var(--bg-surface);
+/*  background: var(--bg-surface);*/
+  background: linear-gradient(
+    135deg,
+    var(--bg-elevated),
+    var(--bg-surface)
+  );
   border: 1px solid var(--border-strong);
   border-radius: 0.25rem;
   overflow: hidden;
   transition: all var(--transition-base);
 }
 
-.crystal-product:hover {
+.crystal-product:hover {  
   transform: translateY(-4px);
   box-shadow: var(--glow-effect);
+  transition: all var(--transition-base);
 }
 
 .crystal-product-image {
@@ -20,7 +26,9 @@
     var(--bg-elevated),
     var(--bg-surface)
   );
-  height: 200px;
+  min-height: 200px;
+  max-height: 400px;
+  aspect-ratio: 4/3;
   display: flex;
   align-items: center;
   justify-content: center;
