@@ -231,7 +231,7 @@ export function Cart() {
                     <div className="col-xs-12 col-md-7">
                       {item.options.imageUrl && (
                         <div className="cart-uploaded-image">
-                          <h4 className="h5 mb-2 mt-2">Preview:</h4>
+                          <h4 className="h5 mb-2">Preview:</h4>
                           <img 
                             src={item.options.imageUrl}
                             alt="Design preview"
@@ -242,7 +242,7 @@ export function Cart() {
                       <br />
                       {item.options.maskedImageUrl && (
                         <div className="masked-image">
-                          <h4 className="h5 mb-2 mt-2">Final Design:</h4>
+                          <h4 className="h5 mb-2">Final Design:</h4>
                           <img 
                             src={item.options.maskedImageUrl}
                             alt="Final design"
@@ -255,7 +255,7 @@ export function Cart() {
                     {/* Item Details */}
                     <div className="col-12 col-md-5">
                       <div className="selected-options">
-                        <h4 className="h5 mb-2 mt-2">Selected Options:</h4>
+                        <h4 className="h5 mb-2">Selected Options:</h4>
                         <ul className="list-unstyled">
                           <li>
                             <span className="option-label">Size:</span>

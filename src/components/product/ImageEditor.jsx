@@ -180,18 +180,12 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
   }, [maskImage]);
 
   return (
-    <Modal 
-      show={show} 
-      onHide={onHide}
-      dialogClassName="image-editor-modal"
-      size="xl"
-    >
+    <Modal show={show} onHide={onHide} dialogClassName="image-editor-modal" size="xl">
       <Modal.Header closeButton>
         <Modal.Title>Edit Image</Modal.Title>
       </Modal.Header>
-      
       <Modal.Body>
-        <div 
+        <div
           ref={containerRef}
           className="editor-workspace"
           onMouseDown={handleMouseDown}
@@ -199,6 +193,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
+          {/* Uploaded Image */}
           <img
             ref={imageRef}
             src={uploadedImage}
@@ -206,24 +201,35 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
             className="uploaded-image"
             style={{
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              transformOrigin: '0 0'
+              transformOrigin: '0 0',
             }}
           />
-          
+
+          {/* Bounding Box */}
+          <div
+            style={{
+              position: 'absolute',
+              border: '2px dashed rgba(255, 255, 255, 0.5)',
+              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+              width: imageRef.current?.width || 0,
+              height: imageRef.current?.height || 0,
+              pointerEvents: 'none', // Ensure it doesn't interfere with dragging
+            }}
+          />
+
+          {/* Mask Image */}
           <img
             ref={maskRef}
             src={maskImage}
             alt="Mask"
             className="mask-image"
+            style={{ width: '100%', height: 'auto' }}
           />
-          
-          <canvas
-            ref={canvasRef}
-            style={{ display: 'none' }}
-          />
+
+          {/* Hidden Canvas */}
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
       </Modal.Body>
-      
       <Modal.Footer>
         <button className="btn btn-secondary" onClick={onHide}>
           Cancel
