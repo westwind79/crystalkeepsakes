@@ -16,7 +16,21 @@ build/
 /config/*.php
 !/config/config.example.php
 
+<<<<<<< HEAD
 # IDE and Editor files
+=======
+# Testing
+/coverage
+
+# Production
+/dist
+/build
+/vendor
+
+# Misc
+.DS_Store
+*.pem
+>>>>>>> bc7c1a84381e0589a0b741510e6f25bbb360fb5b
 .idea/
 .vscode/
 *.swp

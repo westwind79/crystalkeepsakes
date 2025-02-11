@@ -42,7 +42,7 @@ export function Footer() {
          <Row className="g-4 align-items-center text-center mt-5 mb-3">
           <Col xs={12}>
             <div className="social-icons">
-              <Link to='#twitter'>
+              <Link to='https://x.com/3DKeepsakes' target="_blank">
                 <Twitter size={25} />
               </Link> 
 

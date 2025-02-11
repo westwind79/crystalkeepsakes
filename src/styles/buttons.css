@@ -15,7 +15,7 @@
   background: var(--primary);
   border: 1px solid var(--primary);
   color: var(--text-primary);
-  box-shadow: var(--glow-effect);
+/*  box-shadow: var(--glow-effect);*/
 }
 
 .btn-primary:hover {

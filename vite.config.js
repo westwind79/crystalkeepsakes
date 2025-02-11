@@ -1,18 +1,27 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs-extra'
+import path from 'path'
 
 // Copy function for API folder
 const copyAPI = () => ({
   name: 'copy-api',
   closeBundle: async () => {
+<<<<<<< HEAD
     await fs.ensureDir('dist');
     await fs.copy('api', 'dist/api');
     await fs.copy('.htaccess', 'dist/.htaccess');
+=======
+    await fs.ensureDir('dist')    
+    // Copy API folder
+    await fs.copy('api', 'dist/api')    
+    await fs.copy('config', 'dist/config')
+    // Copy .htaccess file to specific path
+    await fs.copy('.htaccess', path.join('dist', '.htaccess'))
+>>>>>>> bc7c1a84381e0589a0b741510e6f25bbb360fb5b
   }
 })
 
-// https://vite.dev/config/
 export default defineConfig(({ command }) => {
   const isProduction = command !== 'serve';
   
@@ -29,13 +38,11 @@ export default defineConfig(({ command }) => {
       sourcemap: true,
       rollupOptions: {
         output: {
-          // Chunk files for better caching
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             bootstrap: ['bootstrap', 'react-bootstrap']
           },
           assetFileNames: (assetInfo) => {
-            // Keep the original folder structure for assets
             let extType = assetInfo.name.split('.').at(1);
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
               extType = 'img';
@@ -51,15 +58,15 @@ export default defineConfig(({ command }) => {
       strictPort: false,
       cors: true,
       watch: {
-        usePolling: true, // Important for some Windows setups
-        interval: 100 // Polling interval in ms
+        usePolling: true,
+        interval: 100
       },
       proxy: {
         '/api': {
-          target: 'http://localhost:8888', // MAMP's Apache server
+          target: 'http://localhost:8888',
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''), // Strips '/api' prefix
+          rewrite: (path) => path.replace(/^\/api/, ''),
         }
       },
       hmr: {

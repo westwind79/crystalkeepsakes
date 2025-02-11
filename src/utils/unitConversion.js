@@ -78,19 +78,19 @@ export const ProductSizeComponent = (sizeStr) => {
   
   // Build HTML structure with BEM class naming
   const html = `
-    <span class="size-option">
-      <span class="size-option__name">${name}</span>
-      <span class="size-measurement">
-        <span class="size-measurement__imperial">
-          <span class="size-measurement__value">${inches}</span>
-          <span class="size-measurement__unit">"</span>
+    <span className="size-option">
+      <span className="size-option__name">${name}</span>
+      <span className="size-measurement">
+        <span className="size-measurement__imperial">
+          <span className="size-measurement__value">${inches}</span>
+          <span className="size-measurement__unit">"</span>
         </span>
-        <span class="size-measurement__separator">(</span>
-        <span class="size-measurement__metric">
-          <span class="size-measurement__value">${cm}</span>
-          <span class="size-measurement__unit">cm</span>
+        <span className="size-measurement__separator">(</span>
+        <span className="size-measurement__metric">
+          <span className="size-measurement__value">${cm}</span>
+          <span className="size-measurement__unit">cm</span>
         </span>
-        <span class="size-measurement__separator">)</span>
+        <span className="size-measurement__separator">)</span>
       </span>
     </span>
   `;

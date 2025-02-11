@@ -1,6 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
-import { Truck, BookHeart, ImageUp, Gem } from 'lucide-react'; 
+import { Truck, BookHeart, Palette, ImageUp, Gem } from 'lucide-react'; 
 
 export function ProcessSection() {
   const steps = [
@@ -10,7 +10,7 @@ export function ProcessSection() {
       description: "Choose your favorite high-quality photo"
     },
     {
-      icon: <Gem size={45} />,
+      icon: <Palette size={45} />,
       title: "Customize Design",
       description: "Select your crystal shape and options"
     },
@@ -25,7 +25,6 @@ export function ProcessSection() {
       description: "Receive your crystal art safely packaged"
     }
   ];
-
 
   return (
     <section className="process-section py-5 context-light bg-light">

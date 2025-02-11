@@ -3,53 +3,123 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
+import { checkoutManager, CHECKOUT_STATES } from '../utils/checkoutStateManager';
+
 
 export function OrderConfirmation() {
-    
-  const getImagePath = (imageName) => {
-    // Remove any leading slash from imageName
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
-  };
-
   const [searchParams] = useSearchParams();
   const [orderStatus, setOrderStatus] = useState('processing');
   const [orderDetails, setOrderDetails] = useState(null);
   const { clearCart } = useCart();
-  
+
+  // Handle one-time order confirmation
+  // Add to OrderConfirmation.jsx - Update useEffect
+
   useEffect(() => {
     const handleOrderConfirmation = async () => {
-      try {
-        // Get order details from session storage
-        const pendingOrderStr = sessionStorage.getItem('pendingOrder');
-        const pendingOrder = pendingOrderStr ? JSON.parse(pendingOrderStr) : null;
-        
-        // Get status from URL parameters
-        const status = searchParams.get('status');
-        const error = searchParams.get('error');
+      // Get status parameters
+      const status = searchParams.get('status');
+      const error = searchParams.get('error');
+      const squareError = searchParams.get('square_error');
+      
+      // Get checkout state
+      const currentState = checkoutManager.getState();
+      const cartData = checkoutManager.getStoredCartData();
+      const paymentData = checkoutManager.getPaymentData();
+      
+      console.log('Checkout State:', {
+        state: currentState,
+        cartData,
+        paymentData
+      });
 
-        if (!pendingOrder) {
-          setOrderStatus('invalid');
-          return;
-        }
+      // Debug validation
+      console.log('Validating:', {
+        cartDataExists: !!cartData,              // Is cart data present?
+        cartDataValue: cartData,                 // What's in cart data?
+        currentState,                            // What's the current state?
+        expectedState: CHECKOUT_STATES.PAYMENT_PENDING,  // What are we comparing to?
+        isStateMatch: currentState === CHECKOUT_STATES.PAYMENT_PENDING  // Do they match?
+      });
 
-        setOrderDetails(pendingOrder);
+      // Validate checkout state
+      if (!cartData || currentState !== CHECKOUT_STATES.PAYMENT_PENDING) {
+        console.error('Invalid checkout state:', currentState);
+        setOrderStatus('invalid');
+        return;
+      }
+
+      // Handle Square-specific response or development mode
+      if (import.meta.env.DEV && status === 'success') {
+        // Development mode success
+        const orderData = {
+          orderId: `DEV-${Date.now()}`,
+          cartData,
+          paymentData
+        };
         
-        if (status === 'success') {
-          setOrderStatus('success');
-          clearCart();
-          sessionStorage.removeItem('pendingOrder');
-        } else if (error || status === 'failed') {
-          setOrderStatus('failed');
-        }
-      } catch (err) {
-        console.error('Error processing order confirmation:', err);
+        checkoutManager.completeCheckout(orderData);
+        setOrderDetails(orderData);
+        setOrderStatus('success');
+        clearCart();
+        
+      } else if (status === 'success' || searchParams.get('checkoutId')) {
+        // Production mode success
+        const orderData = {
+          orderId: searchParams.get('checkoutId') || `ORDER-${Date.now()}`,
+          cartData,
+          paymentData
+        };
+        
+        checkoutManager.completeCheckout(orderData);
+        setOrderDetails(orderData);
+        setOrderStatus('success');
+        clearCart();
+        
+      } else if (error || squareError || status === 'failed') {
+        // Handle error cases
+        const errorMessage = error || squareError || 'Payment failed';
+        checkoutManager.handleError('Payment failed', new Error(errorMessage));
+        setOrderStatus('failed');
+        
+      } else {
+        // Unexpected state
+        checkoutManager.handleError(
+          'Unexpected order state',
+          new Error('Invalid order parameters')
+        );
         setOrderStatus('error');
       }
     };
 
     handleOrderConfirmation();
-  }, [searchParams, clearCart]);
+  }, []); // Empty dependency array - run once on mount
+
+  useEffect(() => {
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      'payment_intent_client_secret'
+    );
+
+    if (!clientSecret) {
+      setOrderStatus('invalid');
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
+      switch (paymentIntent.status) {
+        case "succeeded":
+          setOrderStatus('success');
+          clearCart(); // Clear the cart on success
+          break;
+        case "processing":
+          setOrderStatus('processing');
+          break;
+        default:
+          setOrderStatus('failed');
+          break;
+      }
+    });
+  }, [stripe]);
 
   const renderOrderSummary = () => {
     if (!orderDetails) return null;
@@ -87,8 +157,8 @@ export function OrderConfirmation() {
       case 'success':
         return (
           <div className="text-center">
-            <h2 className="text-success mb-4">Payment Successful!</h2>
-            <p className="lead">Thank you for your order.</p>
+            <h2 className="text-success mb-4">Thank You for Your Order!</h2>
+            <p className="lead">Your crystal creation will be crafted with care.</p>
             <p>You will receive a confirmation email shortly.</p>
             {renderOrderSummary()}
             <div className="mt-4">
@@ -104,8 +174,8 @@ export function OrderConfirmation() {
           <div className="text-center">
             <h2 className="text-danger mb-4">Payment Failed</h2>
             <Alert variant="danger">
-              <p>Something went wrong with your payment.</p>
-              <p>Please try again or contact support if the problem persists.</p>
+              <p>We encountered an issue processing your payment.</p>
+              <p>Please try again or contact us if the problem persists.</p>
             </Alert>
             <div className="mt-4">
               <Link to="/cart" className="btn btn-primary">
@@ -120,8 +190,24 @@ export function OrderConfirmation() {
           <div className="text-center">
             <h2 className="text-warning mb-4">Invalid Order</h2>
             <Alert variant="warning">
-              <p>No order details found.</p>
+              <p>We couldn't find your order details.</p>
               <p>Please try placing your order again.</p>
+            </Alert>
+            <div className="mt-4">
+              <Link to="/cart" className="btn btn-primary">
+                Return to Cart
+              </Link>
+            </div>
+          </div>
+        );
+        
+      case 'error':
+        return (
+          <div className="text-center">
+            <h2 className="text-danger mb-4">Unexpected Error</h2>
+            <Alert variant="danger">
+              <p>Something went wrong while processing your order.</p>
+              <p>Please contact support for assistance.</p>
             </Alert>
             <div className="mt-4">
               <Link to="/cart" className="btn btn-primary">

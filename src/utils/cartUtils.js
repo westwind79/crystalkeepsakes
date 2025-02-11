@@ -30,7 +30,6 @@ export const CartUtils = {
    * @param {Object} item - Cart item to validate
    * @throws {CartError} If item structure is invalid
    */
-
   validateCartItem(item) {
     const requiredFields = ['productId', 'name', 'price', 'options'];
     
@@ -68,6 +67,7 @@ export const CartUtils = {
       );
     }
   },
+
   /**
    * Gets the current cart from localStorage
    * @returns {Array} Array of cart items

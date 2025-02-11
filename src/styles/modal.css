@@ -1,0 +1,80 @@
+/*.image-editor-modal {}
+  .modal-dialog { 
+    margin: 1.75rem auto;
+    min-height: calc(100% - 3.5rem);
+  }
+  .modal-header {
+    color: var(--surface-800);
+    align-items: center;
+    justify-content: space-evenly;
+    .modal-title {
+      font-size: var(--font-scale-15-16);
+    }
+  }
+  .modal-content {
+    width: fit-content;
+    margin: 0 auto;
+  }
+
+  .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background: #f5f5f5;
+  }
+
+
+.editor-container {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.editor-workspace {
+  background: #f5f5f5;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.mask-image {
+  pointer-events: none;
+  z-index: 2;
+}
+
+.zoom-info {
+  right: 1rem;
+  top: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+.uploaded-image {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}*/
+
+.editor-workspace {
+  width: 100%;
+  height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.mask-image {
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  pointer-events: none;
+}
+
+.uploaded-image {
+  position: absolute;
+  transform-origin: center;
+  user-select: none;
+  pointer-events: none;
+  cursor: crosshair;
+}

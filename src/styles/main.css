@@ -2,11 +2,14 @@
 @import 'animations.css';
 @import 'buttons.css';
 @import 'hero.css';
-@import 'navigation.css'; 
-@import 'cards.css'; 
-@import 'laser.css'; 
-@import 'particles.css'; 
-@import 'categories.css'; 
+@import 'navigation.css';
+@import 'cards.css';
+@import 'laser.css';
+@import 'particles.css';
+@import 'categories.css';
+@import 'contact-form.css';
+@import 'modal.css';
+@import 'cart.css';
 
 @media screen and (prefers-reduced-motion:reduce) {
   * {
@@ -66,11 +69,13 @@ a:hover {
 .loading-container {
   animation: fadeIn 0.3s ease-in;
 }
-
-.animate-fadeIn {
-  animation: fadeInScale 0.6s ease-out forwards;
-  opacity: 0;
+header {
+  position: sticky;
+  top: 0;
+  box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
+  z-index: 1;
 }
+
 .page-transition {
   animation: fadeIn 0.5s ease-in;
 }
@@ -130,13 +135,13 @@ a:hover {
   color: var(--light-text-secondary);
 }
 
-.image-upload-container {
+/*.image-upload-container {
   position: relative;
 }
 .image-upload-overlay-mask {
   position: relative;
-  height: 200px;
-  width: 200px;
+  height: 1050px;
+  width: 1050px;
 }
 .upload-image {
   position: absolute;
@@ -147,7 +152,13 @@ a:hover {
   position: absolute;
   height: 100%;
   z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: normal;
 }
+.image-edit-preview {
+  position: relative;
+}*/
+
 /*
 .category-select {
   appearance: none;
@@ -204,7 +215,19 @@ a:hover {
   color: var(--surface-50);
 }
 
-
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0,0,0,0.3);
+  transition: all var(--transition-base) ease;
+}
+.spinner-border {
+  color: var(--brand-500); 
+  margin: auto;
+}
 
 .main-content {
   flex: 1;
@@ -247,37 +270,46 @@ a:hover {
 .gallery-thumbnail  {
   height: 5vh;
   width: 5vh;
+  margin-right:0.5em;
   border: 0 none transparent;
-  background-color: var(--surface-400);
-  transition: background-color var(--transition-fast) ease;
+/*  background-color: var(--surface-800);*/
+  background: linear-gradient(
+    135deg,
+    var(--bg-elevated),
+    var(--bg-surface)
+  );
+  transition: all var(--transition-fast);
 }
+
 @media screen and (min-width: 768px) {
-  .gallery-thumbnail + .gallery-thumbnail  {
-    margin-left:.5em;
-  }
   .gallery-thumbnail  {
     height: 10vh;
     width: 10vh;
   }
-
   .product-preview {
     position: sticky;
-    top: 0;
+    top: 85px;
   }
 }
+
 .gallery-thumbnail.active  {
-  background-color: var(--brand-400);
-  transition: background-color var(--transition-fast) ease;
+  background-color: var(--brand-500); 
 }
 
 .gallery-thumbnail:hover,
 .gallery-thumbnail:hover.active  {
-  background-color: var(--brand-500);
-  transition: background-color var(--transition-fast) ease;
+  background-color: var(--brand-600);
+/*  transform: scale(1.05);*/
 }
+
 .product-gallery {
+  overflow: hidden;
+  border-radius: 3px;
   position: relative;
   background-color: var(--surface-800);
+}
+.product-gallery:hover .btn-gallery-contols{
+  background-color:var(--glow-subtle);
 }
 
 .product-gallery img {
@@ -309,16 +341,24 @@ a:hover {
 /* Custom Radio Button Styles */
 .custom-checkbox-label,
 .crystal-radio {
+  cursor: pointer;
   display: block;
   position: relative;
-  padding: 6px 8px;
+  padding: 6px 8px 6px 25px;
   margin-bottom: 6px;
   border-radius: 8px;
-  background: var(--surface-100);
-  color: var(--surface-900);
-  border: 2px solid transparent;
+  border: 1px solid var(--surface-100);
+/*  background: var(--surface-100);*/
+  color: var(--surface-50); 
   transition: all 0.3s ease;
   cursor: pointer;
+  font-weight: bold;
+  overflow: hidden;
+}
+.crystal-radio {
+  .product-faces {
+    margin-right: 0.25em;
+  }
 }
 
 /* Hide default radio button */
@@ -335,8 +375,8 @@ a:hover {
 .custom-checkbox-label:hover,
 .crystal-radio:hover {
 /*  border-color: var(--palette2-color4);*/
-  background: var(--brand-400);
-  color: var(--surface-100);
+  background: var(--brand-500);
+  color: var(--surface-900);
 }
 
 /* When the radio button is checked */
@@ -346,10 +386,28 @@ a:hover {
   border-color: var(--brand-400);
 }
 
-.crystal-radio input[type="radio"]:checked + .radio-checkmark + span,
+
+/* Custom Radio Button Styles */
+.custom-checkbox-label,
+.crystal-radio .radio-checkmark {
+ position: absolute;
+ left: 0;
+ top: 0;
+ padding: 0.1em;
+ background-color: var(--brand-500);
+ display: none;
+}
+
+/*.crystal-radio input:checked ~ label  .radio-checkmark,
+.crystal-radio input:checked  .radio-checkmark,
+.crystal-radio input[type="radio"]:checked + .radio-checkmark {
+  display: block;
+}*/
+
+/*.crystal-radio input[type="radio"]:checked + .radio-checkmark + span,
 .crystal-radio input[type="radio"]:checked + span {
   color: var(--brand-400);
-}
+}*/
 
 /* Selected state */
 .crystal-radio input[type="radio"]:checked + label,
@@ -360,12 +418,23 @@ a:hover {
   color: var(--surface-50);
 }
 
+.crystal-radio:has(input[type="radio"]:checked)::before,
+.crystal-radio input[type="radio"]:checked::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
+  display: block;
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 0;
+  left: 0; 
+}
+
 /* Selected state */
 .crystal-radio input[type="radio"]:checked:hover + label,
 .crystal-radio input[type="radio"]:checked:hover,
 .crystal-radio:has(input[type="radio"]:checked):hover {
   border-color: var(--brand-700);
-  background: var(--brand-400);
+  background: var(--brand-600);
 }
 
 /* Price tag styling */
@@ -379,6 +448,12 @@ a:hover {
 .product-options > .product-option .form-label {
   display: block;
   border-bottom: 1px solid var(--palette2-color4);
+}
+
+.crystal-radio .product-faces {
+  float: left;
+  text-align: center;
+  font-weight: normal;
 }
 
 /* styles/Cart.css */
@@ -406,7 +481,9 @@ a:hover {
   color: #333;
   margin-bottom: 0;
 }
-
+.cart-item .img-thumbnail {
+  border-color: var(--surface-400);
+}
 @media (max-width: 768px) {
   .cart-item .text-md-end {
     text-align: left !important;
@@ -458,4 +535,12 @@ a:hover {
 }
 footer {
   background-color: var(--surface-800);
+}
+/*.sticky-price {
+  position: sticky;
+  bottom: 0;
+}*/
+.about-photo {
+  position: sticky;
+  top: 1em;
 }

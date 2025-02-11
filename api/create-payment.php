@@ -1,114 +1,90 @@
 <?php
-// Strict error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/square_errors.log');
+header("Content-Type: application/json");
 
-// Required headers
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+// Debugging: Log request start
+error_log("==== New Request to create-payment.php ====");
 
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// Read request body
+$rawData = file_get_contents("php://input");
+$requestData = json_decode($rawData, true);
+
+// Debugging: Log received cart data
+error_log("Received Cart Data: " . json_encode($requestData, JSON_PRETTY_PRINT));
+
+// Ensure cart data exists
+if (!isset($requestData['cartItems']) || empty($requestData['cartItems'])) {
+    error_log("Error: No cart items provided.");
+    echo json_encode(["error" => "No cart items provided"]);
+    exit;
 }
 
-// Verify request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit();
+// ✅ Square API Credentials (Make sure these are correct)
+$accessToken = "EAAAl7t4u29Qkr1jCgqNwDqBFL-WHjbjz_sPXRpz5vjln7sfCQ12DnWZb6ZkCzGC";  // Replace with your actual API key
+$locationId = "LSVZHFQ2F7DBF";  // Replace with your correct location ID
+
+// ✅ Determine API URL based on environment (sandbox or production)
+$isSandbox = strpos($accessToken, "sandbox") !== false;
+$api_url = $isSandbox
+    ? "https://connect.squareupsandbox.com/v2/online-checkout/payment-links"
+    : "https://connect.squareup.com/v2/online-checkout/payment-links";
+
+// ✅ Create order payload
+$order_payload = [
+    "idempotency_key" => uniqid(),
+    "order" => [
+        "location_id" => $locationId,
+        "line_items" => array_map(function($item) {
+            return [
+                "name" => $item["name"],
+                "quantity" => strval($item["quantity"]),  // Square requires quantity as a string
+                "base_price_money" => [
+                    "amount" => intval($item["price"] * 100), // Convert price to cents
+                    "currency" => "USD"
+                ]
+            ];
+        }, $requestData['cartItems'])
+    ],
+    "checkout_options" => [
+        "allow_tipping" => false,
+        "redirect_url" => "https://crystalkeepsakes.com/order-confirmation",
+        "ask_for_shipping_address" => true,
+        "enable_coupon" => false,
+        "enable_loyalty" => false,
+        "merchant_support_email" => "square@crystalkeepsakes.com"
+    ],
+    "payment_note" => "Crystal Keepsakes Order"
+];
+
+// Debugging: Log the Square API request payload
+error_log("Square API Request: " . json_encode($order_payload, JSON_PRETTY_PRINT));
+
+// ✅ Send request to Square API
+$ch = curl_init($api_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Content-Type: application/json",
+    "Authorization: Bearer " . $accessToken
+]);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($order_payload));
+
+$response = curl_exec($ch);
+$httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+// Debugging: Log the response from Square
+error_log("Square API Response ($httpStatus): " . $response);
+
+$result = json_decode($response, true);
+
+// ✅ Check for errors
+if (!$result || !isset($result['payment_link']['url'])) {
+    error_log("Payment Error: " . json_encode($result));
+    echo json_encode(["success" => false, "error" => "Invalid payment link response", "details" => $result]);
+    exit;
 }
 
-try {
-    // Load dependencies
-    require_once __DIR__ . '/../vendor/autoload.php';
-    $config = require_once __DIR__ . '/../config/config.php';
-
-    // Initialize Square client
-    $client = new \Square\SquareClient([
-        'accessToken' => $config['square']['access_token'],
-        'environment' => $config['square']['environment']
-    ]);
-
-    // Get request body
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    // Validate input
-    if (!isset($input['cartItems']) || empty($input['cartItems'])) {
-        throw new Exception('Invalid cart data');
-    }
-
-    // Format items for Square
-    $lineItems = array_map(function($item) {
-        // Validate item structure
-        if (!isset($item['name']) || !isset($item['price'])) {
-            throw new Exception('Invalid item structure');
-        }
-
-        // Format price (convert to cents)
-        $amount = round($item['price'] * 100);
-
-        return [
-            'name' => $item['name'],
-            'quantity' => '1',
-            'base_price_money' => [
-                'amount' => $amount,
-                'currency' => 'USD'
-            ]
-        ];
-    }, $input['cartItems']);
-
-    // Create payment link request
-    $request = [
-        'checkout_options' => [
-            'allow_tipping' => false,
-            'redirect_url' => 'https://crystalkeepsakes.com/order-confirmation',
-            'ask_for_shipping_address' => true
-        ],
-        'order' => [
-            'line_items' => $lineItems
-        ]
-    ];
-
-    // Log request data
-    error_log("Square API Request: " . json_encode($request));
-
-    // Create payment link
-    $response = $client->getCheckoutApi()->createPaymentLink($request);
-
-    // Log response
-    error_log("Square API Response: " . json_encode($response->getResult()));
-
-    if ($response->isSuccess()) {
-        $result = $response->getResult();
-        $paymentLink = $result->getPaymentLink();
-
-        echo json_encode([
-            'success' => true,
-            'payment_link' => [
-                'url' => $paymentLink->getUrl(),
-                'id' => $paymentLink->getId()
-            ]
-        ]);
-    } else {
-        $errors = $response->getErrors();
-        throw new Exception($errors[0]->getDetail());
-    }
-
-} catch (Exception $e) {
-    // Log error
-    error_log("Payment Error: " . $e->getMessage());
-    
-    // Send error response
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
-}
+// ✅ Return correct JSON response
+echo json_encode(["success" => true, "payment_link" => ["url" => $result['payment_link']['url']]]);
+exit;
 ?>
