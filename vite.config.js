@@ -6,8 +6,9 @@ import fs from 'fs-extra'
 const copyAPI = () => ({
   name: 'copy-api',
   closeBundle: async () => {
-    await fs.copy('api', 'dist/api'),
-    await fs.copy('.htaccess', 'dist/')
+    await fs.ensureDir('dist');
+    await fs.copy('api', 'dist/api');
+    await fs.copy('.htaccess', 'dist/.htaccess');
   }
 })
 
