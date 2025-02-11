@@ -1,14 +1,20 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+
 # Environment files
 .env
-.env.local
-.env.*.local
-.env.development
-.env.production
+.env.*
+!.env.example
 
-# Dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Config files with sensitive data
+/config/config.php
+/config/*.php
+!/config/config.example.php
 
 # Testing
 /coverage
@@ -17,28 +23,30 @@
 /dist
 /build
 /vendor
-/config
+
 # Misc
 .DS_Store
 *.pem
+# IDE and Editor files
+
 .idea/
 .vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.swp
+*.swo
 
-# Debug
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local files
-*.local
+# Testing
+coverage/
 
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
+# Stripe API keys and other sensitive data
+stripe.json
+**/stripe*.json

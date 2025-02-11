@@ -7,12 +7,9 @@ import path from 'path'
 const copyAPI = () => ({
   name: 'copy-api',
   closeBundle: async () => {
-    await fs.ensureDir('dist')    
-    // Copy API folder
-    await fs.copy('api', 'dist/api')    
-    await fs.copy('config', 'dist/config')
-    // Copy .htaccess file to specific path
-    await fs.copy('.htaccess', path.join('dist', '.htaccess'))
+    await fs.ensureDir('dist');
+    await fs.copy('api', 'dist/api');
+    await fs.copy('.htaccess', 'dist/.htaccess');
   }
 })
 
