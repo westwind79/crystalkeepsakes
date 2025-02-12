@@ -107,42 +107,42 @@ export function ProductDetail() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
-    if (!file) return
+    if (!file) return;
 
     if (validateImage(file)) {
-      // Create preview URL
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        // Create an image element to check dimensions
         const img = new Image();
-
         img.onload = () => {
           if (img.width < 550 || img.height < 550) {
             setImageError('Image must be at least 550x550 pixels');
             setImagePreview(null);
-            return
+            return;
           }
-          setImagePreview(e.target.result);
-          setUploadedImage(e.target.result);
+          setImagePreview(e.target.result); // Set imagePreview to the original uploaded image
+          setUploadedImage(e.target.result); // Set uploadedImage to the original uploaded image
+          console.log("Uploaded Image Set:", e.target.result); // Debugging
           setShowModal(true);
-        }
-        img.src = e.target.result
-      }
+        };
+        img.src = e.target.result;
+      };
+
+
       reader.readAsDataURL(file);
 
       setSelectedOptions({
         ...selectedOptions,
         image: file
-      })
+      });
     } else {
-      e.target.value = null // Reset file input
+      e.target.value = null; // Reset file input
       setSelectedOptions({
         ...selectedOptions,
         image: null
-      })
+      });
     }
-  } 
+  }; 
 
   const validateForm = () => {
     console.log('Running form validation');
@@ -181,18 +181,22 @@ export function ProductDetail() {
     e.preventDefault();
     setCartError(null);
     setFormErrors({});
-    
-    // Validate form
-  const validationErrors = validateFormFields();
-  if (Object.keys(validationErrors).length > 0) {
-    setFormErrors(validationErrors);
-    return;
-  }
-  
-  setIsAddingToCart(true);
-  
-  try {
-      // Create cart item
+
+    const validationErrors = validateFormFields();
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
+      return;
+    }
+
+    // Ensure finalImage is valid
+    if (!finalImage) {
+      setCartError("Please save the edited image before adding to cart.");
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    try {
       const cartItem = {
         productId: product.id,
         name: product.name,
@@ -210,20 +214,26 @@ export function ProductDetail() {
         }
       };
 
-      // Add to cart using context
+      console.log("Cart Item:", {
+        ...cartItem,
+        options: {
+          ...cartItem.options,
+          imageUrl: cartItem.options.imageUrl ? "Image URL is set" : "Image URL is missing",
+          maskedImageUrl: cartItem.options.maskedImageUrl ? "Masked URL is set" : "Masked URL is missing"
+        }
+      });
+
       await addToCart(cartItem);
 
-      // Success - ask user to view cart
       const shouldNavigate = window.confirm(
         'Item added to cart! Would you like to view your cart?'
       );
-      
+
       if (shouldNavigate) {
         navigate('/cart');
       }
-
     } catch (error) {
-      // ... existing error handling ...
+      setCartError(error.message || 'Failed to add item to cart. Please try again.');
     } finally {
       setIsAddingToCart(false);
     }
@@ -342,7 +352,7 @@ export function ProductDetail() {
       className="product-detail"
     >    
 
-    <section className="hero">
+    <section className="hero py-4">
       <div className="hero-content">
         <h1>{product.name}</h1>
         <p className="lead">{product.description}</p>
@@ -379,34 +389,9 @@ export function ProductDetail() {
               <div className="pt-3 prodct__long-description" dangerouslySetInnerHTML={ProductSizeComponent(product.longDescription)}>                
               </div>
             </div>
-            {/* Uploaded Image Preview -- build it overlay later */}
-            {/*<div className="image-upload-preview mb-4">
-              <div className="image-upload-container">
-                {imagePreview ? (
-                  <div className="image-upload-overlay-mask">  
-                    <img 
-                      src={imageMask.src}
-                      alt="Mask" 
-                      className="img-fluid upload-image-mask"
-                    /> 
-
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    className="img-fluid upload-image"
-                  />
-                </div>
-                ) : (      
-                  <div className="image-upload-placeholder">
-                    Upload an image to see preview
-                  </div>
-                )} 
-              </div>
-            </div>*/}
           </div>
 
-          <div className="col-12 col-sm-12 col-md-7 col-lg-6">
-          
+          <div className="col-12 col-sm-12 col-md-7 col-lg-6">          
             <div className="total-price mb-4">
               <h2 className="h1">Total: ${totalPrice.toFixed(2)}</h2>
             </div>
@@ -443,54 +428,51 @@ export function ProductDetail() {
                   <li>Higher resolution recommended for best results</li>
                 </ul>
               </Form.Text>
-
             </Form.Group>
 
-
              {/* Size Selection */}
-              <Form.Group className="product-option pt-2 mt-2">
-                <Form.Label>Select Size <span className="text-danger">*</span></Form.Label>
+            <Form.Group className="product-option pt-2 mt-2">
+              <Form.Label>Select Size <span className="text-danger">*</span></Form.Label>
                 {formErrors.size && (
                   <div className="text-danger small">{formErrors.size}</div>
                 )}
                 {product.sizes.map(size => (
-                  <label key={size.id} className="crystal-radio">
+                <label key={size.id} className="crystal-radio">
 
-                    <span className="product-faces"><User size={18} /><br/>{size.faces}</span>
+                  <span className="product-faces"><User size={18} /><br/>{size.faces}</span>
+                  <span className="h5">{product.name} - <span dangerouslySetInnerHTML={ProductSizeComponent(size.name)} /></span>
 
-                    <span className="h5">{product.name} - <span dangerouslySetInnerHTML={ProductSizeComponent(size.name)} /></span>
-
-                    <br/>
-                    <span className="option-price">
-                      <span className="option-price__wrapper h5">
-                        {size.price === 0 ? (
-                          <span className="option-price__included">
-                            <span className="option-price__paren">(</span>
-                            <span className="option-price__text">Included</span>
-                            <span className="option-price__paren">)</span>
-                          </span>
-                        ) : (
-                          <span className="option-price__additional">                         
-                            <span className="option-price__currency">$</span>
-                            <span className="option-price__value">{size.price}</span>                        
-                          </span>
-                        )}
-                      </span>
+                  <br/>
+                  <span className="option-price">
+                    <span className="option-price__wrapper h5">
+                      {size.price === 0 ? (
+                        <span className="option-price__included">
+                          <span className="option-price__paren">(</span>
+                          <span className="option-price__text">Included</span>
+                          <span className="option-price__paren">)</span>
+                        </span>
+                      ) : (
+                        <span className="option-price__additional">                         
+                          <span className="option-price__currency">$</span>
+                          <span className="option-price__value">{size.price}</span>                        
+                        </span>
+                      )}
                     </span>
+                  </span>
 
-                    <input
-                      type="radio"
-                      name="size"
-                      required
-                      checked={selectedOptions.size === size.id}
-                      onChange={() => setSelectedOptions({
-                        ...selectedOptions,
-                        size: size.id
-                      })}
-                    />
-                  </label>
-                ))}
-              </Form.Group>
+                  <input
+                    type="radio"
+                    name="size"
+                    required
+                    checked={selectedOptions.size === size.id}
+                    onChange={() => setSelectedOptions({
+                      ...selectedOptions,
+                      size: size.id
+                    })}
+                  />
+                </label>
+              ))}
+            </Form.Group>
 
               {/* Custom Text Fields */}
               <Form.Group className="product-option pt-2 mt-2">
@@ -662,8 +644,12 @@ export function ProductDetail() {
       uploadedImage={uploadedImage}
       maskImage={imageMask.src}
       onSave={(finalImage) => {
+        if (!finalImage) {
+          console.error("Final image is not valid.");
+          return;
+        }
         setFinalImage(finalImage);
-        setImagePreview(uploadedImage); // Keep original for cart display
+        setImagePreview(uploadedImage);
       }}
     />
    

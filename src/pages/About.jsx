@@ -13,7 +13,7 @@ export function About() {
       pageDescription="Learn about our precision 3D crystal engraving process and our commitment to preserving your memories in crystal."
       className="about"
     >    
-      <section className="hero">
+      <section className="hero py-4">
         <div className="hero-content">
           <h1 className="primary-header">About Us</h1>
           <p className="lead">Welcome to CrystalKeepsakes, where cherished moments are transformed into stunning 3D laser-engraved crystal creations.</p>

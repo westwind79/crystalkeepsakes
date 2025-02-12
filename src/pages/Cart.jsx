@@ -6,6 +6,7 @@ import { Container, Row, Col, Alert } from 'react-bootstrap';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
 import { useCart } from '../contexts/CartContext';
 import { LoadingSpinner } from '../components/common/LoadingSpinner'; 
 import { PageLayout } from '../components/layout/PageLayout';
@@ -178,7 +179,7 @@ export function Cart() {
         pageDescription="Review and checkout your custom crystal creations."
         className="empty-cart"
       >
-        <section className="hero">
+        <section className="hero py-4">
           <div className="hero-content">
             <h1 className="primary-header">Your Cart is Empty</h1>
             <p className="mt-3">Add some beautiful crystals to get started!</p>
@@ -204,14 +205,24 @@ export function Cart() {
       pageDescription="Review and checkout your custom crystal creations."
       className="cart"
     >
-      <section className="hero">
+      <section className="hero py-4">
         <div className="hero-content">
           <h1 className="primary-header">Your Cart</h1>
           <p className="mt-3">Review your selections before checkout</p>
         </div>
       </section>
 
-      <Container className="mt-5">
+      <section className="breadcrumb pt-3">
+        <Container>
+          <Row>
+            <div className="col-12 col-sm-12">
+              <Link to="/products"><ArrowLeft size={20}/> Order more</Link>
+            </div>
+          </Row>
+        </Container>
+      </section>
+
+      <Container className="mt-2">
         {error && (
           <PaymentErrorHandler 
             error={error}

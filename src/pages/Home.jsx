@@ -23,7 +23,7 @@ export function Home({ product }) {
       className="home"
     >
 
-    <section className="hero">
+    <section className="hero py-4">
       <Container>
         <Row className="align-items-center mt-4 mb-3">
           <div className="hero-content col-12 col-sm-12 col-md-6 col-lg-5">
@@ -44,7 +44,7 @@ export function Home({ product }) {
           <div className="hero-image col-12 col-sm-12 col-md-6 col-lg-7">
             <div className="crystal-showcase">
               <img 
-                src={getImagePath('img/products/3dc_rectanglewide.jpg')} 
+                src={getImagePath('img/products/3d-rectangle-wide.jpg')} 
                 alt="3D Crystal Art Example" 
                 className="img-fluid rounded crystal-hero-image"
               />

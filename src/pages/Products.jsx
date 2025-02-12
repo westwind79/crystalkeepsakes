@@ -76,7 +76,7 @@ export function Products() {
       pageDescription="Transform your precious moments into stunning 3D crystal art."
       className="products"
     >  
-      <section className="hero"> 
+      <section className="hero py-4"> 
         <div className="hero-content">
           <h1 className="primary-header">Our Crystal Creations</h1>
           <p>Transform memories into timeless, 3D-engraved crystal keepsakes – perfect for every occasion.</p>

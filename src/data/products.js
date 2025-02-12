@@ -195,7 +195,7 @@ export const products = [
     shortDescription: "Elegant and striking, our 3D Iceberg Crystal transforms your most treasured moments into a dazzling masterpiece. Its multi-faceted design reflects light beautifully, making it a timeless keepsake.",
     longDescription: "<p>Perfect for desks, mantels, or display cabinets, this crystal becomes even more radiant with an optional light base. Ideal for weddings, anniversaries, graduations, or corporate awards, it transforms cherished memories into a timeless masterpiece.</p>",
     productMask: [
-      {src: '/img/masks/3d_crystal_large_prestige_iceberg_1_1.png'}
+      {src: '/img/masks/3D-crystal-prestige-iceberg.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d-prestige.jpg', isMain: true}      

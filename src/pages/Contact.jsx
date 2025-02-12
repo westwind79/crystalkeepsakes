@@ -158,7 +158,7 @@ export function Contact() {
       pageDescription="Get in touch with us about custom crystal creations and any questions."
       className="contact"
     >
-      <section className="hero"> 
+      <section className="hero py-4"> 
         <div className="hero-content">
           <h1 className="primary-header">Contact Us</h1>
           <p>Questions about our crystal art? We'd love to hear from you.</p>
