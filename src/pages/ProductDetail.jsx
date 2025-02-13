@@ -28,6 +28,11 @@ export function ProductDetail() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
+  const sizeRef = useRef(null);
+  const backgroundRef = useRef(null);
+  const lightBaseRef = useRef(null);
+  const imageUploadRef = useRef(null); // Create a ref for the image upload section
+
   const [showModal, setShowModal] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [imagePosition, setImagePosition] = useState({ x: 50, y: 50 });
@@ -50,9 +55,9 @@ export function ProductDetail() {
   const textLine1Ref = useRef(null);
 
   const [selectedOptions, setSelectedOptions] = useState({
-    size: 's',
-    background: '',
-    lightBase: '',
+    size: 'small',
+    background: 'rm',
+    lightBase: 'none',
     image: null,
     textLine1: '', // Add first text line
     textLine2: ''  // Add second text line
@@ -104,6 +109,7 @@ export function ProductDetail() {
     return true
   }
 
+  // Update image change handler
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -118,16 +124,24 @@ export function ProductDetail() {
           if (img.width < 550 || img.height < 550) {
             setImageError('Image must be at least 550x550 pixels');
             setImagePreview(null);
+            setFormErrors(prev => ({
+              ...prev,
+              image: 'Image must be at least 550x550 pixels'
+            }));
             return;
           }
-          setImagePreview(e.target.result); // Set imagePreview to the original uploaded image
-          setUploadedImage(e.target.result); // Set uploadedImage to the original uploaded image
-          console.log("Uploaded Image Set:", e.target.result); // Debugging
+          setImagePreview(e.target.result);
+          setUploadedImage(e.target.result);
           setShowModal(true);
+          // Clear image error when valid
+          setFormErrors(prev => {
+            const newErrors = {...prev};
+            delete newErrors.image;
+            return newErrors;
+          });
         };
         img.src = e.target.result;
       };
-
 
       reader.readAsDataURL(file);
 
@@ -136,13 +150,17 @@ export function ProductDetail() {
         image: file
       });
     } else {
-      e.target.value = null; // Reset file input
+      e.target.value = null;
       setSelectedOptions({
         ...selectedOptions,
         image: null
       });
+      setFormErrors(prev => ({
+        ...prev,
+        image: 'Please upload a valid image'
+      }));
     }
-  }; 
+  };
 
   const validateForm = () => {
     console.log('Running form validation');
@@ -177,20 +195,31 @@ export function ProductDetail() {
 
   const [formErrors, setFormErrors] = useState({});
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setCartError(null);
     setFormErrors({});
 
     const validationErrors = validateFormFields();
+
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
+      // Scroll to the first error field
+      if (validationErrors.image && imageUploadRef.current) {
+        imageUploadRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (validationErrors.size && sizeRef.current) {
+        sizeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (validationErrors.background && backgroundRef.current) {
+        backgroundRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (validationErrors.lightBase && lightBaseRef.current) {
+        lightBaseRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
       return;
     }
 
-    // Ensure finalImage is valid
     if (!finalImage) {
-      setCartError("Please save the edited image before adding to cart.");
+      setCartError('Please save the edited image before adding to cart.');
       return;
     }
 
@@ -207,21 +236,13 @@ export function ProductDetail() {
           lightBase: selectedOptions.lightBase,
           customText: {
             line1: selectedOptions.textLine1?.trim() || '',
-            line2: selectedOptions.textLine2?.trim() || ''
+            line2: selectedOptions.textLine2?.trim() || '',
           },
-          imageUrl: imagePreview,
-          maskedImageUrl: finalImage  // Masked version
-        }
+          rawImageUrl: uploadedImage, // Add the original uploaded image
+          imageUrl: imagePreview,     // Preview/edited version
+          maskedImageUrl: finalImage, // Final masked version
+        },
       };
-
-      console.log("Cart Item:", {
-        ...cartItem,
-        options: {
-          ...cartItem.options,
-          imageUrl: cartItem.options.imageUrl ? "Image URL is set" : "Image URL is missing",
-          maskedImageUrl: cartItem.options.maskedImageUrl ? "Masked URL is set" : "Masked URL is missing"
-        }
-      });
 
       await addToCart(cartItem);
 
@@ -258,24 +279,19 @@ export function ProductDetail() {
       image: {
         isValid: () => !!imagePreview,  // Check imagePreview directly
         message: 'Please upload an image'
-      }
+      },
+      finalImage: {
+        isValid: () => !!finalImage, // Check finalImage directly
+        message: 'Please save the edited image before adding to cart',
+      },
     };
 
-    // Validate all fields except image
     Object.entries(validators).forEach(([field, validator]) => {
-      if (field === 'image') {
-        // Handle image validation separately
-        if (!validator.isValid()) {
-          errors[field] = validator.message;
-        }
-      } else {
-        // Handle other fields
-        if (!validator.isValid(selectedOptions[field])) {
-          errors[field] = validator.message;
-        }
+      if (!validator.isValid(selectedOptions[field])) {
+        errors[field] = validator.message;
       }
     });
-    
+
     return errors;
   };
 
@@ -338,7 +354,26 @@ export function ProductDetail() {
     }
   }, [showCustomText])
 
+  // Add validation effect to run when options change
+  useEffect(() => {
+  const errors = validateFormFields();
+  setFormErrors(errors);
+  }, [selectedOptions, imagePreview, finalImage]);
 
+  // Update radio button onChange handlers to maintain errors
+  const handleOptionChange = (field, value) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Only clear error for the changed field
+    setFormErrors(prev => {
+      const newErrors = {...prev};
+      delete newErrors[field];
+      return newErrors;
+    });
+  };
   
   if (!product) {
 
@@ -400,7 +435,7 @@ export function ProductDetail() {
 
              {/* Image Upload */} 
              <Form.Group className="product-option mb-4">
-              <Form.Label className="h3">Upload Your Image <span className="text-danger">*</span></Form.Label>
+              <Form.Label className="h3" ref={imageUploadRef}>Upload Your Image <span className="text-danger">*</span></Form.Label>
               {formErrors.image && (
                 <div className="alert-danger text-danger small">{formErrors.image}</div>
               )}
@@ -432,7 +467,7 @@ export function ProductDetail() {
 
              {/* Size Selection */}
             <Form.Group className="product-option pt-2 mt-2">
-              <Form.Label>Select Size <span className="text-danger">*</span></Form.Label>
+              <Form.Label ref={sizeRef}>Select Size <span className="text-danger">*</span></Form.Label>
                 {formErrors.size && (
                   <div className="text-danger small">{formErrors.size}</div>
                 )}
@@ -465,10 +500,7 @@ export function ProductDetail() {
                     name="size"
                     required
                     checked={selectedOptions.size === size.id}
-                    onChange={() => setSelectedOptions({
-                      ...selectedOptions,
-                      size: size.id
-                    })}
+                    onChange={() => handleOptionChange('size', size.id)}
                   />
                 </label>
               ))}
@@ -556,7 +588,7 @@ export function ProductDetail() {
 
              {/* Background Option */}
               <Form.Group className="product-option pt-2 mt-2">
-                <Form.Label>Background Style <span className="text-danger">*</span></Form.Label>
+                <Form.Label ref={backgroundRef}>Background Style <span className="text-danger">*</span></Form.Label>
                 {/* ERROR Background Option */}
                 {formErrors.background && (
                   <div className="text-danger small">{formErrors.background}</div>
@@ -573,10 +605,7 @@ export function ProductDetail() {
                       name="background"
                       required
                       checked={selectedOptions.background === bg.id}
-                      onChange={() => setSelectedOptions({
-                        ...selectedOptions,
-                        background: bg.id
-                      })}
+                      onChange={() => handleOptionChange('background', bg.id)}
                     />
                     <span className="radio-checkmark"></span>
                   </label>
@@ -585,7 +614,7 @@ export function ProductDetail() {
 
               {/* Light Base Selection */}
               <Form.Group className="product-option pt-2 mt-2">
-                <Form.Label>Light Base <span className="text-danger">*</span></Form.Label>
+                <Form.Label ref={lightBaseRef}>Light Base <span className="text-danger">*</span></Form.Label>
                 
                 {/* ERROR Light Base Selection */}
                 {formErrors.lightBase && (
@@ -598,15 +627,12 @@ export function ProductDetail() {
                     <span className="option-price">
                       {base.price === 0 ? '(Included)' : `(+$${base.price})`}
                     </span>
-                    <input
+                     <input
                       type="radio"
                       name="lightBase"
                       required
                       checked={selectedOptions.lightBase === base.id}
-                      onChange={() => setSelectedOptions({
-                        ...selectedOptions,
-                        lightBase: base.id
-                      })}
+                      onChange={() => handleOptionChange('lightBase', base.id)}
                     />
                     <span className="radio-checkmark"></span>
                   </label>
@@ -617,10 +643,11 @@ export function ProductDetail() {
                   <h2>Total: ${totalPrice.toFixed(2)}</h2>
                 </div>
                 {cartError && (
-                  <Alert variant="danger" className="mb-4" onClose={() => setCartError(null)} dismissible>
+                  <Alert key={cartError} variant="danger" className="mb-4" show={!!cartError} onClose={() => setCartError(null)} dismissible>
                     {cartError}
                   </Alert>
                 )}
+
 
                 <button 
                   type="button"
@@ -645,11 +672,11 @@ export function ProductDetail() {
       maskImage={imageMask.src}
       onSave={(finalImage) => {
         if (!finalImage) {
-          console.error("Final image is not valid.");
+          console.error('Final image is not valid.');
           return;
         }
-        setFinalImage(finalImage);
-        setImagePreview(uploadedImage);
+        setFinalImage(finalImage); // Set the final masked image
+        setImagePreview(uploadedImage); // Set the original uploaded image
       }}
     />
    

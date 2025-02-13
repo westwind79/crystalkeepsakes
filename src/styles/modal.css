@@ -59,10 +59,15 @@
   width: 100%;
   height: 80vh;
   position: relative;
+  margin: 0 auto; /* Center horizontally */
   overflow: hidden;
+  cursor: grab;
 }
-
+.editor-workspace:active {
+  cursor: grabbing;
+}
 .mask-image {
+  aspect-ratio: 1/1;
   position: absolute;
   width: auto;
   height: auto;
@@ -77,4 +82,6 @@
   user-select: none;
   pointer-events: none;
   cursor: crosshair;
-}
+  cursor: move;
+} 
+ 

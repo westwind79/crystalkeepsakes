@@ -8,12 +8,13 @@ import { loadStripe } from '@stripe/stripe-js';
 
 import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
 import { useCart } from '../contexts/CartContext';
+import CartDebug  from '../utils/CartDebug';
+import { CartUtils, getFullImage, storageUtils } from '../utils/cartUtils';
 import { LoadingSpinner } from '../components/common/LoadingSpinner'; 
 import { PageLayout } from '../components/layout/PageLayout';
 import { PaymentErrorHandler } from '../components/payment/PaymentErrorHandler';
 
 const stripePromise = loadStripe("pk_test_51QoDXkFGPmVZe548YMJNAiNX4DoiU7jjlXJ89IPD4S80dvppPLltvgDDQlm8ILw8NibDlcimbSfRPPkn1lVS7P7W00rZzMONme"); // Replace with your actual key
-
 
 export function Cart() {
   const [clientSecret, setClientSecret] = useState("");  
@@ -21,7 +22,8 @@ export function Cart() {
   const elements = useElements();
   const navigate = useNavigate();
   const { cartItems, removeFromCart, clearCart } = useCart();
-  
+  const [fullCartItems, setFullCartItems] = useState([]); // State to hold cart items with full image data
+
   // Consolidated loading states
   const [loadingState, setLoadingState] = useState({
     isLoading: true,
@@ -34,6 +36,21 @@ export function Cart() {
 
   // Calculate cart total
   const cartTotal = cartItems.reduce((total, item) => total + item.price, 0);
+
+  // Fetch full image data for each cart item
+  useEffect(() => {
+    const fetchFullCartItems = async () => {
+      const itemsWithFullImages = await Promise.all(
+        cartItems.map(async (item) => {
+          const fullItem = await CartUtils.getFullCartItem(item.cartId);
+          return fullItem;
+        })
+      );
+      setFullCartItems(itemsWithFullImages);
+    };
+
+    fetchFullCartItems();
+  }, [cartItems]);
 
   // Handle checkout process
   const handleCheckout = async () => {
@@ -106,6 +123,8 @@ export function Cart() {
         isProcessing: true
       }));
       await removeFromCart(cartId);
+      // Clean up after removal
+      storageUtils.cleanupUnusedImages();
     } catch (err) {
       setError({
         type: 'remove',
@@ -129,6 +148,7 @@ export function Cart() {
         isProcessing: true
       }));
       await clearCart();
+      window.dispatchEvent(new Event('cartUpdated'));
     } catch (err) {
       setError({
         type: 'clear',
@@ -148,6 +168,22 @@ export function Cart() {
       ...prev,
       isLoading: false
     }));
+  }, []);
+
+  useEffect(() => {
+    // Clean up on mount
+    storageUtils.cleanupUnusedImages();
+    
+    // Clean up old images (>30 minutes)
+    storageUtils.clearOldImages(30);
+    
+    // Set up periodic cleanup
+    const cleanupInterval = setInterval(() => {
+      storageUtils.cleanupUnusedImages();
+      storageUtils.clearOldImages(30);
+    }, 5 * 60 * 1000); // Run every 5 minutes
+    
+    return () => clearInterval(cleanupInterval);
   }, []);
 
   useEffect(() => {
@@ -179,6 +215,7 @@ export function Cart() {
         pageDescription="Review and checkout your custom crystal creations."
         className="empty-cart"
       >
+     
         <section className="hero py-4">
           <div className="hero-content">
             <h1 className="primary-header">Your Cart is Empty</h1>
@@ -205,6 +242,7 @@ export function Cart() {
       pageDescription="Review and checkout your custom crystal creations."
       className="cart"
     >
+     {/*<CartDebug />*/}
       <section className="hero py-4">
         <div className="hero-content">
           <h1 className="primary-header">Your Cart</h1>
@@ -236,33 +274,57 @@ export function Cart() {
             <div className="cart-items">
               {cartItems.map((item) => (
                 <div key={item.cartId} className="cart-item bg-light mb-4 p-4 rounded-3">
-                  <h3 className="h2">{item.name}</h3>
+                  <h3>{item.name}</h3>
                   <Row>
-                    {/* Preview Image */}
-                    <div className="col-xs-12 col-md-7">
-                      {item.options.imageUrl && (
-                        <div className="cart-uploaded-image">
-                          <h4 className="h5 mb-2">Preview:</h4>
-                          <img 
-                            src={item.options.imageUrl}
-                            alt="Design preview"
-                            className="img-thumbnail img-fluid" 
-                          />
-                        </div>
-                      )}
-                      <br />
-                      {item.options.maskedImageUrl && (
-                        <div className="masked-image">
-                          <h4 className="h5 mb-2">Final Design:</h4>
-                          <img 
-                            src={item.options.maskedImageUrl}
-                            alt="Final design"
-                            className="img-thumbnail img-fluid" 
-                          />
-                        </div>
-                      )}
+                    {/* Preview Images Section in Cart.jsx */}
+                      <div className="col-xs-12 col-md-7">                        
+                        {/*
+                        {item.options.rawImageUrl && (
+                          <div className="cart-uploaded-image">
+                            <h4 className="h5 mb-2">Original Image:</h4>
+                            <img 
+                              src={getFullImage(item.options.rawImageUrl, 'raw')}
+                              alt="Original uploaded image"
+                              className="img-thumbnail img-fluid" 
+                              onError={(e) => {
+                                console.error('Error loading raw image:', item.options.rawImageUrl);
+                                e.target.src = '/placeholder-image.png';
+                              }}
+                            />
+                          </div>
+                        )}
+                        <br />
+                        */}
 
-                    </div>
+                        {item.options.imageUrl && (
+                          <div className="cart-uploaded-image mb-3">
+                            <h4 className="h5 mb-2">Preview:</h4>
+                            <img 
+                              src={getFullImage(item.options.imageUrl, 'preview')}
+                              alt="Preview image"
+                              className="img-thumbnail img-fluid" 
+                              onError={(e) => {
+                                console.error('Error loading preview image:', item.options.imageUrl);
+                                e.target.src = '/placeholder-image.png';
+                              }}
+                            />
+                          </div>
+                        )} 
+                        {item.options.maskedImageUrl && (
+                          <div className="masked-image">
+                            <h4 className="h5 mb-2">Final Design:</h4>
+                            <img 
+                              src={getFullImage(item.options.maskedImageUrl, 'masked')}
+                              alt="Final masked image"
+                              className="img-thumbnail img-fluid" 
+                              onError={(e) => {
+                                console.error('Error loading masked image:', item.options.maskedImageUrl);
+                                e.target.src = '/placeholder-image.png';
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     {/* Item Details */}
                     <div className="col-12 col-md-5">
                       <div className="selected-options">

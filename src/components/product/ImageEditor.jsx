@@ -14,7 +14,19 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
 
   // Load and store the mask image dimensions
   const [maskDimensions, setMaskDimensions] = useState({ width: 0, height: 0 });
-  
+
+  useEffect(() => {
+    if (imageRef.current && maskRef.current) {
+      const maskRect = maskRef.current.getBoundingClientRect();
+      const imgRect = imageRef.current.getBoundingClientRect();
+
+      // Center the uploaded image within the mask
+      const initialX = (maskRect.width - imgRect.width) / 2;
+      const initialY = (maskRect.height - imgRect.height) / 2;
+      setPosition({ x: initialX, y: initialY });
+    }
+  }, [uploadedImage, maskImage]);
+
   useEffect(() => {
     if (maskImage) {
       const img = new Image();
@@ -28,9 +40,34 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     }
   }, [maskImage]);
 
+  const handleZoom = (newScale, cursorX = null, cursorY = null) => {
+    const minScale = 0.1;
+    const maxScale = 5;
+    newScale = Math.max(minScale, Math.min(maxScale, newScale));
+
+    if (cursorX !== null && cursorY !== null) {
+      // Cursor-based zoom (for mousewheel)
+      const factor = newScale / scale;
+      const newX = position.x - cursorX * (factor - 1);
+      const newY = position.y - cursorY * (factor - 1);
+      setPosition({ x: newX, y: newY });
+    } else {
+      // Center-based zoom (for buttons)
+      const rect = imageRef.current.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const factor = newScale / scale;
+      const newX = position.x - centerX * (factor - 1);
+      const newY = position.y - centerY * (factor - 1);
+      setPosition({ x: newX, y: newY });
+    }
+
+    setScale(newScale);
+  };
+
   const handleWheel = (e) => {
     if (e.cancelable) e.preventDefault();
-    
+
     if (!imageRef.current || !containerRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
@@ -38,14 +75,9 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     const cursorY = e.clientY - rect.top;
 
     const scaleFactor = 0.1;
-    const newScale = Math.max(0.1, Math.min(5, scale + Math.sign(-e.deltaY) * scaleFactor));
+    const newScale = scale + Math.sign(-e.deltaY) * scaleFactor;
 
-    const factor = newScale / scale;
-    const newX = position.x - cursorX * (factor - 1);
-    const newY = position.y - cursorY * (factor - 1);
-
-    setScale(newScale);
-    setPosition({ x: newX, y: newY });
+    handleZoom(newScale, cursorX, cursorY);
   };
 
   const handleMouseDown = (e) => {
@@ -53,8 +85,24 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     setIsDragging(true);
     setDragStart({
       x: e.clientX - position.x,
-      y: e.clientY - position.y
+      y: e.clientY - position.y,
     });
+
+    // Change cursor to grabbing
+    const workspace = containerRef.current;
+    if (workspace) {
+      workspace.style.cursor = 'grabbing';
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+
+    // Change cursor back to grab
+    const workspace = containerRef.current;
+    if (workspace) {
+      workspace.style.cursor = 'grab';
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -64,10 +112,6 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     const newY = e.clientY - dragStart.y;
     
     setPosition({ x: newX, y: newY });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
   };
 
   const handleReset = () => {
@@ -188,6 +232,22 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title>Edit Image</Modal.Title>
+        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 1.1)}>
+          Zoom In
+        </button>
+        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 0.9)}>
+          Zoom Out
+        </button>
+        
+        <button className="btn btn-primary" onClick={handleSave}>
+          Save
+        </button>
+        <button className="btn btn-secondary" onClick={handleReset}>
+          Reset
+        </button>
+        <button className="btn btn-secondary" onClick={onHide}>
+          Cancel
+        </button>
       </Modal.Header>
       
       <Modal.Body>
@@ -210,11 +270,23 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
             }}
           />
           
+{/*          <div
+            style={{
+              position: 'absolute',
+              border: '2px dashed rgba(255, 255, 255, 0.5)',
+              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+              width: imageRef.current?.width || 0,
+              height: imageRef.current?.height || 0,
+              pointerEvents: 'none',
+            }}
+          />*/}
+
+          {/* Mask Image */}
           <img
             ref={maskRef}
             src={maskImage}
             alt="Mask"
-            className="mask-image"
+            className="mask-image" 
           />
           
           <canvas
@@ -225,15 +297,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
       </Modal.Body>
       
       <Modal.Footer>
-        <button className="btn btn-secondary" onClick={onHide}>
-          Cancel
-        </button>
-        <button className="btn btn-secondary" onClick={handleReset}>
-          Reset
-        </button>
-        <button className="btn btn-primary" onClick={handleSave}>
-          Save
-        </button>
+        
       </Modal.Footer>
     </Modal>
   );
