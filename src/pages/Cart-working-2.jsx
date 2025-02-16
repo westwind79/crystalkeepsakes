@@ -14,13 +14,6 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { PageLayout } from '../components/layout/PageLayout';
 import { PaymentErrorHandler } from '../components/payment/PaymentErrorHandler';
 
-// Add debug utility at the top of the file
-const debug = (...args) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(...args);
-  }
-};
-
 const stripePromise = loadStripe("pk_test_51QoDXkFGPmVZe548YMJNAiNX4DoiU7jjlXJ89IPD4S80dvppPLltvgDDQlm8ILw8NibDlcimbSfRPPkn1lVS7P7W00rZzMONme"); // Replace with your actual key
 // Add this new function after your existing imports
 const generateOrderNumber = () => {
@@ -51,13 +44,15 @@ export function Cart() {
 
   // 1. Combined initialization and cleanup effect
   useEffect(() => {
+    // Set initial loading state
+    setLoadingState(prev => ({
+      ...prev,
+      isLoading: false
+    }));
+
+    // Define cart item fetching function
     const fetchFullCartItems = async () => {
       try {
-        if (!cartItems || cartItems.length === 0) {
-          setFullCartItems([]);
-          return;
-        }
-
         const itemsWithFullImages = await Promise.all(
           cartItems.map(async (item) => {
             const fullItem = await CartUtils.getFullCartItem(item.cartId);
@@ -71,41 +66,51 @@ export function Cart() {
       }
     };
 
-    setLoadingState(prev => ({
-      ...prev,
-      isLoading: false
-    }));
-
+    // Initial cleanup and data fetch
+    storageUtils.cleanupExpiredCartItems();
+    storageUtils.cleanupUnusedImages();
+    storageUtils.clearOldImages(30);
     fetchFullCartItems();
 
-    // Listen for cart updates
+    // Set up event listeners and intervals
     window.addEventListener('cartUpdated', fetchFullCartItems);
     
+    const cleanupInterval = setInterval(() => {
+      storageUtils.cleanupExpiredCartItems();
+      storageUtils.cleanupUnusedImages();
+      storageUtils.clearOldImages(30);
+      fetchFullCartItems();
+    }, 5 * 60 * 1000); // Every 5 minutes
+
+    // Cleanup function
     return () => {
       window.removeEventListener('cartUpdated', fetchFullCartItems);
+      clearInterval(cleanupInterval);
     };
-  }, [cartItems]);
+  }, [cartItems]); // Only depend on cartItems changes
 
   // 2. Combined payment processing effect
-  // Update the payment processing effect
   useEffect(() => {
-    let isSubscribed = true; // For cleanup/preventing updates after unmount
-
     const initializePayment = async () => {
       if (!stripe) {
-        debug('Waiting for Stripe to initialize...');
+        console.log('Stripe not yet initialized');
         return;
       }
 
-      // Only log initialization once
-      if (!clientSecret) {
-        debug('Stripe ready for payment initialization');
+      // Log Stripe and payment state
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Stripe initialized:', !!stripe);
+        console.log('Client secret status:', {
+          exists: !!clientSecret,
+          shouldShowForm: !!clientSecret
+        });
       }
 
       // If we have a client secret, prepare payment form
-      if (clientSecret && isSubscribed) {
+      if (clientSecret) {
         try {
-          debug('Payment form ready with client secret');
+          // Any additional payment setup can go here
+          console.log('Payment form ready');
         } catch (error) {
           console.error('Payment setup error:', error);
           setCheckoutError('Failed to initialize payment form');
@@ -114,11 +119,6 @@ export function Cart() {
     };
 
     initializePayment();
-
-    // Cleanup
-    return () => {
-      isSubscribed = false;
-    };
   }, [stripe, clientSecret]); // Only re-run when stripe or clientSecret change
 
   // Update the handleCheckout function
@@ -257,7 +257,7 @@ export function Cart() {
   }
 
   // Show empty cart
-  if (!cartItems.length || !fullCartItems.length) {
+  if (!cartItems.length) {
     return (
       <PageLayout 
         pageTitle="Your Shopping Cart is Empty | CrystalKeepsakes"

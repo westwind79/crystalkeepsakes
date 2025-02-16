@@ -530,7 +530,7 @@ header {
     background: linear-gradient(90deg, var(--brand-300), var(--brand-500));
 }
 .product-gallery-container {
-  max-width: 500px;
+/*  max-width: 500px;*/
   margin: auto;
 }
 footer {

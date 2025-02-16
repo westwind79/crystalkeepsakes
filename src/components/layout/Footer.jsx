@@ -17,7 +17,7 @@ export function Footer() {
   return (
     <footer className="py-4 mt-auto">
       <Container>
-        <Row className="g-4 align-items-center">
+        <Row className="g-4">
           <Col xs={12} sm={12} md={4} lg={4} xl={4}>
             <h5>Crystal Art</h5>
             <p>Custom 3D Laser Engraved Crystals</p>

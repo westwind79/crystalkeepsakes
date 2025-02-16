@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
+import { ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react';
+
 
 const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -212,14 +214,15 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     return () => container.removeEventListener("wheel", handleWheel);
   }, [scale, position]);
 
+  // Set aspect ratio based on mask image
   useEffect(() => {
-    if (maskRef.current) {
-      const maskRect = maskRef.current.getBoundingClientRect();
-      const workspace = containerRef.current;
-      if (workspace) {
-        workspace.style.width = `${maskRect.width}px`;
-        workspace.style.height = `${maskRect.height}px`;
-      }
+    if (maskImage && containerRef.current) {
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        containerRef.current.style.aspectRatio = `${aspectRatio}`;
+      };
+      img.src = maskImage;
     }
   }, [maskImage]);
 
@@ -228,11 +231,10 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
       show={show} 
       onHide={onHide}
       dialogClassName="image-editor-modal"
-      size="xl"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Edit Image</Modal.Title>
-        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 1.1)}>
+        <Modal.Title className="h6">Edit Image</Modal.Title>
+{/*        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 1.1)}>
           Zoom In
         </button>
         <button className="btn btn-secondary" onClick={() => handleZoom(scale * 0.9)}>
@@ -247,7 +249,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
         </button>
         <button className="btn btn-secondary" onClick={onHide}>
           Cancel
-        </button>
+        </button>*/}
       </Modal.Header>
       
       <Modal.Body>
@@ -259,6 +261,28 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
+        {/* Zoom Controls Toolbar */}
+          
+          <div className="editor-zoom-controls">
+            <button 
+              onClick={() => handleZoom(scale * 1.1)}
+              title="Zoom In"
+            >
+              <ZoomIn size={18} />
+            </button>
+            
+            <div className="zoom-value">
+              {Math.round(scale * 100)}%
+            </div>
+            
+            <button 
+              onClick={() => handleZoom(scale * 0.9)}
+              title="Zoom Out"
+            >
+              <ZoomOut size={18} />
+            </button>
+          </div>
+
           <img
             ref={imageRef}
             src={uploadedImage}
@@ -297,7 +321,33 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
       </Modal.Body>
       
       <Modal.Footer>
-        
+        {/* Left side - Utility actions */}
+        <div className="modal-footer-group">
+          <button 
+            className="btn-reset"
+            onClick={handleReset}
+            title="Reset Image Position"
+          >
+            <RotateCcw size={18} />
+            <span className="ms-2">Reset</span>
+          </button>
+        </div>
+
+        {/* Right side - Primary actions */}
+        <div className="modal-footer-group">
+          <button 
+            className="btn btn-secondary"
+            onClick={onHide}
+          >
+            Cancel
+          </button>
+          <button 
+            className="btn btn-primary"
+            onClick={handleSave}
+          >
+            Save Changes
+          </button>
+        </div>
       </Modal.Footer>
     </Modal>
   );

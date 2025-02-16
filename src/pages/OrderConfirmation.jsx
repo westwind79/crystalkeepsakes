@@ -11,7 +11,61 @@ export function OrderConfirmation() {
   const [orderStatus, setOrderStatus] = useState('processing');
   const [orderDetails, setOrderDetails] = useState(null);
   const { clearCart } = useCart();
+// Update the useEffect in OrderConfirmation.jsx
+  useEffect(() => {
+    const handleOrderConfirmation = async () => {
+      const orderNumber = searchParams.get('orderNumber');
+      const paymentIntent = searchParams.get('payment_intent');
+      const paymentIntentClientSecret = searchParams.get('payment_intent_client_secret');
+      
+      if (!orderNumber) {
+        setOrderStatus('invalid');
+        return;
+      }
 
+      // In development, always show success
+      if (import.meta.env.DEV) {
+        const mockOrderDetails = {
+          orderId: orderNumber,
+          status: 'success',
+          message: 'Thank you for your order! This is a development preview.',
+          timestamp: new Date().toISOString()
+        };
+        setOrderDetails(mockOrderDetails);
+        setOrderStatus('success');
+        clearCart();
+        return;
+      }
+
+      // In production, verify the payment with Stripe
+      try {
+        if (paymentIntent && paymentIntentClientSecret) {
+          const { paymentIntent: verifiedPayment } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
+          
+          if (verifiedPayment.status === 'succeeded') {
+            const orderDetails = {
+              orderId: orderNumber,
+              status: 'success',
+              paymentId: paymentIntent,
+              timestamp: new Date().toISOString()
+            };
+            setOrderDetails(orderDetails);
+            setOrderStatus('success');
+            clearCart();
+          } else {
+            setOrderStatus('failed');
+          }
+        } else {
+          setOrderStatus('invalid');
+        }
+      } catch (error) {
+        console.error('Payment verification error:', error);
+        setOrderStatus('error');
+      }
+    };
+
+    handleOrderConfirmation();
+  }, [searchParams, clearCart]);
   // Handle one-time order confirmation
   // Add to OrderConfirmation.jsx - Update useEffect
 
@@ -158,8 +212,12 @@ export function OrderConfirmation() {
         return (
           <div className="text-center">
             <h2 className="text-success mb-4">Thank You for Your Order!</h2>
-            <p className="lead">Your crystal creation will be crafted with care.</p>
-            <p>You will receive a confirmation email shortly.</p>
+            <Alert variant="success">
+              <h4>Order Number: {orderDetails?.orderId}</h4>
+              <p className="lead">Your crystal creation will be crafted with care.</p>
+              <p>We will contact you shortly to confirm the details of your order.</p>
+              <p>Please save your order number for reference: <strong>{orderDetails?.orderId}</strong></p>
+            </Alert>
             {renderOrderSummary()}
             <div className="mt-4">
               <Link to="/products" className="btn btn-primary">

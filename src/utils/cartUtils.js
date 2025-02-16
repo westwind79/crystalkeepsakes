@@ -4,6 +4,8 @@ import imageCompression from 'browser-image-compression';
 const CART_STORAGE_KEY = 'crystal_cart';
 const MAX_CART_ITEMS = 10;
 const MAX_STORAGE_SIZE = 10 * 1024 * 1024;
+const CART_ITEM_EXPIRY = 5 * 60 * 1000; // 30 minutes in milliseconds
+
 // Storage management utilities
 const storageUtils = {
    
@@ -164,6 +166,89 @@ const storageUtils = {
       console.warn('Failed to clear old images:', error);
     }
   },
+      // Private method to get raw cart data without cleanup
+  _getRawCart() {
+    const cartData = localStorage.getItem(CART_STORAGE_KEY);
+    return cartData ? JSON.parse(cartData) : [];
+  },
+  // In storageUtils object within cartUtils.js
+  cleanupExpiredCartItems() {
+    try {
+      const cart = this._getRawCart();
+      
+      // If cart is invalid, reset everything
+      if (!Array.isArray(cart)) {
+        localStorage.setItem(CART_STORAGE_KEY, '[]');
+        this.cleanupUnusedImages(); // Clean up any orphaned images
+        window.dispatchEvent(new Event('cartUpdated'));
+        return { removedCount: 0, spaceFreed: 0, validCart: [] };
+      }
+
+      const now = Date.now();
+      let removedCount = 0;
+      let spaceFreed = 0;
+      
+      // Check if entire cart has expired (no activity for expiry period)
+      const lastActivity = Math.max(...cart.map(item => 
+        new Date(item.dateAdded || 0).getTime()
+      ));
+      
+      if (now - lastActivity > CART_ITEM_EXPIRY) {
+        // Cart has completely expired - clear everything
+        localStorage.setItem(CART_STORAGE_KEY, '[]');
+        this.cleanupUnusedImages();
+        window.dispatchEvent(new Event('cartUpdated'));
+        return { 
+          removedCount: cart.length, 
+          spaceFreed: this.getStorageUsage(), 
+          validCart: [] 
+        };
+      }
+
+      // Filter out expired items
+      const validCart = cart.filter(item => {
+        if (!item || !item.dateAdded) {
+          removedCount++;
+          return false;
+        }
+
+        const itemDate = new Date(item.dateAdded).getTime();
+        const isExpired = (now - itemDate) > CART_ITEM_EXPIRY;
+        
+        if (isExpired) {
+          // Clean up associated images
+          if (item.options) {
+            ['rawImageUrl', 'imageUrl', 'maskedImageUrl'].forEach(key => {
+              if (item.options[key]) {
+                const storageKey = this.extractStorageKey(item.options[key]);
+                if (storageKey) {
+                  const value = sessionStorage.getItem(storageKey);
+                  spaceFreed += value ? new Blob([value]).size : 0;
+                  sessionStorage.removeItem(storageKey);
+                }
+              }
+            });
+          }
+          removedCount++;
+          return false;
+        }
+        return true;
+      });
+
+      // Update storage and trigger UI updates if anything changed
+      if (removedCount > 0) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(validCart));
+        this.cleanupUnusedImages();
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
+
+      return { removedCount, spaceFreed, validCart };
+    } catch (error) {
+      console.error('Error cleaning up expired cart items:', error);
+      return { removedCount: 0, spaceFreed: 0, validCart: [] };
+    }
+  },
+
 };
 
 // Updated compression settings
@@ -267,11 +352,14 @@ const storeImage = async (imageData, type) => {
 // Retrieves an image from storage
 const retrieveImage = (reference, type) => {
   try {
+    // Early return if no reference
     if (!reference) return null;
     
-    // If it's not a reference, return as is
+    // Debugging line causing the message - let's remove it
+    // console.log(`Image ${type} is not a reference, returning as is`);
+    
+    // If it's not a reference format, it's probably a data URL, return as is
     if (!reference.startsWith('img_ref_')) {
-      console.log(`Image ${type} is not a reference, returning as is`);
       return reference;
     }
 
@@ -283,13 +371,13 @@ const retrieveImage = (reference, type) => {
     // Retrieve the image data
     const imageData = sessionStorage.getItem(storageKey);
     if (!imageData) {
-      console.warn(`Image data not found in sessionStorage for ${type}:`, storageKey);
+      // Silent fail - just return null if image not found
       return null;
     }
 
-    console.log(`Retrieved ${type} image from sessionStorage with key:`, storageKey);
     return imageData;
   } catch (error) {
+    // Silent fail - log error but don't break functionality
     console.error(`Error retrieving ${type} image:`, error);
     return null;
   }
@@ -322,6 +410,7 @@ export const CartUtils = {
     }
   },
 
+  // Update addToCart to ensure dateAdded is set
   async addToCart(item) {
     try {
       this.validateCartItem(item);
@@ -332,35 +421,34 @@ export const CartUtils = {
       }
 
       // Store images and create references
-      const [rawRef, previewRef, maskedRef] = await Promise.all([
-        storeImage(item.options.rawImageUrl, 'raw'),
-        storeImage(item.options.imageUrl, 'preview'),
-        storeImage(item.options.maskedImageUrl, 'masked')
-      ]);
+      const imageRefs = {};
+      
+      // Only store image if it's not already a reference
+      if (item.options.imageUrl && !item.options.imageUrl.startsWith('img_ref_')) {
+        imageRefs.imageUrl = await storeImage(item.options.imageUrl, 'preview');
+      } else {
+        imageRefs.imageUrl = item.options.imageUrl;
+      }
+      
+      if (item.options.maskedImageUrl && !item.options.maskedImageUrl.startsWith('img_ref_')) {
+        imageRefs.maskedImageUrl = await storeImage(item.options.maskedImageUrl, 'masked');
+      } else {
+        imageRefs.maskedImageUrl = item.options.maskedImageUrl;
+      }
 
-      // Create cart item with image references
+      // Create cart item with either new references or existing ones
       const cartItem = {
         ...item,
         options: {
           ...item.options,
-          rawImageUrl: rawRef,
-          imageUrl: previewRef,
-          maskedImageUrl: maskedRef
+          ...imageRefs
         },
         cartId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         dateAdded: new Date().toISOString()
       };
 
-      // Check storage size
       cart.push(cartItem);
-      const cartString = JSON.stringify(cart);
-      if (cartString.length > MAX_STORAGE_SIZE) {
-        throw new CartError('Cart storage limit exceeded', 'STORAGE_LIMIT_EXCEEDED');
-      }
-
-      // Save to localStorage
-      localStorage.setItem(CART_STORAGE_KEY, cartString);
-      console.log('Added item to cart:', cartItem.cartId);
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
       
       return cartItem.cartId;
     } catch (error) {
@@ -370,33 +458,69 @@ export const CartUtils = {
     }
   },
 
+  // In CartUtils object
   getCart() {
     try {
       const cartData = localStorage.getItem(CART_STORAGE_KEY);
-      return cartData ? JSON.parse(cartData) : [];
+      if (!cartData) return [];
+
+      const cart = JSON.parse(cartData);
+      if (!Array.isArray(cart)) return [];
+
+      const now = Date.now();
+      const validCart = cart.filter(item => {
+        if (!item || !item.dateAdded) return false;
+        const itemDate = new Date(item.dateAdded).getTime();
+        return (now - itemDate) <= CART_ITEM_EXPIRY;
+      });
+
+      // Only update storage if items were removed
+      if (validCart.length < cart.length) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(validCart));
+      }
+
+      return validCart;
     } catch (error) {
-      throw new CartError('Failed to load cart data', 'STORAGE_READ_ERROR');
+      console.error('Error getting cart:', error);
+      return [];
     }
   },
 
   getFullCartItem(cartId) {
-    const cart = this.getCart();
-    const item = cart.find(item => item.cartId === cartId);
-    if (!item) return null;
-
-    // Retrieve full images
-    const fullItem = {
-      ...item,
-      options: {
-        ...item.options,
-        rawImageUrl: retrieveImage(item.options.rawImageUrl, 'raw'),
-        imageUrl: retrieveImage(item.options.imageUrl, 'preview'),
-        maskedImageUrl: retrieveImage(item.options.maskedImageUrl, 'masked')
+    try {
+      if (!cartId) {
+        console.warn('No cartId provided to getFullCartItem');
+        return null;
       }
-    };
 
-    console.log('Retrieved full cart item:', cartId);
-    return fullItem;
+      const cart = this.getCart();
+      if (!Array.isArray(cart)) {
+        console.warn('Invalid cart data in getFullCartItem');
+        return null;
+      }
+
+      const item = cart.find(item => item && item.cartId === cartId);
+      if (!item) {
+        console.warn(`Cart item not found: ${cartId}`);
+        return null;
+      }
+
+      // Add defensive checks for item.options
+      const options = item.options || {};
+      
+      return {
+        ...item,
+        options: {
+          ...options,
+          rawImageUrl: options.rawImageUrl ? retrieveImage(options.rawImageUrl, 'raw') : null,
+          imageUrl: options.imageUrl ? retrieveImage(options.imageUrl, 'preview') : null,
+          maskedImageUrl: options.maskedImageUrl ? retrieveImage(options.maskedImageUrl, 'masked') : null
+        }
+      };
+    } catch (error) {
+      console.error('Error getting full cart item:', error);
+      return null;
+    }
   },
 
   removeItem(cartId) {

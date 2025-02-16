@@ -7,7 +7,7 @@ import "react-resizable/css/styles.css"; // Import styles for ResizableBox
 import { Helmet } from 'react-helmet-async';
 import { SEOHead } from '../components/common/SEOHead';
 
-import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
+import { ArrowBigLeft, ArrowLeft, CornerRightDown } from 'lucide-react'; 
 
 import { useCart } from '../contexts/CartContext';
 import { Modal, Container, Row, Col, Form, Alert, Button } from 'react-bootstrap';
@@ -435,11 +435,11 @@ export function ProductDetail() {
 
              {/* Image Upload */} 
              <Form.Group className="product-option mb-4">
-              <Form.Label className="h3" ref={imageUploadRef}>Upload Your Image <span className="text-danger">*</span></Form.Label>
+              <Form.Label className="h3" ref={imageUploadRef}><span className="text-danger">*</span> Upload Your Image <CornerRightDown size={23} /></Form.Label>
+
               {formErrors.image && (
                 <div className="alert-danger text-danger small">{formErrors.image}</div>
               )}
-
              <Form.Control
                 type="file"
                 required

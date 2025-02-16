@@ -51,6 +51,7 @@ export const products = [
     ],
     images: [
       {id: '1', src: '/img/products/3d-rectangle-tall.jpg', isMain: true}, 
+      {id: '2', src: '/img/products/brooks-memorial.jpg'}, 
     ],
     sizes: [
       { id: 'small', name: 'Medium (3")', price: 89, faces: '1-2' },
@@ -89,6 +90,7 @@ export const products = [
     ],
     images: [
       {id: '1', src: '/img/products/3d-rectangle-wide.jpg', isMain: true}, 
+      {id: '1', src: '/img/products/lalena-gift.jpg'}, 
     ],
     sizes: [
       { id: 'small', name: 'Medium (3")', price: 89, faces: '1-2' },

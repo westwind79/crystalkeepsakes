@@ -6,7 +6,7 @@
   background: var(--surface-800);
   border-radius: 0.5rem;
   position: sticky;
-  top: 1em;
+  top: 80px;
 }
 
 .category-filter__item {

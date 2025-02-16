@@ -7,7 +7,7 @@
   background: linear-gradient(
     35deg, 
     rgba(28, 200, 28, 0.2) 10%, 
-    rgba(28, 28, 28, 0.7) 150%
+    rgba(17, 17, 17, 0.9) 150%
   ), url('/img/hero/laser-background.png') center/cover no-repeat;;
   color: var(--text-primary);
   position: relative;
@@ -50,8 +50,9 @@
   justify-content: center;
   min-height: 75vh;
   background: linear-gradient(
-      rgba(28, 200, 28, 0.2), 
-      rgba(28, 28, 28, 0.8)
+      45deg, 
+      rgba(17, 17, 17, 0.9) 30%,
+      rgba(28, 200, 28, 0.2) 125%
   ), url('/img/flag-background-2.png') center/cover no-repeat;
   color: var(--neutral-white);
   text-align: center;
