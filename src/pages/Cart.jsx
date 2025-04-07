@@ -2,14 +2,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
 
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { getStripePromise } from '../utils/stripeUtils';
 
-import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
-import { useCart } from '../contexts/CartContext';
-import CartDebug  from '../utils/CartDebug';
 import { CartUtils, getFullImage, storageUtils } from '../utils/cartUtils';
+import CartDebug from '../utils/CartDebug';
+
+import { useCart } from '../contexts/CartContext';
+
 import { LoadingSpinner } from '../components/common/LoadingSpinner'; 
 import { PageLayout } from '../components/layout/PageLayout';
 import { PaymentErrorHandler } from '../components/payment/PaymentErrorHandler';
@@ -21,17 +23,62 @@ const debug = (...args) => {
   }
 };
 
-const stripePromise = loadStripe("pk_test_51QoDXkFGPmVZe548YMJNAiNX4DoiU7jjlXJ89IPD4S80dvppPLltvgDDQlm8ILw8NibDlcimbSfRPPkn1lVS7P7W00rZzMONme"); // Replace with your actual key
+const logApiCall = async (endpoint, method, data) => {
+  console.log(`API Call to ${endpoint} (${method})`, data);
+  try {
+    const response = await fetch(endpoint, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const responseData = await response.json();
+    console.log(`API Response from ${endpoint}:`, responseData);
+    return { response, data: responseData };
+  } catch (error) {
+    console.error(`API Error from ${endpoint}:`, error);
+    throw error;
+  }
+};
+
 // Add this new function after your existing imports
 const generateOrderNumber = () => {
   return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-
-export function Cart() {
-  const [clientSecret, setClientSecret] = useState("");  
+// Create a separate component for the payment form
+function CheckoutForm({ onSubmit, isProcessing, cartTotal }) {
   const stripe = useStripe();
   const elements = useElements();
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!stripe || !elements) {
+      return;
+    }
+    
+    await onSubmit(stripe, elements);
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      <button 
+        type="submit"
+        className="btn btn-primary btn-lg w-100 mt-4"
+        disabled={!stripe || isProcessing}
+      >
+        {isProcessing ? "Processing..." : `Pay $${cartTotal.toFixed(2)}`}
+      </button>
+    </form>
+  );
+}
+
+export function Cart() {
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState("");   
+
   const navigate = useNavigate();
   const { cartItems, removeFromCart, clearCart } = useCart();
   const [fullCartItems, setFullCartItems] = useState([]); // State to hold cart items with full image data
@@ -86,43 +133,8 @@ export function Cart() {
     };
   }, [cartItems]);
 
-  // 2. Combined payment processing effect
-  // Update the payment processing effect
-  useEffect(() => {
-    let isSubscribed = true; // For cleanup/preventing updates after unmount
-
-    const initializePayment = async () => {
-      if (!stripe) {
-        debug('Waiting for Stripe to initialize...');
-        return;
-      }
-
-      // Only log initialization once
-      if (!clientSecret) {
-        debug('Stripe ready for payment initialization');
-      }
-
-      // If we have a client secret, prepare payment form
-      if (clientSecret && isSubscribed) {
-        try {
-          debug('Payment form ready with client secret');
-        } catch (error) {
-          console.error('Payment setup error:', error);
-          setCheckoutError('Failed to initialize payment form');
-        }
-      }
-    };
-
-    initializePayment();
-
-    // Cleanup
-    return () => {
-      isSubscribed = false;
-    };
-  }, [stripe, clientSecret]); // Only re-run when stripe or clientSecret change
-
-  // Update the handleCheckout function
-  const handleCheckout = async (e) => {
+  // Update the handleCheckout function to accept stripe and elements params
+  const handleCheckout = async (stripeInstance, elementsInstance, e) => {
     if (e) e.preventDefault();
     
     try {
@@ -133,11 +145,6 @@ export function Cart() {
 
       setCheckoutError(null);
 
-      if (!stripe || !elements) {
-        setCheckoutError('Payment system is not ready. Please try again.');
-        return;
-      }
-
       if (!cartItems.length) {
         setCheckoutError('Your cart is empty');
         return;
@@ -147,6 +154,11 @@ export function Cart() {
       
       // If we don't have a client secret yet, create the payment intent
       if (!clientSecret) {
+        // Choose endpoint based on environment
+        const apiUrl = import.meta.env.MODE === 'development' 
+          ? '/api/create-payment-intent-dev.php' 
+          : '/api/create-payment-intent.php';
+        
         const cartData = {
           cartItems: cartItems.map(item => ({
             name: item.name,
@@ -161,35 +173,37 @@ export function Cart() {
           }))
         };
 
-        const response = await fetch('/api/create-payment-intent.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...cartData,
-            orderNumber
-          })
+        const { response, data } = await logApiCall(apiUrl, 'POST', {
+          ...cartData,
+          orderNumber
         });
-
-        const data = await response.json();
         
         if (data.clientSecret) {
           setClientSecret(data.clientSecret);
         } else {
-          throw new Error('Failed to initialize payment');
+          throw new Error(data.error || 'Failed to initialize payment');
         }
+
+        setLoadingState(prev => ({
+          ...prev,
+          isProcessing: false
+        }));
+
         return;
       }
 
-      // Process the payment
-      const { error: submitError } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation?orderNumber=${orderNumber}`,
-        },
-      });
+      // Process the payment if we have stripe and elements
+      if (stripeInstance && elementsInstance) {
+        const { error: submitError } = await stripeInstance.confirmPayment({
+          elements: elementsInstance,
+          confirmParams: {
+            return_url: `${window.location.origin}/order-confirmation?orderNumber=${orderNumber}`,
+          },
+        });
 
-      if (submitError) {
-        throw new Error(submitError.message);
+        if (submitError) {
+          throw new Error(submitError.message);
+        }
       }
 
     } catch (error) {
@@ -249,7 +263,20 @@ export function Cart() {
     }
   };
 
- 
+  // Load Stripe when component mounts
+  useEffect(() => {
+    async function loadStripe() {
+      try {
+        const stripe = await getStripePromise();
+        setStripePromise(stripe);
+      } catch (error) {
+        console.error('Failed to load Stripe:', error);
+        setCheckoutError('Failed to initialize payment system. Please try again later.');
+      }
+    }
+    
+    loadStripe();
+  }, []);
 
   // Show loading state
   if (loadingState.isLoading) {
@@ -327,24 +354,6 @@ export function Cart() {
                   <Row>
                     {/* Preview Images Section in Cart.jsx */}
                       <div className="col-xs-12 col-md-7">                        
-                        {/*
-                        {item.options.rawImageUrl && (
-                          <div className="cart-uploaded-image">
-                            <h4 className="h5 mb-2">Original Image:</h4>
-                            <img 
-                              src={getFullImage(item.options.rawImageUrl, 'raw')}
-                              alt="Original uploaded image"
-                              className="img-thumbnail img-fluid" 
-                              onError={(e) => {
-                                console.error('Error loading raw image:', item.options.rawImageUrl);
-                                e.target.src = '/placeholder-image.png';
-                              }}
-                            />
-                          </div>
-                        )}
-                        <br />
-                        */}
-
                         {item.options.imageUrl && (
                           <div className="cart-uploaded-image mb-3">
                             <h4 className="h5 mb-2">Preview:</h4>
@@ -452,26 +461,26 @@ export function Cart() {
                   <div className="total-price mb-3">
                     <h4>Total: ${cartTotal.toFixed(2)}</h4>
                   </div>
+                  {checkoutError && (
+                    <Alert variant="danger" className="mb-3">
+                      {checkoutError}
+                    </Alert>
+                  )}
                 </Col>
               </Row>
               <Row>
                 <Col className="text-md-end">
-                  {clientSecret ? (
+                  {clientSecret && stripePromise ? (
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <form onSubmit={handleCheckout}>
-                        <PaymentElement />
-                        <button 
-                          type="submit"
-                          className="btn btn-primary btn-lg w-100 mt-4"
-                          disabled={!stripe || loadingState.isProcessing}
-                        >
-                          {loadingState.isProcessing ? "Processing..." : `Pay $${cartTotal.toFixed(2)}`}
-                        </button>
-                      </form>
+                      <CheckoutForm 
+                        onSubmit={handleCheckout} 
+                        isProcessing={loadingState.isProcessing} 
+                        cartTotal={cartTotal} 
+                      />
                     </Elements>
                   ) : (
                     <button
-                      onClick={handleCheckout}
+                      onClick={(e) => handleCheckout(null, null, e)}
                       className="btn btn-primary btn-lg w-100"
                       disabled={loadingState.isProcessing}
                     >

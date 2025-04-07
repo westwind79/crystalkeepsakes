@@ -73,7 +73,9 @@ header {
   position: sticky;
   top: 0;
   box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
-  z-index: 1;
+  z-index: 10;
+/*  width: 80vw;*/
+/*  margin: auto;*/
 }
 
 .page-transition {
@@ -543,4 +545,8 @@ footer {
 .about-photo {
   position: sticky;
   top: 80px;
+}
+
+.process-step {
+  transition: all 0.3s ease;
 }

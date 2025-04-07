@@ -36,8 +36,12 @@ export function About() {
               <div className="spacer-gradient mt-5 mb-5"></div>
               <Row>
                 <Col md={4} className="order-1 order-md-1">
-                  <div className="text-center about-photo">     
-                    <img src="https://picsum.photos/seed/picsum/1024/1024" className="rounded img-fluid"/>                  
+                  <div className="text-center about-photo">      
+                    <img 
+                      src={getImagePath('img/noahs-keepsake-1.png')} 
+                      alt="Noah's 3D Crystal" 
+                      className="img-fluid rounded"
+                    />                 
                   </div>
                 </Col>     
                 <Col md={8} className="order-1 order-md-2">
@@ -51,7 +55,11 @@ export function About() {
               <Row className="mt-5">
                 <Col md={4} className="order-1 order-md-2">
                   <div className="text-center about-photo">
-                    <img src="https://picsum.photos/seed/picsum/1024/1024" className="rounded img-fluid"/>
+                    <img 
+                      src={getImagePath('img/janell-clipboard.jpg')} 
+                      alt="Janell" 
+                      className="img-fluid rounded"
+                    />   
                   </div>
                 </Col>  
                 <Col md={8} className="order-1 order-md-1">

@@ -1,4 +1,3 @@
-// components/layout/Navigation.jsx
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ShoppingCart, X, Menu } from 'lucide-react'; // Added Menu and X icons
@@ -101,7 +100,7 @@ export function Navigation({ onNavLinkClick }) {
           FAQ
         </NavLink>
       </li>
-      <li>
+      <li className="nav-item">
         <NavLink 
           to="/cart" 
           onClick={onClick}

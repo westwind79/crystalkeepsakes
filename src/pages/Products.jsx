@@ -86,12 +86,12 @@ export function Products() {
       <section className="py-5">
         <Container>
           <Row>
-            <Col xs={12} sm={12} md={8} className="order-2 order-md-1">  
+            <Col xs={12} sm={12} md={8} lg={9} className="order-2 order-md-1">  
               <Row>
                 {filteredProducts.map((product, index) => (             
                   <div 
                     key={product.id}
-                    className="col-xs-12 col-sm-12 col-md-6 mt-4 scale-95 animate-fadeIn"
+                    className="col-12 col-sm-12 col-md-6 col-xl-4 mb-4 scale-95 animate-fadeIn"
                     style={{
                       animationDelay: `${(index * 100)}ms`,
                       animationFillMode: 'forwards'
@@ -102,7 +102,7 @@ export function Products() {
                 ))}
               </Row>
             </Col>
-            <Col xs={12} sm={12} md={4} className="order-1 order-md-2">
+            <Col xs={12} sm={12} md={4} lg={3} className="order-1 order-md-2  mb-4">
               <div className="category-filter">
                 {PRODUCT_CATEGORIES.map(category => (
                   <label 

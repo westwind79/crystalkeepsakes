@@ -1,79 +1,47 @@
 <?php
-// api/create-payment-intent.php
-    header('Content-Type: application/json');
+    // api/create-payment-intent.php
+    // Creates a Stripe payment intent for the checkout process
     error_reporting(E_ALL);
-    ini_set('display_errors', 0);
+    ini_set('display_errors', 0); // Don't display in response
     ini_set('log_errors', 1);
     ini_set('error_log', __DIR__ . '/payment_intent_errors.log');
 
-    // Debug - log the request
-    error_log('Payment intent request received from: ' . $_SERVER['REMOTE_ADDR']);
+    // Set appropriate headers
+    header('Content-Type: application/json');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+
+    // Only allow from the correct origin
+    $allowedOrigin = getenv('SITE_URL') ?: 'https://crystalkeepsakes.com';
+    header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
 
     // Handle preflight requests
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
+        echo json_encode(['success' => true]);
         exit;
     }
 
     // Only allow POST requests
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
-        echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Method not allowed'
+        ]);
         exit;
     }
-
-    // Simple function to get environment variables (same as in get-stripe-key.php)
-    function getEnvironmentVariable($key) {
-        // First try direct environment variable
-        $value = getenv($key);
-        if ($value !== false) {
-            return $value;
-        }
-        
-        // Then try from $_ENV
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-        
-        // Then try loading from .env file directly
-        $envFile = dirname(__DIR__) . '/.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                if (strpos(trim($line), '#') === 0) continue;
-                
-                $parts = explode('=', $line, 2);
-                if (count($parts) !== 2) continue;
-                
-                $envKey = trim($parts[0]);
-                $envValue = trim($parts[1]);
-                
-                // Remove quotes if present
-                if (strpos($envValue, '"') === 0 || strpos($envValue, "'") === 0) {
-                    $envValue = trim($envValue, '"\'');
-                }
-                
-                if ($envKey === $key) {
-                    return $envValue;
-                }
-            }
-        }
-        
-        // Last resort - hardcoded keys for development
-        if ($key === 'STRIPE_SECRET_KEY' && $_SERVER['HTTP_HOST'] !== 'crystalkeepsakes.com') {
-            return 'sk_test_51MwVSvCPW9vHGVtnAYOOKdnWQUv4D4iHkkIIeHgfKzGV6DfUSCwvxCsKrAxVWGhYxtZJDnlxbkfEHFhH4b8CkIbO00kImXoR0F';
-        }
-        
-        return null;
-    }
-
 
     try {
         // Get the Stripe key - hardcoded for development
         $isProduction = $_SERVER['HTTP_HOST'] === 'crystalkeepsakes.com';
         $stripeKey = $isProduction 
             ? getenv('STRIPE_SECRET_KEY') 
-            : 'sk_test_51QoDYf2YE48VQlzYD9L6eHJHFbHLZiU6cx8Wj7HmFvRvv3U6XhwRXjXqVfvoHbqhgzYyV4WoYwxet2Pe7YRPN9RM00MAf9Ds2O';
+            : 'sk_test_51MwVSvCPW9vHGVtnAYOOKdnWQUv4D4iHkkIIeHgfKzGV6DfUSCwvxCsKrAxVWGhYxtZJDnlxbkfEHFhH4b8CkIbO00kImXoR0F';
         
         if (empty($stripeKey)) {
             throw new Exception('Stripe secret key not found');
@@ -85,10 +53,18 @@
         // Get vendor path - try multiple possible locations
         $vendorPath = null;
         $possiblePaths = [
+            // Current directory's parent (project root)
             dirname(__DIR__) . '/vendor/autoload.php',
+            
+            // One level up from project root
             dirname(dirname(__DIR__)) . '/vendor/autoload.php',
+            
+            // Absolute paths for common configurations
             $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php',
-            $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php'
+            $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php',
+            
+            // Production path
+            '/home/uydbo2r007mb/public_html/crystalkeepsakes.com/vendor/autoload.php'
         ];
         
         foreach ($possiblePaths as $path) {
