@@ -161,7 +161,7 @@ export function Contact() {
       <section className="hero py-4"> 
         <div className="hero-content">
           <h1 className="primary-header">Contact Us</h1>
-          <p>Questions about our crystal art?<br/>We'd love to hear from you.</p>
+          <p>Questions about our crystal art? We'd love to hear from you.</p>
         </div>
       </section>
 

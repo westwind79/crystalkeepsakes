@@ -1,145 +1,30 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { getStripePromise } from '../utils/stripeUtils';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import { useStripe } from '@stripe/react-stripe-js';
 import { useCart } from '../contexts/CartContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { checkoutManager, CHECKOUT_STATES } from '../utils/checkoutStateManager';
 
-// Wrapped component that uses useStripe
-function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure }) {
-  const stripe = useStripe();
-  
-  useEffect(() => {
-    if (!stripe || !paymentIntentClientSecret) return;
-    
-    stripe.retrievePaymentIntent(paymentIntentClientSecret).then(({paymentIntent}) => {
-      switch (paymentIntent.status) {
-        case "succeeded":
-          onSuccess(paymentIntent);
-          break;
-        case "processing":
-          onSuccess({ status: 'processing' });
-          break;
-        default:
-          onFailure(paymentIntent);
-          break;
-      }
-    });
-  }, [stripe, paymentIntentClientSecret, onSuccess, onFailure]);
-  
-  return null; // This component doesn't render anything
-};
-
-// Add this function to your OrderConfirmation component
-const sendOrderNotification = async (orderData) => {
-  try {
-    const response = await fetch('/api/send-order-notification.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(orderData)
-    });
-    
-    const result = await response.json();
-    console.log('Order notification result:', result);
-    
-    return result.success;
-  } catch (error) {
-    console.error('Failed to send order notification:', error);
-    return false;
-  }
-};
-
-// Then update the handlePaymentSuccess function
-const handlePaymentSuccess = (paymentIntent) => {
-  const orderNumber = searchParams.get('orderNumber');
-  
-  // Set order details
-  const orderDetailsData = {
-    orderId: orderNumber,
-    status: 'success',
-    paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-    timestamp: new Date().toISOString(),
-    items: cartItems // You'll need to get this from your cart context or localStorage
-  };
-  
-  // Send order notification email
-  sendOrderNotification({
-    orderId: orderNumber,
-    paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-    items: cartItems.map(item => ({
-      name: item.name,
-      price: item.price,
-      options: item.options
-    }))
-  });
-  
-  setOrderDetails(orderDetailsData);
-  setOrderStatus('success');
-  clearCart();
-};
 
 export function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const [orderStatus, setOrderStatus] = useState('processing');
   const [orderDetails, setOrderDetails] = useState(null);
-  const [stripePromise, setStripePromise] = useState(null);
   const { clearCart } = useCart();
-
-  useEffect(() => {
-    async function loadStripeInstance() {
-      try {
-        const stripe = await getStripePromise();
-        setStripePromise(stripe);
-      } catch (error) {
-        console.error('Failed to initialize Stripe:', error);
-        setOrderStatus('error');
-      }
-    }
-
-    loadStripeInstance();
-  }, []);
-
-  // Handle success from payment verification
-  const handlePaymentSuccess = (paymentIntent) => {
-    const orderNumber = searchParams.get('orderNumber');
-    
-    // Set order details
-    const orderDetailsData = {
-      orderId: orderNumber,
-      status: 'success',
-      paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-      timestamp: new Date().toISOString()
-    };
-    
-    setOrderDetails(orderDetailsData);
-    setOrderStatus('success');
-    clearCart();
-  };
-
-  // Handle failure from payment verification
-  const handlePaymentFailure = () => {
-    setOrderStatus('failed');
-  };
-
-  // Main order confirmation effect
+// Update the useEffect in OrderConfirmation.jsx
   useEffect(() => {
     const handleOrderConfirmation = async () => {
       const orderNumber = searchParams.get('orderNumber');
+      const paymentIntent = searchParams.get('payment_intent');
+      const paymentIntentClientSecret = searchParams.get('payment_intent_client_secret');
       
       if (!orderNumber) {
         setOrderStatus('invalid');
         return;
       }
 
-      // In development mode, show success without verification
-      if (import.meta.env.MODE === 'development' && 
-          !searchParams.get('payment_intent_client_secret')) {
+      // In development, always show success
+      if (import.meta.env.DEV) {
         const mockOrderDetails = {
           orderId: orderNumber,
           status: 'success',
@@ -149,46 +34,162 @@ export function OrderConfirmation() {
         setOrderDetails(mockOrderDetails);
         setOrderStatus('success');
         clearCart();
+        return;
       }
-      
-      // For actual status verification, the StripeConfirmation component will handle it
+
+      // In production, verify the payment with Stripe
+      try {
+        if (paymentIntent && paymentIntentClientSecret) {
+          const { paymentIntent: verifiedPayment } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
+          
+          if (verifiedPayment.status === 'succeeded') {
+            const orderDetails = {
+              orderId: orderNumber,
+              status: 'success',
+              paymentId: paymentIntent,
+              timestamp: new Date().toISOString()
+            };
+            setOrderDetails(orderDetails);
+            setOrderStatus('success');
+            clearCart();
+          } else {
+            setOrderStatus('failed');
+          }
+        } else {
+          setOrderStatus('invalid');
+        }
+      } catch (error) {
+        console.error('Payment verification error:', error);
+        setOrderStatus('error');
+      }
     };
 
     handleOrderConfirmation();
   }, [searchParams, clearCart]);
+  // Handle one-time order confirmation
+  // Add to OrderConfirmation.jsx - Update useEffect
+
+  useEffect(() => {
+    const handleOrderConfirmation = async () => {
+      // Get status parameters
+      const status = searchParams.get('status');
+      const error = searchParams.get('error');
+      const squareError = searchParams.get('square_error');
+      
+      // Get checkout state
+      const currentState = checkoutManager.getState();
+      const cartData = checkoutManager.getStoredCartData();
+      const paymentData = checkoutManager.getPaymentData();
+      
+      console.log('Checkout State:', {
+        state: currentState,
+        cartData,
+        paymentData
+      });
+
+      // Debug validation
+      console.log('Validating:', {
+        cartDataExists: !!cartData,              // Is cart data present?
+        cartDataValue: cartData,                 // What's in cart data?
+        currentState,                            // What's the current state?
+        expectedState: CHECKOUT_STATES.PAYMENT_PENDING,  // What are we comparing to?
+        isStateMatch: currentState === CHECKOUT_STATES.PAYMENT_PENDING  // Do they match?
+      });
+
+      // Validate checkout state
+      if (!cartData || currentState !== CHECKOUT_STATES.PAYMENT_PENDING) {
+        console.error('Invalid checkout state:', currentState);
+        setOrderStatus('invalid');
+        return;
+      }
+
+      // Handle Square-specific response or development mode
+      if (import.meta.env.DEV && status === 'success') {
+        // Development mode success
+        const orderData = {
+          orderId: `DEV-${Date.now()}`,
+          cartData,
+          paymentData
+        };
+        
+        checkoutManager.completeCheckout(orderData);
+        setOrderDetails(orderData);
+        setOrderStatus('success');
+        clearCart();
+        
+      } else if (status === 'success' || searchParams.get('checkoutId')) {
+        // Production mode success
+        const orderData = {
+          orderId: searchParams.get('checkoutId') || `ORDER-${Date.now()}`,
+          cartData,
+          paymentData
+        };
+        
+        checkoutManager.completeCheckout(orderData);
+        setOrderDetails(orderData);
+        setOrderStatus('success');
+        clearCart();
+        
+      } else if (error || squareError || status === 'failed') {
+        // Handle error cases
+        const errorMessage = error || squareError || 'Payment failed';
+        checkoutManager.handleError('Payment failed', new Error(errorMessage));
+        setOrderStatus('failed');
+        
+      } else {
+        // Unexpected state
+        checkoutManager.handleError(
+          'Unexpected order state',
+          new Error('Invalid order parameters')
+        );
+        setOrderStatus('error');
+      }
+    };
+
+    handleOrderConfirmation();
+  }, []); // Empty dependency array - run once on mount
+
+  useEffect(() => {
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      'payment_intent_client_secret'
+    );
+
+    if (!clientSecret) {
+      setOrderStatus('invalid');
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
+      switch (paymentIntent.status) {
+        case "succeeded":
+          setOrderStatus('success');
+          clearCart(); // Clear the cart on success
+          break;
+        case "processing":
+          setOrderStatus('processing');
+          break;
+        default:
+          setOrderStatus('failed');
+          break;
+      }
+    });
+  }, [stripe]);
 
   const renderOrderSummary = () => {
     if (!orderDetails) return null;
 
-    // Mock cart items for development
-    if (import.meta.env.MODE === 'development' && !orderDetails.cartItems) {
-      return (
-        <div className="order-summary mt-4">
-          <h3>Order Summary</h3>
-          <div className="items-list">
-            <div className="order-item mb-3 p-3 border-bottom">
-              <h4 className="h6">Development Mode - Mock Order</h4>
-              <div className="d-flex justify-content-between">
-                <span>No actual payment processed</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Real order summary would be displayed here
     return (
       <div className="order-summary mt-4">
         <h3>Order Summary</h3>
         <div className="items-list">
-          {orderDetails.cartItems && orderDetails.cartItems.map((item, index) => (
+          {orderDetails.cartItems.map((item, index) => (
             <div key={index} className="order-item mb-3 p-3 border-bottom">
               <h4 className="h6">{item.name}</h4>
               <div className="d-flex justify-content-between">
                 <span>Price:</span>
                 <span>${item.price.toFixed(2)}</span>
               </div>
+              {/* Options Summary */}
               <div className="options-summary small text-muted mt-2">
                 <div>Size: {item.options.size}</div>
                 <div>Background: {item.options.background}</div>
@@ -196,12 +197,10 @@ export function OrderConfirmation() {
               </div>
             </div>
           ))}
-          {orderDetails.cartTotal && (
-            <div className="total-price mt-3 d-flex justify-content-between">
-              <strong>Total:</strong>
-              <strong>${orderDetails.cartTotal.toFixed(2)}</strong>
-            </div>
-          )}
+          <div className="total-price mt-3 d-flex justify-content-between">
+            <strong>Total:</strong>
+            <strong>${orderDetails.cartTotal.toFixed(2)}</strong>
+          </div>
         </div>
       </div>
     );
@@ -288,9 +287,6 @@ export function OrderConfirmation() {
     }
   };
 
-  // Get client secret from URL
-  const clientSecret = searchParams.get('payment_intent_client_secret');
-
   return (
     <PageLayout
       pageTitle="Order Confirmation | CrystalKeepsakes"
@@ -302,17 +298,6 @@ export function OrderConfirmation() {
           <Col md={8}>
             <Card>
               <Card.Body className="p-5">
-                {/* Only render Stripe Elements when we have both the promise and client secret */}
-                {stripePromise && clientSecret && (
-                  <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <StripeConfirmation 
-                      paymentIntentClientSecret={clientSecret}
-                      onSuccess={handlePaymentSuccess}
-                      onFailure={handlePaymentFailure}
-                    />
-                  </Elements>
-                )}
-                
                 {renderOrderStatus()}
               </Card.Body>
             </Card>

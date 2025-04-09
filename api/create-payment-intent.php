@@ -1,167 +1,96 @@
 <?php
-// api/create-payment-intent.php
-    header('Content-Type: application/json');
+    ob_start();
+
+    if (ob_get_length()) ob_clean();
+
+    echo json_encode([
+        'test' => 'PHP is executing',
+        'time' => time()
+    ]);
+
     error_reporting(E_ALL);
-    ini_set('display_errors', 0);
-    ini_set('log_errors', 1);
-    ini_set('error_log', __DIR__ . '/payment_intent_errors.log');
+    ini_set('display_errors', 1);
 
-    // Debug - log the request
-    error_log('Payment intent request received from: ' . $_SERVER['REMOTE_ADDR']);
+    header('Content-Type: application/json');
 
-    // Handle preflight requests
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        exit;
+    $isProduction = $_SERVER['HTTP_HOST'] === 'crystalkeepsakes.com';
+
+    if ($isProduction) {
+        $vendorPath = '/home/uydbo2r007mb/public_html/crystalkeepsakes.com/vendor/autoload.php';
+    } else {
+        // Local development
+        $projectRoot = dirname(dirname(dirname(__FILE__))); 
+        $vendorPath = $projectRoot . '/vendor/autoload.php';
     }
 
-    // Only allow POST requests
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-        echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-        exit;
-    }
+    // EDIT: Fix path to look for vendor in project root, not in dist
+    // $projectRoot = dirname(dirname(dirname(__FILE__))); // Go up two levels from dist/api
+    // $vendorPath = $projectRoot . '/vendor/autoload.php';
 
-    // Simple function to get environment variables (same as in get-stripe-key.php)
-    function getEnvironmentVariable($key) {
-        // First try direct environment variable
-        $value = getenv($key);
-        if ($value !== false) {
-            return $value;
-        }
-        
-        // Then try from $_ENV
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-        
-        // Then try loading from .env file directly
-        $envFile = dirname(__DIR__) . '/.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                if (strpos(trim($line), '#') === 0) continue;
-                
-                $parts = explode('=', $line, 2);
-                if (count($parts) !== 2) continue;
-                
-                $envKey = trim($parts[0]);
-                $envValue = trim($parts[1]);
-                
-                // Remove quotes if present
-                if (strpos($envValue, '"') === 0 || strpos($envValue, "'") === 0) {
-                    $envValue = trim($envValue, '"\'');
-                }
-                
-                if ($envKey === $key) {
-                    return $envValue;
-                }
-            }
-        }
-        
-        // Last resort - hardcoded keys for development
-        if ($key === 'STRIPE_SECRET_KEY' && $_SERVER['HTTP_HOST'] !== 'crystalkeepsakes.com') {
-            return 'sk_test_51MwVSvCPW9vHGVtnAYOOKdnWQUv4D4iHkkIIeHgfKzGV6DfUSCwvxCsKrAxVWGhYxtZJDnlxbkfEHFhH4b8CkIbO00kImXoR0F';
-        }
-        
-        return null;
-    }
-
+    error_log("Current directory: " . $currentDir);
+    error_log("Root path: " . $rootPath);
+    error_log("Vendor path: " . $vendorPath);
+    error_log("Vendor exists: " . (file_exists($vendorPath) ? 'Yes' : 'No'));
 
     try {
-        // Get the Stripe key - hardcoded for development
-        $isProduction = $_SERVER['HTTP_HOST'] === 'crystalkeepsakes.com';
-        $stripeKey = $isProduction 
-            ? getenv('STRIPE_SECRET_KEY') 
-            : 'sk_test_51QoDYf2YE48VQlzYD9L6eHJHFbHLZiU6cx8Wj7HmFvRvv3U6XhwRXjXqVfvoHbqhgzYyV4WoYwxet2Pe7YRPN9RM00MAf9Ds2O';
-        
-        if (empty($stripeKey)) {
-            throw new Exception('Stripe secret key not found');
-        }
-        
-        // Log vendor path search
-        error_log('Looking for vendor autoload file...');
-        
-        // Get vendor path - try multiple possible locations
-        $vendorPath = null;
-        $possiblePaths = [
-            dirname(__DIR__) . '/vendor/autoload.php',
-            dirname(dirname(__DIR__)) . '/vendor/autoload.php',
-            $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php',
-            $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php'
-        ];
-        
-        foreach ($possiblePaths as $path) {
-            error_log('Checking path: ' . $path);
-            if (file_exists($path)) {
-                $vendorPath = $path;
-                error_log('Found vendor path: ' . $path);
-                break;
-            }
-        }
-        
-        if (!$vendorPath) {
-            // Return a more helpful error message
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Vendor autoload file not found',
-                'details' => 'Please install Composer dependencies: composer require stripe/stripe-php',
-                'paths_checked' => $possiblePaths,
-                'document_root' => $_SERVER['DOCUMENT_ROOT'],
-                'script_filename' => $_SERVER['SCRIPT_FILENAME'],
-                'success' => false
-            ]);
-            exit;
-        }
-        
-        // Load Stripe
         require_once $vendorPath;
         
-        // Set up Stripe
-        \Stripe\Stripe::setApiKey($stripeKey);
+        // EDIT: Replace with your Stripe secret key or env variable
+        $stripeKey = 'sk_test_51QoDXkFGPmVZe548MJulhkA9Zi7bHAISVpWWqqgwv3fK7MHT77bzrKcDbDhKd0fRY3KT7eJ8cvsprqwDXn9MdCRw00QYFA8f3V';
         
-        // Parse request data
-        $jsonStr = file_get_contents('php://input');
-        $data = json_decode($jsonStr);
-        
-        if (!$data || !isset($data->cartItems) || empty($data->cartItems)) {
-            throw new Exception('Invalid or empty cart data');
+        if (!$stripeKey) {
+            throw new Exception('Stripe secret key not found');
         }
-        
-        // Calculate amount
+
+        \Stripe\Stripe::setApiKey($stripeKey);
+
+        $jsonStr = file_get_contents('php://input');
+        error_log('Received request body: ' . $jsonStr); // Debug log
+
+        $data = json_decode($jsonStr);
+
+        if (!$data || !isset($data->cartItems)) {
+            throw new Exception('Invalid cart data');
+        }
+
         $amount = 0;
         foreach ($data->cartItems as $item) {
             $amount += $item->price * ($item->quantity ?? 1);
         }
-        
+
         $amountInCents = round($amount * 100);
-        
-        // Create payment intent
+
+        // EDIT: Add any additional metadata or options you need for your Stripe payments
         $paymentIntent = \Stripe\PaymentIntent::create([
             'amount' => $amountInCents,
             'currency' => 'usd',
             'automatic_payment_methods' => [
                 'enabled' => true,
-            ],
-            'metadata' => [
-                'order_number' => $data->orderNumber ?? ('ORD-' . time()),
-                'items_count' => count($data->cartItems),
             ]
         ]);
-        
-        // Return the client secret
+
+        ob_clean();
+
         echo json_encode([
             'clientSecret' => $paymentIntent->client_secret,
             'success' => true
         ]);
-        
-    } catch (Exception $e) {
-        error_log('Payment intent error: ' . $e->getMessage());
-        
+
+        exit;
+
+    } catch(Exception $e) {
+        error_log('Error: ' . $e->getMessage());
         http_response_code(500);
         echo json_encode([
             'error' => $e->getMessage(),
+            'debug' => [
+                'currentDir' => $currentDir,
+                'rootPath' => $rootPath,
+                'vendorPath' => $vendorPath
+            ],
             'success' => false
         ]);
+        
+        exit;
     }
 ?>

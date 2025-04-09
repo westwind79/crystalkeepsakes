@@ -86,11 +86,11 @@ export const products = [
     shortDescription: "Designed for landscape-oriented images, our Wide Rectangle Crystal turns your favorite moments into a stunning 3D display. Ideal for family portraits or panoramic scenes, it’s a timeless keepsake.",
     longDescription: "<p>Expertly crafted with advanced engraving technology, this crystal catches light from all angles for a breathtaking effect. Simply upload your photo, select your size, and let our designers transform it into a timeless keepsake.</p>",
     productMask: [
-      {src: '/img/masks/3d_crystal_rectangle-wide.png'}
+      {src: '/img/masks/3d_crystal_picture.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d-rectangle-wide.jpg', isMain: true}, 
-      {id: '2', src: '/img/products/lalena-gift.jpg'}, 
+      {id: '1', src: '/img/products/lalena-gift.jpg'}, 
     ],
     sizes: [
       { id: 'small', name: 'Medium (3")', price: 89, faces: '1-2' },
@@ -192,7 +192,7 @@ export const products = [
     name: "3D Prestige",
     slug: "prestige",
     basePrice: 89.99,
-    categories: ["anniversary", "birthday", "weddings","memorial","graduation"],
+    categories: ["anniversary", "birthday", "weddings","memorial"],
     description: "Elegant and timeless, our 3D Photo Crystal Iceberg is a stunning keepsake for life’s biggest moments. Expertly crafted from pure K9 crystal and engraved with advanced laser technology, it captures every detail with breathtaking precision. Its multi-faceted design reflects light beautifully, creating a dazzling effect.",
     shortDescription: "Elegant and striking, our 3D Iceberg Crystal transforms your most treasured moments into a dazzling masterpiece. Its multi-faceted design reflects light beautifully, making it a timeless keepsake.",
     longDescription: "<p>Perfect for desks, mantels, or display cabinets, this crystal becomes even more radiant with an optional light base. Ideal for weddings, anniversaries, graduations, or corporate awards, it transforms cherished memories into a timeless masterpiece.</p>",
@@ -259,104 +259,6 @@ export const products = [
       { id: 'customText', name: 'Custom Text', price: 9.50 }
     ]
   },
-  {
-    id: 8,
-    name: "2D Crystal Ornament",
-    slug: "crystal-christmas-ornament",
-    basePrice: 45,
-    categories: ["christmas", "holiday", "gifts"],
-    description: "Celebrate the joy of the holiday season with our 3D Crystal Christmas Tree. Expertly crafted and laser-etched, it shines with festive spirit and captures your cherished holiday memories.",
-    shortDescription: "A dazzling 3D Crystal Christmas Tree, perfect for holiday gifting or decorating your home. Customizable with your favorite photo or message.",
-    longDescription: "<p>Its all about laser innovation. Custom etch family photos into this sparkly ornament. We have customized our ornament to be the most precious photo laser etched option on the market, exclusively offered to our prestigious customers. Most competitors offer circle ornaments that are just 1/8\" thin, brittle and have a diameter of 1.5\". Our ornaments are 3/8\" thick, robust, have a diameter of 3\" (double others) and rich with facets along the entire circumference.</p>",
-    productMask: [{ src: '/img/masks/2d-ornament-mask.png'}],
-    images: [
-      { id: '1', src: '/img/products/2d-christmas-ornament-1.jpg', isMain: true },
-      { id: '2', src: '/img/products/2d-christmas-ornament-2.jpg'},
-      { id: '3', src: '/img/products/2d-christmas-ornament-3.jpg'},
-      // { id: '1', src: '/img/products/ornament-stand.jpg'}
-    ],
-    sizes: [
-      { id: 'small', name: 'Small (3" x 3")', price: 45, faces: '1-5' },
-    ],
-    backgroundOptions: [
-      { id: 'rm', name: 'Remove Backdrop', price: 0 },
-      { id: '2d', name: 'Keep Background', price: 25 },
-    ],
-    lightBases: [],
-    giftStand: [
-      { id: 'none', name: 'No Stand', price: 0 },
-      { id: 'with_stand', name: 'Add Ornament Stand', price: 25 }
-    ],
-    requiresImage: true,
-    textOptions: [
-      { id: 'none', name: 'No Text', price: 0 },
-      { id: 'customText', name: 'Custom Message', price: 9.50 }
-    ]
-  },
-  {
-    id: 9,
-    name: "3D Crystal Candle Urn - Small",
-    slug: "crystal-urn-small",
-    basePrice: 45,
-    categories: ["memorial", "holiday", "gifts"],
-    description: "Celebrate the joy of the holiday season with our 3D Crystal Christmas Tree. Expertly crafted and laser-etched, it shines with festive spirit and captures your cherished holiday memories.",
-    shortDescription: "A dazzling 3D Crystal Christmas Tree, perfect for holiday gifting or decorating your home. Customizable with your favorite photo or message.",
-    longDescription: "<p>Its all about laser innovation. Custom etch family photos into this sparkly ornament. We have customized our ornament to be the most precious photo laser etched option on the market, exclusively offered to our prestigious customers. Most competitors offer circle ornaments that are just 1/8\" thin, brittle and have a diameter of 1.5\". Our ornaments are 3/8\" thick, robust, have a diameter of 3\" (double others) and rich with facets along the entire circumference.</p>",
-    productMask: [{ src: '/img/masks/3d_crystal_candle.png'}],
-    images: [
-      { id: '1', src: '/img/products/3dc_candle_urn_small.jpg', isMain: true },      
-      {id: '2', src: '/img/products/brooks-memorial.jpg'},
-    ],
-    sizes: [
-      { id: 'small', name: '4" x 2.4" x 2.4"', price: 129, faces: '1-5' },
-    ],
-    backgroundOptions: [
-      { id: 'rm', name: 'Remove Backdrop', price: 0 },
-      { id: '2d', name: 'Keep Background', price: 25 },
-    ],
-    lightBases: [
-      { id: 'none', name: 'No Base', price: 0 },
-      { id: 'standard', name: 'Standard LED Base', price: 25 },
-      { id: 'premium', name: 'Premium RGB Base', price: 40 }
-    ],
-    giftStand: [],
-    requiresImage: true,
-    textOptions: [
-      { id: 'none', name: 'No Text', price: 0 },
-      { id: 'customText', name: 'Custom Message', price: 9.50 }
-    ]
-  },
-  {
-    id: 10,
-    name: "3D Crystal Candle Urn - Large",
-    slug: "crystal-urn-large",
-    basePrice: 45,
-    categories: ["memorial", "holiday", "gifts"],
-    description: "Celebrate the joy of the holiday season with our 3D Crystal Christmas Tree. Expertly crafted and laser-etched, it shines with festive spirit and captures your cherished holiday memories.",
-    shortDescription: "A dazzling 3D Crystal Christmas Tree, perfect for holiday gifting or decorating your home. Customizable with your favorite photo or message.",
-    longDescription: "<p>Its all about laser innovation. Custom etch family photos into this sparkly ornament. We have customized our ornament to be the most precious photo laser etched option on the market, exclusively offered to our prestigious customers. Most competitors offer circle ornaments that are just 1/8\" thin, brittle and have a diameter of 1.5\". Our ornaments are 3/8\" thick, robust, have a diameter of 3\" (double others) and rich with facets along the entire circumference.</p>",
-    productMask: [{ src: '/img/masks/3d_crystal_urn_candle.png'}],
-    images: [
-      { id: '1', src: '/img/products/3dc_candle_urn_large.jpg', isMain: true },
-    ],
-    sizes: [
-      { id: 'small', name: '6" x 5" x 2.5"', price: 256, faces: '1-5' },
-    ],
-    backgroundOptions: [
-      { id: 'rm', name: 'Remove Backdrop', price: 0 },
-      { id: '2d', name: 'Keep Background', price: 25 },
-    ],
-    lightBases: [
-      { id: 'none', name: 'No Base', price: 0 },
-      { id: 'standard', name: 'Standard LED Base', price: 25 },
-      { id: 'premium', name: 'Premium RGB Base', price: 40 }
-    ],
-    giftStand: [],
-    requiresImage: true,
-    textOptions: [
-      { id: 'none', name: 'No Text', price: 0 },
-      { id: 'customText', name: 'Custom Message', price: 9.50 }
-    ]
-  },
+   
   // More products...
 ]

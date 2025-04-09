@@ -1,11 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
 import { Truck, BookHeart, Palette, ImageUp, Gem } from 'lucide-react'; 
- 
+
 export function ProcessSection() {
-  
-const processRef = useRef(null);
   const steps = [
     {
       icon: <ImageUp size={45} />,

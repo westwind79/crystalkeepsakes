@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
+import { gsap, ScrollTrigger, Draggable } from 'gsap/all'; 
 
 // import { Truck, ShoppingBag, ImageUp, Gem } from 'lucide-react'; 
 
@@ -15,68 +14,7 @@ import { ContactCTA } from '../components/layout/ContactCTA';
 import { ProcessSection } from '../components/layout/ProcessSection';
 import { getImagePath } from '../utils/imageUtils';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/effect-cards';
-import 'swiper/css/autoplay';
-
-// import required modules
-import { EffectCards, Autoplay } from 'swiper/modules';
-
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin();
 export function Home({ product }) {
-
-	const heroRef = useRef(null);
-
-	useEffect(() => {
-	  // Split text into words for animation
-	  const headlineText = document.querySelector('.hero h1');
-	  if (headlineText) {
-	    const words = headlineText.textContent.split(' ');
-	    headlineText.innerHTML = '';
-	    
-	    words.forEach(word => {
-	      const span = document.createElement('span');
-	      span.className = 'animate-word';
-	      span.textContent = word + ' ';
-	      headlineText.appendChild(span);
-	    });
-	    
-	    gsap.from('.animate-word', {
-	      opacity: 0,
-	      y: 20,
-	      rotation: 5,
-	      duration: 0.8,
-	      stagger: 0.1
-	    });
-	  }
- 
-    // Your hero section parallax effect
-    gsap.to('.hero-image', {
-      scrollTrigger: {
-        trigger: '.hero',
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      },
-      y: -5,
-      scale: 1.05,
-      ease: "none"
-    });
-
-    // Add more animations as needed
-    
-    return () => {
-      // Cleanup
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
-
 
   return (
   	<PageLayout 
@@ -104,70 +42,14 @@ export function Home({ product }) {
             </div>
           </div>
           <div className="hero-image col-12 col-sm-12 col-md-6 col-lg-7">
-          		<Swiper
-				        effect={'cards'}
-				        grabCursor={true}
-				        modules={[EffectCards, Autoplay]}
-				        cardsEffect={{
-					        slideShadows: false,
-					        rotate: true,
-					        perSlideRotate: 3,
-					        perSlideOffset: 6,
-					      }}
-				        initialSlide={0}
-					      speed={800}
-					      preventClicks={true}
-					      preventClicksPropagation={true}
-					      // onRealIndexChange={(swiper) => {
-							  //   // Disable touch move after slide changes
-							  //   swiper.allowTouchMove = false;
-							  //   swiper.unsetGrabCursor();
-							  // }}
-							  onTouchEnd={(swiper) => {
-							    // Re-enable touch move after touch ends
-							    swiper.allowTouchMove = true;
-							  }}
-							  autoplay={{
-					        delay: 3500, // Delay between transitions (in ms)
-					        disableOnInteraction: false, // Continue autoplay after user interaction
-					        pauseOnMouseEnter: true, // Optional: pause on mouse hover
-					      }}
-				        className="mySwiper"
-				      >
-				        <SwiperSlide>
-					        <img 
-	                src={getImagePath('img/products/brooks-memorial.jpg')} 
-	                alt="3D Crystal Art Example" 
-	                className="img-fluid rounded"
-		              />
-		              <span className="slide-text">Optional Text 1</span>
-	              </SwiperSlide> 
-	              <SwiperSlide>
-					        <img 
-	                src={getImagePath('img/noahs-keepsake-1.png')} 
-	                alt="3D Crystal Art Example" 
-	                className="img-fluid rounded"
-		              />
-		              <span className="slide-text">Optional Text 2</span>
-	              </SwiperSlide> 
-	              <SwiperSlide>
-					        <img 
-	                src={getImagePath('img/products/lalena-gift.jpg')} 
-	                alt="3D Crystal Art Example" 
-	                className="img-fluid rounded"
-		              />
-		              <span className="slide-text">Optional Text 3</span>
-	              </SwiperSlide>	              
-				      </Swiper>
-            {/*<div className="crystal-showcase">
-            	
+            <div className="crystal-showcase">
               <img 
                 src={getImagePath('img/products/3d-rectangle-wide.jpg')} 
                 alt="3D Crystal Art Example" 
                 className="img-fluid rounded crystal-hero-image"
               />
-              <div className="crystal-glow"></div>
-            </div>*/}
+              {/*<div className="crystal-glow"></div>*/}
+            </div>
           </div>
         </Row>
       </Container>
@@ -175,7 +57,7 @@ export function Home({ product }) {
 
 
 	   {/* Featured Products */}
-	  <section  className="featured-products context-dark py-5">
+	  <section className="featured-products context-dark py-5">
 	    <Container>
 	      <h2 className="section-title text-center mb-4">Popular Crystal Designs</h2>
 	      <Row>
@@ -192,7 +74,6 @@ export function Home({ product }) {
 	      </div>
 	    </Container>
 	  </section>
-
 	  {/* Category Type */}
     <CategoryNav />
     {/* Process Section */}
