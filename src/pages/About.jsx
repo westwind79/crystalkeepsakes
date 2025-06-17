@@ -1,18 +1,40 @@
 import { Container, Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { SEOHead } from '../components/common/SEOHead';
+import { Helmet } from 'react-helmet-async'; 
 import { PageLayout } from '../components/layout/PageLayout';
 import { getImagePath } from '../utils/imageUtils';
 
 export function About() {
 
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About CrystalKeepsakes - 3D Crystal Memories",
+    "description": "Learn about our precision 3D crystal engraving process and our commitment to preserving your memories in crystal.",
+    "url": `${import.meta.env.VITE_SITE_URL || 'https://crystalkeepsakes.com'}/about`,
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "CrystalKeepsakes",
+      "description": "Custom 3D laser engraved crystal keepsakes for preserving special memories",
+      "image": `${import.meta.env.VITE_SITE_URL || 'https://crystalkeepsakes.com'}/img/noahs-keepsake-1.png`,
+      "founder": "Noah",
+      "foundingDate": "2022",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "US"
+      }
+    }
+  };
+  
   return (
 		<PageLayout 
       pageTitle="About CrystalKeepsakes - 3D Crystal Memories"
       pageDescription="Learn about our precision 3D crystal engraving process and our commitment to preserving your memories in crystal."
+      pageImage="/img/noahs-keepsake-1.png"
+      keywords="3D crystal engraving, crystal memories, custom crystal art, laser engraving, crystal keepsakes, about us"
+      schema={aboutSchema}
       className="about"
-    >    
+    >       
       <section className="hero py-4">
         <div className="hero-content">
           <h1 className="primary-header">About Us</h1>

@@ -11,6 +11,11 @@
   border-radius: 0.25rem;
   overflow: hidden; 
   transition: all var(--transition-base);
+  .btn {
+    display: block;
+    margin-left: auto !important; 
+    margin-right: auto !important; 
+  }
 }
 
 .crystal-product:hover {  
@@ -65,3 +70,6 @@
   box-shadow: var(--glow-effect);
 }
 
+.product-image-container  {
+  img {width: 100%;}
+}

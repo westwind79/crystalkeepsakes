@@ -10,7 +10,14 @@ export const PRODUCT_CATEGORIES = [
     value: 'all',          // Internal value used for filtering
     label: 'All Products', // Display label shown to users
     path: '/products',     // URL path
-    order: 0              // Display order
+  },
+  {
+    value: 'accessories',
+    label: 'Accessories',
+    description: 'Light bases for your crystal art',
+    icon: Heart,          // Lucide icon component
+    path: '/products/accessories',
+    image: '/img/categories/accessories.jpg', // Default category image
   },
   {
     value: 'anniversary',
@@ -19,7 +26,6 @@ export const PRODUCT_CATEGORIES = [
     icon: Heart,          // Lucide icon component
     path: '/products/anniversary',
     image: '/img/categories/anniversary.jpg', // Default category image
-    order: 1
   },
   {
     value: 'weddings',
@@ -28,7 +34,6 @@ export const PRODUCT_CATEGORIES = [
     icon: Gem,
     path: '/products/weddings',
     image: '/img/categories/weddings.jpg',
-    order: 2
   },
   {
     value: 'memorial',
@@ -37,7 +42,6 @@ export const PRODUCT_CATEGORIES = [
     icon: Flower2,
     path: '/products/memorial',
     image: '/img/categories/memorial.jpg',
-    order: 3
   },
   {
     value: 'pet',
@@ -46,7 +50,6 @@ export const PRODUCT_CATEGORIES = [
     icon: PawPrint,
     path: '/products/pet',
     image: '/img/categories/pet.jpg',
-    order: 4
   },
   {
     value: 'birthday',
@@ -55,7 +58,6 @@ export const PRODUCT_CATEGORIES = [
     icon: Gift,
     path: '/products/birthday',
     image: '/img/categories/birthday.jpg',
-    order: 5
   },
   {
     value: 'christmas',
@@ -64,7 +66,6 @@ export const PRODUCT_CATEGORIES = [
     icon: TreePine,
     path: '/products/christmas',
     image: '/img/categories/christmas.jpg',
-    order: 6
   },
   {
     value: 'graduation',
@@ -73,7 +74,14 @@ export const PRODUCT_CATEGORIES = [
     icon: GraduationCap,
     path: '/products/graduation',
     image: '/img/categories/graduation.jpg',
-    order: 7
+  },
+  {
+    value: 'home-decor',
+    label: 'Home Decor',
+    description: 'A beautiful piece  of art for your home',
+    icon: GraduationCap,
+    path: '/products/home-decor',
+    image: '/img/categories/home-decor.jpg',
   }
 ];
 

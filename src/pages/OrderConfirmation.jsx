@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { getStripePromise } from '../utils/stripeUtils';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useStripe } from '@stripe/react-stripe-js';
 import { useCart } from '../contexts/CartContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
-import { checkoutManager, CHECKOUT_STATES } from '../utils/checkoutStateManager';
+import { getStripePromise } from '../utils/stripeUtils';
 
-// Wrapped component that uses useStripe
+// Stripe confirmation component
 function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure }) {
   const stripe = useStripe();
   
@@ -22,7 +21,7 @@ function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure })
           onSuccess(paymentIntent);
           break;
         case "processing":
-          onSuccess({ status: 'processing' });
+          onSuccess({ status: 'processing', id: paymentIntent.id });
           break;
         default:
           onFailure(paymentIntent);
@@ -31,58 +30,8 @@ function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure })
     });
   }, [stripe, paymentIntentClientSecret, onSuccess, onFailure]);
   
-  return null; // This component doesn't render anything
-};
-
-// Add this function to your OrderConfirmation component
-const sendOrderNotification = async (orderData) => {
-  try {
-    const response = await fetch('/api/send-order-notification.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(orderData)
-    });
-    
-    const result = await response.json();
-    console.log('Order notification result:', result);
-    
-    return result.success;
-  } catch (error) {
-    console.error('Failed to send order notification:', error);
-    return false;
-  }
-};
-
-// Then update the handlePaymentSuccess function
-const handlePaymentSuccess = (paymentIntent) => {
-  const orderNumber = searchParams.get('orderNumber');
-  
-  // Set order details
-  const orderDetailsData = {
-    orderId: orderNumber,
-    status: 'success',
-    paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-    timestamp: new Date().toISOString(),
-    items: cartItems // You'll need to get this from your cart context or localStorage
-  };
-  
-  // Send order notification email
-  sendOrderNotification({
-    orderId: orderNumber,
-    paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-    items: cartItems.map(item => ({
-      name: item.name,
-      price: item.price,
-      options: item.options
-    }))
-  });
-  
-  setOrderDetails(orderDetailsData);
-  setOrderStatus('success');
-  clearCart();
-};
+  return null;
+}
 
 export function OrderConfirmation() {
   const [searchParams] = useSearchParams();
@@ -91,6 +40,7 @@ export function OrderConfirmation() {
   const [stripePromise, setStripePromise] = useState(null);
   const { clearCart } = useCart();
 
+  // Load Stripe
   useEffect(() => {
     async function loadStripeInstance() {
       try {
@@ -101,112 +51,56 @@ export function OrderConfirmation() {
         setOrderStatus('error');
       }
     }
-
     loadStripeInstance();
   }, []);
 
-  // Handle success from payment verification
-  const handlePaymentSuccess = (paymentIntent) => {
-    const orderNumber = searchParams.get('orderNumber');
+  // Handle payment success
+  const handlePaymentSuccess = async (paymentIntent) => {
+      // DEBUG: Let's see what's actually in the payment intent
+  console.log('=== PAYMENT INTENT DEBUG ===');
+  console.log('Full payment intent:', paymentIntent);
+  console.log('Metadata:', paymentIntent.metadata);
+  console.log('Order number from metadata:', paymentIntent.metadata?.order_number);
+  console.log('URL order number:', searchParams.get('orderNumber'));
+  
+  const orderNumber = paymentIntent.metadata?.order_number || 'UNKNOWN';
+
     
-    // Set order details
-    const orderDetailsData = {
+    setOrderDetails({
       orderId: orderNumber,
-      status: 'success',
-      paymentId: paymentIntent.id || searchParams.get('payment_intent'),
-      timestamp: new Date().toISOString()
-    };
+      paymentId: paymentIntent.id,
+      amount: paymentIntent.amount / 100,
+      status: paymentIntent.status,
+      shippingInfo: paymentIntent.shipping
+    });
     
-    setOrderDetails(orderDetailsData);
     setOrderStatus('success');
     clearCart();
   };
 
-  // Handle failure from payment verification
-  const handlePaymentFailure = () => {
+  // Handle payment failure
+  const handlePaymentFailure = (paymentIntent) => {
+    // DEBUG: Let's see what's actually in the payment intent
+  console.log('=== PAYMENT INTENT FAILURE DEBUG ===');
+  console.log('Full payment intent:', paymentIntent);
+  console.log('Metadata:', paymentIntent.metadata);
+  console.log('Order number from metadata:', paymentIntent.metadata?.order_number);
+  
+  const orderNumber = paymentIntent.metadata?.order_number || 'UNKNOWN';
+
+    
+    setOrderDetails({
+      orderId: orderNumber,
+      error: paymentIntent.last_payment_error?.message || 'Payment failed'
+    });
     setOrderStatus('failed');
   };
 
-  // Main order confirmation effect
-  useEffect(() => {
-    const handleOrderConfirmation = async () => {
-      const orderNumber = searchParams.get('orderNumber');
-      
-      if (!orderNumber) {
-        setOrderStatus('invalid');
-        return;
-      }
+  // Get client secret from URL and order number with fallback logic
+  const clientSecret = searchParams.get('payment_intent_client_secret');
+  const orderNumber = searchParams.get('orderNumber'); // This might be null, but we have fallbacks
 
-      // In development mode, show success without verification
-      if (import.meta.env.MODE === 'development' && 
-          !searchParams.get('payment_intent_client_secret')) {
-        const mockOrderDetails = {
-          orderId: orderNumber,
-          status: 'success',
-          message: 'Thank you for your order! This is a development preview.',
-          timestamp: new Date().toISOString()
-        };
-        setOrderDetails(mockOrderDetails);
-        setOrderStatus('success');
-        clearCart();
-      }
-      
-      // For actual status verification, the StripeConfirmation component will handle it
-    };
-
-    handleOrderConfirmation();
-  }, [searchParams, clearCart]);
-
-  const renderOrderSummary = () => {
-    if (!orderDetails) return null;
-
-    // Mock cart items for development
-    if (import.meta.env.MODE === 'development' && !orderDetails.cartItems) {
-      return (
-        <div className="order-summary mt-4">
-          <h3>Order Summary</h3>
-          <div className="items-list">
-            <div className="order-item mb-3 p-3 border-bottom">
-              <h4 className="h6">Development Mode - Mock Order</h4>
-              <div className="d-flex justify-content-between">
-                <span>No actual payment processed</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Real order summary would be displayed here
-    return (
-      <div className="order-summary mt-4">
-        <h3>Order Summary</h3>
-        <div className="items-list">
-          {orderDetails.cartItems && orderDetails.cartItems.map((item, index) => (
-            <div key={index} className="order-item mb-3 p-3 border-bottom">
-              <h4 className="h6">{item.name}</h4>
-              <div className="d-flex justify-content-between">
-                <span>Price:</span>
-                <span>${item.price.toFixed(2)}</span>
-              </div>
-              <div className="options-summary small text-muted mt-2">
-                <div>Size: {item.options.size}</div>
-                <div>Background: {item.options.background}</div>
-                <div>Light Base: {item.options.lightBase}</div>
-              </div>
-            </div>
-          ))}
-          {orderDetails.cartTotal && (
-            <div className="total-price mt-3 d-flex justify-content-between">
-              <strong>Total:</strong>
-              <strong>${orderDetails.cartTotal.toFixed(2)}</strong>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
+  // Render order status
   const renderOrderStatus = () => {
     switch (orderStatus) {
       case 'success':
@@ -215,11 +109,26 @@ export function OrderConfirmation() {
             <h2 className="text-success mb-4">Thank You for Your Order!</h2>
             <Alert variant="success">
               <h4>Order Number: {orderDetails?.orderId}</h4>
-              <p className="lead">Your crystal creation will be crafted with care.</p>
-              <p>We will contact you shortly to confirm the details of your order.</p>
-              <p>Please save your order number for reference: <strong>{orderDetails?.orderId}</strong></p>
+              <p className="lead">Your payment was successful!</p>
+              <p>Amount: ${orderDetails?.amount?.toFixed(2)}</p>
+              <p>Payment ID: {orderDetails?.paymentId}</p>
+              <p>We will process your crystal creation and contact you with updates.</p>
             </Alert>
-            {renderOrderSummary()}
+            
+            {orderDetails?.shippingInfo && (
+              <div className="mt-4">
+                <h5>Shipping To:</h5>
+                <p>
+                  {orderDetails.shippingInfo.name}<br/>
+                  {orderDetails.shippingInfo.address?.line1}<br/>
+                  {orderDetails.shippingInfo.address?.line2 && (
+                    <>{orderDetails.shippingInfo.address.line2}<br/></>
+                  )}
+                  {orderDetails.shippingInfo.address?.city}, {orderDetails.shippingInfo.address?.state} {orderDetails.shippingInfo.address?.postal_code}
+                </p>
+              </div>
+            )}
+            
             <div className="mt-4">
               <Link to="/products" className="btn btn-primary">
                 Continue Shopping
@@ -234,6 +143,7 @@ export function OrderConfirmation() {
             <h2 className="text-danger mb-4">Payment Failed</h2>
             <Alert variant="danger">
               <p>We encountered an issue processing your payment.</p>
+              {orderDetails?.error && <p>Error: {orderDetails.error}</p>}
               <p>Please try again or contact us if the problem persists.</p>
             </Alert>
             <div className="mt-4">
@@ -244,33 +154,17 @@ export function OrderConfirmation() {
           </div>
         );
 
-      case 'invalid':
-        return (
-          <div className="text-center">
-            <h2 className="text-warning mb-4">Invalid Order</h2>
-            <Alert variant="warning">
-              <p>We couldn't find your order details.</p>
-              <p>Please try placing your order again.</p>
-            </Alert>
-            <div className="mt-4">
-              <Link to="/cart" className="btn btn-primary">
-                Return to Cart
-              </Link>
-            </div>
-          </div>
-        );
-        
       case 'error':
         return (
           <div className="text-center">
-            <h2 className="text-danger mb-4">Unexpected Error</h2>
+            <h2 className="text-danger mb-4">System Error</h2>
             <Alert variant="danger">
               <p>Something went wrong while processing your order.</p>
               <p>Please contact support for assistance.</p>
             </Alert>
             <div className="mt-4">
-              <Link to="/cart" className="btn btn-primary">
-                Return to Cart
+              <Link to="/contact" className="btn btn-primary">
+                Contact Support
               </Link>
             </div>
           </div>
@@ -283,13 +177,11 @@ export function OrderConfirmation() {
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
+            <p className="mt-3">Please wait while we confirm your payment...</p>
           </div>
         );
     }
   };
-
-  // Get client secret from URL
-  const clientSecret = searchParams.get('payment_intent_client_secret');
 
   return (
     <PageLayout
@@ -302,7 +194,7 @@ export function OrderConfirmation() {
           <Col md={8}>
             <Card>
               <Card.Body className="p-5">
-                {/* Only render Stripe Elements when we have both the promise and client secret */}
+                {/* Only render Stripe Elements when we have both */}
                 {stripePromise && clientSecret && (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <StripeConfirmation 

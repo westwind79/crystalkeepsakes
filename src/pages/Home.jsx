@@ -2,10 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
+import { gsap } from 'gsap';
 
 // import { Truck, ShoppingBag, ImageUp, Gem } from 'lucide-react'; 
-
+import { SEOHead } from '../components/common/SEOHead';
 import { PageLayout } from '../components/layout/PageLayout';
 
 import { products } from '../data/products';
@@ -23,17 +23,19 @@ import 'swiper/css/autoplay';
 
 // import required modules
 import { EffectCards, Autoplay } from 'swiper/modules';
-
-import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin();
+gsap.registerPlugin(ScrollTrigger);
+// gsap.registerPlugin();
 export function Home({ product }) {
 
 	const heroRef = useRef(null);
 
 	useEffect(() => {
+		if (typeof window !== 'undefined') {
+	    gsap.registerPlugin(ScrollTrigger);
+	  }
+
 	  // Split text into words for animation
 	  const headlineText = document.querySelector('.hero h1');
 	  if (headlineText) {
@@ -57,17 +59,17 @@ export function Home({ product }) {
 	  }
  
     // Your hero section parallax effect
-    gsap.to('.hero-image', {
-      scrollTrigger: {
-        trigger: '.hero',
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      },
-      y: -5,
-      scale: 1.05,
-      ease: "none"
-    });
+    // gsap.to('.hero-image', {
+    //   scrollTrigger: {
+    //     trigger: '.hero',
+    //     start: "top top",
+    //     end: "bottom top",
+    //     scrub: true
+    //   },
+    //   y: -5,
+    //   scale: 1.05,
+    //   ease: "none"
+    // });
 
     // Add more animations as needed
     
@@ -152,7 +154,7 @@ export function Home({ product }) {
 	              </SwiperSlide> 
 	              <SwiperSlide>
 					        <img 
-	                src={getImagePath('img/products/lalena-gift.jpg')} 
+	                src={getImagePath('img/products/lalena-gift-square.jpg')} 
 	                alt="3D Crystal Art Example" 
 	                className="img-fluid rounded"
 		              />

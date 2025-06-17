@@ -1,5 +1,6 @@
 // cartUtils.js
 import imageCompression from 'browser-image-compression';
+import { products } from '../data/products';
 
 const CART_STORAGE_KEY = 'crystal_cart';
 const MAX_CART_ITEMS = 10;
@@ -254,24 +255,24 @@ const storageUtils = {
 // Updated compression settings
 const compressionSettings = {
   raw: {
-    maxSizeMB: 1.5,           // Reduced from 2MB
-    maxWidthOrHeight: 2000,   // Reduced from 2400
+    maxSizeMB: 2,           // Reduced from 2MB
+    maxWidthOrHeight: 2400,   
     useWebWorker: true,
-    fileType: 'image/jpeg',
+    fileType: 'image/png',
     initialQuality: 0.85      // Reduced from 0.9
   },
   preview: {
-    maxSizeMB: 0.3,          // Reduced from 0.5
-    maxWidthOrHeight: 800,    // Reduced from 1200
+    maxSizeMB: 0.3,
+    maxWidthOrHeight: 1200,    
     useWebWorker: true,
-    fileType: 'image/jpeg',
+    fileType: 'image/png',
     initialQuality: 0.75      // Reduced from 0.8
   },
   masked: {
     maxSizeMB: 0.75,         // Reduced from 1
     maxWidthOrHeight: 1600,   // Reduced from 1920
     useWebWorker: true,
-    fileType: 'image/jpeg',
+    fileType: 'image/png',
     initialQuality: 0.8       // Reduced from 0.85
   }
 };
@@ -281,53 +282,31 @@ const storeImage = async (imageData, type) => {
   try {
     if (!imageData) return null;
     
-    if (!imageData.startsWith('data:')) {
+    // Skip if already a reference
+    if (imageData.startsWith('img_ref_')) {
       return imageData;
+    }
+
+    // Validate it's a data URL
+    if (!imageData.startsWith('data:')) {
+      console.warn('Invalid image format, not a data URL:', imageData.substring(0, 20) + '...');
+      return imageData; // Return as-is instead of throwing error
     }
 
     const timestamp = Date.now();
     const storageKey = `img_${type}_${timestamp}`;
     
-    // Estimate needed space
+    // Estimate needed space (images are already compressed)
     const estimatedSize = imageData.length;
     
-    // Try to clear space if needed using the correct reference
+    // Try to clear space if needed
     await storageUtils.clearSpaceIfNeeded(estimatedSize);
     
-    // Compress image
-    let compressedImage = imageData;
-    try {
-      const fetchResponse = await fetch(imageData);
-      const blob = await fetchResponse.blob();
-      
-      let options = compressionSettings[type] || compressionSettings.preview;
-      
-      // If original is very large, adjust compression
-      if (blob.size > 5 * 1024 * 1024) {
-        options = {
-          ...options,
-          maxSizeMB: options.maxSizeMB * 0.75,
-          initialQuality: options.initialQuality * 0.9
-        };
-      }
-      
-      const compressedFile = await imageCompression(blob, options);
-      
-      const reader = new FileReader();
-      compressedImage = await new Promise((resolve) => {
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(compressedFile);
-      });
-      
-      console.log(`Compressed ${type} image from ${(blob.size / 1024 / 1024).toFixed(2)}MB to ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
-      
-    } catch (compressionError) {
-      console.warn(`Compression failed for ${type} image:`, compressionError);
-      throw new CartError('Image compression failed. Please try a smaller image.', 'COMPRESSION_ERROR');
-    }
+    // NO COMPRESSION - images are already compressed from ProductDetail/ImageEditor
+    console.log(`Storing ${type} image (already compressed): ${(imageData.length / 1024 / 1024).toFixed(2)}MB`);
     
     try {
-      sessionStorage.setItem(storageKey, compressedImage);
+      sessionStorage.setItem(storageKey, imageData);
     } catch (storageError) {
       if (storageError.name === 'QuotaExceededError') {
         throw new CartError(
@@ -347,6 +326,7 @@ const storeImage = async (imageData, type) => {
     );
   }
 };
+
 
 
 // Retrieves an image from storage
@@ -383,6 +363,15 @@ const retrieveImage = (reference, type) => {
   }
 };
 
+// New utility function in cartUtils.js
+export const validateImageSize = (imageData, maxSizeMB = 5) => {
+  if (!imageData) return false;
+  if (!imageData.startsWith('data:')) return true; // Assume non-data URLs are OK
+  
+  const sizeInMB = (imageData.length * 2) / (1024 * 1024);
+  return sizeInMB <= maxSizeMB;
+};
+
 export class CartError extends Error {
   constructor(message, code) {
     super(message);
@@ -402,10 +391,23 @@ export const CartUtils = {
     if (typeof item.price !== 'number' || item.price <= 0) {
       throw new CartError('Price must be a positive number', 'INVALID_PRICE');
     }
-    if (!item.options.size || !item.options.background || !item.options.lightBase) {
-      throw new CartError('Missing required options', 'INVALID_OPTIONS');
+    
+    // Find the product to check its requirements
+    const product = products.find(p => p.id === item.productId);
+    
+    // Only validate options that exist for this product
+    if (product && product.sizes && product.sizes.length > 0 && !item.options.size) {
+      throw new CartError('Size selection is required', 'MISSING_SIZE');
     }
-    if (!item.options.imageUrl) {
+    if (product && product.backgroundOptions && product.backgroundOptions.length > 0 && !item.options.background) {
+      throw new CartError('Background selection is required', 'MISSING_BACKGROUND');
+    }
+    if (product && product.lightBases && product.lightBases.length > 0 && !item.options.lightBase) {
+      throw new CartError('Light base selection is required', 'MISSING_LIGHTBASE');
+    }
+    
+    // Only require image if product requires it
+    if (product && product.requiresImage && !item.options.imageUrl) {
       throw new CartError('Image is required', 'MISSING_IMAGE');
     }
   },
@@ -420,23 +422,32 @@ export const CartUtils = {
         throw new CartError(`Cart cannot exceed ${MAX_CART_ITEMS} items`, 'CART_LIMIT_REACHED');
       }
 
-      // Store images and create references
+      // Store images - NO COMPRESSION since they're already compressed
       const imageRefs = {};
       
-      // Only store image if it's not already a reference
+      // Store images if they exist and aren't already references
+      if (item.options.rawImageUrl && !item.options.rawImageUrl.startsWith('img_ref_')) {
+        console.log('Storing raw image (already compressed)');
+        imageRefs.rawImageUrl = await storeImage(item.options.rawImageUrl, 'raw');
+      } else {
+        imageRefs.rawImageUrl = item.options.rawImageUrl;
+      }
+      
       if (item.options.imageUrl && !item.options.imageUrl.startsWith('img_ref_')) {
+        console.log('Storing preview image (already compressed)');
         imageRefs.imageUrl = await storeImage(item.options.imageUrl, 'preview');
       } else {
         imageRefs.imageUrl = item.options.imageUrl;
       }
       
       if (item.options.maskedImageUrl && !item.options.maskedImageUrl.startsWith('img_ref_')) {
+        console.log('Storing masked image (already compressed)');
         imageRefs.maskedImageUrl = await storeImage(item.options.maskedImageUrl, 'masked');
       } else {
         imageRefs.maskedImageUrl = item.options.maskedImageUrl;
       }
 
-      // Create cart item with either new references or existing ones
+      // Create cart item with references
       const cartItem = {
         ...item,
         options: {

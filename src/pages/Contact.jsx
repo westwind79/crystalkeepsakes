@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Alert, Button } from 'react-bootstrap';
 import { Helmet } from 'react-helmet-async';
+import { SEOHead } from '../components/common/SEOHead';
 import { PageLayout } from '../components/layout/PageLayout';
 
 export function Contact() {
@@ -185,10 +186,12 @@ export function Contact() {
               <Form onSubmit={handleSubmit}>
                 {/* Name Field */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Name <span className="text-danger">*</span></Form.Label>
+                  <Form.Label htmlFor="contact-name">Name <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    autoComplete="on"
                     type="text"
                     name="name"
+                    id="contact-name"
                     value={formData.name}
                     onChange={handleChange}
                     isInvalid={!!errors.name}
@@ -201,9 +204,11 @@ export function Contact() {
 
                 {/* Phone Field */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Phone</Form.Label>
+                  <Form.Label htmlFor="contact-phone">Phone</Form.Label>
                   <Form.Control
+                    autoComplete="on"
                     type="tel"
+                    id="contact-phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
@@ -217,10 +222,12 @@ export function Contact() {
 
                 {/* Email Field */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Email <span className="text-danger">*</span></Form.Label>
+                  <Form.Label htmlFor="contact-email">Email <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    autoComplete="on"
                     type="email"
                     name="email"
+                    id="contact-email"
                     value={formData.email}
                     onChange={handleChange}
                     isInvalid={!!errors.email}
@@ -233,10 +240,12 @@ export function Contact() {
 
                 {/* Comment Field */}
                 <Form.Group className="mb-4">
-                  <Form.Label>Message <span className="text-danger">*</span></Form.Label>
+                  <Form.Label htmlFor="contact-comment">Message <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    autoComplete="on"
                     as="textarea"
                     rows={4}
+                    id="contact-comment"
                     name="comment"
                     value={formData.comment}
                     onChange={handleChange}

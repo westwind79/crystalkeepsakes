@@ -1,18 +1,63 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import { ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react';
-
+import imageCompression from 'browser-image-compression';
 
 const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const containerRef = useRef(null);
   const imageRef = useRef(null);
   const maskRef = useRef(null);
   const canvasRef = useRef(null);
+
+  // Compression settings for the final masked image
+  const compressionSettings = {
+    maxSizeMB: 0.75,         // 750KB max
+    maxWidthOrHeight: 1600,   
+    useWebWorker: true,
+    fileType: 'image/png',
+    initialQuality: 0.8
+  };
+
+  // Helper function to compress image
+  const compressImage = async (dataUrl) => {
+    try {
+      // Convert data URL to blob
+      const base64Data = dataUrl.split(',')[1];
+      const mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: mimeType });
+      
+      console.log(`Original image size: ${(blob.size / 1024 / 1024).toFixed(2)}MB`);
+      
+      // Compress the blob
+      const compressedFile = await imageCompression(blob, compressionSettings);
+      
+      console.log(`Compressed image size: ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
+      
+      // Convert back to data URL
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(compressedFile);
+      });
+      
+    } catch (error) {
+      console.error('Compression failed:', error);
+      // Return original if compression fails
+      return dataUrl;
+    }
+  };
 
   // Load and store the mask image dimensions
   const [maskDimensions, setMaskDimensions] = useState({ width: 0, height: 0 });
@@ -29,18 +74,33 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     }
   }, [uploadedImage, maskImage]);
 
+  // In the useEffect that sets aspect ratio
   useEffect(() => {
-    if (maskImage) {
-      const img = new Image();
-      img.onload = () => {
-        setMaskDimensions({
-          width: img.naturalWidth,
-          height: img.naturalHeight
-        });
-      };
-      img.src = maskImage;
-    }
-  }, [maskImage]);
+  // Only run when modal is actually shown AND we have the mask image
+    if (!show || !maskImage || !containerRef.current) return;
+    
+    console.log('🖼️ Modal is open, setting up mask...');
+    
+    const img = new Image();
+    img.onload = () => {
+      // Double-check refs still exist after async image load
+      if (!containerRef.current) {
+        console.warn('Container ref lost during image load');
+        return;
+      }
+      
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      console.log('📏 Setting aspect ratio:', aspectRatio);
+      
+      containerRef.current.style.aspectRatio = `${aspectRatio}`;
+      
+      setMaskDimensions({
+        width: img.naturalWidth,
+        height: img.naturalHeight
+      });
+    };
+    img.src = maskImage;
+  }, [show, maskImage]); // Add 'show' as dependency!
 
   const handleZoom = (newScale, cursorX = null, cursorY = null) => {
     const minScale = 0.1;
@@ -76,7 +136,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     const cursorX = e.clientX - rect.left;
     const cursorY = e.clientY - rect.top;
 
-    const scaleFactor = 0.1;
+    const scaleFactor = 0.025;
     const newScale = scale + Math.sign(-e.deltaY) * scaleFactor;
 
     handleZoom(newScale, cursorX, cursorY);
@@ -126,6 +186,8 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
       console.error('Missing required elements for saving');
       return;
     }
+
+    setIsProcessing(true);
 
     try {
       const canvas = canvasRef.current;
@@ -198,11 +260,17 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
         throw new Error('Generated data URL is invalid');
       }
 
-      onSave(dataUrl);
+      // COMPRESS THE FINAL IMAGE HERE
+      console.log('Compressing final masked image...');
+      const compressedDataUrl = await compressImage(dataUrl);
+
+      onSave(compressedDataUrl); // Pass compressed image
       onHide();
 
     } catch (error) {
       console.error('Error saving image:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -214,18 +282,6 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     return () => container.removeEventListener("wheel", handleWheel);
   }, [scale, position]);
 
-  // Set aspect ratio based on mask image
-  useEffect(() => {
-    if (maskImage && containerRef.current) {
-      const img = new Image();
-      img.onload = () => {
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-        containerRef.current.style.aspectRatio = `${aspectRatio}`;
-      };
-      img.src = maskImage;
-    }
-  }, [maskImage]);
-
   return (
     <Modal 
       show={show} 
@@ -234,22 +290,6 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title className="h6">Edit Image</Modal.Title>
-{/*        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 1.1)}>
-          Zoom In
-        </button>
-        <button className="btn btn-secondary" onClick={() => handleZoom(scale * 0.9)}>
-          Zoom Out
-        </button>
-        
-        <button className="btn btn-primary" onClick={handleSave}>
-          Save
-        </button>
-        <button className="btn btn-secondary" onClick={handleReset}>
-          Reset
-        </button>
-        <button className="btn btn-secondary" onClick={onHide}>
-          Cancel
-        </button>*/}
       </Modal.Header>
       
       <Modal.Body>
@@ -261,12 +301,12 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
-        {/* Zoom Controls Toolbar */}
-          
+          {/* Zoom Controls Toolbar */}
           <div className="editor-zoom-controls">
             <button 
               onClick={() => handleZoom(scale * 1.1)}
               title="Zoom In"
+              disabled={isProcessing}
             >
               <ZoomIn size={18} />
             </button>
@@ -278,6 +318,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
             <button 
               onClick={() => handleZoom(scale * 0.9)}
               title="Zoom Out"
+              disabled={isProcessing}
             >
               <ZoomOut size={18} />
             </button>
@@ -293,25 +334,48 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
               transformOrigin: '0 0'
             }}
           />
-          
-{/*          <div
-            style={{
-              position: 'absolute',
-              border: '2px dashed rgba(255, 255, 255, 0.5)',
-              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              width: imageRef.current?.width || 0,
-              height: imageRef.current?.height || 0,
-              pointerEvents: 'none',
-            }}
-          />*/}
 
-          {/* Mask Image */}
-          <img
-            ref={maskRef}
-            src={maskImage}
-            alt="Mask"
-            className="mask-image" 
-          />
+          {/* Mask Image */} 
+          {maskImage && (
+            <img
+              ref={maskRef}
+              src={maskImage}
+              alt="Mask"
+              className="mask-image"
+              onLoad={() => console.log('🎭 Mask image element loaded')}
+              onError={(e) => console.error('❌ Mask image element failed:', e)}
+            />
+          )}
+          
+          {/* Processing Overlay */}
+          {isProcessing && (
+            <div 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 20,
+                borderRadius: '8px'
+              }}
+            >
+              <div style={{ textAlign: 'center', color: 'white' }}>
+                <div 
+                  className="spinner-border text-light mb-2" 
+                  role="status"
+                  style={{ width: '3rem', height: '3rem' }}
+                >
+                  <span className="visually-hidden">Processing...</span>
+                </div>
+                <div>Compressing and saving...</div>
+              </div>
+            </div>
+          )}
           
           <canvas
             ref={canvasRef}
@@ -327,6 +391,7 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
             className="btn-reset"
             onClick={handleReset}
             title="Reset Image Position"
+            disabled={isProcessing}
           >
             <RotateCcw size={18} />
             <span className="ms-2">Reset</span>
@@ -338,14 +403,23 @@ const ImageEditor = ({ show, onHide, uploadedImage, maskImage, onSave }) => {
           <button 
             className="btn btn-secondary"
             onClick={onHide}
+            disabled={isProcessing}
           >
             Cancel
           </button>
           <button 
             className="btn btn-primary"
             onClick={handleSave}
+            disabled={isProcessing}
           >
-            Save Changes
+            {isProcessing ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing...
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </button>
         </div>
       </Modal.Footer>

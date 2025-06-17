@@ -11,17 +11,28 @@
   background: var(--surface-900);
   width: fit-content;
   margin: 0 auto;
+  max-width: 90vw;
 }
 
 .editor-workspace {
   position: relative;
-  width: 80vmin; /* Use viewport-relative units */
-  aspect-ratio: 1/1; /* Default square, will be overridden by JS if needed */
+  width: 90vw;
+  max-width: 500px;
+  height: auto; /* Let aspect-ratio determine height */
   overflow: hidden;
   cursor: grab;
   background: var(--surface-900);
   margin: auto;
 }
+
+/* Fallback for smaller screens */
+@media (max-height: 600px) {
+  .editor-workspace {
+    width: 80vw;
+    max-width: 400px;
+  }
+}
+
 
 .mask-image {
   position: absolute;
@@ -40,6 +51,8 @@
   user-select: none;
   pointer-events: none;
 }
+
+
 .modal-footer {
   border: none;
 }

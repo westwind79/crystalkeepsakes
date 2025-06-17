@@ -5,16 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/prebuild.js",
     "build": "npm run clean && vite build",
     "clean": "rimraf dist",
     "preview": "vite preview",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "reactSnap": {
+    "source": "dist",
+    "skipThirdPartyRequests": true
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^5.6.0",
     "bootstrap": "^5.3.3",
     "lucide-react": "^0.469.0",
+    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
     "react-dom": "^18.3.1",
@@ -22,26 +28,28 @@
     "react-error-boundary": "^5.0.0",
     "react-helmet-async": "^2.0.5",
     "react-resizable": "^3.0.5",
-    "react-router-dom": "^7.1.1",
-    "square": "^39.1.1"
+    "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@prerenderer/renderer-jsdom": "^1.1.9",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.4.1",
     "browser-image-compression": "^2.0.2",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "fs-extra": "^11.3.0",
+    "glob": "^11.0.2",
     "gsap": "^3.12.5",
+    "lodash": "^4.17.21",
+    "puppeteer": "^24.9.0",
     "rimraf": "^6.0.1",
     "swiper": "^11.2.6",
     "terser": "^5.37.0",
     "vite": "^6.0.7",
-    "vite-plugin-compression2": "^1.3.3",
-    "vite-plugin-prerender": "^1.0.8"
+    "vite-plugin-compression2": "^1.3.3"
   }
 }

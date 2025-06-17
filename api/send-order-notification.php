@@ -1,110 +1,180 @@
 <?php
 // api/send-order-notification.php
 
-	header('Content-Type: application/json');
+header('Content-Type: application/json');
+require_once __DIR__ . '/image-storage.php';
 
-	// Function to sanitize input data
-	function sanitizeInput($data) {
-	    if (is_array($data)) {
-	        foreach ($data as $key => $value) {
-	            $data[$key] = sanitizeInput($value);
-	        }
-	        return $data;
-	    }
-	    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
-	}
+function sanitizeInput($data) {
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            $data[$key] = sanitizeInput($value);
+        }
+        return $data;
+    }
+    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+}
 
-	// Get JSON data from request
-	$jsonData = file_get_contents('php://input');
-	$orderData = json_decode($jsonData, true);
+function sendOrderEmailWithImages($orderData, $pdo) {
+    try {
+        $imageStorage = new ImageStorage();
+        $orderNumber = $orderData['orderId'];
+        
+        // Get image attachments
+        $attachments = $imageStorage->createEmailAttachments($pdo, $orderNumber, 500); // 500KB max per image
+        
+        // Email settings
+        $to = 'orders@crystalkeepsakes.com';
+        $subject = 'New Order: ' . $orderNumber;
+        
+        // Create boundary for multipart email
+        $boundary = uniqid('boundary_');
+        
+        // Email headers
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-Type: multipart/mixed; boundary="' . $boundary . '"',
+            'From: CrystalKeepsakes Order System <noreply@crystalkeepsakes.com>',
+            'Reply-To: orders@crystalkeepsakes.com',
+            'X-Mailer: PHP/' . phpversion()
+        ];
+        
+        // Create email body
+        $message = "--$boundary\r\n";
+        $message .= "Content-Type: text/html; charset=utf-8\r\n";
+        $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        
+        // HTML content
+        $htmlContent = "<html><body>";
+        $htmlContent .= "<h2>New Order Received: #{$orderNumber}</h2>";
+        $htmlContent .= "<p><strong>Date:</strong> " . date('Y-m-d H:i:s') . "</p>";
+        $htmlContent .= "<p><strong>Payment ID:</strong> " . ($orderData['paymentId'] ?? 'Pending') . "</p>";
+        
+        // Customer information
+        if (isset($orderData['shippingInfo'])) {
+            $htmlContent .= "<h3>Customer Information</h3>";
+            $htmlContent .= "<p><strong>Name:</strong> " . ($orderData['shippingInfo']['name'] ?? 'N/A') . "</p>";
+            $htmlContent .= "<p><strong>Email:</strong> " . ($orderData['receipt_email'] ?? $orderData['shippingInfo']['email'] ?? 'N/A') . "</p>";
+            $htmlContent .= "<p><strong>Phone:</strong> " . ($orderData['shippingInfo']['phone'] ?? 'N/A') . "</p>";
+        }
+        
+        // Order items
+        if (isset($orderData['cartItems']) && is_array($orderData['cartItems'])) {
+            $htmlContent .= "<h3>Order Items</h3>";
+            $htmlContent .= "<table border='1' cellpadding='5' cellspacing='0' width='100%'>";
+            $htmlContent .= "<tr><th>Product</th><th>Options</th><th>Price</th></tr>";
+            
+            $total = 0;
+            foreach ($orderData['cartItems'] as $item) {
+                $htmlContent .= "<tr>";
+                $htmlContent .= "<td>" . ($item['name'] ?? 'Unknown Product') . "</td>";
+                
+                // Format options
+                $options = "";
+                if (isset($item['options'])) {
+                    foreach ($item['options'] as $key => $value) {
+                        if ($key === 'customText' && is_array($value)) {
+                            if (!empty($value['line1'])) $options .= "Text Line 1: {$value['line1']}<br>";
+                            if (!empty($value['line2'])) $options .= "Text Line 2: {$value['line2']}<br>";
+                        } elseif (!is_array($value) && !empty($value) && !in_array($key, ['imageUrl', 'maskedImageUrl', 'rawImageUrl'])) {
+                            $options .= ucfirst($key) . ": {$value}<br>";
+                        }
+                    }
+                }
+                
+                $htmlContent .= "<td>" . $options . "</td>";
+                $htmlContent .= "<td>$" . number_format(($item['price'] ?? 0), 2) . "</td>";
+                $htmlContent .= "</tr>";
+                
+                $total += ($item['price'] ?? 0);
+            }
+            
+            $htmlContent .= "<tr><td colspan='2' align='right'><strong>Total:</strong></td>";
+            $htmlContent .= "<td><strong>$" . number_format($total, 2) . "</strong></td></tr>";
+            $htmlContent .= "</table>";
+        }
+        
+        // Image information
+        if (!empty($attachments)) {
+            $htmlContent .= "<h3>Customer Images</h3>";
+            $htmlContent .= "<p>Customer uploaded images are included with this order:</p>";
+            $htmlContent .= "<ul>";
+            
+            foreach ($attachments as $attachment) {
+                if ($attachment['type'] === 'link') {
+                    $htmlContent .= "<li><strong>{$attachment['name']}:</strong> <a href='{$attachment['url']}'>Download Link</a> (Large file)</li>";
+                } else {
+                    $htmlContent .= "<li><strong>{$attachment['name']}:</strong> Attached to this email</li>";
+                }
+            }
+            
+            $htmlContent .= "</ul>";
+        }
+        
+        $htmlContent .= "</body></html>";
+        
+        $message .= $htmlContent . "\r\n";
+        
+        // Add attachments
+        foreach ($attachments as $attachment) {
+            if ($attachment['type'] !== 'link' && file_exists($attachment['path'])) {
+                $fileContent = file_get_contents($attachment['path']);
+                $encodedContent = chunk_split(base64_encode($fileContent));
+                
+                $message .= "--$boundary\r\n";
+                $message .= "Content-Type: {$attachment['type']}; name=\"{$attachment['name']}\"\r\n";
+                $message .= "Content-Transfer-Encoding: base64\r\n";
+                $message .= "Content-Disposition: attachment; filename=\"{$attachment['name']}\"\r\n\r\n";
+                $message .= $encodedContent . "\r\n";
+            }
+        }
+        
+        $message .= "--$boundary--\r\n";
+        
+        // Send email
+        $emailSent = mail($to, $subject, $message, implode("\r\n", $headers));
+        
+        return [
+            'success' => $emailSent,
+            'attachments_count' => count($attachments),
+            'message' => $emailSent ? 'Order notification sent with images' : 'Failed to send email'
+        ];
+        
+    } catch (Exception $e) {
+        error_log('Email with images error: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+}
 
-	if (!$orderData || !isset($orderData['orderId'])) {
-	    http_response_code(400);
-	    echo json_encode(['success' => false, 'message' => 'Invalid order data']);
-	    exit;
-	}
-
-	// Sanitize the input data
-	$orderData = sanitizeInput($orderData);
-
-	// Email settings
-	$to = 'orders@crystalkeepsakes.com';
-	$subject = 'New Order: ' . $orderData['orderId'];
-
-	// Create email content
-	$message = "<html><body>";
-	$message .= "<h2>New Order Received: #{$orderData['orderId']}</h2>";
-	$message .= "<p><strong>Date:</strong> " . date('Y-m-d H:i:s') . "</p>";
-	$message .= "<p><strong>Payment ID:</strong> " . ($orderData['paymentId'] ?? 'N/A') . "</p>";
-
-	// Add customer information if available
-	if (isset($orderData['customer'])) {
-	    $message .= "<h3>Customer Information</h3>";
-	    $message .= "<p><strong>Name:</strong> " . ($orderData['customer']['name'] ?? 'N/A') . "</p>";
-	    $message .= "<p><strong>Email:</strong> " . ($orderData['customer']['email'] ?? 'N/A') . "</p>";
-	    $message .= "<p><strong>Phone:</strong> " . ($orderData['customer']['phone'] ?? 'N/A') . "</p>";
-	}
-
-	// Add order items
-	if (isset($orderData['items']) && is_array($orderData['items'])) {
-	    $message .= "<h3>Order Items</h3>";
-	    $message .= "<table border='1' cellpadding='5' cellspacing='0' width='100%'>";
-	    $message .= "<tr><th>Product</th><th>Options</th><th>Price</th></tr>";
-	    
-	    $total = 0;
-	    foreach ($orderData['items'] as $item) {
-	        $message .= "<tr>";
-	        $message .= "<td>" . ($item['name'] ?? 'Unknown Product') . "</td>";
-	        
-	        // Format options
-	        $options = "";
-	        if (isset($item['options'])) {
-	            foreach ($item['options'] as $key => $value) {
-	                if ($key === 'customText' && is_array($value)) {
-	                    if (!empty($value['line1'])) $options .= "Text Line 1: {$value['line1']}<br>";
-	                    if (!empty($value['line2'])) $options .= "Text Line 2: {$value['line2']}<br>";
-	                } elseif (!is_array($value) && !empty($value) && $key !== 'imageUrl' && $key !== 'maskedImageUrl') {
-	                    $options .= ucfirst($key) . ": {$value}<br>";
-	                }
-	            }
-	        }
-	        
-	        $message .= "<td>" . $options . "</td>";
-	        $message .= "<td>$" . number_format(($item['price'] ?? 0), 2) . "</td>";
-	        $message .= "</tr>";
-	        
-	        $total += ($item['price'] ?? 0);
-	    }
-	    
-	    $message .= "<tr><td colspan='2' align='right'><strong>Total:</strong></td>";
-	    $message .= "<td><strong>$" . number_format($total, 2) . "</strong></td></tr>";
-	    $message .= "</table>";
-	}
-
-	// Add note about images
-	$message .= "<p><em>Note: Customer images are not included in this email. Please check the order system to view uploaded images.</em></p>";
-
-	$message .= "</body></html>";
-
-	// Set email headers
-	$headers = [
-	    'MIME-Version: 1.0',
-	    'Content-type: text/html; charset=utf-8',
-	    'From: CrystalKeepsakes Order System <noreply@crystalkeepsakes.com>',
-	    'Reply-To: orders@crystalkeepsakes.com',
-	    'X-Mailer: PHP/' . phpversion()
-	];
-
-	// Attempt to send the email
-	$emailSent = mail($to, $subject, $message, implode("\r\n", $headers));
-
-	if ($emailSent) {
-	    // Log success
-	    error_log("Order notification email sent for order ID: " . $orderData['orderId']);
-	    echo json_encode(['success' => true, 'message' => 'Order notification sent']);
-	} else {
-	    // Log failure
-	    error_log("Failed to send order notification email for order ID: " . $orderData['orderId']);
-	    echo json_encode(['success' => false, 'message' => 'Failed to send order notification']);
-	}
+// Main execution
+try {
+    $jsonData = file_get_contents('php://input');
+    $orderData = json_decode($jsonData, true);
+    
+    if (!$orderData || !isset($orderData['orderId'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid order data']);
+        exit;
+    }
+    
+    // Sanitize input
+    $orderData = sanitizeInput($orderData);
+    
+    // Connect to database
+    $pdo = require_once __DIR__ . '/db_connect.php';
+    
+    // Send email with images
+    $result = sendOrderEmailWithImages($orderData, $pdo);
+    
+    echo json_encode($result);
+    
+} catch (Exception $e) {
+    error_log('Order notification error: ' . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}
 ?>
