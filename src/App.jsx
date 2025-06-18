@@ -1,11 +1,20 @@
 // App.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react'
 import ReactDOM from 'react-dom/client'
+<<<<<<< HEAD
 // import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 // Register GSAP plugins globally
 import { gsap } from 'gsap';
+=======
+import { HelmetProvider } from 'react-helmet-async';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+>>>>>>> development
 
 import { CartProvider } from './contexts/CartContext';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
@@ -38,6 +47,7 @@ if (process.env.NODE_ENV === 'development') {
     }, 100);
   });
 
+<<<<<<< HEAD
   // Catch regular errors
   window.addEventListener('error', event => {
     console.error('🚨 WINDOW ERROR:', event.error);
@@ -72,6 +82,10 @@ window.checkStoredErrors = () => {
   console.table(errors);
   return errors;
 };
+=======
+const stripePromise = loadStripe('pk_test_51QoDYf2YE48VQlzYdSB0UqhJphSSP6s82c2XYbprasSkna3EGfN0G5IgZXxR2nAVjsZrqtUttSJj6kfAsnrfye0T00AEwHQ8zq');
+  
+>>>>>>> development
 
 // Move ScrollToTop outside App component and add useLocation import
 function ScrollToTop() {
@@ -89,15 +103,33 @@ function ScrollToTop() {
 }
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
+<<<<<<< HEAD
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 250);
     
     return () => clearTimeout(timer);
   }, []);
+=======
+    // Simulate initial load
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 1500)
+  }, [])
+
+  // const options = {
+  //   mode: 'payment',
+  //   amount: 1099,
+  //   currency: 'usd',
+  //   // We'll configure this when we have a payment ready
+  //   appearance: {
+  //     theme: 'stripe'
+  //   }
+  // };
+>>>>>>> development
 
   if (isLoading) {
     return (
@@ -109,6 +141,7 @@ function App() {
 
   return (
     <BrowserRouter>
+<<<<<<< HEAD
       <CartProvider>
         <ScrollToTop />
         <Header />
@@ -142,10 +175,33 @@ function App() {
         </main>
         <Footer />
       </CartProvider>
+=======
+      <Elements stripe={stripePromise}>
+        <CartProvider>
+          <ScrollToTop />
+          <Header />       
+            <main>               
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/product/:slug" element={<ProductDetail />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="*" element={<div>Page Not Found</div>} />
+              </Routes> 
+            </main>
+          <Footer />
+        </CartProvider>    
+      </Elements>
+>>>>>>> development
     </BrowserRouter>
   );
 }
 
+<<<<<<< HEAD
 // Add this new component
 function PageTransition() {
   const location = useLocation();
@@ -195,4 +251,6 @@ function PageTransition() {
     </main>
   );
 }
+=======
+>>>>>>> development
 export default App

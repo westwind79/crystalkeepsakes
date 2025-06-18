@@ -59,7 +59,7 @@
 /* ImageEditor Modal Styles */
 .image-editor-modal .modal-header {
   border-bottom: 1px solid var(--surface-700);
-  padding: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
 }
 
 .image-editor-modal .modal-title {
@@ -70,7 +70,7 @@
 
 .image-editor-modal .modal-footer {
   border-top: 1px solid var(--surface-700);
-  padding: 0.25rem 1rem;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   gap: 1rem;

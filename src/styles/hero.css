@@ -8,7 +8,7 @@
     35deg, 
     rgba(28, 200, 28, 0.2) 10%, 
     rgba(17, 17, 17, 0.9) 150%
-  ), url('/img/hero/laser-background.png') center/cover no-repeat;
+  ), url('/img/hero/laser-background.png') center/cover no-repeat;;
   color: var(--text-primary);
   position: relative;
   overflow: hidden;
@@ -20,16 +20,19 @@
     max-width: 600px;
 }
 
-.hero-content h1 {
-  line-height: 1.1;
-  font-weight: 500;
+.hero-content h1 {  
   text-transform: uppercase;
+<<<<<<< HEAD
   font-size: var(--font-scale-36-52);
   margin-bottom: 20px; 
   background: -webkit-linear-gradient(var(--surface-100), var(--primary));
 /*  background: -webkit-linear-gradient(var(--primary), var(--surface-300));*/
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+=======
+  font-size: var(--font-scale-27-36);
+  margin-bottom: 20px;
+>>>>>>> development
 }
 
 .hero-content p {  
@@ -111,65 +114,4 @@
   );
   filter: blur(20px);
   z-index: 0;
-}
-
-
-.swiper {
-  margin-top: 2em;
-  max-width:350px;
-}
-
-.swiper-slide {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;  
-  height: 350px;
-}
-.swiper-slide .slide-text {
-  display: absolute;
-  bottom: 0;
-  left: 0;
-  font-size: 22px;
-  font-weight: bold;
-  right: 0;
-  width: 100%;
-  z-index: 1;
-  display: none;
-  color: #fff; 
-}
-
-.swiper-slide img {
-  aspect-ratio: 1/1;
-  width: 100% !important;
-  position:  absolute;
-  z-index: 0;
-}
-
-@media screen and (min-width: 992px) {
-  .swiper {
-    max-width: 450px;
-  }
-  .swiper-slide {
-    height: 450px;
-  }
-}
-
-/*@media screen and (min-width: 1024px) {
-  .swiper {
-    max-width: 550px;
-  }
-  .swiper-slide {
-    height: 550px;
-  }
-}
-*/
-@media screen and (min-width: 1920px) {
-  .swiper {
-    max-width: 550px;
-  }
-  .swiper-slide {
-    height: 550px;
-  }
 }

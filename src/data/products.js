@@ -87,12 +87,16 @@ export const products = [
     shortDescription: "Designed for landscape-oriented images, our Wide Rectangle Crystal turns your favorite moments into a stunning 3D display. Ideal for family portraits or panoramic scenes, it’s a timeless keepsake.",
     longDescription: "<p>Expertly crafted with advanced engraving technology, this crystal catches light from all angles for a breathtaking effect. Simply upload your photo, select your size, and let our designers transform it into a timeless keepsake.</p>",
     productMask: [
-      {src: '/img/masks/3d_crystal_rectangle-wide.png'}
+      {src: '/img/masks/3d_crystal_picture.png'}
     ],
     images: [
       {id: '1', src: '/img/products/3d-rectangle-wide.jpg', isMain: true}, 
+<<<<<<< HEAD
       {id: '2', src: '/img/products/lalena-gift.jpg'}, 
       {id: '2', src: '/img/products/180x120-horizondal-people-copy_8.png'}, 
+=======
+      {id: '1', src: '/img/products/lalena-gift.jpg'}, 
+>>>>>>> development
     ],
     sizes: [
       { id: 'small', name: 'Medium (3")', price: 89, faces: '1-2' },
@@ -192,7 +196,7 @@ export const products = [
     name: "3D Prestige",
     slug: "prestige",
     basePrice: 89.99,
-    categories: ["anniversary", "birthday", "weddings","memorial","graduation"],
+    categories: ["anniversary", "birthday", "weddings","memorial"],
     description: "Elegant and timeless, our 3D Photo Crystal Iceberg is a stunning keepsake for life’s biggest moments. Expertly crafted from pure K9 crystal and engraved with advanced laser technology, it captures every detail with breathtaking precision. Its multi-faceted design reflects light beautifully, creating a dazzling effect.",
     shortDescription: "Elegant and striking, our 3D Iceberg Crystal transforms your most treasured moments into a dazzling masterpiece. Its multi-faceted design reflects light beautifully, making it a timeless keepsake.",
     longDescription: "<p>Perfect for desks, mantels, or display cabinets, this crystal becomes even more radiant with an optional light base. Ideal for weddings, anniversaries, graduations, or corporate awards, it transforms cherished memories into a timeless masterpiece.</p>",
@@ -259,6 +263,7 @@ export const products = [
       { id: 'customText', name: 'Custom Text', price: 9.50 }
     ]
   },
+<<<<<<< HEAD
   {
     id: 8,
     name: "2D Crystal Ornament",
@@ -579,4 +584,8 @@ export const products = [
   //   requiresImage: false,
   //   textOptions: []
   // },
+=======
+   
+  // More products...
+>>>>>>> development
 ]

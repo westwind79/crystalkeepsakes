@@ -1,8 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+<<<<<<< HEAD
 import { gsap } from 'gsap';
+=======
+import { gsap, ScrollTrigger, Draggable } from 'gsap/all'; 
+>>>>>>> development
 
 // import { Truck, ShoppingBag, ImageUp, Gem } from 'lucide-react'; 
 import { SEOHead } from '../components/common/SEOHead';
@@ -15,6 +18,7 @@ import { ContactCTA } from '../components/layout/ContactCTA';
 import { ProcessSection } from '../components/layout/ProcessSection';
 import { getImagePath } from '../utils/imageUtils';
 
+<<<<<<< HEAD
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
@@ -80,6 +84,10 @@ export function Home({ product }) {
   }, []);
 
 
+=======
+export function Home({ product }) {
+
+>>>>>>> development
   return (
   	<PageLayout 
       pageTitle="3D Crystals from CrystalKeepsakes - 3D Crystal Memories"
@@ -106,6 +114,7 @@ export function Home({ product }) {
             </div>
           </div>
           <div className="hero-image col-12 col-sm-12 col-md-6 col-lg-7">
+<<<<<<< HEAD
           		<Swiper
 				        effect={'cards'}
 				        grabCursor={true}
@@ -163,13 +172,16 @@ export function Home({ product }) {
 				      </Swiper>
             {/*<div className="crystal-showcase">
             	
+=======
+            <div className="crystal-showcase">
+>>>>>>> development
               <img 
                 src={getImagePath('img/products/3d-rectangle-wide.jpg')} 
                 alt="3D Crystal Art Example" 
                 className="img-fluid rounded crystal-hero-image"
               />
-              <div className="crystal-glow"></div>
-            </div>*/}
+              {/*<div className="crystal-glow"></div>*/}
+            </div>
           </div>
         </Row>
       </Container>
@@ -177,7 +189,7 @@ export function Home({ product }) {
 
 
 	   {/* Featured Products */}
-	  <section  className="featured-products context-dark py-5">
+	  <section className="featured-products context-dark py-5">
 	    <Container>
 	      <h2 className="section-title text-center mb-4">Popular Crystal Designs</h2>
 	      <Row>
@@ -194,7 +206,6 @@ export function Home({ product }) {
 	      </div>
 	    </Container>
 	  </section>
-
 	  {/* Category Type */}
     <CategoryNav />
     {/* Process Section */}

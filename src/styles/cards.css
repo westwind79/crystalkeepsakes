@@ -1,7 +1,7 @@
+
 /* Crystal Product Card */
 .crystal-product {
 /*  background: var(--bg-surface);*/
-  display: block;
   background: linear-gradient(
     145deg,
     var(--bg-elevated),
@@ -9,7 +9,7 @@
   );
   border: 1px solid var(--border-strong);
   border-radius: 0.25rem;
-  overflow: hidden; 
+  overflow: hidden;
   transition: all var(--transition-base);
   .btn {
     display: block;
@@ -68,8 +68,11 @@
 .crystal-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--glow-effect);
+<<<<<<< HEAD
 }
 
 .product-image-container  {
   img {width: 100%;}
+=======
+>>>>>>> development
 }

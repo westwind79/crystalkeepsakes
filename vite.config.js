@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs-extra'
 import path from 'path'
+<<<<<<< HEAD
 import { fileURLToPath } from 'url'
 import { compression } from 'vite-plugin-compression2'
 
@@ -19,8 +20,19 @@ const postBuildTasks = () => ({
     console.log('Running post-build tasks...');
     
     // Copy API and other necessary files (ONCE)
+=======
+
+// Copy function for API folder
+const copyAPI = () => ({
+  name: 'copy-api',
+  closeBundle: async () => {
+    // Ensure dist directory exists
+>>>>>>> development
     await fs.ensureDir('dist');
+    
+    // Copy API folder and its contents
     await fs.copy('api', 'dist/api');
+<<<<<<< HEAD
     await fs.copy('./src/admin', 'dist/admin');
     
     const combinedFile = 'src/data/cockpit3d-products.js';
@@ -146,9 +158,18 @@ const postBuildTasks = () => ({
     }
     
     console.log('Post-build tasks completed successfully!');
+=======
+    
+    // Copy config folder maintaining structure
+    await fs.copy('config', 'dist/config');
+    
+    // Copy htaccess file
+    await fs.copy('.htaccess', 'dist/.htaccess');
+>>>>>>> development
   }
 });
 
+<<<<<<< HEAD
 export default defineConfig(async ({ command, mode }) => {
   // Load env file based on mode
   const env = loadEnv(mode, process.cwd(), '');
@@ -169,6 +190,10 @@ export default defineConfig(async ({ command, mode }) => {
   if (isProduction) {
     plugins.push(compression());
   }
+=======
+export default defineConfig(({ command }) => {
+  const isProduction = command !== 'serve';
+>>>>>>> development
   
   return {
     plugins,
@@ -209,7 +234,7 @@ export default defineConfig(async ({ command, mode }) => {
     },
     server: {
       host: true,
-      port: 5174,
+      port: 5173,
       strictPort: false,
       cors: true,
       watch: {
@@ -218,7 +243,7 @@ export default defineConfig(async ({ command, mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://crystalkeepsakes:8888',
+          target: 'http://localhost:8888',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ''),

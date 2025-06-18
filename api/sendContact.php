@@ -6,14 +6,8 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/contact_form_errors.log');
 
 // Ensure we always send JSON response
-// Set secure headers
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: SAMEORIGIN');
-header('X-XSS-Protection: 1; mode=block');
-header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-
-// Only allow from the correct origin
-header('Access-Control-Allow-Origin: ' . getEnv('SITE_URL', 'https://crystalkeepsakes.com'));
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
