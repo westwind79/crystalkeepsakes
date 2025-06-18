@@ -50,3 +50,5 @@ coverage/
 # Stripe API keys and other sensitive data
 stripe.json
 **/stripe*.json
+.htaccess
+Cockpit3D API.pdf
