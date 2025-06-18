@@ -68,11 +68,8 @@
 .crystal-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--glow-effect);
-<<<<<<< HEAD
 }
 
 .product-image-container  {
   img {width: 100%;}
-=======
->>>>>>> development
 }

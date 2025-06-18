@@ -1,4 +1,4 @@
-// Intelligently merged products (static + CockPit3D) - 2025-06-17 10:52:41
+// Intelligently merged products (static + CockPit3D) - 2025-06-17 22:32:22
 
 export const cockpit3dProducts = [
     {
@@ -3466,7 +3466,7 @@ export const cockpit3dProducts = [
     }
 ];
 
-export const generatedAt = "2025-06-17T10:52:41-08:00";
+export const generatedAt = "2025-06-17T22:32:22-08:00";
 
 export const isRealTimeData = true;
 

@@ -7,8 +7,6 @@
     transform: translateX(0);
 }
 
-<<<<<<< HEAD
-=======
 @media (min-width: 992px) {
   .offcanvas {
     display: none;
@@ -21,7 +19,6 @@
   transition: background var(--transition-base);
 }
 
->>>>>>> development
 .navbar-brand {
   max-width: 221px;
   color: var(--text-bright) !important;
@@ -32,7 +29,6 @@
 .navbar-brand:hover {
   color: var(--interactive-hover) !important;
 }
-<<<<<<< HEAD
 
 @media (min-width: 992px) {
   .offcanvas {
@@ -64,8 +60,6 @@
   margin-left: 0;
   margin-top: 1em;
 }
-=======
->>>>>>> development
 
 .nav-link {
   color: var(--surface-200) !important;

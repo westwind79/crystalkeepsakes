@@ -22,17 +22,12 @@
 
 .hero-content h1 {  
   text-transform: uppercase;
-<<<<<<< HEAD
   font-size: var(--font-scale-36-52);
   margin-bottom: 20px; 
   background: -webkit-linear-gradient(var(--surface-100), var(--primary));
 /*  background: -webkit-linear-gradient(var(--primary), var(--surface-300));*/
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-=======
-  font-size: var(--font-scale-27-36);
-  margin-bottom: 20px;
->>>>>>> development
 }
 
 .hero-content p {  

@@ -91,12 +91,9 @@ export const products = [
     ],
     images: [
       {id: '1', src: '/img/products/3d-rectangle-wide.jpg', isMain: true}, 
-<<<<<<< HEAD
       {id: '2', src: '/img/products/lalena-gift.jpg'}, 
-      {id: '2', src: '/img/products/180x120-horizondal-people-copy_8.png'}, 
-=======
-      {id: '1', src: '/img/products/lalena-gift.jpg'}, 
->>>>>>> development
+      {id: '3', src: '/img/products/180x120-horizondal-people-copy_8.png'}, 
+
     ],
     sizes: [
       { id: 'small', name: 'Medium (3")', price: 89, faces: '1-2' },
@@ -262,8 +259,7 @@ export const products = [
       { id: 'none', name: 'No Text', price: 0 },
       { id: 'customText', name: 'Custom Text', price: 9.50 }
     ]
-  },
-<<<<<<< HEAD
+  }, 
   {
     id: 8,
     name: "2D Crystal Ornament",
@@ -584,8 +580,5 @@ export const products = [
   //   requiresImage: false,
   //   textOptions: []
   // },
-=======
-   
-  // More products...
->>>>>>> development
+
 ]

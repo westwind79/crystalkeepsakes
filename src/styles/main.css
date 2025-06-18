@@ -74,13 +74,10 @@ header {
   position: sticky;
   top: 0;
   box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
-<<<<<<< HEAD
   z-index: 1030;
 /*  width: 80vw;*/
 /*  margin: auto;*/
-=======
-  z-index: 1;
->>>>>>> development
+
 }
 
 .page-transition {
@@ -551,8 +548,7 @@ footer {
 }*/
 .about-photo {
   position: sticky;
-  top: 80px;
-<<<<<<< HEAD
+  top: 80px; 
 }
 
 .process-step {
@@ -596,6 +592,4 @@ footer {
   font-size: 12px;
   color: #6c757d;
   text-decoration: line-through;
-=======
->>>>>>> development
 }

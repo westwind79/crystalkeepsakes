@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-<<<<<<< HEAD
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useStripe } from '@stripe/react-stripe-js';
-=======
->>>>>>> development
 import { useCart } from '../contexts/CartContext';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { getStripePromise } from '../utils/stripeUtils';
 
-<<<<<<< HEAD
 // Stripe confirmation component
 function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure }) {
   const stripe = useStripe();
@@ -36,15 +32,13 @@ function StripeConfirmation({ paymentIntentClientSecret, onSuccess, onFailure })
   
   return null;
 }
-=======
->>>>>>> development
 
 export function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const [orderStatus, setOrderStatus] = useState('processing');
   const [orderDetails, setOrderDetails] = useState(null);
+  const [stripePromise, setStripePromise] = useState(null);
   const { clearCart } = useCart();
-<<<<<<< HEAD
 
   // Load Stripe
   useEffect(() => {
@@ -105,202 +99,6 @@ export function OrderConfirmation() {
   // Get client secret from URL and order number with fallback logic
   const clientSecret = searchParams.get('payment_intent_client_secret');
   const orderNumber = searchParams.get('orderNumber'); // This might be null, but we have fallbacks
-=======
-// Update the useEffect in OrderConfirmation.jsx
-  useEffect(() => {
-    const handleOrderConfirmation = async () => {
-      const orderNumber = searchParams.get('orderNumber');
-      const paymentIntent = searchParams.get('payment_intent');
-      const paymentIntentClientSecret = searchParams.get('payment_intent_client_secret');
-      
-      if (!orderNumber) {
-        setOrderStatus('invalid');
-        return;
-      }
-
-      // In development, always show success
-      if (import.meta.env.DEV) {
-        const mockOrderDetails = {
-          orderId: orderNumber,
-          status: 'success',
-          message: 'Thank you for your order! This is a development preview.',
-          timestamp: new Date().toISOString()
-        };
-        setOrderDetails(mockOrderDetails);
-        setOrderStatus('success');
-        clearCart();
-        return;
-      }
-
-      // In production, verify the payment with Stripe
-      try {
-        if (paymentIntent && paymentIntentClientSecret) {
-          const { paymentIntent: verifiedPayment } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
-          
-          if (verifiedPayment.status === 'succeeded') {
-            const orderDetails = {
-              orderId: orderNumber,
-              status: 'success',
-              paymentId: paymentIntent,
-              timestamp: new Date().toISOString()
-            };
-            setOrderDetails(orderDetails);
-            setOrderStatus('success');
-            clearCart();
-          } else {
-            setOrderStatus('failed');
-          }
-        } else {
-          setOrderStatus('invalid');
-        }
-      } catch (error) {
-        console.error('Payment verification error:', error);
-        setOrderStatus('error');
-      }
-    };
-
-    handleOrderConfirmation();
-  }, [searchParams, clearCart]);
-  // Handle one-time order confirmation
-  // Add to OrderConfirmation.jsx - Update useEffect
-
-  useEffect(() => {
-    const handleOrderConfirmation = async () => {
-      // Get status parameters
-      const status = searchParams.get('status');
-      const error = searchParams.get('error');
-      const squareError = searchParams.get('square_error');
-      
-      // Get checkout state
-      const currentState = checkoutManager.getState();
-      const cartData = checkoutManager.getStoredCartData();
-      const paymentData = checkoutManager.getPaymentData();
-      
-      console.log('Checkout State:', {
-        state: currentState,
-        cartData,
-        paymentData
-      });
-
-      // Debug validation
-      console.log('Validating:', {
-        cartDataExists: !!cartData,              // Is cart data present?
-        cartDataValue: cartData,                 // What's in cart data?
-        currentState,                            // What's the current state?
-        expectedState: CHECKOUT_STATES.PAYMENT_PENDING,  // What are we comparing to?
-        isStateMatch: currentState === CHECKOUT_STATES.PAYMENT_PENDING  // Do they match?
-      });
-
-      // Validate checkout state
-      if (!cartData || currentState !== CHECKOUT_STATES.PAYMENT_PENDING) {
-        console.error('Invalid checkout state:', currentState);
-        setOrderStatus('invalid');
-        return;
-      }
-
-      // Handle Square-specific response or development mode
-      if (import.meta.env.DEV && status === 'success') {
-        // Development mode success
-        const orderData = {
-          orderId: `DEV-${Date.now()}`,
-          cartData,
-          paymentData
-        };
-        
-        checkoutManager.completeCheckout(orderData);
-        setOrderDetails(orderData);
-        setOrderStatus('success');
-        clearCart();
-        
-      } else if (status === 'success' || searchParams.get('checkoutId')) {
-        // Production mode success
-        const orderData = {
-          orderId: searchParams.get('checkoutId') || `ORDER-${Date.now()}`,
-          cartData,
-          paymentData
-        };
-        
-        checkoutManager.completeCheckout(orderData);
-        setOrderDetails(orderData);
-        setOrderStatus('success');
-        clearCart();
-        
-      } else if (error || squareError || status === 'failed') {
-        // Handle error cases
-        const errorMessage = error || squareError || 'Payment failed';
-        checkoutManager.handleError('Payment failed', new Error(errorMessage));
-        setOrderStatus('failed');
-        
-      } else {
-        // Unexpected state
-        checkoutManager.handleError(
-          'Unexpected order state',
-          new Error('Invalid order parameters')
-        );
-        setOrderStatus('error');
-      }
-    };
-
-    handleOrderConfirmation();
-  }, []); // Empty dependency array - run once on mount
-
-  useEffect(() => {
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      'payment_intent_client_secret'
-    );
-
-    if (!clientSecret) {
-      setOrderStatus('invalid');
-      return;
-    }
-
-    stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
-      switch (paymentIntent.status) {
-        case "succeeded":
-          setOrderStatus('success');
-          clearCart(); // Clear the cart on success
-          break;
-        case "processing":
-          setOrderStatus('processing');
-          break;
-        default:
-          setOrderStatus('failed');
-          break;
-      }
-    });
-  }, [stripe]);
-
-  const renderOrderSummary = () => {
-    if (!orderDetails) return null;
-
-    return (
-      <div className="order-summary mt-4">
-        <h3>Order Summary</h3>
-        <div className="items-list">
-          {orderDetails.cartItems.map((item, index) => (
-            <div key={index} className="order-item mb-3 p-3 border-bottom">
-              <h4 className="h6">{item.name}</h4>
-              <div className="d-flex justify-content-between">
-                <span>Price:</span>
-                <span>${item.price.toFixed(2)}</span>
-              </div>
-              {/* Options Summary */}
-              <div className="options-summary small text-muted mt-2">
-                <div>Size: {item.options.size}</div>
-                <div>Background: {item.options.background}</div>
-                <div>Light Base: {item.options.lightBase}</div>
-              </div>
-            </div>
-          ))}
-          <div className="total-price mt-3 d-flex justify-content-between">
-            <strong>Total:</strong>
-            <strong>${orderDetails.cartTotal.toFixed(2)}</strong>
-          </div>
-        </div>
-      </div>
-    );
-  };
->>>>>>> development
 
   // Render order status
   const renderOrderStatus = () => {
@@ -396,7 +194,6 @@ export function OrderConfirmation() {
           <Col md={8}>
             <Card>
               <Card.Body className="p-5">
-<<<<<<< HEAD
                 {/* Only render Stripe Elements when we have both */}
                 {stripePromise && clientSecret && (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
@@ -408,8 +205,6 @@ export function OrderConfirmation() {
                   </Elements>
                 )}
                 
-=======
->>>>>>> development
                 {renderOrderStatus()}
               </Card.Body>
             </Card>

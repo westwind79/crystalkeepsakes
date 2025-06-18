@@ -1,7 +1,6 @@
 // pages/Cart.jsx
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import { Container, Row, Col, Alert, Form } from 'react-bootstrap';
 import { ArrowLeft } from 'lucide-react'; 
 
@@ -13,18 +12,6 @@ import { useCart } from '../contexts/CartContext';
 
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { SEOHead } from '../components/common/SEOHead'; 
-=======
-import { Container, Row, Col, Alert } from 'react-bootstrap';
-
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-
-import { ArrowBigLeft, ArrowLeft } from 'lucide-react'; 
-import { useCart } from '../contexts/CartContext';
-import CartDebug  from '../utils/CartDebug';
-import { CartUtils, getFullImage, storageUtils } from '../utils/cartUtils';
-import { LoadingSpinner } from '../components/common/LoadingSpinner'; 
->>>>>>> development
 import { PageLayout } from '../components/layout/PageLayout';
 import { PaymentErrorHandler } from '../components/payment/PaymentErrorHandler';
 
@@ -37,7 +24,6 @@ const debug = (...args) => {
   }
 };
 
-<<<<<<< HEAD
 const logApiCall = async (endpoint, method, data) => {
   console.log(`API Call to ${endpoint} (${method})`, data);
   try {
@@ -57,15 +43,10 @@ const logApiCall = async (endpoint, method, data) => {
 };
 
 // Order number generator
-=======
-const stripePromise = loadStripe("pk_test_51QoDXkFGPmVZe548YMJNAiNX4DoiU7jjlXJ89IPD4S80dvppPLltvgDDQlm8ILw8NibDlcimbSfRPPkn1lVS7P7W00rZzMONme"); // Replace with your actual key
-// Add this new function after your existing imports
->>>>>>> development
 const generateOrderNumber = () => {
   return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-<<<<<<< HEAD
 // Shipping options
 const STRIPE_SHIPPING_OPTIONS = [
   {
@@ -287,13 +268,6 @@ export function Cart() {
   const [selectedShipping, setSelectedShipping] = useState(STRIPE_SHIPPING_OPTIONS[0]);
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
 
-=======
-
-export function Cart() {
-  const [clientSecret, setClientSecret] = useState("");  
-  const stripe = useStripe();
-  const elements = useElements();
->>>>>>> development
   const navigate = useNavigate();
   const { cartItems, removeFromCart, clearCart } = useCart();
   const [fullCartItems, setFullCartItems] = useState([]);
@@ -355,7 +329,6 @@ export function Cart() {
     };
   }, [cartItems]);
 
-<<<<<<< HEAD
   // Create payment intent when component mounts if cart has items
   useEffect(() => {
     const createPaymentIntent = async () => {
@@ -391,7 +364,7 @@ export function Cart() {
         }));
 
         const cartData = {
-          // cartItems: cleanCartItems,
+          cartItems: cleanCartItems,
           fullCartItems: cartItems,
           subtotal: subtotal,
           shippingCost: shippingCost,
@@ -418,112 +391,6 @@ export function Cart() {
         setCheckoutError('Failed to initialize payment. Please try again.');
       } finally {
         setIsLoadingPayment(false);
-=======
-  // 2. Combined payment processing effect
-  // Update the payment processing effect
-  useEffect(() => {
-    let isSubscribed = true; // For cleanup/preventing updates after unmount
-
-    const initializePayment = async () => {
-      if (!stripe) {
-        debug('Waiting for Stripe to initialize...');
-        return;
-      }
-
-      // Only log initialization once
-      if (!clientSecret) {
-        debug('Stripe ready for payment initialization');
-      }
-
-      // If we have a client secret, prepare payment form
-      if (clientSecret && isSubscribed) {
-        try {
-          debug('Payment form ready with client secret');
-        } catch (error) {
-          console.error('Payment setup error:', error);
-          setCheckoutError('Failed to initialize payment form');
-        }
-      }
-    };
-
-    initializePayment();
-
-    // Cleanup
-    return () => {
-      isSubscribed = false;
-    };
-  }, [stripe, clientSecret]); // Only re-run when stripe or clientSecret change
-
-  // Update the handleCheckout function
-  const handleCheckout = async (e) => {
-    if (e) e.preventDefault();
-    
-    try {
-      setLoadingState(prev => ({
-        ...prev,
-        isProcessing: true
-      }));
-
-      setCheckoutError(null);
-
-      if (!stripe || !elements) {
-        setCheckoutError('Payment system is not ready. Please try again.');
-        return;
-      }
-
-      if (!cartItems.length) {
-        setCheckoutError('Your cart is empty');
-        return;
-      }
-
-      const orderNumber = generateOrderNumber();
-      
-      // If we don't have a client secret yet, create the payment intent
-      if (!clientSecret) {
-        const cartData = {
-          cartItems: cartItems.map(item => ({
-            name: item.name,
-            price: parseFloat(item.price),
-            quantity: 1,
-            options: {
-              size: item.options?.size || 'default',
-              background: item.options?.background || 'default',
-              lightBase: item.options?.lightBase || 'default',
-              customText: item.options?.customText || ''
-            }
-          }))
-        };
-
-        const response = await fetch('/api/create-payment-intent.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...cartData,
-            orderNumber
-          })
-        });
-
-        const data = await response.json();
-        
-        if (data.clientSecret) {
-          setClientSecret(data.clientSecret);
-        } else {
-          throw new Error('Failed to initialize payment');
-        }
-        return;
-      }
-
-      // Process the payment
-      const { error: submitError } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation?orderNumber=${orderNumber}`,
-        },
-      });
-
-      if (submitError) {
-        throw new Error(submitError.message);
->>>>>>> development
       }
     };
     
@@ -592,11 +459,6 @@ export function Cart() {
     }
   };
 
-<<<<<<< HEAD
-=======
- 
-
->>>>>>> development
   // Show loading state
   if (loadingState.isLoading) {
     return <LoadingSpinner />;
@@ -692,7 +554,6 @@ export function Cart() {
 
         <Row>
           {/* Cart Items Column */}
-<<<<<<< HEAD
           <Col xs={12} md={7} lg={8}>
             <div className="cart-summary p-4 rounded">
               <div className="cart-items">
@@ -753,105 +614,6 @@ export function Cart() {
                               />
                             </div>
                           )}
-=======
-          <Col xs={12} sm={7} md={6} lg={7}>
-            <div className="cart-items">
-              {fullCartItems.map((item) => (
-                <div key={item.cartId} className="cart-item bg-light mb-4 p-4 rounded-3">
-                  <h3>{item.name}</h3>
-                  <Row>
-                    {/* Preview Images Section in Cart.jsx */}
-                      <div className="col-xs-12 col-md-7">                        
-                        {/*
-                        {item.options.rawImageUrl && (
-                          <div className="cart-uploaded-image">
-                            <h4 className="h5 mb-2">Original Image:</h4>
-                            <img 
-                              src={getFullImage(item.options.rawImageUrl, 'raw')}
-                              alt="Original uploaded image"
-                              className="img-thumbnail img-fluid" 
-                              onError={(e) => {
-                                console.error('Error loading raw image:', item.options.rawImageUrl);
-                                e.target.src = '/placeholder-image.png';
-                              }}
-                            />
-                          </div>
-                        )}
-                        <br />
-                        */}
-
-                        {item.options.imageUrl && (
-                          <div className="cart-uploaded-image mb-3">
-                            <h4 className="h5 mb-2">Preview:</h4>
-                            <img 
-                              src={getFullImage(item.options.imageUrl, 'preview')}
-                              alt="Preview image"
-                              className="img-thumbnail img-fluid" 
-                              onError={(e) => {
-                                console.error('Error loading preview image:', item.options.imageUrl);
-                                e.target.src = '/placeholder-image.png';
-                              }}
-                            />
-                          </div>
-                        )} 
-                        {item.options.maskedImageUrl && (
-                          <div className="masked-image">
-                            <h4 className="h5 mb-2">Final Design:</h4>
-                            <img 
-                              src={getFullImage(item.options.maskedImageUrl, 'masked')}
-                              alt="Final masked image"
-                              className="img-thumbnail img-fluid" 
-                              onError={(e) => {
-                                console.error('Error loading masked image:', item.options.maskedImageUrl);
-                                e.target.src = '/placeholder-image.png';
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    {/* Item Details */}
-                    <div className="col-12 col-md-5">
-                      <div className="selected-options">
-                        <h4 className="h5 mb-2">Selected Options:</h4>
-                        <ul className="list-unstyled">
-                          <li>
-                            <span className="option-label">Size:</span>
-                            <span className="option-value">{item.options.size}</span>
-                          </li>
-                          <li>
-                            <span className="option-label">Background:</span>
-                            <span className="option-value">{item.options.background}</span>
-                          </li>
-                          <li>
-                            <span className="option-label">Light Base:</span>
-                            <span className="option-value">{item.options.lightBase}</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Custom Text if any */}
-                      {(item.options.customText?.line1 || item.options.customText?.line2) && (
-                        <div className="custom-text mt-3">
-                          <h4 className="h6 mb-2">Custom Text:</h4>
-                          <ul className="list-unstyled">
-                            {item.options.customText?.line1 && (
-                              <li>
-                                <span className="text-label">Line 1:</span>
-                                <span className="text-value">
-                                  {item.options.customText.line1}
-                                </span>
-                              </li>
-                            )}
-                            {item.options.customText?.line2 && (
-                              <li>
-                                <span className="text-label">Line 2:</span>
-                                <span className="text-value">
-                                  {item.options.customText.line2}
-                                </span>
-                              </li>
-                            )}
-                          </ul>
->>>>>>> development
                         </div>
                         
                         {/* Item Details */}
@@ -938,52 +700,9 @@ export function Cart() {
                         </div>
                       </Row>
                     </div>
-<<<<<<< HEAD
                   );
                 })}
                 <div className="d-flex justify-content-between mt-4">
-=======
-                  </Row>
-                </div>
-              ))}
-            </div>
-          </Col> 
-
-          {/* Cart Summary Column */}
-          <Col xs={12} sm={5} md={6} lg={5}>
-            <div className="cart-summary p-4 border rounded">
-              <Row>
-                <Col xs={12}>
-                  <div className="total-price mb-3">
-                    <h4>Total: ${cartTotal.toFixed(2)}</h4>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="text-md-end">
-                  {clientSecret ? (
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <form onSubmit={handleCheckout}>
-                        <PaymentElement />
-                        <button 
-                          type="submit"
-                          className="btn btn-primary btn-lg w-100 mt-4"
-                          disabled={!stripe || loadingState.isProcessing}
-                        >
-                          {loadingState.isProcessing ? "Processing..." : `Pay $${cartTotal.toFixed(2)}`}
-                        </button>
-                      </form>
-                    </Elements>
-                  ) : (
-                    <button
-                      onClick={handleCheckout}
-                      className="btn btn-primary btn-lg w-100"
-                      disabled={loadingState.isProcessing}
-                    >
-                      {loadingState.isProcessing ? "Processing..." : "Proceed to Checkout"}
-                    </button>
-                  )}
->>>>>>> development
                   <button
                     className="btn btn-outline-secondary"
                     onClick={handleClearCart}

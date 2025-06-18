@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-=======
-// components/layout/Navigation.jsx
-import { useState, useEffect } from 'react';
->>>>>>> development
 import { NavLink, useLocation } from 'react-router-dom';
 import { throttle } from 'lodash';
 import { ShoppingCart, X, Menu } from 'lucide-react'; // Added Menu and X icons
@@ -104,12 +99,9 @@ const Navigation = React.memo(({ onNavLinkClick }) => {
           FAQ
         </NavLink>
       </li>
-<<<<<<< HEAD
     {cartCount > 0 && (
       <li className="nav-item">
-=======
-      <li>
->>>>>>> development
+
         <NavLink 
           to="/cart" 
           onClick={onClick}
