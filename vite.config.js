@@ -157,6 +157,15 @@ const buildTasksPlugin = () => ({
     }
     
     console.log('✅ Post-build tasks completed successfully!');
+// Copy function for API folder
+const copyAPI = () => ({
+  name: 'copy-api',
+  closeBundle: async () => {
+    await fs.ensureDir('dist');
+    await fs.copy('api', 'dist/api');  
+    await fs.copy('config', 'dist/config')
+    // Copy .htaccess file to specific path
+    await fs.copy('.htaccess', path.join('dist', '.htaccess'))
   }
 });
 

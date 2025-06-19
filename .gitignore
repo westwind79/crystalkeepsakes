@@ -27,8 +27,8 @@ build/
 # Misc
 .DS_Store
 *.pem
-# IDE and Editor files
 
+# IDE and Editor files
 .idea/
 .vscode/
 *.swp
