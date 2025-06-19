@@ -31,54 +31,31 @@ export function Home({ product }) {
 
 	const heroRef = useRef(null);
 
-	useEffect(() => {
-		if (typeof window !== 'undefined') {
-	    gsap.registerPlugin(ScrollTrigger);
-	  }
 
-	  // Split text into words for animation
-	  const headlineText = document.querySelector('.hero h1');
-	  if (headlineText) {
-	    const words = headlineText.textContent.split(' ');
-	    headlineText.innerHTML = '';
+// useEffect(() => {
+// 	  // Text animation only - separate from scroll effects
+// 	  const headlineText = document.querySelector('.hero h1');
+// 	  if (headlineText) {
+// 	    const words = headlineText.textContent.split(' ');
+// 	    headlineText.innerHTML = '';
 	    
-	    words.forEach(word => {
-	      const span = document.createElement('span');
-	      span.className = 'animate-word';
-	      span.textContent = word + ' ';
-	      headlineText.appendChild(span);
-	    });
+// 	    words.forEach(word => {
+// 	      const span = document.createElement('span');
+// 	      span.className = 'animate-word';
+// 	      span.textContent = word + ' ';
+// 	      span.style.display = 'inline-block';
+// 	      headlineText.appendChild(span);
+// 	    });
 	    
-	    gsap.from('.animate-word', {
-	      opacity: 0,
-	      y: 20,
-	      rotation: 5,
-	      duration: 0.8,
-	      stagger: 0.1
-	    });
-	  }
- 
-    // Your hero section parallax effect
-    // gsap.to('.hero-image', {
-    //   scrollTrigger: {
-    //     trigger: '.hero',
-    //     start: "top top",
-    //     end: "bottom top",
-    //     scrub: true
-    //   },
-    //   y: -5,
-    //   scale: 1.05,
-    //   ease: "none"
-    // });
-
-    // Add more animations as needed
-    
-    return () => {
-      // Cleanup
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
-
+// 	    // Simple fade-in animation without complex transforms
+// 	    gsap.from('.animate-word', {
+// 	      opacity: 0,
+// 	      duration: 0.6,
+// 	      stagger: 0.1,
+// 	      ease: "power2.out"
+// 	    });
+// 	  }
+// 	}, []); // Text animation effect
 
   return (
   	<PageLayout 
@@ -91,7 +68,7 @@ export function Home({ product }) {
       <Container>
         <Row className="align-items-center mt-4 mb-3">
           <div className="hero-content col-12 col-sm-12 col-md-6 col-lg-5">
-            <h1 className="display-4 mb-4">Memories Preserved in Crystal</h1>
+            <h1 className="mb-4">Memories Preserved in Crystal</h1>
             <p className="lead mb-4">
               Transform your cherished photos into stunning 3D crystal art pieces. 
               Our precision laser technology creates beautiful, lasting memories.
@@ -207,8 +184,10 @@ export function Home({ product }) {
 	        <Col md={8}>
 	          <h2>Crafted with Precision</h2>
 	          <p className="lead">Perfect for anniversaries, graduations, birthdays, weddings, and memorials, each piece is crafted to showcase memories in stunning, light-catching detail.</p>
+	          
 	          <p>CrystalKeepsakes isn’t just a company delivering exceptional products and services. We’re a team of dedicated individuals with one shared mission: to make your experience unforgettable. From graphic designers and production technicians to customer support specialists, everyone at CrystalKeepsakes is committed to helping you create the perfect 3D crystal, from start to finish.</p>
-	          <p>Think of our website as an extension of our team, here to guide you through the process even when we’re not available in person. Have questions? Check out our FAQ page or reach out to us directly. We’re here to help!</p>
+	          
+	          <p>Think of our website as an extension of our team, here to guide you through the process even when we’re not available in person. Have questions? Check out our <Link to="/faq">FAQ page</Link> or reach out to us directly. We’re here to help!</p>
 	        </Col>
 	        <Col md={4}>
 	          <div className="text-center"> 

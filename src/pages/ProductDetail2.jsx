@@ -136,7 +136,7 @@ function useCatalogData() {
       try {
         setLoading(true);
         const devCacheBust = process.env.NODE_ENV === 'development' ? '?t=' + Date.now() : '';
-        const jsModule = await import(/* @vite-ignore */ `../../data/cockpit3d-products.js${devCacheBust}`);
+        const jsModule = await import(/* @vite-ignore */ `../data/cockpit3d-products.js`);
         const catalogData = jsModule.cockpit3dProducts;
         
         if (catalogData && Array.isArray(catalogData)) {

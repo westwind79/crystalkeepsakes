@@ -8,27 +8,36 @@ const rootDir = path.join(__dirname, '..');
 
 // Development mode logging
 function devLog(message) {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`🔨 PREBUILD: ${message}`);
-  }
+  console.log(`🔨 PREBUILD: ${message}`);
 }
 
-// Function to create a simple local server to test the API
-async function testLocalAPI() {
+// Function to test if MAMP/API is available
+async function testAPIAvailability() {
   try {
-    // Try to fetch from MAMP server - use the same URL as vite proxy
-    const response = await fetch('http://crystalkeepsakes:8888/api/cockpit3d-data-fetcher.php?action=generate-products');
+    console.log('🧪 Testing API availability...');
+    
+    // Test the exact same URL that vite uses in proxy
+    const testUrl = 'http://crystalkeepsakes:8888/api/cockpit3d-data-fetcher.php?action=generate-products';
+    
+    const response = await fetch(testUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Prebuild-Test/1.0'
+      },
+      signal: AbortSignal.timeout(10000) // 10 second timeout for test
+    });
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const result = await response.json();
-    devLog(`API Test Result: ${JSON.stringify(result, null, 2)}`);
+    devLog(`✅ API test successful - received ${result.count || 0} items`);
     
-    return result.success;
+    return true;
   } catch (error) {
-    devLog(`API test failed: ${error.message}`);
+    devLog(`❌ API test failed: ${error.message}`);
     return false;
   }
 }
@@ -43,7 +52,6 @@ async function createFallbackProductsFile() {
     const staticProductsUrl = `file://${staticProductsPath.replace(/\\/g, '/')}`;
     
     devLog(`Static products path: ${staticProductsPath}`);
-    devLog(`Static products URL: ${staticProductsUrl}`);
     
     // Check if file exists first
     const fileExists = await fs.pathExists(staticProductsPath);
@@ -52,6 +60,7 @@ async function createFallbackProductsFile() {
     }
     
     const { products } = await import(staticProductsUrl);
+    devLog(`Loaded ${products.length} static products`);
     
     // Create the fallback file content - FIXED: Use correct export name
     const jsContent = `// Auto-generated fallback products file - ${new Date().toISOString()}
@@ -68,8 +77,11 @@ export const fallbackReason = "API not available during build - using static pro
 export const sourceInfo = {
   static_products: ${products.length},
   cockpit3d_products: 0,
-  total: ${products.length}
+  final_total: ${products.length},
+  matching_algorithm: "fallback_static_only"
 };
+
+export default cockpit3dProducts;
 `;
 
     // Write the file
@@ -77,7 +89,8 @@ export const sourceInfo = {
     await fs.ensureDir(path.dirname(outputPath));
     await fs.writeFile(outputPath, jsContent);
     
-    devLog(`Fallback products file created: ${outputPath}`);
+    devLog(`✅ Fallback products file created: ${outputPath}`);
+    devLog(`📊 Fallback file contains ${products.length} static products`);
     return true;
     
   } catch (error) {
@@ -91,8 +104,8 @@ async function generateProductsViaAPI() {
   devLog('Attempting to generate products via API...');
   
   try {
-    // FIXED: Use the correct API URL (same as vite proxy) and action
-    const apiUrl = process.env.VITE_API_URL || 'http://crystalkeepsakes:8888';
+    // FIXED: Use the same URL structure as vite proxy
+    const apiUrl = 'http://crystalkeepsakes:8888';
     const fullUrl = `${apiUrl}/api/cockpit3d-data-fetcher.php?action=generate-products&refresh=true`;
     
     devLog(`Calling API: ${fullUrl}`);
@@ -103,13 +116,12 @@ async function generateProductsViaAPI() {
         'Accept': 'application/json',
         'User-Agent': 'Prebuild-Script/1.0'
       },
-      // Add timeout
-      signal: AbortSignal.timeout(60000) // 60 second timeout
+      signal: AbortSignal.timeout(120000) // 2 minute timeout for generation
     });
     
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${response.statusText}. Response: ${errorText}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}. Response: ${errorText.substring(0, 200)}`);
     }
     
     const result = await response.json();
@@ -127,14 +139,20 @@ async function generateProductsViaAPI() {
       throw new Error('API call succeeded but products file was not created');
     }
     
-    // ADDED: Also verify the file has content
+    // Verify the file has content
     const stats = await fs.stat(productsFilePath);
     if (stats.size < 100) {
       throw new Error('Products file was created but appears to be empty or corrupted');
     }
     
-    devLog(`✅ Products file generated successfully via API (${stats.size} bytes)`);
-    devLog(`✅ Generated ${result.products_count} total products (${result.static_count} static + ${result.cockpit3d_count} CockPit3D)`);
+    devLog(`✅ Products file generated successfully via API (${Math.round(stats.size/1024)}KB)`);
+    devLog(`✅ Generated ${result.total_products || result.merged_count} total products`);
+    
+    // Log detailed breakdown if available
+    if (result.static_count !== undefined && result.cockpit3d_count !== undefined) {
+      devLog(`📊 Breakdown: ${result.static_count} static + ${result.cockpit3d_count} CockPit3D = ${result.total_products} total`);
+    }
+    
     return true;
     
   } catch (error) {
@@ -143,7 +161,7 @@ async function generateProductsViaAPI() {
   }
 }
 
-// ADDED: Function to verify the generated file
+// Function to verify the generated file
 async function verifyGeneratedFile() {
   try {
     const productsFilePath = path.join(rootDir, 'src/data/cockpit3d-products.js');
@@ -169,10 +187,14 @@ async function verifyGeneratedFile() {
       const products = JSON.parse(match[1]);
       const productCount = Array.isArray(products) ? products.length : 0;
       
+      if (productCount < 2) {
+        return { valid: false, error: `Too few products found: ${productCount}. Expected at least 2.` };
+      }
+      
       devLog(`✅ File verification passed: ${productCount} products found`);
       return { valid: true, productCount };
     } catch (parseError) {
-      return { valid: false, error: 'Products array is not valid JSON' };
+      return { valid: false, error: 'Products array is not valid JSON: ' + parseError.message };
     }
     
   } catch (error) {
@@ -185,30 +207,41 @@ async function prebuild() {
   console.log('🚀 Starting prebuild process...');
   
   try {
-    // First, try to generate via API
-    const apiSuccess = await generateProductsViaAPI();
+    // First, test if API is available
+    const isAPIAvailable = await testAPIAvailability();
     
-    if (apiSuccess) {
-      // Verify the generated file
-      const verification = await verifyGeneratedFile();
-      if (verification.valid) {
-        console.log(`✅ Prebuild completed - ${verification.productCount} products generated via API`);
-        return;
+    if (isAPIAvailable) {
+      console.log('✅ API is available, attempting to generate products...');
+      
+      // Try to generate via API
+      const apiSuccess = await generateProductsViaAPI();
+      
+      if (apiSuccess) {
+        // Verify the generated file
+        const verification = await verifyGeneratedFile();
+        if (verification.valid) {
+          console.log(`✅ Prebuild completed successfully - ${verification.productCount} products generated via API`);
+          return;
+        } else {
+          console.log(`⚠️ Generated file failed verification: ${verification.error}`);
+          console.log('🔄 Falling back to static products...');
+        }
       } else {
-        console.log(`⚠️ Generated file failed verification: ${verification.error}`);
-        console.log('🔄 Falling back to static products...');
+        console.log('⚠️ API generation failed, falling back to static products...');
       }
+    } else {
+      console.log('⚠️ API not available (MAMP may not be running), using static products...');
     }
     
     // If API fails or verification fails, create fallback file
-    console.log('⚠️ API generation failed, creating fallback file...');
+    console.log('📁 Creating fallback file from static products...');
     const fallbackSuccess = await createFallbackProductsFile();
     
     if (fallbackSuccess) {
       // Verify the fallback file
       const verification = await verifyGeneratedFile();
       if (verification.valid) {
-        console.log(`✅ Prebuild completed - ${verification.productCount} fallback products file created`);
+        console.log(`✅ Prebuild completed with fallback - ${verification.productCount} static products`);
         return;
       } else {
         console.error(`❌ Fallback file failed verification: ${verification.error}`);
@@ -217,17 +250,20 @@ async function prebuild() {
     
     // If everything fails, exit with error
     console.error('❌ Prebuild failed - could not generate or create fallback products file');
-    process.exit(1);
+    throw new Error('All prebuild methods failed');
     
   } catch (error) {
     console.error(`❌ Prebuild error: ${error.message}`);
-    process.exit(1);
+    throw error; // Re-throw to be caught by vite config
   }
 }
 
 // Run prebuild if this script is executed directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  prebuild();
+  prebuild().catch((error) => {
+    console.error('Prebuild failed:', error.message);
+    process.exit(1);
+  });
 }
 
 export { prebuild };

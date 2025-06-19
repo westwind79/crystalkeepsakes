@@ -89,6 +89,43 @@ class CockPit3DFetcher {
     private $cacheDir;
     private $cacheMaxAge;
 
+    /**
+    * PRICING CONFIGURATION - Add this to the class properties
+    */
+    private $pricingConfig = [
+        'markup_percentage' => 160,  // 160% markup = 62% profit margin
+        'show_original_price' => true,
+        'original_price_multiplier' => 2.5,  // For strikethrough pricing
+        
+        // Size multipliers based on dimensions/complexity
+        'size_multipliers' => [
+            // Small sizes (under 8cm)
+            'small' => 1.0,
+            'mini' => 1.0,
+            '6x4' => 1.0,
+            '5x5' => 1.0,
+            
+            // Medium sizes (8-12cm)
+            'medium' => 1.3,
+            '8x5' => 1.3,
+            '9x6' => 1.3,
+            
+            // Large sizes (12-18cm)
+            'large' => 1.8,
+            'xlarge' => 2.2,
+            '12x8' => 2.2,
+            '15x10' => 2.8,
+            
+            // Mantel sizes (18cm+)
+            'mantel' => 3.5,
+            'presidential' => 4.2,
+            '18x12' => 3.5,
+            '22x16' => 4.2,
+            '27x18' => 5.0
+        ]
+    ];
+
+
     public function __construct() {
         console_log("🚀 Initializing CockPit3DFetcher...");
 
@@ -194,6 +231,10 @@ class CockPit3DFetcher {
         
         $url = (strpos($endpoint, 'http') === 0) ? $endpoint : $this->baseUrl . $endpoint;
         console_log("Full URL", $url);
+        
+        // ADD THIS - ALWAYS OUTPUT THE URL SO YOU CAN SEE IT:
+        echo "🌐 ACTUAL API URL BEING USED: " . $url . "\n";
+        error_log("🌐 ACTUAL API URL BEING USED: " . $url);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -305,7 +346,79 @@ class CockPit3DFetcher {
         }
     }
 
-     private function transformCockpit3dProduct($rawProduct, $catalog = []) {
+    /**
+     * Calculate customer price from cost with profit margin
+     */
+    private function calculateCustomerPrice($costPrice, $sizeMultiplier = 1.0) {
+        $baseCost = (float)$costPrice;
+        $adjustedCost = $baseCost * $sizeMultiplier;
+        
+        // Apply markup percentage
+        $customerPrice = $adjustedCost * (1 + ($this->pricingConfig['markup_percentage'] / 100));
+        
+        // Round to nearest .99 or .00 for psychological pricing
+        $rounded = round($customerPrice);
+        if ($rounded > $customerPrice) {
+            $finalPrice = $rounded - 0.01; // Make it $XX.99
+        } else {
+            $finalPrice = $rounded;
+        }
+        
+        console_log("💰 Price calculation", [
+            'cost' => $baseCost,
+            'size_multiplier' => $sizeMultiplier,
+            'adjusted_cost' => $adjustedCost,
+            'markup_percent' => $this->pricingConfig['markup_percentage'],
+            'calculated_price' => $customerPrice,
+            'final_price' => $finalPrice
+        ]);
+        
+        return $finalPrice;
+    }
+
+    /**
+     * Get size multiplier based on size name
+     */
+    private function getSizeMultiplier($sizeName) {
+        $name = strtolower($sizeName);
+        $multipliers = $this->pricingConfig['size_multipliers'];
+        
+        // Check for exact keyword matches first
+        foreach ($multipliers as $keyword => $multiplier) {
+            if (strpos($name, $keyword) !== false) {
+                console_log("🔍 Size multiplier found", ['size' => $sizeName, 'keyword' => $keyword, 'multiplier' => $multiplier]);
+                return $multiplier;
+            }
+        }
+        
+        // Fallback: analyze dimensions if present
+        if (preg_match('/(\d+)x(\d+)cm/', $name, $matches)) {
+            $width = (int)$matches[1];
+            $height = (int)$matches[2];
+            $area = $width * $height;
+            
+            if ($area < 50) return 1.0;      // Small
+            if ($area < 100) return 1.3;    // Medium  
+            if ($area < 200) return 1.8;    // Large
+            if ($area < 300) return 2.8;    // XLarge
+            return 4.2;                     // Presidential
+        }
+        
+        console_log("⚠️ No size multiplier found, using default", ['size' => $sizeName]);
+        return 1.0; // Default multiplier
+    }
+    /**
+     * Calculate original price for strikethrough display
+     */
+    private function calculateOriginalPrice($customerPrice) {
+        return round($customerPrice * $this->pricingConfig['original_price_multiplier']);
+    }
+
+        
+    /**
+     * ENHANCED transformCockpit3dProduct with proper size pricing
+     */
+    private function transformCockpit3dProduct($rawProduct, $catalog = []) {
         console_log("🔄 Transforming CockPit3D product", $rawProduct['id']);
         
         // Check if this is a lightbase product by name
@@ -359,32 +472,25 @@ class CockPit3DFetcher {
 
         // ONLY ADD PRODUCT OPTIONS IF IT'S NOT A LIGHTBASE
         if (!$isLightbaseProduct) {
-            // Handle size options with ACTUAL prices
+            // Handle size options - USE PRICING FILE INSTEAD OF CALCULATIONS
             if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
                 foreach ($rawProduct['options'] as $option) {
                     if ($option['name'] === 'Size' && isset($option['values'])) {
-                        $transformed['sizes'] = array_map(function($value) use ($rawProduct) {
-                            $price = isset($value['price']) && is_numeric($value['price']) 
-                                ? (float)$value['price'] 
-                                : (float)$rawProduct['price']; // fallback
-
-                            if (!is_numeric($value['price'])) {
-                                console_log("⚠️ SIZE PRICE NOT NUMERIC", $value);
-                            }
-
+                        $transformed['sizes'] = array_map(function($value) {
+                            // Get pricing from the separate pricing file (to be loaded by frontend)
                             return [
                                 'id' => (string)$value['id'],
                                 'name' => $value['name'],
-                                'price' => $price
+                                'price' => 0, // Frontend will load from pricing file
+                                'usePricingFile' => true // Flag for frontend to use pricing file
                             ];
                         }, $option['values']);
                     }
                 }
             }
 
-            
             // Add standard lightbase options for crystal products
-            $transformed['lightBases'] = $this->extractLightbaseOptions($catalog);
+            $transformed['lightBases'] = $this->extractLightbaseOptionsFixed($catalog);
             
             // Add background options with prices from catalog
             $transformed['backgroundOptions'] = $this->extractBackgroundOptions($catalog);
@@ -398,17 +504,86 @@ class CockPit3DFetcher {
             'basePrice' => $transformed['basePrice'],
             'isLightbase' => $isLightbaseProduct,
             'requiresImage' => $transformed['requiresImage'] ?? false,
-            'hasSizes' => isset($transformed['sizes']) ? count($transformed['sizes']) : 0,
-            'hasImages' => count($transformed['images']),
-            'slug' => $transformed['slug']
+            'hasSizes' => isset($transformed['sizes']) ? count($transformed['sizes']) : 0
         ]);
         
         return $transformed;
     }
+        
+    /**
+    * FIXED extractLightbaseOptions - removes the bug
+    */
+    private function extractLightbaseOptionsFixed($catalog) {
+        $options = [
+            [
+                'id' => 'none',
+                'name' => 'No Base',
+                'price' => 0
+            ]
+        ];
+        
+        // Add standard lightbase options with known prices
+        $standardLightbases = [
+            ['id' => 'lightbase-rectangle', 'name' => 'Lightbase Rectangle', 'price' => 25],
+            ['id' => 'lightbase-square', 'name' => 'Lightbase Square', 'price' => 25],
+            ['id' => 'lightbase-wood-small', 'name' => 'Lightbase Wood Small', 'price' => 60],
+            ['id' => 'lightbase-wood-medium', 'name' => 'Lightbase Wood Medium', 'price' => 60],
+            ['id' => 'lightbase-wood-long', 'name' => 'Lightbase Wood Long', 'price' => 60],
+            ['id' => 'rotating-led-lightbase', 'name' => 'Rotating LED Lightbase', 'price' => 35],
+            ['id' => 'wooden-premium-base-mini', 'name' => 'Wooden Premium Base Mini', 'price' => 60],
+            ['id' => 'concave-lightbase', 'name' => 'Concave Lightbase', 'price' => 39],
+            ['id' => 'ornament-stand', 'name' => 'Ornament Stand', 'price' => 25]
+        ];
+        
+        foreach ($standardLightbases as $base) {
+            $options[] = $base;
+        }
+
+        return $options;
+    }
+    
+    /**
+     * Find individual product by size ID
+     * Size IDs in catalog options should match product IDs in raw products
+     */
+    private function findProductBySizeId($sizeId, $allRawProducts) {
+        foreach ($allRawProducts as $product) {
+            if ($product['id'] === $sizeId) {
+                return $product;
+            }
+        }
+        return null;
+    }
 
     /**
-     * Check if a product is a lightbase/stand product
-     */
+    * Get base cost from admin panel or estimate
+    * This is where you'd integrate with the actual cost data
+    */
+    private function getBaseCostForProduct($productId, $productName) {
+        // TODO: Replace this with actual admin panel cost lookup
+        // For now, using estimated base costs
+        
+        $estimatedCosts = [
+            'rectangle' => 24.75,
+            'heart' => 28.50,
+            'cube' => 32.00,
+            'cylinder' => 29.75,
+            'dome' => 45.00
+        ];
+        
+        $name = strtolower($productName);
+        foreach ($estimatedCosts as $type => $cost) {
+            if (strpos($name, $type) !== false) {
+                return $cost;
+            }
+        }
+        
+        return 24.75; // Default base cost
+    }
+
+    /**
+    * Check if a product is a lightbase/stand product
+    */
     private function isLightbaseProduct($productName) {
         $name = strtolower($productName);
         $lightbaseKeywords = [
@@ -434,8 +609,9 @@ class CockPit3DFetcher {
     }
 
     /**
-     * Extract lightbase options with prices
-     */
+    * Extract lightbase options with prices - FIXED VERSION
+    * Replace the existing extractLightbaseOptions() method in your fetcher
+    */
     private function extractLightbaseOptions($catalog) {
         $options = [
             [
@@ -460,7 +636,8 @@ class CockPit3DFetcher {
             }
         }
         
-        foreach ($lightbaseOptions as &$base) {
+        // FIXED: Use $options instead of undefined $lightbaseOptions
+        foreach ($options as &$base) {
             if (!isset($base['price']) || $base['price'] === true || $base['price'] === false) {
                 console_log("🛑 Invalid lightbase price, forcing to 0", $base);
                 $base['price'] = 0;
@@ -633,8 +810,8 @@ class CockPit3DFetcher {
 
     // NEW: Generate the combined products file (static + CockPit3D)
     public function generateProcessedProductsFile($refresh = false) {
-        console_log("🔧 Generating processed products file (static + CockPit3D)...");
-        
+        console_log("🔧 Generating processed products file with Name/SKU matching...");
+            
         try {
             // First, ensure we have raw data
             console_log("📡 Ensuring raw data is available...");
@@ -650,92 +827,73 @@ class CockPit3DFetcher {
             $staticProducts = $this->loadStaticProducts();
             console_log("Static products loaded", count($staticProducts) . " products");
             
-            // Load raw CockPit3D data
+            // Load and transform raw CockPit3D data
             console_log("📦 Loading raw CockPit3D data...");
             $cockpitProducts = [];
             $rawProductsFile = $this->cacheDir . 'cockpit3d-raw-products.js';
             $rawCatalogFile = $this->cacheDir . 'cockpit3d-raw-catalog.js';
             
-            console_log("Checking raw files", [
-                'products_file' => file_exists($rawProductsFile) ? 'EXISTS' : 'MISSING',
-                'catalog_file' => file_exists($rawCatalogFile) ? 'EXISTS' : 'MISSING'
-            ]);
-            
             if (file_exists($rawProductsFile) && file_exists($rawCatalogFile)) {
-                // Read and parse raw products
+                // Parse raw data
                 $rawProductsContent = file_get_contents($rawProductsFile);
+                $rawCatalogContent = file_get_contents($rawCatalogFile);
+                
                 if (preg_match('/export\s+const\s+cockpit3dRawProducts\s*=\s*(\[.*?\]);/s', $rawProductsContent, $matches)) {
                     $rawProducts = json_decode($matches[1], true);
-                    console_log("Raw products parsed", count($rawProducts) . " products");
                     
-                    // Read and parse raw catalog
-                    $rawCatalogContent = file_get_contents($rawCatalogFile);
                     if (preg_match('/export\s+const\s+cockpit3dRawCatalog\s*=\s*(\[.*?\]);/s', $rawCatalogContent, $matches)) {
                         $rawCatalog = json_decode($matches[1], true);
-                        console_log("Raw catalog parsed", count($rawCatalog) . " items");
                         
-                        // Transform each CockPit3D product
+                        // Transform CockPit3D products - PASS ALL RAW PRODUCTS FOR SIZE LOOKUP
                         if (is_array($rawProducts)) {
                             foreach ($rawProducts as $rawProduct) {
-                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog);
+                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog, $rawProducts);
                             }
                         }
-                    } else {
-                        console_log("❌ Could not parse raw catalog content");
                     }
-                } else {
-                    console_log("❌ Could not parse raw products content");
                 }
-            } else {
-                console_log("⚠️ Raw files not found, continuing with static products only");
             }
             
-            // Combine static + CockPit3D products
-            $allProducts = array_merge($staticProducts, $cockpitProducts);
-            console_log("🔗 Combined products", [
+            console_log("Raw data loaded", [
+                'static_products' => count($staticProducts),
+                'cockpit3d_products' => count($cockpitProducts)
+            ]);
+            
+            // INTELLIGENT MATCHING AND CONCATENATION
+            $finalProducts = $this->intelligentProductMerge($staticProducts, $cockpitProducts);
+            
+            console_log("🔗 Intelligent merge completed", [
                 'static' => count($staticProducts),
                 'cockpit3d' => count($cockpitProducts),
-                'total' => count($allProducts)
+                'final_total' => count($finalProducts),
+                'merged_products' => count($finalProducts) - count($cockpitProducts)
             ]);
             
             // Generate the processed products file
             $processedProductsFile = $this->cacheDir . 'cockpit3d-products.js';
-            $jsContent = "// Combined processed products (static + CockPit3D) - " . date('Y-m-d H:i:s') . "\n\n";
-            $jsContent .= "export const cockpit3dProducts = " . json_encode($allProducts, JSON_PRETTY_PRINT) . ";\n\n";
+            $jsContent = "// Intelligently merged products (static + CockPit3D) - " . date('Y-m-d H:i:s') . "\n\n";
+            $jsContent .= "export const cockpit3dProducts = " . json_encode($finalProducts, JSON_PRETTY_PRINT) . ";\n\n";
             $jsContent .= "export const generatedAt = \"" . date('c') . "\";\n\n";
             $jsContent .= "export const isRealTimeData = true;\n\n";
             $jsContent .= "export const sourceInfo = {\n";
             $jsContent .= "  static_products: " . count($staticProducts) . ",\n";
             $jsContent .= "  cockpit3d_products: " . count($cockpitProducts) . ",\n";
-            $jsContent .= "  total: " . count($allProducts) . "\n";
-            $jsContent .= "};\n";
+            $jsContent .= "  final_total: " . count($finalProducts) . ",\n";
+            $jsContent .= "  matching_algorithm: \"name_sku_fuzzy\"\n";
+            $jsContent .= "};\n\n";
+            $jsContent .= "export default cockpit3dProducts;\n";
             
-            $result = file_put_contents($processedProductsFile, $jsContent);
-            if ($result === false) {
-                throw new Exception("Failed to write processed products file: " . $processedProductsFile);
-            }
+            $success = file_put_contents($processedProductsFile, $jsContent) !== false;
             
-            console_log("✅ Processed products file saved successfully", [
-                'file' => $processedProductsFile,
-                'size' => $result . ' bytes',
-                'total_products' => count($allProducts),
-                'static_count' => count($staticProducts),
-                'cockpit3d_count' => count($cockpitProducts)
-            ]);
-            
-            if (count($staticProducts) > 0) {
-                console_log("First static product in final array", $allProducts[0]);
-            }
-            if (count($cockpitProducts) > 0) {
-                console_log("First CockPit3D product in final array", $allProducts[count($staticProducts)]);
-            }
+            console_log($success ? "✅ Processed products file generated successfully" : "❌ Failed to generate processed products file");
             
             return [
-                'success' => true,
-                'products_count' => count($allProducts),
+                'success' => $success,
+                'file' => $processedProductsFile,
+                'total_products' => count($finalProducts),
                 'static_count' => count($staticProducts),
                 'cockpit3d_count' => count($cockpitProducts),
-                'file_size' => $result
+                'merged_count' => count($finalProducts)
             ];
             
         } catch (Exception $e) {
@@ -746,6 +904,218 @@ class CockPit3DFetcher {
             ];
         }
     }
+
+    /**
+     * Intelligent product merge using Name/SKU matching
+     */
+    private function intelligentProductMerge($staticProducts, $cockpitProducts) {
+        $finalProducts = [];
+        $matchedCockpitIds = [];
+        
+        console_log("🔍 Starting intelligent product matching...");
+        
+        // Step 1: Try to match each static product with CockPit3D products
+        foreach ($staticProducts as $staticProduct) {
+            $matchedCockpitProduct = $this->findMatchingCockpitProduct($staticProduct, $cockpitProducts);
+            
+            if ($matchedCockpitProduct) {
+                // Found a match - merge the products
+                console_log("✅ MATCH FOUND", [
+                    'static' => $staticProduct['name'],
+                    'cockpit3d' => $matchedCockpitProduct['name'],
+                    'match_score' => $this->calculateMatchScore($staticProduct, $matchedCockpitProduct)
+                ]);
+                
+                $mergedProduct = $this->mergeProducts($staticProduct, $matchedCockpitProduct);
+                $finalProducts[] = $mergedProduct;
+                $matchedCockpitIds[] = $matchedCockpitProduct['id'];
+                
+            } else {
+                // No match found - keep static product as-is
+                console_log("➕ STATIC ONLY", ['name' => $staticProduct['name']]);
+                $finalProducts[] = $staticProduct;
+            }
+        }
+        
+        // Step 2: Add unmatched CockPit3D products
+        foreach ($cockpitProducts as $cockpitProduct) {
+            if (!in_array($cockpitProduct['id'], $matchedCockpitIds)) {
+                console_log("➕ COCKPIT3D ONLY", ['name' => $cockpitProduct['name']]);
+                $finalProducts[] = $cockpitProduct;
+            }
+        }
+        
+        console_log("🎯 Matching summary", [
+            'static_products' => count($staticProducts),
+            'cockpit3d_products' => count($cockpitProducts),
+            'matched_pairs' => count($matchedCockpitIds),
+            'final_total' => count($finalProducts)
+        ]);
+        
+        return $finalProducts;
+    }
+
+    /**
+     * Find matching CockPit3D product for a static product
+     */
+    private function findMatchingCockpitProduct($staticProduct, $cockpitProducts) {
+        $bestMatch = null;
+        $bestScore = 0;
+        $minimumScore = 0.6; // 60% similarity threshold
+        
+        foreach ($cockpitProducts as $cockpitProduct) {
+            $score = $this->calculateMatchScore($staticProduct, $cockpitProduct);
+            
+            if ($score > $bestScore && $score >= $minimumScore) {
+                $bestScore = $score;
+                $bestMatch = $cockpitProduct;
+            }
+        }
+        
+        return $bestMatch;
+    }
+
+    /**
+     * Calculate match score between two products using Name and SKU
+     */
+    private function calculateMatchScore($staticProduct, $cockpitProduct) {
+        $score = 0;
+        
+        // Name matching (70% weight)
+        $nameScore = $this->calculateNameSimilarity($staticProduct['name'], $cockpitProduct['name']);
+        $score += $nameScore * 0.7;
+        
+        // SKU matching (30% weight) - if both have SKUs
+        if (isset($staticProduct['sku']) && isset($cockpitProduct['sku']) && 
+            !empty($staticProduct['sku']) && !empty($cockpitProduct['sku'])) {
+            $skuScore = $this->calculateSkuSimilarity($staticProduct['sku'], $cockpitProduct['sku']);
+            $score += $skuScore * 0.3;
+        }
+        
+        return $score;
+    }
+
+    /**
+     * Calculate name similarity using fuzzy matching
+     */
+    private function calculateNameSimilarity($name1, $name2) {
+        // Normalize names for comparison
+        $name1 = $this->normalizeProductName($name1);
+        $name2 = $this->normalizeProductName($name2);
+        
+        // Exact match
+        if ($name1 === $name2) {
+            return 1.0;
+        }
+        
+        // Check if one contains the other
+        if (strpos($name1, $name2) !== false || strpos($name2, $name1) !== false) {
+            return 0.8;
+        }
+        
+        // Calculate similarity percentage using similar_text
+        $similarity = 0;
+        similar_text($name1, $name2, $similarity);
+        
+        return $similarity / 100.0;
+    }
+
+    /**
+     * Calculate SKU similarity
+     */
+    private function calculateSkuSimilarity($sku1, $sku2) {
+        $sku1 = strtolower(trim($sku1));
+        $sku2 = strtolower(trim($sku2));
+        
+        if ($sku1 === $sku2) {
+            return 1.0;
+        }
+        
+        // Check for partial matches
+        if (strpos($sku1, $sku2) !== false || strpos($sku2, $sku1) !== false) {
+            return 0.7;
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Normalize product name for better matching
+     */
+    private function normalizeProductName($name) {
+        $name = strtolower($name);
+        // Remove common words that don't help with matching
+        $removeWords = ['3d', 'crystal', 'static', 'custom', 'laser', 'engraving'];
+        foreach ($removeWords as $word) {
+            $name = str_replace($word, '', $name);
+        }
+        // Remove extra spaces and special characters
+        $name = preg_replace('/[^a-z0-9\s]/', '', $name);
+        $name = preg_replace('/\s+/', ' ', $name);
+        return trim($name);
+    }
+
+    /**
+     * Merge static product with CockPit3D product data
+     */
+    private function mergeProducts($staticProduct, $cockpitProduct) {
+        console_log("🔗 Merging products", [
+            'static_id' => $staticProduct['id'],
+            'cockpit3d_id' => $cockpitProduct['id']
+        ]);
+        
+        // Start with static product as base
+        $merged = $staticProduct;
+        
+        // Enhance with CockPit3D data (only if static data is missing/empty)
+        
+        // Use CockPit3D ID for backend compatibility
+        $merged['cockpit3d_id'] = $cockpitProduct['id'];
+        $merged['sku'] = $cockpitProduct['sku'] ?? $staticProduct['sku'];
+        
+        // Pricing - prefer CockPit3D pricing
+        if (isset($cockpitProduct['basePrice']) && $cockpitProduct['basePrice'] > 0) {
+            $merged['basePrice'] = $cockpitProduct['basePrice'];
+        }
+        
+        // Images - prefer CockPit3D images if available
+        if (isset($cockpitProduct['images']) && !empty($cockpitProduct['images'])) {
+            $merged['images'] = $cockpitProduct['images'];
+        }
+        
+        // Product options - merge from CockPit3D
+        if (isset($cockpitProduct['sizes']) && !empty($cockpitProduct['sizes'])) {
+            $merged['sizes'] = $cockpitProduct['sizes'];
+        }
+        
+        if (isset($cockpitProduct['lightBases']) && !empty($cockpitProduct['lightBases'])) {
+            $merged['lightBases'] = $cockpitProduct['lightBases'];
+        }
+        
+        if (isset($cockpitProduct['backgroundOptions']) && !empty($cockpitProduct['backgroundOptions'])) {
+            $merged['backgroundOptions'] = $cockpitProduct['backgroundOptions'];
+        }
+        
+        if (isset($cockpitProduct['textOptions']) && !empty($cockpitProduct['textOptions'])) {
+            $merged['textOptions'] = $cockpitProduct['textOptions'];
+        }
+        
+        // Requirements
+        if (isset($cockpitProduct['requiresImage'])) {
+            $merged['requiresImage'] = $cockpitProduct['requiresImage'];
+        }
+        
+        console_log("✅ Products merged successfully", [
+            'final_name' => $merged['name'],
+            'final_id' => $merged['id'],
+            'cockpit3d_id' => $merged['cockpit3d_id'],
+            'has_sizes' => isset($merged['sizes']) ? count($merged['sizes']) : 0
+        ]);
+        
+        return $merged;
+    }
+
+
 }
 
 // Only execute the action handling if this file is called directly

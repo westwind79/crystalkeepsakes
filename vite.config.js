@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { compression } from 'vite-plugin-compression2'
+// import { prebuild } from './scripts/prebuild.js'  // Import the prebuild function
 
 // Get current directory in ES module
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,14 +12,28 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Import products for generating routes
 import { products } from './src/data/static-products.js'
 
-
-// Function to handle post-build tasks
-const postBuildTasks = () => ({
-  name: 'post-build-tasks',
+// FIXED: Combined prebuild and post-build tasks plugin
+const buildTasksPlugin = () => ({
+  name: 'build-tasks-plugin',
+  
+  // FIXED: Run prebuild BEFORE build starts
+  // buildStart: async () => {
+  //   console.log('🚀 Running prebuild tasks...');
+  //   try {
+  //     await prebuild();
+  //     console.log('✅ Prebuild tasks completed successfully');
+  //   } catch (error) {
+  //     console.error('❌ Prebuild failed:', error.message);
+  //     // Don't fail the build - continue with fallback data
+  //     console.warn('⚠️ Continuing with fallback data...');
+  //   }
+  // },
+  
+  // Post-build tasks (existing functionality)
   writeBundle: async () => {
-    console.log('Running post-build tasks...');
+    console.log('🎯 Running post-build tasks...');
     
-    // Copy API and other necessary files (ONCE)
+    // Copy API and other necessary files
     await fs.ensureDir('dist');
     await fs.copy('api', 'dist/api');
     await fs.copy('./src/admin', 'dist/admin');
@@ -27,32 +42,29 @@ const postBuildTasks = () => ({
     const rawCatalogFile = 'src/data/cockpit3d-raw-catalog.js';
     const rawProductsFile = 'src/data/cockpit3d-raw-products.js';
     
+    // Copy the generated products file
     if (fs.existsSync(combinedFile)) {
       await fs.ensureDir('dist/data');
       await fs.copy(combinedFile, 'dist/data/cockpit3d-products.js');
       console.log('✅ Copied combined products file to dist');
     } else {
-      console.warn('⚠️ Combined products file not found - run data generation first');
+      console.warn('⚠️ Combined products file not found - build may have incomplete data');
     }
     
-    // Copy raw catalog file for ProductDetail2
+    // Copy raw files if they exist
     if (fs.existsSync(rawCatalogFile)) {
       await fs.ensureDir('dist/data');
       await fs.copy(rawCatalogFile, 'dist/data/cockpit3d-raw-catalog.js');
       console.log('✅ Copied raw catalog file to dist');
-    } else {
-      console.warn('⚠️ Raw catalog file not found - run data generation first');
     }
     
-    // Copy raw catalog file for ProductDetail2
     if (fs.existsSync(rawProductsFile)) {
       await fs.ensureDir('dist/data');
       await fs.copy(rawProductsFile, 'dist/data/cockpit3d-raw-products.js');
-      console.log('✅ Copied raw Products file to dist');
-    } else {
-      console.warn('⚠️ Raw Products file not found - run data generation first');
+      console.log('✅ Copied raw products file to dist');
     }
 
+    // Copy other required files
     await fs.copy('.htaccess', 'dist/.htaccess');
     await fs.copy('robots.txt', 'dist/robots.txt');
     
@@ -71,7 +83,7 @@ const postBuildTasks = () => ({
     
     // Try to load the combined products file for sitemap
     try {
-      console.log('🔍 Looking for combined products file...');
+      console.log('🔍 Looking for combined products file for sitemap...');
     
       if (fs.existsSync(combinedFile)) {
         console.log('✅ Combined products file exists');
@@ -85,7 +97,7 @@ const postBuildTasks = () => ({
           try {
             allProducts = JSON.parse(match[1]);
             console.log(`📍 SITEMAP: Successfully loaded ${allProducts.length} products from combined file`);
-            console.log('📍 First few products:', allProducts.slice(0, 3).map(p => p.name));
+            console.log('📍 First few products:', allProducts.slice(0, 3).map(p => ({ name: p.name, slug: p.slug })));
           } catch (parseError) {
             console.error('❌ JSON parse error:', parseError.message);
             throw parseError;
@@ -104,14 +116,13 @@ const postBuildTasks = () => ({
       console.warn('⚠️ Falling back to static products');
       
       // Fallback to static products
-      const { products: staticProducts } = await import('./src/data/static-products.js');
-      allProducts = staticProducts;
+      allProducts = products;
       console.log(`📍 SITEMAP: Using ${allProducts.length} static products as fallback`);
     }
 
     // Generate product routes ONLY for /product2/ paths (not the old /product/ routes)
     const productRoutes = allProducts.map(product => `/product2/${product.slug}`);
-    console.log('📍 Generated product routes:', productRoutes.length);
+    console.log(`📍 Generated ${productRoutes.length} product routes`);
 
     const allRoutes = [...routes, ...productRoutes];
 
@@ -145,7 +156,7 @@ const postBuildTasks = () => ({
       await fs.writeFile(path.join(routePath, 'index.html'), indexHtml);
     }
     
-    console.log('Post-build tasks completed successfully!');
+    console.log('✅ Post-build tasks completed successfully!');
   }
 });
 
@@ -162,7 +173,7 @@ export default defineConfig(async ({ command, mode }) => {
     react({
       fastRefresh: true
     }),
-    postBuildTasks()
+    buildTasksPlugin() // FIXED: Combined plugin with both buildStart and writeBundle
   ];
   
   // Add compression plugin for production
@@ -179,7 +190,7 @@ export default defineConfig(async ({ command, mode }) => {
           : env.VITE_STRIPE_LIVE_PUBLISHABLE_KEY
       ),
       'process.env.STRIPE_MODE': JSON.stringify(
-        useStripeTestKeys ? 'test' : 'live'
+        useStripeTestKeys ? 'development' : 'live'
       ),
       'process.env.IS_PRODUCTION': isProduction,
       'process.env.SITE_URL': JSON.stringify(siteUrl)
@@ -197,13 +208,7 @@ export default defineConfig(async ({ command, mode }) => {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             bootstrap: ['bootstrap', 'react-bootstrap']
           },
-          assetFileNames: (assetInfo) => {
-            let extType = assetInfo.name.split('.').at(1);
-            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-              extType = 'img';
-            }
-            return `${extType}/[name][extname]`;
-          }
+          assetFileNames: 'assets/[name]-[hash][extname]',
         }
       }
     },

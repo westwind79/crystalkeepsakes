@@ -6,12 +6,12 @@ export const products = [
     "slug": "static-3d-crystal-heart",
     "sku": "static_crystal_heart_001",
     "basePrice": 89.00,
-    "description": "Static 3D Crystal Heart",
+    "description": "Static Laser Engraving",
     "longDescription": "",
     "requiresImage": true,
     "images": [
       {
-        "src": "https:\/\/placehold.co\/600x400",
+        "src": "https:\/\/placehold.co\/600x400?text=Laser+Engraving",
         "isMain": true
       }
     ]
@@ -27,7 +27,7 @@ export const products = [
     "requiresImage": true,
     "images": [
       {
-        "src": "https:\/\/placehold.co\/600x400",
+        "src": "https:\/\/placehold.co\/600x400?text=3D+Printing",
         "isMain": true
       }
     ]
