@@ -107,13 +107,39 @@ export function Products2() {
 
   return (
     <PageLayout2>
+
+      <section className="hero py-4"> 
+        <div className="hero-content">
+          <h1 className="primary-header">Our Crystal Creations</h1>
+          <p>Transform memories into timeless, 3D-engraved crystal keepsakes – perfect for every occasion.</p>
+        </div>
+      </section>
+
+      
+
       <Container className="py-4">
-        <Row className="mb-4">
+        {/* Debug info */}
+      {process.env.NODE_ENV === 'development' && (
+        <Row className="mt-4">
           <Col>
-            <h1>Products (V2 - Combined)</h1>
-            <p className="text-muted">Static + CockPit3D Products</p>
+            <Alert variant="light">
+              <h6>Debug Info:</h6>
+              <ul className="mb-0">
+                <li>Products loaded: {products.length}</li>
+                <li>Loading: {loading ? 'Yes' : 'No'}</li>
+                <li>Error: {error || 'None'}</li>
+                <li>Is generating: {isGenerating ? 'Yes' : 'No'}</li>
+                <li>Last generated: {lastGenerated?.toLocaleString() || 'Unknown'}</li>
+              </ul>
+              <div className="mt-2">
+                <Button variant="outline-primary" size="sm" onClick={generateFreshData} disabled={isGenerating}>
+                  {isGenerating ? 'Generating...' : 'Generate Combined File'}
+                </Button>
+              </div>
+            </Alert>
           </Col>
         </Row>
+      )} 
 
         {/* Loading state */}
         {loading && (
@@ -170,28 +196,7 @@ export function Products2() {
           </Row>
         )}
 
-        {/* Debug info */}
-        {process.env.NODE_ENV === 'development' && (
-          <Row className="mt-4">
-            <Col>
-              <Alert variant="light">
-                <h6>Debug Info:</h6>
-                <ul className="mb-0">
-                  <li>Products loaded: {products.length}</li>
-                  <li>Loading: {loading ? 'Yes' : 'No'}</li>
-                  <li>Error: {error || 'None'}</li>
-                  <li>Is generating: {isGenerating ? 'Yes' : 'No'}</li>
-                  <li>Last generated: {lastGenerated?.toLocaleString() || 'Unknown'}</li>
-                </ul>
-                <div className="mt-2">
-                  <Button variant="outline-primary" size="sm" onClick={generateFreshData} disabled={isGenerating}>
-                    {isGenerating ? 'Generating...' : 'Generate Combined File'}
-                  </Button>
-                </div>
-              </Alert>
-            </Col>
-          </Row>
-        )}
+        
 
       </Container>
     </PageLayout2>

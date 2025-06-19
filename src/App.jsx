@@ -23,6 +23,7 @@ import { OrderConfirmation } from './pages/OrderConfirmation';
 import { Cart } from './pages/Cart';
 import { FAQ } from './pages/FAQ'; 
 import ErrorBoundary from './components/ErrorBoundary';
+import ProductAdmin from './admin/ProductAdmin';
 
 // Enhanced error logging to catch ALL errors
 if (process.env.NODE_ENV === 'development') {
@@ -113,6 +114,7 @@ function App() {
         <Header />
         <main>
           <Routes> 
+            <Route path="/admin" element={<ProductAdmin />} />
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
@@ -161,6 +163,7 @@ function PageTransition() {
   return (
     <main ref={pageRef}>               
       <Routes>
+        <Route path="/admin" element={<ProductAdmin />} />
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:slug" element={<ProductDetail />} />

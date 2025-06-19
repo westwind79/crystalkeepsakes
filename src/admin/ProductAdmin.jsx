@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '../data/cockpit3d-products'; // Your source data
 import { Download, Save, Upload, Edit, Eye, EyeOff } from 'lucide-react';
-import { Container, Row, Col, Alert, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Button, Form, Card } from 'react-bootstrap';
 
 const ProductAdmin = () => {
   const [sourceProducts] = useState(cockpit3dProducts); // Read-only source
@@ -107,141 +107,138 @@ export default finalProducts;
   };
 
   return (
-    <Container>
-      <Row> 
-        <h1 className="text-3xl font-bold">Product Admin Panel</h1>
-             
-        
-        {/* Header */} 
-     
-
-        <button
-          onClick={() => setShowPreview(!showPreview)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
-        >
-          {showPreview ? <EyeOff size={20} /> : <Eye size={20} />}
-          {showPreview ? 'Hide Preview' : 'Show Preview'}
-        </button>
-        <button
-          onClick={saveFinalProducts}
-          className="flex items-center gap-2 px-6 py-2 bg-green-600 rounded-lg hover:bg-green-700 font-semibold"
-        >
-          <Download size={20} />
-          Generate final-products.js
-        </button>
+    <Container fluid className="mt-3">
+      {/* Header */}
+      <Row className="mb-4">
+        <Col>
+          <h1 className="display-4">Product Admin Panel</h1>
+        </Col>
+        <Col xs="auto">
+          <Button
+            variant={showPreview ? "outline-primary" : "primary"}
+            onClick={() => setShowPreview(!showPreview)}
+            className="me-2"
+          >
+            {showPreview ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showPreview ? ' Hide Preview' : ' Show Preview'}
+          </Button>
+          <Button
+            variant="success"
+            onClick={saveFinalProducts}
+          >
+            <Download size={20} />
+            {' Generate final-products.js'}
+          </Button>
+        </Col>
       </Row>
 
-      <Row>   
-        <Col className="col-sm-4"> 
-          {sourceProducts.map(product => (
-          <div
-            key={product.id}
-            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-              selectedProduct?.id === product.id ? 'bg-blue-50 border-blue-200' : ''
-            }`}
-            onClick={() => setSelectedProduct(product)}
-          >
-               
-            <h3 className="font-medium text-gray-900">{product.name}</h3>
-            <p className="text-sm text-gray-500">ID: {product.id} • SKU: {product.sku}</p>
-            <p className="text-sm text-green-600">${product.basePrice}</p>
-            
-            {hasCustomizations(product.id) && (
-              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                Modified
-              </span>
-            )}
-            <Edit size={16} className="text-gray-400" />
-            <hr />
-          </div>
-          ))} 
+      <Row>
+        {/* Product List */}
+        <Col md={4}>
+          <Card>
+            <Card.Header>
+              <h5 className="mb-0">Products ({sourceProducts.length})</h5>
+            </Card.Header>
+            <Card.Body className="p-0" style={{maxHeight: '600px', overflowY: 'auto'}}>
+              {sourceProducts.map(product => (
+                <div
+                  key={product.id}
+                  className={`p-3 border-bottom ${
+                    selectedProduct?.id === product.id ? 'bg-primary bg-opacity-10 border-primary' : ''
+                  }`}
+                  style={{cursor: 'pointer'}}
+                  onClick={() => setSelectedProduct(product)}
+                >
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="mb-1">{product.name}</h6>
+                      <small className="text-muted">ID: {product.id} • SKU: {product.sku}</small>
+                      <div className="text-success fw-bold">${product.basePrice}</div>
+                      {hasCustomizations(product.id) && (
+                        <span className="badge bg-success mt-1">Modified</span>
+                      )}
+                    </div>
+                    <Edit size={16} className="text-muted" />
+                  </div>
+                </div>
+              ))}
+            </Card.Body>
+          </Card>
         </Col>
-        <Col className="col-sm-4">
-            <div className="p-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold">
+
+        {/* Edit Panel */}
+        <Col md={4}>
+          <Card>
+            <Card.Header>
+              <h5 className="mb-0">
                 {selectedProduct ? `Edit: ${selectedProduct.name}` : 'Select a Product'}
-              </h2>
-            </div>
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              {selectedProduct ? (
+                <Form>
+                  {/* Basic Info */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Display Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={getProductData(selectedProduct.id).name}
+                      onChange={(e) => updateProduct(selectedProduct.id, { name: e.target.value })}
+                    />
+                  </Form.Group>
 
-            {selectedProduct ? (
-              <div className="p-4 space-y-4">
-                {/* Basic Info */}
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">
-                    Display Name
-                  </label><br />
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    value={getProductData(selectedProduct.id).name}
-                    onChange={(e) => updateProduct(selectedProduct.id, { name: e.target.value })}
-                  />
-                </div>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Short Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={getProductData(selectedProduct.id).description || ''}
+                      onChange={(e) => updateProduct(selectedProduct.id, { description: e.target.value })}
+                    />
+                  </Form.Group>
 
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">
-                    Short Description
-                  </label><br />
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    value={getProductData(selectedProduct.id).description || ''}
-                    onChange={(e) => updateProduct(selectedProduct.id, { description: e.target.value })}
-                  />
-                </div>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Long Description</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={getProductData(selectedProduct.id).longDescription || ''}
+                      onChange={(e) => updateProduct(selectedProduct.id, { longDescription: e.target.value })}
+                      placeholder="Detailed product description..."
+                    />
+                  </Form.Group>
 
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">
-                    Long Description
-                  </label><br />
-                  <textarea
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 h-24"
-                    value={getProductData(selectedProduct.id).longDescription || ''}
-                    onChange={(e) => updateProduct(selectedProduct.id, { longDescription: e.target.value })}
-                    placeholder="Detailed product description..."
-                  />
-                </div>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Base Price Override</Form.Label>
+                    <Form.Control
+                      type="number"
+                      step="0.01"
+                      value={getProductData(selectedProduct.id).basePrice}
+                      onChange={(e) => updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) })}
+                    />
+                  </Form.Group>
 
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">
-                    Base Price Override
-                  </label><br />
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    value={getProductData(selectedProduct.id).basePrice}
-                    onChange={(e) => updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) })}
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1">
-                    Featured Product
-                  </label><br />
-                  <label className="flex items-center">
-                    <input
+                  <Form.Group className="mb-3">
+                    <Form.Check
                       type="checkbox"
-                      className="rounded border-gray-300"
+                      label="Show as featured product"
                       checked={getProductData(selectedProduct.id).featured || false}
                       onChange={(e) => updateProduct(selectedProduct.id, { featured: e.target.checked })}
                     />
-                    <span className="ml-2 text-sm text-gray-600">Show as featured product</span>
-                  </label>
-                </div>
+                  </Form.Group>
 
-                {/* Size Pricing */}
-                {selectedProduct.sizes && (
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Size Pricing</h4>
-                    <div className="space-y-2">
+                  {/* Size Pricing */}
+                  {selectedProduct.sizes && (
+                    <Form.Group className="mb-3">
+                      <Form.Label>Size Pricing</Form.Label>
                       {selectedProduct.sizes.map((size, index) => (
-                        <div key={size.id} className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600 flex-1">{size.name}</span>
-                          <input
+                        <div key={size.id} className="d-flex align-items-center mb-2">
+                          <Form.Label className="me-2 mb-0" style={{minWidth: '100px'}}>
+                            {size.name}
+                          </Form.Label>
+                          <Form.Control
                             type="number"
                             step="0.01"
-                            className="border border-gray-300 rounded px-2 py-1 w-20"
+                            style={{width: '100px'}}
                             value={getProductData(selectedProduct.id).sizes?.[index]?.price || size.price}
                             onChange={(e) => {
                               const updatedSizes = [...(getProductData(selectedProduct.id).sizes || selectedProduct.sizes)];
@@ -251,70 +248,75 @@ export default finalProducts;
                           />
                         </div>
                       ))}
-                    </div>
-                  </div>
-                )}
+                    </Form.Group>
+                  )}
 
-                <div className="pt-4 border-t">
-                  <button
+                  <hr />
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
                     onClick={() => {
                       const newEditedProducts = { ...editedProducts };
                       delete newEditedProducts[selectedProduct.id];
                       setEditedProducts(newEditedProducts);
                     }}
-                    className="text-red-600 hover:text-red-800 text-sm"
                   >
                     Reset to Original
-                  </button>
+                  </Button>
+                </Form>
+              ) : (
+                <div className="text-center text-muted py-5">
+                  <p>Select a product from the list to edit</p>
                 </div>
-              </div>
-            ) : (
-              <div className="p-8 text-center text-gray-500">
-                Select a product from the list to edit
-              </div>
-            )} 
-
+              )}
+            </Card.Body>
+          </Card>
         </Col>
 
-      {showPreview && (
-        <Col className="col-sm-4">
-          {/* Preview Panel */}
-          
-            <div className="mt-6 rounded-lg shadow-sm">
-              <div className="p-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">Generated File Preview</h2>
-              </div>
-              <div className="p-4">
-                <pre className="bg-gray-50 p-4 rounded-lg text-xs overflow-auto max-h-64">
+        {/* Preview Panel */}
+        {showPreview && (
+          <Col md={4}>
+            <Card>
+              <Card.Header>
+                <h5 className="mb-0">Generated File Preview</h5>
+              </Card.Header>
+              <Card.Body>
+                <pre className="bg-light p-3 rounded" style={{fontSize: '0.75rem', overflowX: 'auto', maxHeight: '300px'}}>
                   {generateFinalProducts()}
                 </pre>
-              </div>
-            </div>
-          
+              </Card.Body>
+            </Card>
 
-          <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
-            <div className="bg-blue-50 p-3 rounded">
-              <div className="font-semibold text-blue-800">Source Products</div>
-              <div className="text-2xl font-bold text-blue-600">{sourceProducts.length}</div>
-            </div>
-            <div className="bg-green-50 p-3 rounded">
-              <div className="font-semibold text-green-800">Customized</div>
-              <div className="text-2xl font-bold text-green-600">{Object.keys(editedProducts).length}</div>
-            </div>
-            <div className="bg-purple-50 p-3 rounded">
-              <div className="font-semibold text-purple-800">Final Products</div>
-              <div className="text-2xl font-bold text-purple-600">{sourceProducts.length}</div>
-            </div>
-          </div> 
-
-        </Col>
+            <Row className="mt-3 g-2">
+              <Col>
+                <Card className="bg-primary bg-opacity-10">
+                  <Card.Body className="text-center">
+                    <div className="fw-bold text-primary">Source Products</div>
+                    <div className="display-6 fw-bold text-primary">{sourceProducts.length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col>
+                <Card className="bg-success bg-opacity-10">
+                  <Card.Body className="text-center">
+                    <div className="fw-bold text-success">Customized</div>
+                    <div className="display-6 fw-bold text-success">{Object.keys(editedProducts).length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col>
+                <Card className="bg-info bg-opacity-10">
+                  <Card.Body className="text-center">
+                    <div className="fw-bold text-info">Final Products</div>
+                    <div className="display-6 fw-bold text-info">{sourceProducts.length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
         )}
       </Row>
     </Container>
-
-
-
-  
   );
 };
 

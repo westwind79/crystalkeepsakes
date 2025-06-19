@@ -157,10 +157,20 @@ const buildTasksPlugin = () => ({
     }
     
     console.log('✅ Post-build tasks completed successfully!');
-  }  
-});
+      }  
+    });
 
- 
+    // Copy function for API folder
+    const copyAPI = () => ({
+      name: 'copy-api',
+      closeBundle: async () => {
+        await fs.ensureDir('dist');
+        await fs.copy('api', 'dist/api');  
+        await fs.copy('config', 'dist/config')
+        // Copy .htaccess file to specific path
+        await fs.copy('.htaccess', path.join('dist', '.htaccess'))
+      }
+    });
 
 export default defineConfig(async ({ command, mode }) => {
   // Load env file based on mode
@@ -210,13 +220,14 @@ export default defineConfig(async ({ command, mode }) => {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             bootstrap: ['bootstrap', 'react-bootstrap']
           },
-          assetFileNames: (assetInfo) => {
-            let extType = assetInfo.name.split('.').at(1);
-            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-              extType = 'img';
-            }
-            return `${extType}/[name]-[hash][extName]`;
-          }
+          assetFileNames: 'assets/[name]-[hash][extname]',
+          // assetFileNames: (assetInfo) => {
+          //   let extType = assetInfo.name.split('.').at(1);
+          //   if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+          //     extType = 'img';
+          //   }
+          //   return `${extType}/[name]-[hash][extName]`;
+          // }
         }
       }
     },
