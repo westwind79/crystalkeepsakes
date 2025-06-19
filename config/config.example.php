@@ -1,9 +1,12 @@
 <?php
+    // config/config.php
     return [
-        'square' => [
-            'access_token' => getenv('SQUARE_ACCESS_TOKEN'),
-            'location_id' => getenv('SQUARE_LOCATION_ID'),
-            'environment' => getenv('SQUARE_ENVIRONMENT'),
+        'stripe' => [
+            'secret_key' => getenv('sk_test_'),
+            'publishable_key' => getenv('pk_test_')
+        ],
+        'site' => [
+            'url' => getenv('SITE_URL') ?: 'https://example.com'
         ]
     ];
 ?>

@@ -1,12 +1,11 @@
 // App.jsx
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client'
-import { HelmetProvider } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
+// import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+// Register GSAP plugins globally
+import { gsap } from 'gsap';
 
 import { CartProvider } from './contexts/CartContext';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
@@ -17,14 +16,61 @@ import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { Products } from './pages/Products';
+import { Products2 } from './pages/Products2';
 import { ProductDetail } from './pages/ProductDetail';
+import { ProductDetail2 } from './pages/ProductDetail2';
 import { OrderConfirmation } from './pages/OrderConfirmation';
 import { Cart } from './pages/Cart';
-import { FAQ } from './pages/FAQ';
+import { FAQ } from './pages/FAQ'; 
+import ErrorBoundary from './components/ErrorBoundary';
 
+// Enhanced error logging to catch ALL errors
+if (process.env.NODE_ENV === 'development') {
+  // Catch unhandled promise rejections
+  window.addEventListener('unhandledrejection', event => {
+    console.error('🚨 UNHANDLED PROMISE REJECTION:', event.reason);
+    console.trace('Promise rejection stack trace');
+    
+    // Don't let it disappear
+    setTimeout(() => {
+      console.error('🚨 PERSISTENT ERROR LOG:', event.reason);
+    }, 100);
+  });
 
-const stripePromise = loadStripe('pk_test_51QoDYf2YE48VQlzYdSB0UqhJphSSP6s82c2XYbprasSkna3EGfN0G5IgZXxR2nAVjsZrqtUttSJj6kfAsnrfye0T00AEwHQ8zq');
-  
+  // Catch regular errors
+  window.addEventListener('error', event => {
+    console.error('🚨 WINDOW ERROR:', event.error);
+    console.error('🚨 ERROR DETAILS:', {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      stack: event.error?.stack
+    });
+  });
+
+  // Override console.error to make it more persistent
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    originalConsoleError.apply(console, args);
+    
+    // Also store in sessionStorage so you can see it
+    const errorLog = sessionStorage.getItem('react_errors') || '[]';
+    const errors = JSON.parse(errorLog);
+    errors.push({
+      timestamp: new Date().toISOString(),
+      error: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ')
+    });
+    sessionStorage.setItem('react_errors', JSON.stringify(errors.slice(-10))); // Keep last 10
+  };
+}
+
+// Function to check stored errors (call in console)
+window.checkStoredErrors = () => {
+  const errors = JSON.parse(sessionStorage.getItem('react_errors') || '[]');
+  console.table(errors);
+  return errors;
+};
 
 // Move ScrollToTop outside App component and add useLocation import
 function ScrollToTop() {
@@ -42,53 +88,100 @@ function ScrollToTop() {
 }
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true)
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
-    // Simulate initial load
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1500)
-  }, [])
-
-  // const options = {
-  //   mode: 'payment',
-  //   amount: 1099,
-  //   currency: 'usd',
-  //   // We'll configure this when we have a payment ready
-  //   appearance: {
-  //     theme: 'stripe'
-  //   }
-  // };
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 250);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   if (isLoading) {
-    return <LoadingSpinner />
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
     <BrowserRouter>
-      <Elements stripe={stripePromise}>
-        <CartProvider>
-          <ScrollToTop />
-          <Header />       
-            <main>               
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/product/:slug" element={<ProductDetail />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                <Route path="*" element={<div>Page Not Found</div>} />
-              </Routes> 
-            </main>
-          <Footer />
-        </CartProvider>    
-      </Elements>
+      <CartProvider>
+        <ScrollToTop />
+        <Header />
+        <main>
+          <Routes> 
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
+            <Route path="/products2" element={
+                  <ErrorBoundary>
+                    <Products2 />
+                  </ErrorBoundary>
+                } />
+                <Route path="/product2/:slug" element={
+                  <ErrorBoundary>
+                    <ProductDetail2 />
+                  </ErrorBoundary>
+                } />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} /> 
+            <Route path="*" element={<div className="container py-5 text-center">Page Not Found</div>} />
+          </Routes>
+        </main>
+        <Footer />
+      </CartProvider>
     </BrowserRouter>
-  )
+  );
 }
 
+// Add this new component
+function PageTransition() {
+  const location = useLocation();
+  const pageRef = useRef();
+  
+  useEffect(() => {
+    // Page transition animation
+    const onEnter = () => {
+      gsap.fromTo(
+        pageRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
+      );
+    };
+    
+    onEnter();
+  }, [location]);
+
+  return (
+    <main ref={pageRef}>               
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/product/:slug" element={<ProductDetail />} />
+        <Route path="/products2" element={
+          <ErrorBoundary>
+            <Products2 />
+          </ErrorBoundary>
+        } />
+        <Route path="/product2/:slug" element={
+          <ErrorBoundary>
+            <ProductDetail2 />
+          </ErrorBoundary>
+        } />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="*" element={<div>Page Not Found</div>} />
+      </Routes> 
+    </main>
+  );
+}
 export default App

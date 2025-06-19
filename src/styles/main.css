@@ -10,6 +10,7 @@
 @import 'contact-form.css';
 @import 'modal.css';
 @import 'cart.css';
+@import 'product-card.css';
 
 @media screen and (prefers-reduced-motion:reduce) {
   * {
@@ -73,7 +74,10 @@ header {
   position: sticky;
   top: 0;
   box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
-  z-index: 1;
+  z-index: 1030;
+/*  width: 80vw;*/
+/*  margin: auto;*/
+
 }
 
 .page-transition {
@@ -471,9 +475,11 @@ header {
 .text-value {
   color: #333;
 }
-
+.checkout-section,
+.cart-items,
 .cart-summary {
-  background-color: #f8f9fa;
+  background-color: var(--surface-50);
+  color: var(--surface-800);
 }
 
 .total-price h4 {
@@ -530,7 +536,7 @@ header {
     background: linear-gradient(90deg, var(--brand-300), var(--brand-500));
 }
 .product-gallery-container {
-  max-width: 500px;
+/*  max-width: 500px;*/
   margin: auto;
 }
 footer {
@@ -542,5 +548,48 @@ footer {
 }*/
 .about-photo {
   position: sticky;
-  top: 1em;
+  top: 80px; 
+}
+
+.process-step {
+  transition: all 0.3s ease;
+}
+
+.shipping-info {
+  text-align: left;
+}
+
+.position-fixed {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+/* Add to your CSS file */
+.sticky-price-bar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  background-color: var(--brand-500);
+}
+
+.sticky-price-bar.fade-out {
+  opacity: 0;
+  transform: translateY(100%);
+  visibility: hidden;
+}
+.size-pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.original-price {
+  font-size: 12px;
+  color: #6c757d;
+  text-decoration: line-through;
 }

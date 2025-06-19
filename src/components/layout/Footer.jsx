@@ -17,12 +17,12 @@ export function Footer() {
   return (
     <footer className="py-4 mt-auto">
       <Container>
-        <Row className="g-4 align-items-center">
-          <Col xs={12} sm={12} md={4} lg={4} xl={4}>
+        <Row className="g-4">
+          <Col xs={12} sm={12} md={4} lg={4} xl={6}>
             <h5>Crystal Art</h5>
-            <p>Custom 3D Laser Engraved Crystals</p>
+            <p>At CrystalKeepsakes, we specialize in breathtaking 3D laser-engraved crystal gifts that immortalize your most cherished moments. Using cutting-edge laser technology, we etch photos, logos, and designs into premium crystal, creating stunning keepsakes for weddings, memorials, corporate awards, and special occasions. Choose from a variety of shapes and sizes, each crafted with precision and care. Perfect for personalized gifts, our crystal engravings are timeless treasures you’ll cherish forever.</p>
           </Col>
-          <Col xs={12} sm={12} md={4} lg={4} xl={4}>
+          <Col xs={12} sm={12} md={4} lg={4} xl={2}>
             <h5>Quick Links</h5>
             <ul className="list-unstyled">
               <li><Link to="/">Home</Link></li>
@@ -31,7 +31,7 @@ export function Footer() {
               <li><Link to="/contact">Contact</Link></li>
             </ul>
           </Col>
-          <Col xs={12} sm={12} md={4} lg={4} xl={4}>
+          <Col xs={12} sm={12} md={4} lg={4} xl={3}>
             <h5>Contact</h5>
             <p><strong>Email:</strong>&nbsp;<Link to={'mailto:info@crystalkeepsakes.com?subject=Hello%20there&body=This%20is%20a%20predefined%20email%20body.'}>info@crystalkeepsakes.com</Link>
             <br />

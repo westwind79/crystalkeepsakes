@@ -16,9 +16,6 @@ build/
 /config/*.php
 !/config/config.example.php
 
-<<<<<<< HEAD
-# IDE and Editor files
-=======
 # Testing
 /coverage
 
@@ -30,7 +27,8 @@ build/
 # Misc
 .DS_Store
 *.pem
->>>>>>> bc7c1a84381e0589a0b741510e6f25bbb360fb5b
+
+# IDE and Editor files
 .idea/
 .vscode/
 *.swp
@@ -52,3 +50,5 @@ coverage/
 # Stripe API keys and other sensitive data
 stripe.json
 **/stripe*.json
+.htaccess
+Cockpit3D API.pdf

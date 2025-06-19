@@ -41,3 +41,6 @@
 .btn-outline-danger {
   border: 1px solid var(--error-light);
 }
+.btn-outline-secondary {
+  border: 1px solid var(--brand-400);
+}

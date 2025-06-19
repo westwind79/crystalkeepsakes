@@ -1,34 +1,37 @@
-// components/layout/Navigation.jsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { throttle } from 'lodash';
 import { ShoppingCart, X, Menu } from 'lucide-react'; // Added Menu and X icons
+import { getImagePath } from '../../utils/imageUtils';
 import { useCart } from '../../contexts/CartContext';
 
-export function Navigation({ onNavLinkClick }) {
+
+const Navigation = React.memo(({ onNavLinkClick }) => {
   const { cartCount } = useCart();
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
   const location = useLocation();
 
-  // Close offcanvas when route changes
+
+// Close offcanvas when route changes
   useEffect(() => {
     setIsOffcanvasOpen(false);
   }, [location]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = throttle(() => {
       // If we're at desktop size (992px is Bootstrap's lg breakpoint)
       if (window.innerWidth >= 992) {
         setIsOffcanvasOpen(false); // This will remove both offcanvas and backdrop
       }
-    };
-
+    }, 200);
     // Add event listener
     window.addEventListener('resize', handleResize);
-
-    // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      handleResize.cancel(); // Cancel any pending throttled calls
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
-  
+
   const handleLinkClick = () => {
     setIsOffcanvasOpen(false);
     if (onNavLinkClick) onNavLinkClick();
@@ -36,11 +39,6 @@ export function Navigation({ onNavLinkClick }) {
 
   const isProductsActive = () => {
     return location.pathname.startsWith('/product');
-  };
-
-  const getImagePath = (imageName) => {
-    const cleanImageName = imageName.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${cleanImageName}`;
   };
 
   // Navigation Links Component - DRY up the repeated code
@@ -101,7 +99,9 @@ export function Navigation({ onNavLinkClick }) {
           FAQ
         </NavLink>
       </li>
-      <li>
+    {cartCount > 0 && (
+      <li className="nav-item">
+
         <NavLink 
           to="/cart" 
           onClick={onClick}
@@ -111,23 +111,28 @@ export function Navigation({ onNavLinkClick }) {
         >
           <div className="position-relative">
             <ShoppingCart size={18} />
-            {cartCount > 0 && (
+            
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {cartCount}
                 <span className="visually-hidden">items in cart</span>
               </span>
-            )}
-          </div>
+            
+          </div>&nbsp;
           <span className={`ms-1 ${mobile ? '' : 'visually-hidden'}`}>Cart</span>
         </NavLink>
       </li>
+      )}
     </ul>
   );
-
   return (
     <nav className="navbar navbar-expand-lg">
       {/* Main Navbar */}
-      <NavLink className="navbar-brand" to="/">CrystalKeepsakes</NavLink>
+      <NavLink className="navbar-brand" to="/">
+        <img src={getImagePath('img/crystalkeepsakes-logo.png')} 
+        alt="CrystalKeepsakes" 
+        className="logo img-fluid"
+        />
+      </NavLink>
       
       {/* Mobile Toggle Button */}
       <button
@@ -175,4 +180,6 @@ export function Navigation({ onNavLinkClick }) {
       )}
     </nav>
   );
-}
+});
+
+export default Navigation;

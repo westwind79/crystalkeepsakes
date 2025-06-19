@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { ProductCard } from '../components/product/ProductCard';
 import { products } from '../data/products';
+import { SEOHead } from '../components/common/SEOHead';
 import { PageLayout } from '../components/layout/PageLayout';
 import { PRODUCT_CATEGORIES } from '../utils/categoriesConfig';
 
@@ -76,7 +77,7 @@ export function Products() {
       pageDescription="Transform your precious moments into stunning 3D crystal art."
       className="products"
     >  
-      <section className="hero"> 
+      <section className="hero py-4"> 
         <div className="hero-content">
           <h1 className="primary-header">Our Crystal Creations</h1>
           <p>Transform memories into timeless, 3D-engraved crystal keepsakes – perfect for every occasion.</p>
@@ -104,24 +105,38 @@ export function Products() {
             </Col>
             <Col xs={12} sm={12} md={4} className="order-1 order-md-2">
               <div className="category-filter">
-                {PRODUCT_CATEGORIES.map(category => (
-                  <label 
-                    key={category.value}
-                    className={`category-filter__item ${
-                      selectedCategories.includes(category.value) ? 'category-filter__item--active' : ''
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category.value)}
-                      onChange={() => handleCategoryToggle(category.value)}
-                      className="category-filter__checkbox"
-                    />
-                    <span className="category-filter__label">
-                      {category.label} ({getCategoryCount(category.value)})
-                    </span>
-                  </label>
-                ))}
+
+               {[
+                  PRODUCT_CATEGORIES.find(cat => cat.value === 'all'),
+                  ...PRODUCT_CATEGORIES
+                    .filter(cat => cat.value !== 'all')
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                ].map(category => {
+                  const inputId = `category-filter__checkbox-${category.value}`;
+                  
+                  return (
+                    <label 
+                      key={category.value}
+                      htmlFor={inputId}
+                      className={`category-filter__item ${
+                        selectedCategories.includes(category.value) ? 'category-filter__item--active' : ''
+                      }`}
+                    >
+                      <input 
+                        id={inputId}
+                        name="category-filter"
+                        type="checkbox"
+                        checked={selectedCategories.includes(category.value)}
+                        onChange={() => handleCategoryToggle(category.value)}
+                        className="category-filter__checkbox"
+                      />
+                      <span className="category-filter__label">
+                        {category.label} ({getCategoryCount(category.value)})
+                      </span> 
+                    </label>
+                  );
+                })}
+                     
               </div>
             </Col>
           </Row>
