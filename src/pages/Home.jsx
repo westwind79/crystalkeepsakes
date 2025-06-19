@@ -142,7 +142,7 @@ export function Home({ product }) {
 	                alt="3D Crystal Art Example" 
 	                className="img-fluid rounded"
 		              />
-		              <span className="slide-text">Optional Text 1</span>
+		              {/*<span className="slide-text">Optional Text 1</span>*/}
 	              </SwiperSlide> 
 	              <SwiperSlide>
 					        <img 
@@ -150,7 +150,7 @@ export function Home({ product }) {
 	                alt="3D Crystal Art Example" 
 	                className="img-fluid rounded"
 		              />
-		              <span className="slide-text">Optional Text 2</span>
+		              {/*<span className="slide-text">Optional Text 2</span>*/}
 	              </SwiperSlide> 
 	              <SwiperSlide>
 					        <img 
@@ -158,7 +158,7 @@ export function Home({ product }) {
 	                alt="3D Crystal Art Example" 
 	                className="img-fluid rounded"
 		              />
-		              <span className="slide-text">Optional Text 3</span>
+		              {/*<span className="slide-text">Optional Text 3</span>*/}
 	              </SwiperSlide>	              
 				      </Swiper>
             {/*<div className="crystal-showcase">

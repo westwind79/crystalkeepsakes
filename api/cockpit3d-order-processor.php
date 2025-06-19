@@ -8,25 +8,28 @@ class CockPit3DOrderProcessor extends CockPit3DFetcher {
     
     private $apiBaseUrl;
     private $bearerToken;
+    private $retailerId;  // ← Add this
     private $mode;
     
     public function __construct() {
         parent::__construct();
         
         // Get environment mode
-        $this->mode = $_ENV['NODE_ENV'] ?? getenv('NODE_ENV') ?? 'development';
+        $this->mode = getEnvVariable('VITE_STRIPE_MODE') ?? 'development';
         
-        // Set API credentials from environment
-        $this->apiBaseUrl = $_ENV['COCKPIT3D_API_URL'] ?? getenv('COCKPIT3D_API_URL');
-        $this->bearerToken = $_ENV['COCKPIT3D_BEARER_TOKEN'] ?? getenv('COCKPIT3D_BEARER_TOKEN');
+        // SIMPLE: Just use what the parent fetcher already has
+        $this->apiBaseUrl = $this->baseUrl;     // ✅ From parent
+        $this->bearerToken = $this->token;      // ✅ From parent (API response)
+        $this->retailerId = $this->retailerId;  // ✅ From parent
         
+        // Log what we're actually using
         if ($this->mode === 'development' || $this->mode === 'test') {
-            error_log("🚀 COCKPIT3D: Initializing order processor in {$this->mode} mode");
-            error_log("🔑 COCKPIT3D: API URL: " . $this->apiBaseUrl);
-            error_log("🔑 COCKPIT3D: Token set: " . (!empty($this->bearerToken) ? 'YES' : 'NO'));
+            error_log("🚀 COCKPIT3D: API URL: " . ($this->apiBaseUrl ?: 'MISSING'));
+            error_log("🔑 COCKPIT3D: Token: " . ($this->bearerToken ? 'SET (' . substr($this->bearerToken, 0, 10) . '...)' : 'MISSING'));
+            error_log("🏪 COCKPIT3D: Store Key: " . ($this->retailerId ?: 'MISSING'));
         }
     }
-    
+
     /**
      * Process and send order to CockPit3D after successful Stripe payment
      * @param array $orderData - Order data from Stripe checkout
@@ -34,6 +37,25 @@ class CockPit3DOrderProcessor extends CockPit3DFetcher {
      */
     public function processOrder($orderData) {
         try {
+            error_log("DEBUG: processOrder method started");
+            echo "DEBUG: processOrder method started\n";
+        
+            // PUT REAL AUTH BACK:
+            $this->ensureAuthenticated();
+            echo "DEBUG: Creds from parent\n";
+            
+            // GET REAL CREDENTIALS:
+            $this->apiBaseUrl = $this->baseUrl;
+            $this->bearerToken = $this->token;
+            
+            echo "DEBUG: Got real credentials\n";
+            
+            // Rest of your existing code...
+            if ($this->mode === 'development' || $this->mode === 'test') {
+                echo "🔑 COCKPIT3D: Using token: DUMMY_TOKEN\n";
+                echo "🏪 COCKPIT3D: Using store key: " . $this->retailerId . "\n";
+            }
+
             if ($this->mode === 'development' || $this->mode === 'test') {
                 error_log("🚀 COCKPIT3D: Processing order for CockPit3D");
                 error_log("📦 COCKPIT3D: Order data: " . json_encode($orderData, JSON_PRETTY_PRINT));
@@ -247,33 +269,21 @@ class CockPit3DOrderProcessor extends CockPit3DFetcher {
     private function prepareCockPit3DOrder($orderData, $cockpit3dItems) {
         $customerInfo = $orderData['customerInfo'];
         $shippingAddress = $orderData['shippingAddress'];
-        $billingAddress = $orderData['billingAddress'] ?? $shippingAddress;
         
         $order = [
             'retailer_id' => $orderData['orderNumber'],
             'address' => [
-                'shipping_address' => [
-                    'firstname' => $shippingAddress['firstName'] ?? '',
-                    'lastname' => $shippingAddress['lastName'] ?? '',
-                    'street' => $shippingAddress['address'] ?? '',
-                    'city' => $shippingAddress['city'] ?? '',
-                    'region' => $shippingAddress['state'] ?? '',
-                    'country' => $shippingAddress['country'] ?? 'US',
-                    'postcode' => $shippingAddress['postalCode'] ?? '',
-                    'telephone' => $customerInfo['phone'] ?? '',
-                    'email' => $customerInfo['email'] ?? ''
-                ],
-                'billing_address' => [
-                    'firstname' => $billingAddress['firstName'] ?? $shippingAddress['firstName'] ?? '',
-                    'lastname' => $billingAddress['lastName'] ?? $shippingAddress['lastName'] ?? '',
-                    'street' => $billingAddress['address'] ?? $shippingAddress['address'] ?? '',
-                    'city' => $billingAddress['city'] ?? $shippingAddress['city'] ?? '',
-                    'region' => $billingAddress['state'] ?? $shippingAddress['state'] ?? '',
-                    'country' => $billingAddress['country'] ?? $shippingAddress['country'] ?? 'US',
-                    'postcode' => $billingAddress['postalCode'] ?? $shippingAddress['postalCode'] ?? '',
-                    'telephone' => $customerInfo['phone'] ?? '',
-                    'email' => $customerInfo['email'] ?? ''
-                ]
+                'email' => $customerInfo['email'] ?? '',
+                'firstname' => $shippingAddress['firstName'] ?? '',
+                'lastname' => $shippingAddress['lastName'] ?? '',
+                'telephone' => $customerInfo['phone'] ?? '',
+                'region' => $shippingAddress['state'] ?? '',
+                'country' => $shippingAddress['country'] ?? 'US',
+                'street' => $shippingAddress['address'] ?? '',
+                'city' => $shippingAddress['city'] ?? '',
+                'postcode' => $shippingAddress['postalCode'] ?? '',
+                'shipping_method' => 'standard',
+                'destination' => 'vendor_store'
             ],
             'items' => $cockpit3dItems
         ];
@@ -292,7 +302,19 @@ class CockPit3DOrderProcessor extends CockPit3DFetcher {
             throw new Exception("CockPit3D API credentials not configured");
         }
         
-        $url = rtrim($this->apiBaseUrl, '/') . '/order';
+        // Use retailerId as store key - get it from parent fetcher
+        $storeKey = $this->retailerId ?? getEnvVariable('COCKPIT3D_API_TOKEN');
+        
+        // Build URL with store key
+        $url = rtrim($this->apiBaseUrl, '/') . '/rest/V2/orders';
+    
+        echo "📤 COCKPIT3D: Full URL: " . $url . "\n";
+        
+        // Log the URL being used
+        if ($this->mode === 'development' || $this->mode === 'test') {
+            error_log("🔑 COCKPIT3D: Using store key: " . $storeKey);
+            error_log("📤 COCKPIT3D: Full URL: " . $url);
+        }
         
         $headers = [
             'Content-Type: application/json',

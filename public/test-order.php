@@ -1,240 +1,143 @@
 <?php
-// test-order.php - PHP version for MAMP
+// simple-test.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+require_once __DIR__ . '/api/cockpit3d-data-fetcher.php';
+require_once __DIR__ . '/api/cockpit3d-order-processor.php';
+
+echo "🚀 Simple CockPit3D Order Test\n\n";
+
+try {
+    // 1. Create working fetcher
+    echo "1. Creating fetcher...\n";
+    $fetcher = new CockPit3DFetcher();
+    
+    // 2. Test authentication by calling a method that triggers it
+    echo "2. Authenticating (via getCatalog)...\n";
+    $fetcher->getCatalog(); // This will trigger ensureAuthenticated internally
+    echo "✅ Auth successful\n";
+    
+    // 3. Create processor and copy credentials
+    echo "3. Setting up processor...\n";
+    $processor = new CockPit3DOrderProcessor();
+    
+    // 4. Create test order
+    echo "4. Creating test order...\n";
+    $testOrder = [
+        'orderNumber' => 'TEST_' . date('YmdHis'),
+        'cartItems' => [['productId' => '105', 'name' => 'Lightbase Rectangle', 'price' => 25, 'quantity' => 1, 'options' => ['lightBase' => 'rectangle']]],
+        'customerInfo' => ['firstName' => 'Noah', 'lastName' => 'Test', 'email' => 'noah@crystalkeepsakes.com', 'phone' => '555-123-4567'],
+        'shippingAddress' => ['firstName' => 'Noah', 'lastName' => 'Test', 'address' => '123 Test St', 'city' => 'Test City', 'state' => 'NY', 'country' => 'US', 'postalCode' => '12345']
+    ];
+    
+    // 5. Send to CockPit3D
+    echo "5. Sending to CockPit3D...\n";
+    
+    // Simple order format (EXACT copy from PDF)
+    $cockpitOrder = [
+        'retailer_id' => 256568874,
+        'address' => [
+            'email' => 'test_billing@mail.test',
+            'firstname' => 'Firstname',
+            'lastname' => 'Lastname',
+            'telephone' => '1111111',
+            'region' => 'QC',
+            'country' => 'CA',
+            'staff_user' => 'Staff User',
+            'order_id' => 'Unique order id',
+            'voyage_code' => 'Voyage code',
+            'street' => '3193 Beaver Creek',
+            'city' => 'Thornhill',
+            'postcode' => 'L4J 1W2',
+            'shipping_method' => 'air',
+            'destination' => 'vendor_store'
+        ],
+        'items' => [[
+            'sku' => 'Cut_Corner_Diamond',
+            'qty' => '1',
+            'client_item_id' => '123456-1',
+            'original_photo' => 'https://c3d-api-dev.host.alva.tools/media/catalog/product/C/u/Cut_Corner.jpg',
+            'cropped_photo' => 'https://c3d-api-dev.host.alva.tools/media/catalog/product/3/d/3d_crystal_tribute_square_copy.jpg',
+            '3d_file' => 'https://c3d-api-dev.host.alva.tools/pub/media/order_item/1/1/2/2/3d_file.zip',
+            'special_instructions' => 'Special Instruction text',
+            '2d' => true,
+            'options' => [
+                [
+                    'id' => '198',
+                    'qty' => '1'
+                ],
+                [
+                    'id' => '151',
+                    'qty' => '1',
+                    'value' => '549'
+                ],
+                [
+                    'id' => '399',
+                    'qty' => '1',
+                    'value' => '719'
+                ],
+                [
+                    'id' => '199',
+                    'value' => [
+                        'Customer Text',
+                        'Customer Text 2',
+                        'Customer Text 3'
+                    ]
+                ],
+                [
+                    'id' => '381',
+                    'value' => 'Laser Engraved Text'
+                ],
+                [
+                    'name' => 'Custom Option',
+                    'value' => '120'
+                ]
+            ]
+        ]]
+    ];
+    
+    // Send API request - use getEnvVariable instead of private properties
+    $url = getEnvVariable('COCKPIT3D_BASE_URL') . '/rest/V2/orders';
+    
+    // Get token via reflection (hack to access private property)
+    $reflection = new ReflectionClass($fetcher);
+    $tokenProperty = $reflection->getProperty('token');
+    $tokenProperty->setAccessible(true);
+    $token = $tokenProperty->getValue($fetcher);
+    
+    $headers = [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $token,
+        'Accept: application/json'
+    ];
+    
+    echo "URL: $url\n";
+    echo "Order: " . json_encode($cockpitOrder, JSON_PRETTY_PRINT) . "\n";
+    
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($cockpitOrder),
+        CURLOPT_HTTPHEADER => $headers,
+        CURLOPT_TIMEOUT => 30
+    ]);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    echo "Response ($httpCode): $response\n";
+    
+    if ($httpCode === 201) {
+        echo "✅ SUCCESS! Order sent to CockPit3D\n";
+    } else {
+        echo "❌ ERROR: HTTP $httpCode\n";
+    }
+    
+} catch (Exception $e) {
+    echo "❌ ERROR: " . $e->getMessage() . "\n";
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CockPit3D Test Order</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .test-item {
-            background: #e3f2fd;
-            border: 2px solid #2196F3;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .test-item h3 {
-            margin: 0 0 10px 0;
-            color: #1976D2;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 5px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 6px;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-        .error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-        .info {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-        .order-details {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .order-details h4 {
-            margin: 0 0 10px 0;
-            color: #495057;
-        }
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .order-item:last-child {
-            border-bottom: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🧪 CockPit3D Test Order System</h1>
-        
-        <div class="test-item">
-            <h3>📦 Simple Lightbase Test Order</h3>
-            <p>Send a basic test order with a Lightbase Rectangle ($25) to CockPit3D API.</p>
-            
-            <div class="order-details">
-                <h4>Test Order Contents:</h4>
-                <div class="order-item">
-                    <span><strong>Product:</strong> Lightbase Rectangle</span>
-                    <span><strong>Price:</strong> $25.00</span>
-                </div>
-                <div class="order-item">
-                    <span><strong>Customer:</strong> Noah Test</span>
-                    <span><strong>Shipping:</strong> $10.00</span>
-                </div>
-                <div class="order-item">
-                    <span><strong>Order Total:</strong> $35.00</span>
-                    <span><strong>Mode:</strong> TEST</span>
-                </div>
-            </div>
-            
-            <button onclick="sendTestOrder()" id="testBtn">
-                🚀 Send Test Order to CockPit3D
-            </button>
-            
-            <button onclick="checkCredentials()" id="credBtn">
-                🔍 Check API Credentials
-            </button>
-            
-            <div id="result"></div>
-        </div>
-
-        <div class="test-item">
-            <h3>📋 What This Test Will Do:</h3>
-            <ul>
-                <li>✅ Create a mock order with simple lightbase product</li>
-                <li>✅ Check your CockPit3D API credentials</li>
-                <li>✅ Transform order data to CockPit3D format</li>
-                <li>✅ Send POST request to CockPit3D API</li>
-                <li>✅ Show you the exact request and response</li>
-                <li>⚠️ <strong>NO real payment processing</strong></li>
-                <li>⚠️ Uses TEST_ prefix for order number</li>
-            </ul>
-        </div>
-    </div>
-
-    <script>
-        async function sendTestOrder() {
-            const btn = document.getElementById('testBtn');
-            const result = document.getElementById('result');
-            
-            btn.disabled = true;
-            btn.textContent = '⏳ Sending Test Order...';
-            
-            result.className = 'result loading';
-            result.textContent = '🚀 Preparing test order for CockPit3D...\n\nThis may take a few seconds...';
-            
-            try {
-                const response = await fetch('http://crystalkeepsakes:8888/api/test-cockpit3d-order.php?test=true', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                const text = await response.text();
-                console.log('Raw response:', text);
-                
-                // Try to parse JSON from the end of the response
-                const jsonMatch = text.match(/(\{[^}]*"success"[^}]*\}[^}]*\})$/);
-                if (jsonMatch) {
-                    const data = JSON.parse(jsonMatch[1]);
-                    
-                    if (data.success) {
-                        result.className = 'result success';
-                        result.textContent = `✅ SUCCESS!\n\n${text}`;
-                    } else {
-                        result.className = 'result error';
-                        result.textContent = `❌ FAILED!\n\n${text}`;
-                    }
-                } else {
-                    // Show full response if no JSON found
-                    result.className = 'result info';
-                    result.textContent = `📝 Full Response:\n\n${text}`;
-                }
-                
-            } catch (error) {
-                result.className = 'result error';
-                result.textContent = `❌ ERROR: ${error.message}\n\nCheck console for details.`;
-                console.error('Test order error:', error);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🚀 Send Test Order to CockPit3D';
-            }
-        }
-        
-        async function checkCredentials() {
-            const btn = document.getElementById('credBtn');
-            const result = document.getElementById('result');
-            
-            btn.disabled = true;
-            btn.textContent = '⏳ Checking...';
-            
-            result.className = 'result loading';
-            result.textContent = '🔍 Checking CockPit3D API credentials...';
-            
-            try {
-                const response = await fetch('http://crystalkeepsakes:8888/api/test-cockpit3d-order.php?test=true&check=credentials', {
-                    method: 'GET'
-                });
-                
-                const text = await response.text();
-                
-                result.className = 'result info';
-                result.textContent = `🔧 Credentials Check:\n\n${text}`;
-                
-            } catch (error) {
-                result.className = 'result error';
-                result.textContent = `❌ ERROR: ${error.message}`;
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🔍 Check API Credentials';
-            }
-        }
-    </script>
-</body>
-</html>

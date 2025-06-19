@@ -1,10 +1,57 @@
 <?php
-// api/test-cockpit3d-order.php
-// Send a simple test order to CockPit3D API
-echo "API file loaded successfully!<br>";
-echo "Request method: " . $_SERVER['REQUEST_METHOD'] . "<br>";
-echo "Query params: " . print_r($_GET, true) . "<br>";
+// Add this at the very top
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+echo "API file loaded successfully!<br>";
+echo "Request method: " . $_SERVER['REQUEST_METHOD'] . "\n\n";
+echo "Query params: " . print_r($_GET, true) . "<br> \n\n";
+
+echo "=== STEP 1: Checking file dependencies ===<br>";
+
+// Check if required files exist
+$processorFile = __DIR__ . '/cockpit3d-order-processor.php';
+$fetcherFile = __DIR__ . '/cockpit3d-data-fetcher.php';
+
+echo " \n\n Processor file exists: " . (file_exists($processorFile) ? 'YES' : 'NO') . " - $processorFile<br>";
+echo " \n\n Fetcher file exists: " . (file_exists($fetcherFile) ? 'YES' : 'NO') . " - $fetcherFile<br>";
+
+echo "=== STEP 2: Loading dependencies ===<br>";
+
+try {
+    require_once $processorFile;
+    echo "✅ Processor file loaded \n\n";
+} catch (Exception $e) {
+    echo "❌ Error loading processor: " . $e->getMessage() . " \n\n";
+    exit;
+} catch (Error $e) {
+    echo "❌ Fatal error loading processor: " . $e->getMessage() . " \n\n";
+    exit;
+}
+
+echo "=== STEP 3: Checking test parameter ===<br>";
+
+$testMode = $_GET['test'] ?? 'false';
+echo "Test mode value: '$testMode'<br>";
+
+if ($testMode !== 'true') {
+    echo "❌ Test mode not 'true', exiting<br>";
+    exit;
+}
+
+echo "✅ Test mode confirmed<br>";
+
+echo "=== STEP 4: Creating test data ===<br>";
+
+// Simple test without complex dependencies
+$testOrderData = [
+    'orderNumber' => 'TEST_' . date('YmdHis'),
+    'message' => 'Basic test data created'
+];
+
+echo "Test order data: " . json_encode($testOrderData, JSON_PRETTY_PRINT) . "<br>";
+
+echo "=== STEP 5: All steps completed! ===<br>";
 // Then your existing code...
 require_once __DIR__ . '/cockpit3d-order-processor.php';
 
@@ -12,52 +59,6 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-
-// Function to get .env variables (copied from create-payment-intent.php)
-function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '/.env';
-    if (!file_exists($envFile)) {
-        error_log(".env file not found at: $envFile");
-        return null;
-    }
-    
-    $content = file_get_contents($envFile);
-    if ($content === false) {
-        error_log("Failed to read .env file");
-        return null;
-    }
-    
-    $lines = explode("\n", $content);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        
-        // Skip comments and empty lines
-        if (empty($line) || strpos($line, '#') === 0) {
-            continue;
-        }
-        
-        $parts = explode('=', $line, 2);
-        if (count($parts) !== 2) {
-            continue;
-        }
-        
-        $envKey = trim($parts[0]);
-        $envValue = trim($parts[1]);
-        
-        // Remove quotes if present
-        if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
-            (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
-            $envValue = substr($envValue, 1, -1);
-        }
-        
-        if ($envKey === $key) {
-            return $envValue;
-        }
-    }
-    
-    error_log("Key '$key' not found in .env file");
-    return null;
-}
 
 try {
     // Check if this is a test request
@@ -115,18 +116,23 @@ try {
     
     echo "📦 Test Order Data:\n";
     echo json_encode($testOrderData, JSON_PRETTY_PRINT) . "\n\n";
-    
-    // Initialize the CockPit3D processor
+ 
+
+    // Now create processor (which extends fetcher)
     $processor = new CockPit3DOrderProcessor();
-    
+    // Continue with your existing test code...
     echo "🔧 Checking CockPit3D API configuration...\n";
     
-    // Check if we have API credentials
-    $apiUrl = getEnvVariable('COCKPIT3D_API_URL');
-    $bearerToken = getEnvVariable('COCKPIT3D_BEARER_TOKEN');
-    
-    echo "API URL: " . ($apiUrl ? '✅ SET' : '❌ MISSING') . "\n";
-    echo "Bearer Token: " . ($bearerToken ? '✅ SET' : '❌ MISSING') . "\n\n";
+    // Check if we have API credentials from the processor
+    $apiUrl = $processor->apiBaseUrl ?? 'MISSING';
+    $bearerToken = $processor->bearerToken ?? 'MISSING';
+
+    // Or get directly from env with correct names
+    $apiUrlFromEnv = getEnvVariable('COCKPIT3D_BASE_URL');
+    $bearerTokenFromEnv = getEnvVariable('COCKPIT3D_API_TOKEN'); // or whatever your token var is named
+
+    echo "Direct from env - URL: " . ($apiUrlFromEnv ? '✅ SET' : '❌ MISSING') . "\n";
+    echo "Direct from env - Token: " . ($bearerTokenFromEnv ? '✅ SET' : '❌ MISSING') . "\n";
     
     if (!$apiUrl || !$bearerToken) {
         echo "⚠️  CockPit3D credentials missing. Order will be logged but not sent.\n\n";
@@ -149,11 +155,20 @@ try {
         
         exit;
     }
-    
-    echo "🚀 Sending test order to CockPit3D...\n\n";
-    
+     
+    // Process the order
+        echo "🚀 Sending test order to CockPit3D...\n\n";
+
+    // Add this logging:
+    echo "DEBUG: About to call processOrder\n";
+    error_log("DEBUG: About to call processOrder");
+
     // Process the order
     $result = $processor->processOrder($testOrderData);
+
+    // Add this logging:
+    echo "DEBUG: processOrder returned\n"; 
+    error_log("DEBUG: processOrder returned");
     
     echo "📥 CockPit3D Response:\n";
     echo json_encode($result, JSON_PRETTY_PRINT) . "\n\n";

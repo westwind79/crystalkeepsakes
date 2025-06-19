@@ -231,6 +231,10 @@ class CockPit3DFetcher {
         
         $url = (strpos($endpoint, 'http') === 0) ? $endpoint : $this->baseUrl . $endpoint;
         console_log("Full URL", $url);
+        
+        // ADD THIS - ALWAYS OUTPUT THE URL SO YOU CAN SEE IT:
+        echo "🌐 ACTUAL API URL BEING USED: " . $url . "\n";
+        error_log("🌐 ACTUAL API URL BEING USED: " . $url);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
