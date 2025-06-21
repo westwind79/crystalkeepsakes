@@ -1,14 +1,12 @@
 // pages/ProductDetail2.jsx - COMPLETELY CLEAN VERSION
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
+import { ArrowLeft, ImageIcon } from 'lucide-react';
 import { Container, Row, Col, Alert, Button, Form } from 'react-bootstrap';
 
-import { cockpit3dProducts } from '../data/cockpit3d-products';
+import { useCart } from '../contexts/CartContext';
 import { normalizeCockpitProduct } from '../utils/normalizeCockpitProducts';
 import { getSizePricing } from '../data/size-pricing';
-
 
 import { 
   OPTION_TYPES, 
@@ -18,30 +16,98 @@ import {
   PricingCalculator,
   OptionValidator
 } from '../../config/productOptionsConfig';
-import { ArrowLeft, ImageIcon } from 'lucide-react';
+
 import { PageLayout } from '../components/layout/PageLayout';
+import ProductGallery2 from '../components/product/ProductGallery2';
 import ImageEditor2 from '../components/product/ImageEditor2';
 import gsap from 'gsap';
  
 
-const getProductImageSrc = (product) => {
-  // Method 1: Check merged product images array
-  if (product.images && product.images.length > 0 && product.images[0].src) {
-    const imageSrc = product.images[0].src;
-    console.log('✅ PRODUCTDETAIL2: Using product.images[0].src:', imageSrc);
-    return imageSrc;
+const getProductImages = (product) => {
+  // Method 1: Check merged product images array (multiple images)
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ PRODUCTDETAIL2: Using product.images array:', product.images.length, 'images');
+      console.log('✅ PRODUCTDETAIL2: Images data:', product.images);
+    }
+    return product.images;
   }
   
-  // Method 2: Check legacy photo property
+  // Method 2: Check legacy photo property (single image)
   if (product.photo) {
-    console.log('✅ PRODUCTDETAIL2: Using legacy product.photo:', product.photo);
-    return product.photo;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ PRODUCTDETAIL2: Using legacy product.photo:', product.photo);
+    }
+    return [{ src: product.photo, isMain: true }];
   }
   
-  // Method 3: Fallback placeholder
+  // Method 3: No images available
+  if (process.env.NODE_ENV === 'development') {
+    console.log('⚠️ PRODUCTDETAIL2: No images found, will show placeholder');
+  }
+  return [];
+};
+
+// Enhanced ProductGallery2 wrapper with fallback
+const ProductImageDisplay = ({ product, finalImage }) => {
+  const images = getProductImages(product);
+  
+  // Show final/edited image if available
+  if (finalImage) {
+    return (
+      <div className="saved-image-preview">
+        <h4>Saved Image Preview:</h4>
+        <img src={finalImage} alt="Final design" className="img-fluid rounded shadow" />
+      </div>
+    );
+  }
+  
+  // Show gallery if we have images
+  if (images.length > 0) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎨 PRODUCTDETAIL2: Rendering ProductGallery2 with', images.length, 'images');
+    }
+    return <ProductGallery2 images={images} />;
+  }
+  
+  // Fallback to placeholder with debugging
   const fallbackSrc = `https://placehold.co/600x400/e9ecef/6c757d?text=${encodeURIComponent(product.name)}`;
-  console.log('⚠️ PRODUCTDETAIL2: No valid image found, using placeholder:', fallbackSrc);
-  return fallbackSrc;
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🎨 PRODUCTDETAIL2: Using fallback placeholder:', fallbackSrc);
+  }
+  
+  return (
+    <div className="bg-light p-5 rounded text-center">
+      <img 
+        src={fallbackSrc}
+        alt={`${product.name} placeholder`}
+        className="img-fluid rounded shadow"
+        onLoad={() => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ PRODUCTDETAIL2: Placeholder loaded successfully');
+          }
+        }}
+        onError={(e) => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('❌ PRODUCTDETAIL2: Even placeholder failed, showing icon');
+          }
+          // Hide broken image and show icon instead
+          e.target.style.display = 'none';
+          e.target.nextElementSibling.style.display = 'block';
+        }}
+      />
+      <div style={{ display: 'none' }}>
+        <ImageIcon size={48} className="text-muted mb-2" />
+        <p className="text-muted">No image available</p>
+      </div>
+      {process.env.NODE_ENV === 'development' && (
+        <small className="text-muted d-block mt-2">
+          Debug: No product.photo or product.images found - showing placeholder
+        </small>
+      )}
+    </div>
+  );
 };
 
 // Enhanced cart item preparation for merged products
@@ -125,7 +191,6 @@ const useDefaultOptions = (product, selectedOptions, setSelectedOptions) => {
   }, [product, setSelectedOptions]);
 };
 
-// DATA LOADING HOOK
 function useCatalogData() {
   const [catalog, setCatalog] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -135,9 +200,9 @@ function useCatalogData() {
     const loadCatalog = async () => {
       try {
         setLoading(true);
-        const devCacheBust = process.env.NODE_ENV === 'development' ? '?t=' + Date.now() : '';
-        const jsModule = await import(/* @vite-ignore */ `../data/cockpit3d-products.js`);
-        const catalogData = jsModule.cockpit3dProducts;
+        // Use the default export from the dynamic import
+        const jsModule = await import(`../data/final-product-list.js`);
+        const catalogData = jsModule.finalProductList;
         
         if (catalogData && Array.isArray(catalogData)) {
           setCatalog(catalogData);
@@ -158,10 +223,9 @@ function useCatalogData() {
 
   return { catalog, loading, error };
 }
-
 // PRODUCT LOOKUP
 function getProductFromCatalog(slug, catalog) {
-  if (!catalog || catalog.length === 0) return null;
+  if (!catalog || !Array.isArray(catalog)) return null;
   
   for (const product of catalog) {
     const productSlug = product.slug || product.name?.toLowerCase()
@@ -458,12 +522,36 @@ export const ProductOptionsRenderer = ({
   hasAttemptedSubmit = false,
   className = ""
 }) => {
+  
+  // DETECT LIGHTBASE PRODUCTS - Use compiled data structure
+  const isLightbaseProduct = product && (
+    product.requiresImage === false && 
+    (!product.sizes || product.sizes.length === 0)
+  );
+  
+  console.log('🔍 Product type detection:', {
+    name: product?.name,
+    requiresImage: product?.requiresImage,
+    sizesLength: product?.sizes?.length || 0,
+    isLightbase: isLightbaseProduct
+  });
+
+  // EARLY RETURN FOR LIGHTBASE PRODUCTS - NO OPTIONS NEEDED
+  if (isLightbaseProduct) {
+    console.log('🎯 Lightbase product detected - showing simple add to cart only');
+    return (
+      <div className={`product-options-simple ${className}`}>
+        <div className="alert alert-info">
+          <small>This is a ready-to-use lightbase product - no customization needed!</small>
+        </div>
+      </div>
+    );
+  }
   const getProductOptions = () => {
     if (!product) return [];
-
     const options = [];
 
-    // SIZE OPTIONS
+    // SIZE OPTIONS (Crystal products only)
     if (product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0) {
       options.push({
         id: 'size',
@@ -472,9 +560,7 @@ export const ProductOptionsRenderer = ({
         required: true,
         displayStyle: 'size_selector',
         values: product.sizes.map(size => {
-          // Get pricing from the pricing file
           const pricing = getSizePricing(size.name);
-          
           return {
             id: size.id,
             name: size.name,
@@ -487,7 +573,8 @@ export const ProductOptionsRenderer = ({
         validation: { errorMessage: 'Please select a size' }
       });
     }
-    // LIGHTBASE OPTIONS
+
+    // LIGHTBASE OPTIONS (Crystal products only - to add a lightbase)
     if (product.lightBases && Array.isArray(product.lightBases) && product.lightBases.length > 0) {
       options.push({
         id: 'lightBase',
@@ -505,13 +592,13 @@ export const ProductOptionsRenderer = ({
       });
     }
 
-    // BACKGROUND OPTIONS
+    // BACKGROUND OPTIONS (Crystal products only)
     if (product.backgroundOptions && Array.isArray(product.backgroundOptions) && product.backgroundOptions.length > 0) {
       options.push({
         id: 'background',
-        name: 'Background',
+        name: 'Background Style',
         type: OPTION_TYPES.RADIO_BUTTONS,
-        required: false,
+        required: true,
         displayStyle: 'toggle',
         values: product.backgroundOptions.map(bg => ({
           id: bg.id,
@@ -519,80 +606,76 @@ export const ProductOptionsRenderer = ({
           pricingType: PRICING_TYPES.FIXED_PRICE,
           priceChange: parseFloat(bg.price || 0),
           displayPrice: parseFloat(bg.price || 0) === 0 ? 'Included' : `+$${parseFloat(bg.price || 0).toFixed(2)}`
-        }))
+        })),
+        validation: { errorMessage: 'Please select a background style' }
       });
     }
 
-    // TEXT OPTIONS
+    // TEXT OPTIONS (Crystal products only)
     if (product.textOptions && Array.isArray(product.textOptions) && product.textOptions.length > 0) {
       const customTextOption = product.textOptions.find(opt => 
         opt.name.toLowerCase().includes('custom') || opt.id === 'customText'
       );
-      
       if (customTextOption && parseFloat(customTextOption.price || 0) > 0) {
         options.push({
           id: 'customText',
           name: 'Custom Text',
           type: OPTION_TYPES.TEXT_INPUT,
           required: false,
+          placeholder: 'Enter custom text (optional)',
           pricingType: PRICING_TYPES.FIXED_PRICE,
           priceChange: parseFloat(customTextOption.price || 0),
-          displayPrice: `+$${parseFloat(customTextOption.price || 0).toFixed(2)}`,
-          placeholder: 'Enter custom text',
-          validation: {
-            maxLength: 30,
-            errorMessage: 'Please enter custom text'
-          }
+          validation: { maxLength: 50 }
         });
       }
     }
 
-    // PROCESSING SPEED
-    if (product.requiresImage) {
-      options.push({
-        id: 'processingSpeed',
-        name: 'Processing Speed',
-        type: OPTION_TYPES.RADIO_BUTTONS,
-        required: false,
-        displayStyle: 'toggle',
-        values: [
-          {
-            id: 'standard',
-            name: 'Standard Processing',
-            pricingType: PRICING_TYPES.FREE,
-            priceChange: 0,
-            displayPrice: 'Included'
-          },
-          {
-            id: 'rush48',
-            name: '48 Hour Rush Service',
-            pricingType: PRICING_TYPES.FIXED_PRICE,
-            priceChange: 35,
-            displayPrice: '+$35.00'
-          },
-          {
-            id: 'rush24',
-            name: '24 Hour Rush Service',
-            pricingType: PRICING_TYPES.FIXED_PRICE,
-            priceChange: 65,
-            displayPrice: '+$65.00'
-          }
-        ]
-      });
-    }
+    // PROCESSING SPEED (All crystal products)
+    options.push({
+      id: 'processingSpeed',
+      name: 'Processing Speed',
+      type: OPTION_TYPES.RADIO_BUTTONS,
+      required: true,
+      displayStyle: 'toggle',
+      values: [
+        {
+          id: 'standard',
+          name: 'Standard (7-10 days)',
+          pricingType: PRICING_TYPES.FREE,
+          priceChange: 0,
+          displayPrice: 'Included'
+        },
+        {
+          id: 'rush48',
+          name: 'Rush (2-3 days)',
+          pricingType: PRICING_TYPES.FIXED_PRICE,
+          priceChange: 35,
+          displayPrice: '+$35.00'
+        },
+        {
+          id: 'rush24',
+          name: 'Express (1-2 days)',
+          pricingType: PRICING_TYPES.FIXED_PRICE,
+          priceChange: 65,
+          displayPrice: '+$65.00'
+        }
+      ],
+      validation: { errorMessage: 'Please select processing speed' }
+    });
 
     return options;
   };
 
   const productOptions = getProductOptions();
 
+// RENDER OPTION COMPONENTS - Use existing components directly
   const renderOption = (option) => {
     const props = {
       option,
       error: errors[option.id],
       hasAttemptedSubmit,
-      onChange: onOptionChange,
-      selectedValue: selectedOptions[option.id]
+      selectedValue: selectedOptions[option.id],
+      onChange: (optionId, value) => onOptionChange(optionId, value)
     };
 
     switch (option.type) {
@@ -610,7 +693,7 @@ export const ProductOptionsRenderer = ({
   };
 
   return (
-    <div className={`product-options-renderer ${className}`}>
+    <div className={`product-options ${className}`}>
       {productOptions
         .filter(option => option.type !== OPTION_TYPES.IMAGE_UPLOAD)
         .map(renderOption)}
@@ -818,23 +901,113 @@ export function ProductDetail2() {
   const maskImage = useMemo(() => {
     if (!product || !product.requiresImage) return null;
     
-    const maskMap = {
-      'diamond': '/img/masks/diamond-mask.png',
-      'heart': '/img/masks/crystal-heart-mask.png',
-      'rectangle': '/img/masks/rectangle-mask.png'
-    };
-    
     const productName = product.name?.toLowerCase() || '';
     
-    for (const [key, maskPath] of Object.entries(maskMap)) {
-      if (productName.includes(key)) {
+    // Comprehensive mask mapping based on your available masks
+    const maskMap = {
+      // Crystal shapes
+      'diamond': '/img/masks/diamond-mask.png',
+      'crystal diamond': '/img/masks/3d_crystal_diamond_cut_corner_2.png',
+      'heart': '/img/masks/heart-mask.png',
+      'crystal heart': '/img/masks/crystal-heart-mask.png',
+      'rectangle': '/img/masks/rectangle-mask.png',
+      'crystal rectangle': '/img/masks/3d-rectangle-tall-mask.png',
+      'square': '/img/masks/3d-crystal-rectangle-wide-mask.png',
+      'oval': '/img/masks/3d-crystal-oval-mask.png',
+      'circle': '/img/masks/globe-mask.png',
+      'octagon': '/img/masks/3d-crystal-octagon-mask.png',
+      
+      // Specific product types
+      'ornament': '/img/masks/ornament-mask.png',
+      'globe': '/img/masks/globe-mask.png',
+      'iceberg': '/img/masks/3d-crystal-prestige-iceberg-mask.png',
+      'prestige': '/img/masks/prestige-mask.png',
+      'keychain': '/img/masks/rectangle-keychain-horizontal-mask.png',
+      'pendant': '/img/masks/3CSS-portrait-mask.png',
+      'portrait': '/img/masks/3CSS-portrait-mask.png',
+      
+      // Size variations
+      'small': '/img/masks/3d-crystal-black.png',
+      'medium': '/img/masks/3d-crystal-rectangle-wide-mask.png',
+      'large': '/img/masks/3d-rectangle-tall-mask.png',
+      
+      // Special shapes
+      'dog bone': '/img/masks/dogbone-horizontal-mask.png',
+      'bone': '/img/masks/dogbone-horizontal-mask.png',
+      'vertical': '/img/masks/dogbone-vertical-mask.png',
+      'notched': '/img/masks/notched-horizontal-mask.png',
+      'beveled': '/img/masks/rectangle-keychain-vertical-mask.png'
+    };
+    
+    // Try exact matches first
+    for (const [keyword, maskPath] of Object.entries(maskMap)) {
+      if (productName.includes(keyword)) {
+        console.log(`🎭 Mask matched: "${keyword}" -> ${maskPath}`);
         return maskPath;
       }
     }
     
+    // Advanced pattern matching for complex product names
+    if (productName.includes('3d') && productName.includes('crystal')) {
+      if (productName.includes('heart')) return '/img/masks/crystal-heart-mask.png';
+      if (productName.includes('diamond')) return '/img/masks/3d_crystal_diamond_cut_corner_2.png';
+      if (productName.includes('rectangle')) return '/img/masks/3d-crystal-rectangle-wide-mask.png';
+      if (productName.includes('prestige')) return '/img/masks/3d-crystal-prestige-iceberg-mask.png';
+    }
+    
+    // Shape-based fallbacks
+    if (productName.includes('round') || productName.includes('circular')) {
+      return '/img/masks/globe-mask.png';
+    }
+    
+    if (productName.includes('tall') || productName.includes('vertical')) {
+      return '/img/masks/3d-rectangle-tall-mask.png';
+    }
+    
+    if (productName.includes('wide') || productName.includes('horizontal')) {
+      return '/img/masks/3d-crystal-rectangle-wide-mask.png';
+    }
+    
+    // Default fallback
+    console.log(`🎭 Using default mask for: ${productName}`);
     return '/img/masks/3d_crystal_picture.png';
   }, [product]);
 
+  // Optional: Add this helper function to get all available masks for admin/debugging
+  // export const getAllAvailableMasks = () => {
+  //   return [
+  //     '/img/masks/2d-ornament-mask.png',
+  //     '/img/masks/3CRS-portrait-mask.png',
+  //     '/img/masks/3d-crystal-black.png',
+  //     '/img/masks/3d_crystal_diamond_cut_corner_2.png',
+  //     '/img/masks/3d-crystal-prestige-iceberg-mask.png',
+  //     '/img/masks/3d-crystal-rectangle-wide-mask.png',
+  //     '/img/masks/3d-crystal-sun-small-mask.png',
+  //     '/img/masks/3d_crystal_picture.png',
+  //     '/img/masks/3d-rectangle-tall-mask.png',
+  //     '/img/masks/crystal-heart-mask.png',
+  //     '/img/masks/crystal-sun-large-mask.png',
+  //     '/img/masks/desk-lamp-mask.png',
+  //     '/img/masks/diamond-mask.png',
+  //     '/img/masks/dogbone-horizontal-mask.png',
+  //     '/img/masks/dogbone-vertical-mask.png',
+  //     '/img/masks/globe-mask.png',
+  //     '/img/masks/heart-keychain-mask.png',
+  //     '/img/masks/heart-mask.png',
+  //     '/img/masks/heart-necklace-mask.png',
+  //     '/img/masks/notched-horizontal-mask.png',
+  //     '/img/masks/notched-vertical-mask.png',
+  //     '/img/masks/ornament-mask.png',
+  //     '/img/masks/photo_crystal_ornament_with_a_backup.png',
+  //     '/img/masks/prestige-mask.png',
+  //     '/img/masks/rectangle-horizontal-mask.png',
+  //     '/img/masks/rectangle-keychain-horizontal-mask.png',
+  //     '/img/masks/rectangle-keychain-vertical-mask.png',
+  //     '/img/masks/rectangle-mask.png',
+  //     '/img/masks/rectangle-necklace-mask.png',
+  //     '/img/masks/rectangle-vertical-mask.png'
+  //   ];
+  // };
   const handleOptionChange = (optionId, value) => {
     setSelectedOptions(prev => ({
       ...prev,
@@ -1037,43 +1210,7 @@ export function ProductDetail2() {
                   </div>
                 ) : (
                   <div className="product-image-container">
-                    {(() => {
-                      const imageSrc = getProductImageSrc(product);
-                      
-                      if (process.env.NODE_ENV === 'development') {
-                        console.log('🎨 PRODUCTDETAIL2: About to render image with src:', imageSrc);
-                      }
-                      
-                      return product.photo || (product.images && product.images.length > 0) ? (
-                        <img 
-                          src={imageSrc}
-                          alt={product.name}
-                          className="img-fluid rounded shadow"
-                          onLoad={() => {
-                            if (process.env.NODE_ENV === 'development') {
-                              console.log('✅ PRODUCTDETAIL2: Image loaded successfully:', imageSrc);
-                            }
-                          }}
-                          onError={(e) => {
-                            if (process.env.NODE_ENV === 'development') {
-                              console.log('❌ PRODUCTDETAIL2: Image failed to load:', imageSrc);
-                              console.log('❌ PRODUCTDETAIL2: Trying placeholder fallback...');
-                            }
-                            e.target.src = 'https://placehold.co/600x400/e9ecef/6c757d?text=' + encodeURIComponent(product.name);
-                          }}
-                        />
-                      ) : (
-                        <div className="bg-light p-5 rounded text-center">
-                          <ImageIcon size={48} className="text-light mb-2" />
-                          <p>No image available</p>
-                          {process.env.NODE_ENV === 'development' && (
-                            <small className="text-muted">
-                              Debug: No product.photo or product.images found
-                            </small>
-                          )}
-                        </div>
-                      );
-                    })()}
+                    <ProductImageDisplay product={product} finalImage={finalImage} />
                   </div>
                 )}
                 

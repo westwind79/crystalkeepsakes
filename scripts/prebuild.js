@@ -17,7 +17,7 @@ async function testAPIAvailability() {
     console.log('🧪 Testing API availability...');
     
     // Test the exact same URL that vite uses in proxy
-    const testUrl = 'http://crystalkeepsakes:8888/api/cockpit3d-data-fetcher.php?action=generate-products';
+    const testUrl = 'http://crystalkeepsakes:8888/api/cockpit3d-data-fetcher.php?action=generate-compiled';
     
     const response = await fetch(testUrl, {
       method: 'GET',
@@ -59,7 +59,10 @@ async function createFallbackProductsFile() {
       throw new Error(`Static products file not found: ${staticProductsPath}`);
     }
     
-    const { products } = await import(staticProductsUrl);
+    // const { products } = await import(staticProductsUrl);
+    const staticModule = await import(staticProductsUrl);
+    const products = staticModule.products || staticModule.default || [];
+
     devLog(`Loaded ${products.length} static products`);
     
     // Create the fallback file content - FIXED: Use correct export name
@@ -85,7 +88,7 @@ export default cockpit3dProducts;
 `;
 
     // Write the file
-    const outputPath = path.join(rootDir, 'src/data/cockpit3d-products.js');
+    const outputPath = path.join(rootDir, 'src/data/final-product-list.js');
     await fs.ensureDir(path.dirname(outputPath));
     await fs.writeFile(outputPath, jsContent);
     
@@ -106,7 +109,7 @@ async function generateProductsViaAPI() {
   try {
     // FIXED: Use the same URL structure as vite proxy
     const apiUrl = 'http://crystalkeepsakes:8888';
-    const fullUrl = `${apiUrl}/api/cockpit3d-data-fetcher.php?action=generate-products&refresh=true`;
+    const fullUrl = `${apiUrl}/api/cockpit3d-data-fetcher.php?action=generate-compiled&refresh=true`;
     
     devLog(`Calling API: ${fullUrl}`);
     
@@ -132,7 +135,7 @@ async function generateProductsViaAPI() {
     }
     
     // Verify the products file was actually created
-    const productsFilePath = path.join(rootDir, 'src/data/cockpit3d-products.js');
+    const productsFilePath = path.join(rootDir, 'src/data/final-product-list.js');
     const fileExists = await fs.pathExists(productsFilePath);
     
     if (!fileExists) {
@@ -164,7 +167,7 @@ async function generateProductsViaAPI() {
 // Function to verify the generated file
 async function verifyGeneratedFile() {
   try {
-    const productsFilePath = path.join(rootDir, 'src/data/cockpit3d-products.js');
+    const productsFilePath = path.join(rootDir, 'src/data/final-product-list.js');
     
     if (!await fs.pathExists(productsFilePath)) {
       return { valid: false, error: 'File does not exist' };

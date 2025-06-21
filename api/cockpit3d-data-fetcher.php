@@ -305,32 +305,347 @@ class CockPit3DFetcher {
         }
     }
 
-     private function transformCockpit3dProduct($rawProduct, $catalog = []) {
-        console_log("🔄 Transforming CockPit3D product", $rawProduct['id']);
+/**
+     * Generate compiled-products.js from static + raw products + raw catalog
+     * This is the base structure that admin panel will customize
+     */
+    public function generateCompiledProducts($refresh = false) {
+        console_log("🔧 Step 2: Generating compiled-products.js...");
         
-        // Check if this is a lightbase product by name
-        $isLightbaseProduct = $this->isLightbaseProduct($rawProduct['name']);
+        try {
+            // Ensure raw files exist
+            $rawResult = $this->generateRawFiles($refresh);
+            if (!$rawResult['success']) {
+                throw new Exception("Failed to generate raw files");
+            }
+            
+            // Load static products
+            $staticProducts = $this->loadStaticProducts();
+            
+            // Load and match APIs
+            $cockpitProducts = $this->processApiProducts();
+            
+            // Combine and save
+            $allProducts = array_merge($staticProducts, $cockpitProducts);
+            $this->saveCompiledProductsFile($allProducts, $staticProducts, $cockpitProducts);
+            
+            return [
+                'success' => true,
+                'file' => 'compiled-products.js',
+                'total_products' => count($allProducts),
+                'static_count' => count($staticProducts),
+                'cockpit3d_count' => count($cockpitProducts)
+            ];
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Process API products with SKU/name matching
+     */
+    private function processApiProducts() {
+        $rawProductsFile = $this->cacheDir . 'cockpit3d-raw-products.js';
+        $rawCatalogFile = $this->cacheDir . 'cockpit3d-raw-catalog.js';
         
-        $transformed = [
+        if (!file_exists($rawProductsFile) || !file_exists($rawCatalogFile)) {
+            console_log("⚠️ Raw files missing, returning empty array");
+            return [];
+        }
+        
+        // Parse raw data
+        $rawProducts = $this->parseJsFile($rawProductsFile, 'cockpit3dRawProducts');
+        $rawCatalog = $this->parseJsFile($rawCatalogFile, 'cockpit3dRawCatalog');
+        
+        $processedProducts = [];
+        foreach ($rawProducts as $rawProduct) {
+            $catalogMatch = $this->findCatalogMatch($rawProduct, $rawCatalog);
+            $transformed = $this->buildProductStructure($rawProduct, $catalogMatch);
+            if ($transformed) {
+                $processedProducts[] = $transformed;
+            }
+        }
+        
+        return $processedProducts;
+    }
+
+    /**
+     * Build complete product structure for admin panel
+     */
+    private function buildProductStructure($rawProduct, $catalogMatch) {
+        return [
+            // Core fields that match your order system
             'id' => $rawProduct['id'],
             'name' => $rawProduct['name'],
             'slug' => $this->createSlug($rawProduct['name']),
-            'sku' => $rawProduct['sku'],
-            'basePrice' => (float)$rawProduct['price'],
+            'sku' => $rawProduct['sku'] ?? 'sku_' . $rawProduct['id'],
+            'basePrice' => (float)($rawProduct['price'] ?? 0),
             'description' => $rawProduct['name'],
             'longDescription' => '',
-            'images' => [],
-            'options' => []
+            'requiresImage' => !$this->isLightbaseProduct($rawProduct['name']),
+            'featured' => false,
+            
+            // Images for product pages
+            'images' => $this->buildProductImages($rawProduct),
+            
+            // Auto-mapped Cockpit3D options
+            'cockpit3dOptions' => $this->buildCockpit3dOptions($catalogMatch),
+            
+            // Product options that match your current system
+            'sizes' => $this->buildSizesWithValueIds($catalogMatch),
+            'lightBases' => $this->buildStandardLightbaseOptions(),
+            'backgroundOptions' => $this->buildStandardBackgroundOptions(),
+            'textOptions' => $this->buildStandardTextOptions(),
+            
+            // Source tracking
+            'source' => 'cockpit3d',
+            'catalogMatched' => $catalogMatch ? true : false
         ];
+    }
 
-        // Set product-type specific fields
-        if ($isLightbaseProduct) {
-            $transformed['requiresImage'] = false;
-        } else {
-            $transformed['requiresImage'] = true;
+    /**
+     * Build the JavaScript content for compiled-products.js
+     */
+    private function buildCompiledProductsContent($allProducts, $staticProducts, $cockpitProducts) {
+        $timestamp = date('Y-m-d H:i:s');
+        $isoTimestamp = date('c');
+        
+        $jsContent = "// compiled-products.js - Base Structure for Admin Customization\n";
+        $jsContent .= "// Generated: {$timestamp}\n";
+        $jsContent .= "// Sources: static-products.js + cockpit3d-raw-products.js + cockpit3d-raw-catalog.js\n";
+        $jsContent .= "// This file contains auto-mapped Cockpit3D options and is the base for admin panel\n";
+        $jsContent .= "// Admin panel will customize this and output final-product-list.js\n\n";
+        
+        $jsContent .= "export const compiledProducts = " . json_encode($allProducts, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . ";\n\n";
+        
+        $jsContent .= "export const compilationInfo = {\n";
+        $jsContent .= "  generated_at: \"{$isoTimestamp}\",\n";
+        $jsContent .= "  total_products: " . count($allProducts) . ",\n";
+        $jsContent .= "  static_products: " . count($staticProducts) . ",\n";
+        $jsContent .= "  cockpit3d_products: " . count($cockpitProducts) . ",\n";
+        $jsContent .= "  auto_mapped: true,\n";
+        $jsContent .= "  ready_for_admin: true\n";
+        $jsContent .= "};\n\n";
+        
+        $jsContent .= "// Structure info for admin panel\n";
+        $jsContent .= "export const productStructure = {\n";
+        $jsContent .= "  base_fields: ['id', 'name', 'slug', 'sku', 'basePrice', 'description', 'longDescription'],\n";
+        $jsContent .= "  cockpit3d_fields: ['cockpit3dOptions', 'sizes', 'lightBases', 'backgroundOptions', 'textOptions'],\n";
+        $jsContent .= "  customizable_fields: ['name', 'description', 'longDescription', 'basePrice', 'featured', 'images'],\n";
+        $jsContent .= "  pricing_fields: ['sizes', 'lightBases', 'backgroundOptions', 'textOptions']\n";
+        $jsContent .= "};\n\n";
+        
+        $jsContent .= "export default compiledProducts;\n";
+        
+        return $jsContent;
+    }
+
+    /**
+     * Enhanced transform with complete structure for admin customization
+     */
+    private function transformCockpit3dProduct($rawProduct, $catalog = []) {
+        console_log("🔄 Transforming product with complete structure", [
+            'product_id' => $rawProduct['id'],
+            'product_name' => $rawProduct['name'],
+            'product_sku' => $rawProduct['sku'] ?? 'NO_SKU',      
+            'is_lightbase' => $isLightbase ? 'YES' : 'NO'
+        ]);
+        
+        // Find matching catalog entry
+        $catalogMatch = $this->findCatalogMatch($rawProduct, $catalog);
+        
+        // Build complete product structure
+        $transformed = [
+            // Basic product info
+            'id' => $rawProduct['id'],
+            'name' => $rawProduct['name'],
+            'slug' => $this->createSlug($rawProduct['name']),
+            'sku' => $rawProduct['sku'] ?? 'sku_' . $rawProduct['id'],
+            'basePrice' => (float)($rawProduct['price'] ?? 0),
+            'description' => $rawProduct['name'],
+            'longDescription' => '',
+            'requiresImage' => !$this->isLightbaseProduct($rawProduct['name']),
+            'featured' => false,
+            
+            // Images
+            'images' => $this->buildProductImages($rawProduct),
+            
+            // Cockpit3D mappings (auto-generated)
+            'cockpit3dOptions' => $this->buildCockpit3dOptions($catalogMatch),
+            
+            // Product options with Cockpit3D value IDs
+            'sizes' => $this->buildSizesWithValueIds($catalogMatch),
+            'lightBases' => $this->buildLightbaseOptions($catalog),
+            'backgroundOptions' => $this->buildBackgroundOptions($catalog),
+            'textOptions' => $this->buildTextOptions($catalog),
+            
+            // Metadata for admin panel
+            'source' => 'cockpit3d',
+            'catalogMatched' => $catalogMatch ? true : false,
+            'autoMapped' => true
+        ];
+        
+        console_log("✅ Product transformed with complete structure", [
+            'name' => $transformed['name'],
+            'catalog_matched' => $catalogMatch ? 'YES' : 'NO',
+            'option_ids_count' => count($transformed['cockpit3dOptions']),
+            'sizes_count' => count($transformed['sizes']),
+            'lightbases_count' => count($transformed['lightBases']),
+            'requires_image' => $transformed['requiresImage'] ? 'YES' : 'NO'
+        ]);
+        
+        return $transformed;
+    }
+    /**
+     * Find matching catalog entry by SKU/name
+     */
+    private function findCatalogMatch($product, $catalog) {
+        console_log("🔍 Finding catalog match for", [
+            'sku' => $product['sku'],
+            'name' => $product['name']
+        ]);
+        
+        foreach ($catalog as $category) {
+            if (!isset($category['products']) || !is_array($category['products'])) {
+                continue;
+            }
+            
+            foreach ($category['products'] as $catalogProduct) {
+                // Try exact SKU match first
+                if (isset($catalogProduct['sku']) && $catalogProduct['sku'] === $product['sku']) {
+                    console_log("✅ Found SKU match", $catalogProduct['sku']);
+                    return $catalogProduct;
+                }
+                
+                // Try name match (normalized)
+                $productName = $this->normalizeName($product['name']);
+                $catalogName = $this->normalizeName($catalogProduct['name']);
+                
+                if ($productName === $catalogName) {
+                    console_log("✅ Found name match", $catalogProduct['name']);
+                    return $catalogProduct;
+                }
+                
+                // Try partial name match (80% similarity)
+                $similarity = 0;
+                similar_text($productName, $catalogName, $similarity);
+                if ($similarity > 80) {
+                    console_log("✅ Found similar name match", [
+                        'product' => $product['name'],
+                        'catalog' => $catalogProduct['name'],
+                        'similarity' => $similarity
+                    ]);
+                    return $catalogProduct;
+                }
+            }
         }
+        
+        console_log("❌ No catalog match found for", $product['name']);
+        return null;
+    }
 
-        // Handle images
+    /**
+     * Normalize product names for matching
+     */
+    private function normalizeName($name) {
+        $normalized = strtolower(trim($name));
+        $normalized = preg_replace('/[^a-z0-9\s]/', '', $normalized);
+        $normalized = preg_replace('/\s+/', ' ', $normalized);
+        return $normalized;
+    }
+
+    /**
+     * Build Cockpit3D option mappings from catalog match
+     */
+    private function buildCockpit3dOptions($catalogMatch) {
+        $options = [];
+        
+        if (!$catalogMatch || !isset($catalogMatch['options'])) {
+            console_log("⚠️ No catalog match or options found");
+            return $options;
+        }
+        
+        foreach ($catalogMatch['options'] as $option) {
+            switch (strtolower($option['name'])) {
+                case 'size':
+                    $options['sizeOptionId'] = $option['id'];
+                    console_log("📏 Found size option ID", $option['id']);
+                    break;
+                    
+                case 'face':
+                    $options['faceOptionId'] = $option['id'];
+                    console_log("🖼️ Found face option ID", $option['id']);
+                    break;
+                    
+                case 'light base':
+                case 'lightbase':
+                    $options['lightBaseOptionId'] = $option['id'];
+                    console_log("💡 Found light base option ID", $option['id']);
+                    break;
+                    
+                case 'service_queue':
+                    $options['serviceQueueOptionId'] = $option['id'];
+                    console_log("⚡ Found service queue option ID", $option['id']);
+                    break;
+                    
+                case 'customer text':
+                    $options['customerTextOptionId'] = $option['id'];
+                    console_log("✏️ Found customer text option ID", $option['id']);
+                    break;
+                    
+                case '2d backdrop':
+                    $options['twoDBackdropOptionId'] = $option['id'];
+                    console_log("🎨 Found 2D backdrop option ID", $option['id']);
+                    break;
+                    
+                case '3d backdrop':
+                    $options['threeDBackdropOptionId'] = $option['id'];
+                    console_log("🎨 Found 3D backdrop option ID", $option['id']);
+                    break;
+            }
+        }
+        
+        console_log("✅ Built Cockpit3D options", $options);
+        return $options;
+    }
+
+    /**
+     * Build sizes array with Cockpit3D value IDs
+     */
+    private function buildSizesWithValueIds($catalogMatch) {
+        $sizes = [];
+        
+        if (!$catalogMatch || !isset($catalogMatch['options'])) {
+            return $sizes;
+        }
+        
+        // Find the Size option
+        foreach ($catalogMatch['options'] as $option) {
+            if (strtolower($option['name']) === 'size' && isset($option['values'])) {
+                foreach ($option['values'] as $sizeValue) {
+                    $sizes[] = [
+                        'id' => (string)$sizeValue['id'],
+                        'name' => $sizeValue['name'],
+                        'price' => isset($sizeValue['price']) ? (float)$sizeValue['price'] : 0,
+                        'cockpit3dValueId' => (string)$sizeValue['id'] // Auto-mapped!
+                    ];
+                }
+                
+                console_log("📏 Built sizes with value IDs", count($sizes) . " sizes");
+                break;
+            }
+        }
+        
+        return $sizes;
+    }
+
+    /**
+     * Build product images array
+     */
+    private function buildProductImages($rawProduct) {
+        $images = [];
+        
         if (isset($rawProduct['photo']) && !empty($rawProduct['photo'])) {
             $cleanName = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $rawProduct['name']);
             $cleanName = preg_replace('/_+/', '_', $cleanName);
@@ -346,66 +661,99 @@ class CockPit3DFetcher {
             
             $localImagePath = "/img/products/cockpit3d/{$rawProduct['id']}/cockpit3d_{$rawProduct['id']}_{$cleanName}.{$actualExtension}";
             
-            $transformed['images'][] = [
+            $images[] = [
                 'src' => $localImagePath,
                 'isMain' => true
             ];
         } else {
-            $transformed['images'][] = [
-                'src' => "https://placehold.co/600x400",
+            $images[] = [
+                'src' => "https://placehold.co/600x400?text=Missing+Image",
                 'isMain' => true
             ];
         }
+        
+        return $images;
+    }
 
-        // ONLY ADD PRODUCT OPTIONS IF IT'S NOT A LIGHTBASE
-        if (!$isLightbaseProduct) {
-            // Handle size options with ACTUAL prices
-            if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
-                foreach ($rawProduct['options'] as $option) {
-                    if ($option['name'] === 'Size' && isset($option['values'])) {
-                        $transformed['sizes'] = array_map(function($value) use ($rawProduct) {
-                            $price = isset($value['price']) && is_numeric($value['price']) 
-                                ? (float)$value['price'] 
-                                : (float)$rawProduct['price']; // fallback
-
-                            if (!is_numeric($value['price'])) {
-                                console_log("⚠️ SIZE PRICE NOT NUMERIC", $value);
-                            }
-
-                            return [
-                                'id' => (string)$value['id'],
-                                'name' => $value['name'],
-                                'price' => $price
-                            ];
-                        }, $option['values']);
+    /**
+     * Build lightbase options from catalog
+     */
+    private function buildLightbaseOptions($catalog) {
+        $options = [
+            [
+                'id' => 'none',
+                'name' => 'No Base',
+                'price' => 0,
+                'cockpit3dValueId' => null
+            ]
+        ];
+        
+        // Find lightbase products in catalog
+        foreach ($catalog as $category) {
+            if (isset($category['products']) && is_array($category['products'])) {
+                foreach ($category['products'] as $product) {
+                    if ($this->isLightbaseProduct($product['name'])) {
+                        $options[] = [
+                            'id' => $this->createSlug($product['name']),
+                            'name' => $product['name'],
+                            'price' => isset($product['price']) ? (float)$product['price'] : 0,
+                            'cockpit3dValueId' => $product['id'] // Link to catalog product ID
+                        ];
                     }
                 }
             }
-
-            
-            // Add standard lightbase options for crystal products
-            $transformed['lightBases'] = $this->extractLightbaseOptions($catalog);
-            
-            // Add background options with prices from catalog
-            $transformed['backgroundOptions'] = $this->extractBackgroundOptions($catalog);
-            
-            // Add text options with prices from catalog
-            $transformed['textOptions'] = $this->extractTextOptions($catalog);
         }
         
-        console_log("✅ Transformed product", [
-            'name' => $transformed['name'],
-            'basePrice' => $transformed['basePrice'],
-            'isLightbase' => $isLightbaseProduct,
-            'requiresImage' => $transformed['requiresImage'] ?? false,
-            'hasSizes' => isset($transformed['sizes']) ? count($transformed['sizes']) : 0,
-            'hasImages' => count($transformed['images']),
-            'slug' => $transformed['slug']
-        ]);
-        
-        return $transformed;
+        return $options;
     }
 
+    /**
+     * Build background options
+     */
+    private function buildBackgroundOptions($catalog) {
+        return [
+            [
+                'id' => 'rm',
+                'name' => 'Remove Backdrop',
+                'price' => 0,
+                'cockpit3dValueId' => null
+            ],
+            [
+                'id' => '2d',
+                'name' => '2D Backdrop',
+                'price' => 12.0,
+                'cockpit3dValueId' => null // Will be filled by admin or auto-detected
+            ],
+            [
+                'id' => '3d',
+                'name' => '3D Backdrop',
+                'price' => 15.0,
+                'cockpit3dValueId' => null // Will be filled by admin or auto-detected
+            ]
+        ];
+    }
+
+    /**
+     * Build text options
+     */
+    private function buildTextOptions($catalog) {
+        return [
+            [
+                'id' => 'none',
+                'name' => 'No Text',
+                'price' => 0,
+                'cockpit3dValueId' => null
+            ],
+            [
+                'id' => 'customText',
+                'name' => 'Custom Text',
+                'price' => 9.5,
+                'cockpit3dValueId' => null // Will be filled by admin
+            ]
+        ];
+    }
+
+    
     /**
      * Check if a product is a lightbase/stand product
      */
@@ -441,7 +789,7 @@ class CockPit3DFetcher {
             [
                 'id' => 'none',
                 'name' => 'No Base',
-                'price' => null
+                'price' => 0
             ]
         ];
         
@@ -453,14 +801,15 @@ class CockPit3DFetcher {
                         $options[] = [
                             'id' => $this->createSlug($product['name']),
                             'name' => $product['name'],
-                            'price' => isset($product['price']) ? (float)$product['price'] : null
+                            'price' => isset($product['price']) ? (float)$product['price'] : 0
                         ];
                     }
                 }
             }
         }
         
-        foreach ($lightbaseOptions as &$base) {
+        // FIXED: Validate prices in the options we just created
+        foreach ($options as &$base) {
             if (!isset($base['price']) || $base['price'] === true || $base['price'] === false) {
                 console_log("🛑 Invalid lightbase price, forcing to 0", $base);
                 $base['price'] = 0;
@@ -474,85 +823,85 @@ class CockPit3DFetcher {
         return $options;
     }
 
-    /**
-     * Extract background options with prices
-     */
-    private function extractBackgroundOptions($catalog) {
-        $options = [
-            [
-                'id' => 'rm',
-                'name' => 'Remove Backdrop',
-                'price' => 0
-            ]
-        ];
+    // /**
+    //  * Extract background options with prices
+    //  */
+    // private function extractBackgroundOptions($catalog) {
+    //     $options = [
+    //         [
+    //             'id' => 'rm',
+    //             'name' => 'Remove Backdrop',
+    //             'price' => 0
+    //         ]
+    //     ];
         
-        // Find backdrop prices in catalog options
-        $twoDPrice = 12; // Fallback
-        $threeDPrice = 15; // Fallback
+    //     // Find backdrop prices in catalog options
+    //     $twoDPrice = 12; // Fallback
+    //     $threeDPrice = 15; // Fallback
         
-        foreach ($catalog as $category) {
-            if (isset($category['options'])) {
-                foreach ($category['options'] as $option) {
-                    if ($option['name'] === '2D Backdrop' && isset($option['price'])) {
-                        $twoDPrice = (float)$option['price'];
-                    }
-                    if ($option['name'] === '3D Backdrop' && isset($option['price'])) {
-                        $threeDPrice = (float)$option['price'];
-                    }
-                }
-            }
-        }
+    //     foreach ($catalog as $category) {
+    //         if (isset($category['options'])) {
+    //             foreach ($category['options'] as $option) {
+    //                 if ($option['name'] === '2D Backdrop' && isset($option['price'])) {
+    //                     $twoDPrice = (float)$option['price'];
+    //                 }
+    //                 if ($option['name'] === '3D Backdrop' && isset($option['price'])) {
+    //                     $threeDPrice = (float)$option['price'];
+    //                 }
+    //             }
+    //         }
+    //     }
         
-        $options[] = [
-            'id' => '2d',
-            'name' => '2D Backdrop',
-            'price' => $twoDPrice
-        ];
+    //     $options[] = [
+    //         'id' => '2d',
+    //         'name' => '2D Backdrop',
+    //         'price' => $twoDPrice
+    //     ];
         
-        $options[] = [
-            'id' => '3d',
-            'name' => '3D Backdrop',
-            'price' => $threeDPrice
-        ];
+    //     $options[] = [
+    //         'id' => '3d',
+    //         'name' => '3D Backdrop',
+    //         'price' => $threeDPrice
+    //     ];
         
-        return $options;
-    }
+    //     return $options;
+    // }
 
-    /**
-     * Extract text options with prices
-     */
-    private function extractTextOptions($catalog) {
-        $options = [
-            [
-                'id' => 'none',
-                'name' => 'No Text',
-                'price' => 0
-            ]
-        ];
+    // /**
+    //  * Extract text options with prices
+    //  */
+    // private function extractTextOptions($catalog) {
+    //     $options = [
+    //         [
+    //             'id' => 'none',
+    //             'name' => 'No Text',
+    //             'price' => 0
+    //         ]
+    //     ];
         
-        // Find text option prices in catalog
-        $customTextPrice = 9.5; // Fallback
+    //     // Find text option prices in catalog
+    //     $customTextPrice = 9.5; // Fallback
         
-        foreach ($catalog as $category) {
-            if (isset($category['options'])) {
-                foreach ($category['options'] as $option) {
-                    if (($option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
-                        && isset($option['price'])) {
-                        $customTextPrice = (float)$option['price'];
-                        break;
-                    }
-                }
-            }
-        }
+    //     foreach ($catalog as $category) {
+    //         if (isset($category['options'])) {
+    //             foreach ($category['options'] as $option) {
+    //                 if (($option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
+    //                     && isset($option['price'])) {
+    //                     $customTextPrice = (float)$option['price'];
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
         
-        $options[] = [
-            'id' => 'customText',
-            'name' => 'Custom Text',
-            'price' => $customTextPrice
-        ];
+    //     $options[] = [
+    //         'id' => 'customText',
+    //         'name' => 'Custom Text',
+    //         'price' => $customTextPrice
+    //     ];
         
-        return $options;
-    }
+    //     return $options;
+    // }
 
     // Create URL-friendly slug
     private function createSlug($string) {
@@ -631,115 +980,115 @@ class CockPit3DFetcher {
         }
     }
 
-    // NEW: Generate the combined products file (static + CockPit3D)
-    public function generateProcessedProductsFile($refresh = false) {
-        console_log("🔧 Generating processed products file (static + CockPit3D)...");
+    /**
+     * Generate compiled-products.js from static + raw APIs
+     */
+    public function generateCompiledProductsFile($refresh = false) {
+        console_log("🔧 Generating compiled-products.js (static + mapped Cockpit3D)...");
         
         try {
-            // First, ensure we have raw data
-            console_log("📡 Ensuring raw data is available...");
+            // Ensure raw data exists
             $rawResult = $this->generateRawFiles($refresh);
             if (!$rawResult['success']) {
                 throw new Exception("Failed to generate raw files: " . ($rawResult['error'] ?? 'Unknown error'));
             }
             
-            console_log("✅ Raw data generation completed", $rawResult);
-            
             // Load static products
-            console_log("📁 Loading static products...");
             $staticProducts = $this->loadStaticProducts();
-            console_log("Static products loaded", count($staticProducts) . " products");
+            console_log("📁 Static products loaded", count($staticProducts));
             
-            // Load raw CockPit3D data
-            console_log("📦 Loading raw CockPit3D data...");
-            $cockpitProducts = [];
+            // Load and parse raw data
             $rawProductsFile = $this->cacheDir . 'cockpit3d-raw-products.js';
             $rawCatalogFile = $this->cacheDir . 'cockpit3d-raw-catalog.js';
             
-            console_log("Checking raw files", [
-                'products_file' => file_exists($rawProductsFile) ? 'EXISTS' : 'MISSING',
-                'catalog_file' => file_exists($rawCatalogFile) ? 'EXISTS' : 'MISSING'
-            ]);
+            $cockpitProducts = [];
             
             if (file_exists($rawProductsFile) && file_exists($rawCatalogFile)) {
-                // Read and parse raw products
+                // Parse products
                 $rawProductsContent = file_get_contents($rawProductsFile);
                 if (preg_match('/export\s+const\s+cockpit3dRawProducts\s*=\s*(\[.*?\]);/s', $rawProductsContent, $matches)) {
                     $rawProducts = json_decode($matches[1], true);
-                    console_log("Raw products parsed", count($rawProducts) . " products");
                     
-                    // Read and parse raw catalog
+                    // Parse catalog
                     $rawCatalogContent = file_get_contents($rawCatalogFile);
                     if (preg_match('/export\s+const\s+cockpit3dRawCatalog\s*=\s*(\[.*?\]);/s', $rawCatalogContent, $matches)) {
                         $rawCatalog = json_decode($matches[1], true);
-                        console_log("Raw catalog parsed", count($rawCatalog) . " items");
                         
-                        // Transform each CockPit3D product
-                        if (is_array($rawProducts)) {
-                            foreach ($rawProducts as $rawProduct) {
-                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog);
+                        console_log("📊 Processing APIs into compiled structure", [
+                            'products_count' => count($rawProducts),
+                            'catalog_items' => count($rawCatalog)
+                        ]);
+                        
+                        // Transform with enhanced matching
+                        foreach ($rawProducts as $rawProduct) {
+                            $transformed = $this->transformCockpit3dProduct($rawProduct, $rawCatalog);
+                            if ($transformed) {
+                                $cockpitProducts[] = $transformed;
                             }
                         }
-                    } else {
-                        console_log("❌ Could not parse raw catalog content");
                     }
-                } else {
-                    console_log("❌ Could not parse raw products content");
                 }
-            } else {
-                console_log("⚠️ Raw files not found, continuing with static products only");
             }
             
-            // Combine static + CockPit3D products
-            $allProducts = array_merge($staticProducts, $cockpitProducts);
-            console_log("🔗 Combined products", [
-                'static' => count($staticProducts),
-                'cockpit3d' => count($cockpitProducts),
-                'total' => count($allProducts)
-            ]);
+            // Combine all products
+            $compiledProducts = array_merge($staticProducts, $cockpitProducts);
             
-            // Generate the processed products file
-            $processedProductsFile = $this->cacheDir . 'cockpit3d-products.js';
-            $jsContent = "// Combined processed products (static + CockPit3D) - " . date('Y-m-d H:i:s') . "\n\n";
-            $jsContent .= "export const cockpit3dProducts = " . json_encode($allProducts, JSON_PRETTY_PRINT) . ";\n\n";
-            $jsContent .= "export const generatedAt = \"" . date('c') . "\";\n\n";
-            $jsContent .= "export const isRealTimeData = true;\n\n";
-            $jsContent .= "export const sourceInfo = {\n";
+            // Generate compiled-products.js
+            $compiledProductsFile = $this->cacheDir . 'compiled-products.js';
+            $jsContent = "// Compiled Products (Static + Auto-Mapped Cockpit3D APIs) - " . date('Y-m-d H:i:s') . "\n";
+            $jsContent .= "// Base structure for admin panel customization\n";
+            $jsContent .= "// Admin panel will generate final-product-list.js from this\n\n";
+            
+            $jsContent .= "export const compiledProducts = " . json_encode($compiledProducts, JSON_PRETTY_PRINT) . ";\n\n";
+            
+            $jsContent .= "export const compilationInfo = {\n";
+            $jsContent .= "  generated_at: \"" . date('c') . "\",\n";
             $jsContent .= "  static_products: " . count($staticProducts) . ",\n";
             $jsContent .= "  cockpit3d_products: " . count($cockpitProducts) . ",\n";
-            $jsContent .= "  total: " . count($allProducts) . "\n";
-            $jsContent .= "};\n";
+            $jsContent .= "  total_products: " . count($compiledProducts) . ",\n";
+            $jsContent .= "  auto_mapped_options: true,\n";
+            $jsContent .= "  ready_for_admin: true\n";
+            $jsContent .= "};\n\n";
             
-            $result = file_put_contents($processedProductsFile, $jsContent);
+            $jsContent .= "// Default export for compatibility\n";
+            $jsContent .= "export default compiledProducts;\n";
+            
+            $result = file_put_contents($compiledProductsFile, $jsContent);
+            
             if ($result === false) {
-                throw new Exception("Failed to write processed products file: " . $processedProductsFile);
+                throw new Exception("Failed to write compiled-products.js file");
             }
             
-            console_log("✅ Processed products file saved successfully", [
-                'file' => $processedProductsFile,
-                'size' => $result . ' bytes',
-                'total_products' => count($allProducts),
+            console_log("✅ compiled-products.js generated successfully", [
+                'file' => $compiledProductsFile,
+                'total_products' => count($compiledProducts),
                 'static_count' => count($staticProducts),
-                'cockpit3d_count' => count($cockpitProducts)
+                'cockpit3d_count' => count($cockpitProducts),
+                'file_size' => $result . ' bytes'
             ]);
             
-            if (count($staticProducts) > 0) {
-                console_log("First static product in final array", $allProducts[0]);
-            }
-            if (count($cockpitProducts) > 0) {
-                console_log("First CockPit3D product in final array", $allProducts[count($staticProducts)]);
+            // Log sample structure for debugging
+            if (count($compiledProducts) > 0) {
+                console_log("📋 Sample compiled product structure", [
+                    'keys' => array_keys($compiledProducts[0]),
+                    'has_cockpit3d_options' => isset($compiledProducts[0]['cockpit3dOptions']),
+                    'has_sizes' => isset($compiledProducts[0]['sizes']),
+                    'has_images' => isset($compiledProducts[0]['images'])
+                ]);
             }
             
             return [
                 'success' => true,
-                'products_count' => count($allProducts),
+                'file' => 'compiled-products.js',
+                'products_count' => count($compiledProducts),
                 'static_count' => count($staticProducts),
                 'cockpit3d_count' => count($cockpitProducts),
-                'file_size' => $result
+                'file_size' => $result,
+                'ready_for_admin' => true
             ];
             
         } catch (Exception $e) {
-            console_log("❌ Error generating processed products file", $e->getMessage());
+            console_log("❌ Error generating compiled-products.js", $e->getMessage());
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -768,25 +1117,6 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
         }
 
         switch ($action) {
-            case 'products':
-                console_log("📦 Handling products action...");
-                $data = $fetcher->getProducts();
-                echo json_encode([
-                    'success' => true,
-                    'data' => $data,
-                    'count' => is_array($data) ? count($data) : 0
-                ]);
-                break;
-
-            case 'catalog':
-                console_log("📋 Handling catalog action...");
-                $data = $fetcher->getCatalog();
-                echo json_encode([
-                    'success' => true,
-                    'data' => $data,
-                    'count' => is_array($data) ? count($data) : 0
-                ]);
-                break;
 
             case 'generate-raw':
                 console_log("🔧 Handling generate-raw action...");
@@ -794,14 +1124,15 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
                 echo json_encode($result);
                 break;
 
-            case 'generate-products':
-                console_log("🔧 Handling generate-products action...");
-                $result = $fetcher->generateProcessedProductsFile($refresh);
+
+            case 'generate-compiled':
+                console_log("🔧 Handling generate-compiled action...");
+                $result = $fetcher->generateCompiledProductsFile($refresh);
                 echo json_encode($result);
                 break;
 
             default:
-                throw new Exception('Invalid action. Use ?action=catalog, ?action=products, ?action=generate-raw, or ?action=generate-products');
+                throw new Exception('Invalid action. Use ?action=generate-compiled, ?action=generate-raw');
         }
 
         console_log("✅ Request completed successfully");

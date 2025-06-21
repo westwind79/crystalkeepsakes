@@ -4,31 +4,46 @@ import fs from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { compression } from 'vite-plugin-compression2'
-// import { prebuild } from './scripts/prebuild.js'  // Import the prebuild function
 
 // Get current directory in ES module
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Import products for generating routes
-import { products } from './src/data/static-products.js'
+// FIXED: Define fallback products
+const fallbackProducts = [
+  {
+    id: "900",
+    name: "Static Laser Engraving",
+    slug: "static-laser-engraving",
+    sku: "static_laser_001",
+    basePrice: 89.00
+  },
+  {
+    id: "901", 
+    name: "3D Printing",
+    slug: "static-3d-printing",
+    sku: "static_printing_001", 
+    basePrice: 119.00
+  }
+];
 
 // FIXED: Combined prebuild and post-build tasks plugin
 const buildTasksPlugin = () => ({
   name: 'build-tasks-plugin',
-  
-  // FIXED: Run prebuild BEFORE build starts
-  // buildStart: async () => {
-  //   console.log('🚀 Running prebuild tasks...');
-  //   try {
-  //     await prebuild();
-  //     console.log('✅ Prebuild tasks completed successfully');
-  //   } catch (error) {
-  //     console.error('❌ Prebuild failed:', error.message);
-  //     // Don't fail the build - continue with fallback data
-  //     console.warn('⚠️ Continuing with fallback data...');
-  //   }
-  // },
-  
+  buildStart: async () => {
+    console.log('🔍 Pre-build: Checking required files...');
+    
+    const finalProductFile = 'src/data/final-product-list.js'; 
+    
+    if (!fs.existsSync(finalProductFile)) {
+      console.error('❌ CRITICAL: Neither final-product-list.js nor cockpit3d-products.js exists!');
+      console.log('📝 Please either:');
+      console.log('   1. Generate final-product-list.js using the ProductAdmin panel');
+      console.log('   2. Start MAMP to generate cockpit3d-products.js via API');
+      console.log('   3. Build will continue with fallback static products only');
+    } else if (fs.existsSync(finalProductFile)) {
+      console.log('✅ Pre-build: final-product-list.js found - will use for sitemap');
+    } 
+  },
   // Post-build tasks (existing functionality)
   writeBundle: async () => {
     console.log('🎯 Running post-build tasks...');
@@ -37,37 +52,19 @@ const buildTasksPlugin = () => ({
     await fs.ensureDir('dist');
     await fs.copy('api', 'dist/api');
     await fs.copy('./src/admin', 'dist/admin');
-    
-    const combinedFile = 'src/data/cockpit3d-products.js';
-    const rawCatalogFile = 'src/data/cockpit3d-raw-catalog.js';
-    const rawProductsFile = 'src/data/cockpit3d-raw-products.js';
-    
-    // Copy the generated products file
-    if (fs.existsSync(combinedFile)) {
-      await fs.ensureDir('dist/data');
-      await fs.copy(combinedFile, 'dist/data/cockpit3d-products.js');
-      console.log('✅ Copied combined products file to dist');
-    } else {
-      console.warn('⚠️ Combined products file not found - build may have incomplete data');
-    }
-    
-    // Copy raw files if they exist
-    if (fs.existsSync(rawCatalogFile)) {
-      await fs.ensureDir('dist/data');
-      await fs.copy(rawCatalogFile, 'dist/data/cockpit3d-raw-catalog.js');
-      console.log('✅ Copied raw catalog file to dist');
-    }
-    
-    if (fs.existsSync(rawProductsFile)) {
-      await fs.ensureDir('dist/data');
-      await fs.copy(rawProductsFile, 'dist/data/cockpit3d-raw-products.js');
-      console.log('✅ Copied raw products file to dist');
-    }
 
+     // Copy the final product list if it exists
+    const finalProductFile = 'src/data/final-product-list.js';
+    if (fs.existsSync(finalProductFile)) {
+      await fs.ensureDir('dist/data');
+      await fs.copy(finalProductFile, 'dist/data/final-product-list.js');
+      console.log('✅ Copied final product list to dist');
+    }
+    
     // Copy other required files
     await fs.copy('.htaccess', 'dist/.htaccess');
     await fs.copy('robots.txt', 'dist/robots.txt');
-    
+
     try {
       if (fs.existsSync('.env')) {
         await fs.copy('.env', 'dist/.env');
@@ -81,43 +78,46 @@ const buildTasksPlugin = () => ({
     const routes = ['/', '/products', '/products2', '/about', '/contact', '/faq', '/cart', '/order-confirmation'];
     let allProducts = [];
     
-    // Try to load the combined products file for sitemap
+    // Try to load the final product list for sitemap
     try {
-      console.log('🔍 Looking for combined products file for sitemap...');
-    
-      if (fs.existsSync(combinedFile)) {
-        console.log('✅ Combined products file exists');
-        const combinedContent = await fs.readFile(combinedFile, 'utf8');
-        console.log('📄 File content length:', combinedContent.length);
+      console.log('🔍 Looking for final product list for sitemap...');
+      
+      // FIXED: Look for the correct file
+      const finalProductFile = 'src/data/final-product-list.js';
+      
+      if (fs.existsSync(finalProductFile)) {
+        console.log('✅ Final product list file exists');
+        const finalContent = await fs.readFile(finalProductFile, 'utf8');
+        console.log('📄 File content length:', finalContent.length);
         
-        // Look for the export pattern
-        const match = combinedContent.match(/export\s+const\s+cockpit3dProducts\s*=\s*(\[.*?\]);/s);
+        // FIXED: Look for the correct export pattern
+        const match = finalContent.match(/export\s+const\s+finalProductList\s*=\s*(\[.*?\]);/s);
         if (match) {
-          console.log('🎯 Found export pattern');
+          console.log('🎯 Found finalProductList export pattern');
           try {
             allProducts = JSON.parse(match[1]);
-            console.log(`📍 SITEMAP: Successfully loaded ${allProducts.length} products from combined file`);
+            console.log(`📍 SITEMAP: Successfully loaded ${allProducts.length} products from final product list`);
             console.log('📍 First few products:', allProducts.slice(0, 3).map(p => ({ name: p.name, slug: p.slug })));
           } catch (parseError) {
             console.error('❌ JSON parse error:', parseError.message);
             throw parseError;
           }
         } else {
-          console.error('❌ Could not find export pattern in combined products file');
-          console.log('📄 File preview:', combinedContent.substring(0, 500));
+          console.error('❌ Could not find finalProductList export pattern');
+          console.log('📄 File preview:', finalContent.substring(0, 500));
           throw new Error('Export pattern not found');
         }
       } else {
-        console.error('❌ Combined products file does not exist:', combinedFile);
+        console.error('❌ Final product list file does not exist:', finalProductFile);
         throw new Error('File not found');
       }
     } catch (error) {
-      console.warn('⚠️ Could not load combined products for sitemap:', error.message);
+      console.warn('⚠️ Could not load final product list for sitemap:', error.message);
       console.warn('⚠️ Falling back to static products');
       
-      // Fallback to static products
-      allProducts = products;
-      console.log(`📍 SITEMAP: Using ${allProducts.length} static products as fallback`);
+      // FIXED: Use the defined fallback products
+      allProducts = fallbackProducts;
+      console.log(`📍 SITEMAP: Using ${allProducts.length} fallback products`);
     }
 
     // Generate product routes ONLY for /product2/ paths (not the old /product/ routes)
@@ -221,13 +221,6 @@ export default defineConfig(async ({ command, mode }) => {
             bootstrap: ['bootstrap', 'react-bootstrap']
           },
           assetFileNames: 'assets/[name]-[hash][extname]',
-          // assetFileNames: (assetInfo) => {
-          //   let extType = assetInfo.name.split('.').at(1);
-          //   if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-          //     extType = 'img';
-          //   }
-          //   return `${extType}/[name]-[hash][extName]`;
-          // }
         }
       }
     },

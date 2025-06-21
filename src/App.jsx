@@ -113,21 +113,25 @@ function App() {
         <ScrollToTop />
         <Header />
         <main>
-          <Routes> 
-            <Route path="/admin" element={<ProductAdmin />} />
+          <Routes>
+            <Route path="/admin" element={ 
+              <ErrorBoundary>
+                <ProductAdmin />
+              </ErrorBoundary>} 
+            />
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/products2" element={
-                  <ErrorBoundary>
-                    <Products2 />
-                  </ErrorBoundary>
-                } />
-                <Route path="/product2/:slug" element={
-                  <ErrorBoundary>
-                    <ProductDetail2 />
-                  </ErrorBoundary>
-                } />
+              <ErrorBoundary>
+                <Products2 />
+              </ErrorBoundary>
+            } />
+            <Route path="/product2/:slug" element={
+              <ErrorBoundary>
+                <ProductDetail2 />
+              </ErrorBoundary>
+            } />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
@@ -163,7 +167,11 @@ function PageTransition() {
   return (
     <main ref={pageRef}>               
       <Routes>
-        <Route path="/admin" element={<ProductAdmin />} />
+        <Route path="/admin" element={ 
+          <ErrorBoundary>
+            <ProductAdmin /> 
+          </ErrorBoundary>} 
+        />
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:slug" element={<ProductDetail />} />
