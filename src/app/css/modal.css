@@ -1,0 +1,156 @@
+
+@media (min-width: 576px) {
+  .modal .image-editor-modal {
+        max-width: 100% !important;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+.image-editor-modal .modal-content {
+  background: var(--surface-900);
+  width: fit-content;
+  margin: 0 auto;
+  max-width: 90vw;
+}
+
+.editor-workspace {
+  position: relative;
+  width: 90vw;
+  max-width: 500px;
+  height: auto; /* Let aspect-ratio determine height */
+  overflow: hidden;
+  cursor: grab;
+  background: var(--surface-900);
+  margin: auto;
+}
+
+/* Fallback for smaller screens */
+@media (max-height: 600px) {
+  .editor-workspace {
+    width: 80vw;
+    max-width: 400px;
+  }
+}
+
+
+.mask-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  object-fit: contain;
+  margin: auto;
+}
+
+.uploaded-image {
+  position: absolute;
+  transform-origin: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+
+.modal-footer {
+  border: none;
+}
+/* ImageEditor Modal Styles */
+.image-editor-modal .modal-header {
+  border-bottom: 1px solid var(--surface-700);
+  padding: 1rem 1.5rem;
+}
+
+.image-editor-modal .modal-title {
+  color: var(--surface-50);
+  font-size: var(--font-scale-20-24);
+  font-weight: 500;
+}
+
+.image-editor-modal .modal-footer {
+  border-top: 1px solid var(--surface-700);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Zoom Controls Toolbar */
+.editor-zoom-controls {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  background: var(--surface-800);
+  border: 1px solid var(--surface-600);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.editor-zoom-controls button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-700);
+  border: 1px solid var(--surface-600);
+  color: var(--surface-50);
+  transition: all 0.2s ease;
+}
+
+.editor-zoom-controls button:hover {
+  background: var(--surface-600);
+}
+
+.editor-zoom-controls .zoom-value {
+  text-align: center;
+  color: var(--surface-200);
+  font-size: var(--font-scale-13-14);
+  padding: 0.25rem 0;
+}
+
+/* Footer Button Groups */
+.modal-footer-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Button Styling */
+.modal-footer .btn-primary {
+  background: var(--brand-500);
+  border-color: var(--brand-600);
+  padding: 0.5rem 1.5rem;
+}
+
+.modal-footer .btn-primary:hover {
+  background: var(--brand-600);
+}
+
+.modal-footer .btn-secondary {
+  background: var(--surface-700);
+  border-color: var(--surface-600);
+  padding: 0.5rem 1.5rem;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: var(--surface-600);
+}
+
+.btn-reset {
+  color: var(--surface-400);
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.btn-reset:hover {
+  color: var(--surface-200);
+}

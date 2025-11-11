@@ -1,0 +1,38 @@
+# Crystal Keepsakes API - .htaccess
+# Version: 1.0.0
+# Date: 2025-11-07
+
+# Enable error logging
+php_flag display_errors Off
+php_flag log_errors On
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# CORS headers for API endpoints
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# Deny access to sensitive files
+<FilesMatch "(\.env|\.log|db_connect\.php|schema\.sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Only allow PHP files
+<FilesMatch "\.php$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Set memory limit for image processing
+php_value memory_limit 256M
+php_value upload_max_filesize 10M
+php_value post_max_size 10M

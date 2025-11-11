@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CockPit3D Image Downloader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .env-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-download {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-download:hover {
+            background: #059669;
+        }
+        
+        .btn-status {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-status:hover {
+            background: #2563eb;
+        }
+        
+        .btn-clear {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #dc2626;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .status {
+            padding: 20px 30px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .status.loading {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .status.error {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .results {
+            padding: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .summary h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .details {
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #d1d5db;
+        }
+        
+        .detail-item.success {
+            border-left-color: #10b981;
+        }
+        
+        .detail-item.error {
+            border-left-color: #ef4444;
+        }
+        
+        .detail-item.skipped {
+            border-left-color: #f59e0b;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .product-info {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ CockPit3D Image Downloader</h1>
+            <p>Download all product images from CockPit3D API</p>
+            <div class="env-badge" id="envBadge">Loading...</div>
+        </div>
+        
+        <div class="controls">
+            <div class="button-group">
+                <button class="btn-download" onclick="downloadImages()">
+                    📥 Download All Images
+                </button>
+                <button class="btn-status" onclick="checkStatus()">
+                    📊 Check Status
+                </button>
+                <button class="btn-clear" onclick="clearResults()">
+                    🗑️ Clear Results
+                </button>
+            </div>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        // UPDATED: Use the correct API path
+        const API_URL = '/dist/api/cockpit3d-download-images.php';
+        
+        // Detect environment on page load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_URL}?action=status`);
+                const data = await response.json();
+                
+                if (data.environment) {
+                    const badge = document.getElementById('envBadge');
+                    badge.textContent = `Environment: ${data.environment.toUpperCase()}`;
+                    
+                    if (data.environment === 'production') {
+                        badge.style.background = '#ef4444';
+                    } else {
+                        badge.style.background = '#10b981';
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to detect environment:', error);
+            }
+        });
+        
+        async function downloadImages() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            const buttons = document.querySelectorAll('button');
+            
+            // Disable buttons
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // Show loading
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '<span class="spinner"></span>Downloading images from CockPit3D... This may take a few minutes.';
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_URL}?action=download`);
+                const data = await response.json();
+                
+                if (data.success && data.results) {
+                    displayResults(data.results);
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Download complete!';
+                } else {
+                    throw new Error(data.error || 'Invalid response format');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                resultsDiv.innerHTML = `<pre>${error.stack || error.message}</pre>`;
+            } finally {
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        }
+        
+        async function checkStatus() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            const buttons = document.querySelectorAll('button');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '<span class="spinner"></span>Checking image status...';
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_URL}?action=status`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayStatus(data);
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Status loaded!';
+                } else {
+                    throw new Error(data.error || 'Failed to load status');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                resultsDiv.innerHTML = `<pre>${error.stack || error.message}</pre>`;
+            } finally {
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('status').className = 'status';
+            document.getElementById('status').textContent = '';
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            
+            const total = results.total_products || 0;
+            const downloaded = results.images_downloaded || 0;
+            const skipped = results.images_skipped || 0;
+            const errors = results.errors || 0;
+            
+            let html = `
+                <div class="summary">
+                    <h3>Download Summary</h3>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div class="stat-label">Environment</div>
+                            <div class="stat-value">${results.environment || 'Unknown'}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Total Products</div>
+                            <div class="stat-value">${total}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Downloaded</div>
+                            <div class="stat-value" style="color: #10b981">${downloaded}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Skipped</div>
+                            <div class="stat-value" style="color: #f59e0b">${skipped}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Errors</div>
+                            <div class="stat-value" style="color: #ef4444">${errors}</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${total > 0 ? ((downloaded + skipped) / total * 100) : 0}%"></div>
+                    </div>
+                </div>
+                
+                <div class="details">
+                    <h3>Details (${results.details?.length || 0} items)</h3>
+            `;
+            
+            if (results.details && results.details.length > 0) {
+                results.details.forEach(detail => {
+                    const statusClass = detail.success ? (detail.skipped ? 'skipped' : 'success') : 'error';
+                    const icon = detail.success ? (detail.skipped ? '⏭️' : '✅') : '❌';
+                    
+                    html += `
+                        <div class="detail-item ${statusClass}">
+                            <div class="product-name">${icon} ${detail.product_name || 'Unknown Product'}</div>
+                            <div class="product-info">
+                                ID: ${detail.product_id} | 
+                                ${detail.success ? 
+                                    (detail.skipped ? 'Already exists' : `Downloaded: ${detail.filename}`) : 
+                                    `Error: ${detail.error}`
+                                }
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p style="color: #6b7280;">No details available</p>';
+            }
+            
+            html += `</div>`;
+            resultsDiv.innerHTML = html;
+        }
+        
+        function displayStatus(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            const totalProducts = data.total_products || 0;
+            const productDirs = data.product_directories || {};
+            const totalImages = Object.values(productDirs).reduce((sum, p) => sum + (p.image_count || 0), 0);
+            
+            let html = `
+                <div class="summary">
+                    <h3>Current Status</h3>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div class="stat-label">Environment</div>
+                            <div class="stat-value">${data.environment || 'Unknown'}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Total Products</div>
+                            <div class="stat-value">${totalProducts}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Total Images</div>
+                            <div class="stat-value">${totalImages}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Image Directory</div>
+                            <div class="stat-value" style="font-size: 12px; word-break: break-all;">${data.images_directory || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="details">
+                    <h3>Product Images (${totalProducts} products)</h3>
+            `;
+            
+            if (totalProducts > 0) {
+                Object.values(productDirs).forEach(product => {
+                    html += `
+                        <div class="detail-item success">
+                            <div class="product-name">📁 Product ${product.product_id}</div>
+                            <div class="product-info">
+                                ${product.image_count} image(s): ${product.files.join(', ')}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p style="color: #6b7280;">No images found. Click "Download All Images" to start downloading.</p>';
+            }
+            
+            html += `</div>`;
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+
+/* Crystal Product Card */
+.crystal-product {
+/*  background: var(--bg-surface);*/
+  background: linear-gradient(
+    145deg,
+    var(--bg-elevated),
+    rgba(0,0,0,0.35)
+  );
+  border: 1px solid var(--border-strong);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  .btn {
+    display: block;
+    margin-left: auto !important; 
+    margin-right: auto !important; 
+  }
+}
+
+.crystal-product:hover {  
+  transform: translateY(-4px);
+  box-shadow: var(--glow-effect);
+  transition: all var(--transition-base);
+}
+
+.crystal-product-image {
+  overflow: hidden;
+  background: linear-gradient(
+    45deg,
+    var(--bg-elevated),
+    var(--bg-surface)
+  );
+  min-height: 200px;
+  max-height: 550px;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 130%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.crystal-product-info {
+  padding: 1.5rem;
+}
+
+.crystal-product-info h3 {
+  color: inherit;  
+  font-size: var(--font-scale-20-24);
+  margin-bottom: 0.5rem;
+}
+
+.crystal-product-price {
+/*  color: var(--crystal-600);*/
+  font-size: var(--font-scale-15-18);
+  font-weight: 600;
+  margin-bottom: 1em;
+}
+
+/* Cards */
+.crystal-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: transform var(--transition-base);
+}
+
+.crystal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glow-effect);
+}
+
+.product-image-container  {
+  img {width: 100%;}
+}

@@ -1,0 +1,106 @@
+/* [project]/src/app/css/product-options.css [app-client] (css) */
+.custom-checkbox-label, .crystal-radio {
+  cursor: pointer;
+  border: 1px solid var(--surface-100);
+  color: var(--surface-50);
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  padding: 6px 8px 6px 25px;
+  font-weight: bold;
+  transition: all .3s;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.crystal-radio .product-faces {
+  margin-right: .25em;
+}
+
+.custom-checkbox-label input[type="checkbox"], .crystal-radio input[type="radio"] {
+  opacity: 0;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.custom-checkbox-label:hover, .crystal-radio:hover {
+  background: var(--brand-500);
+  color: var(--surface-900);
+}
+
+.crystal-radio input:checked ~ label, .crystal-radio input:checked, .crystal-radio input[type="radio"]:checked + .radio-checkmark {
+  border-color: var(--brand-400);
+}
+
+.custom-checkbox-label, .crystal-radio .radio-checkmark {
+  background-color: var(--brand-500);
+  padding: .1em;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.crystal-radio input[type="radio"]:checked + label, .crystal-radio input[type="radio"]:checked {
+  border-color: var(--brand-400);
+  background: var(--brand-700);
+  color: var(--surface-50);
+}
+
+.crystal-radio:has(input[type="radio"]:checked) {
+  border-color: var(--brand-400);
+  background: var(--brand-700);
+  color: var(--surface-50);
+}
+
+.crystal-radio input[type="radio"]:checked:before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
+  width: 30px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.crystal-radio:has(input[type="radio"]:checked):before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
+  width: 30px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.crystal-radio input[type="radio"]:checked:hover + label, .crystal-radio input[type="radio"]:checked:hover {
+  border-color: var(--brand-700);
+  background: var(--brand-600);
+}
+
+.crystal-radio:has(input[type="radio"]:checked):hover {
+  border-color: var(--brand-700);
+  background: var(--brand-600);
+}
+
+.crystal-radio .option-price {
+  color: var(--palette2-color4);
+  margin-left: 8px;
+  font-size: .9em;
+}
+
+.product-options > .product-option .form-label {
+  border-bottom: 1px solid var(--palette2-color4);
+  display: block;
+}
+
+.crystal-radio .product-faces {
+  float: left;
+  text-align: center;
+  font-weight: normal;
+}
+
+/*# sourceMappingURL=src_app_css_product-options_css_e59ae46c._.single.css.map*/

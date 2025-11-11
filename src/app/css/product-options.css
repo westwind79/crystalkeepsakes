@@ -1,0 +1,117 @@
+/* Custom Radio Button Styles */
+.custom-checkbox-label,
+.crystal-radio {
+  cursor: pointer;
+  display: block;
+  position: relative;
+  padding: 6px 8px 6px 25px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--surface-100);
+/*  background: var(--surface-100);*/
+  color: var(--surface-50); 
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: bold;
+  overflow: hidden;
+}
+.crystal-radio {
+  .product-faces {
+    margin-right: 0.25em;
+  }
+}
+
+/* Hide default radio button */
+.custom-checkbox-label input[type="checkbox"],
+.crystal-radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Hover effect */
+.custom-checkbox-label:hover,
+.crystal-radio:hover {
+/*  border-color: var(--palette2-color4);*/
+  background: var(--brand-500);
+  color: var(--surface-900);
+}
+
+/* When the radio button is checked */
+.crystal-radio input:checked ~ label,
+.crystal-radio input:checked,
+.crystal-radio input[type="radio"]:checked + .radio-checkmark {
+  border-color: var(--brand-400);
+}
+
+
+/* Custom Radio Button Styles */
+.custom-checkbox-label,
+.crystal-radio .radio-checkmark {
+ position: absolute;
+ left: 0;
+ top: 0;
+ padding: 0.1em;
+ background-color: var(--brand-500);
+ display: none;
+}
+
+/*.crystal-radio input:checked ~ label  .radio-checkmark,
+.crystal-radio input:checked  .radio-checkmark,
+.crystal-radio input[type="radio"]:checked + .radio-checkmark {
+  display: block;
+}*/
+
+/*.crystal-radio input[type="radio"]:checked + .radio-checkmark + span,
+.crystal-radio input[type="radio"]:checked + span {
+  color: var(--brand-400);
+}*/
+
+/* Selected state */
+.crystal-radio input[type="radio"]:checked + label,
+.crystal-radio input[type="radio"]:checked,
+.crystal-radio:has(input[type="radio"]:checked) {
+  border-color: var(--brand-400);
+  background: var(--brand-700);
+  color: var(--surface-50);
+}
+
+.crystal-radio:has(input[type="radio"]:checked)::before,
+.crystal-radio input[type="radio"]:checked::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
+  display: block;
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 0;
+  left: 0; 
+}
+
+/* Selected state */
+.crystal-radio input[type="radio"]:checked:hover + label,
+.crystal-radio input[type="radio"]:checked:hover,
+.crystal-radio:has(input[type="radio"]:checked):hover {
+  border-color: var(--brand-700);
+  background: var(--brand-600);
+}
+
+/* Price tag styling */
+.crystal-radio .option-price {
+  font-size: 0.9em;
+  color: var(--palette2-color4);
+/*  color: #6c757d;*/
+  margin-left: 8px;
+}
+
+.product-options > .product-option .form-label {
+  display: block;
+  border-bottom: 1px solid var(--palette2-color4);
+}
+
+.crystal-radio .product-faces {
+  float: left;
+  text-align: center;
+  font-weight: normal;
+}

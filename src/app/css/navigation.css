@@ -1,0 +1,36 @@
+/* navigation.css - Bootstrap 5 Offcanvas Navigation */
+/* Version: 1.4.0 | Date: 2025-11-02 */
+/* MERGED: Your original styles with proper Bootstrap structure */
+/* navigation.css - Minimal Custom Styles for Header */
+/* Version: 3.0.0 | Date: 2025-11-05 */
+/* NOTE: Bootstrap removed - using pure TailwindCSS */
+
+/* ===== CUSTOM BRAND TEXT (if not using Tailwind for everything) ===== */
+.brand-text {
+  line-height: 1.2;
+}
+
+/* ===== SMOOTH SCROLL (Optional) ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== PREVENT LAYOUT SHIFT ===== */
+body {
+  overflow-x: hidden;
+}
+
+/* ===== OPTIONAL: Custom focus styles for accessibility ===== */
+*:focus-visible {
+  outline: 2px solid var(--brand-400, #72b01d);
+  outline-offset: 2px;
+}
+
+/* ===== REMOVE DEFAULT LINK UNDERLINE ===== */
+.no-underline {
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+}

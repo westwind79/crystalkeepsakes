@@ -1,0 +1,91 @@
+.particle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--emerald-300);
+  border-radius: 50%;
+  animation: particleFloat 15s infinite linear;
+  opacity: 0;
+}
+
+.particle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(2px);
+  animation: particleGlow 3s infinite ease-in-out;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--move-x, 100px), var(--move-y, -100px)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes particleGlow {
+  0%, 100% {
+    filter: blur(2px) brightness(1);
+  }
+  50% {
+    filter: blur(4px) brightness(1.5);
+  }
+}
+
+/* Generate multiple variations */
+.particle:nth-child(3n) {
+  --move-x: -150px;
+  --move-y: -150px;
+  animation-duration: 20s;
+}
+
+.particle:nth-child(3n + 1) {
+  --move-x: 150px;
+  --move-y: 150px;
+  animation-duration: 25s;
+}
+
+.particle:nth-child(3n + 2) {
+  --move-x: -100px;
+  --move-y: 150px;
+  animation-duration: 30s;
+}
+@media (max-width: 768px) {
+  .particle-container {
+    /* Reduce particle count on mobile */
+    opacity: 0.7;
+  }
+  
+  .particle {
+    /* Adjust particle size for mobile */
+    width: 1px;
+    height: 1px;
+  }
+}

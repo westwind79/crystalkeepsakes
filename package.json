@@ -1,0 +1,43 @@
+{
+  "name": "crystalkeepsakes",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "prebuild": "node scripts/fetch-cockpit3d-products.js",
+    "build": "next build",
+    "build:testing": "env-cmd -f .env.testing next build",
+    "build:production": "env-cmd -f .env.production next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^5.2.0",
+    "@stripe/stripe-js": "^8.0.0",
+    "@types/gsap": "^1.20.2",
+    "browser-image-compression": "^2.0.2",
+    "gsap": "^3.13.0",
+    "next": "15.4.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "serve": "^14.2.5",
+    "stripe": "^19.1.0",
+    "swiper": "^11.2.10"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.16",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "fs-extra": "^11.3.2",
+    "lucide-react": "^0.552.0",
+    "postcss": "^8.5.6",
+    "postcss-import": "^16.1.1",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,44 @@
+/* Buttons */
+.btn {
+  display: inline-block; 
+  border: 0 none transparent; 
+  font-weight: 500;
+  font-size: var(--font-scale-13-14);
+  transition: all var(--transition-base); 
+}
+
+.btn-primary {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: var(--surface-50);
+/*  box-shadow: var(--glow-effect);*/
+}
+
+.btn-primary:hover {
+  color: var(--surface-50);
+  animation: glowPulse 1.25s ease-in-out infinite;
+  border: 1px solid var(--primary);
+  background: var(--primary-dark); 
+  box-shadow: var(--glow-intense);
+}
+.btn-outline-light {  
+  border: 1px solid var(--primary);
+}
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-900);  
+  border: 1px solid var(--primary-light);
+  color: var(--surface-50);
+  box-shadow: var(--glow-soft);
+}
+.btn-outline-danger {
+  border: 1px solid var(--error-light);
+}
+.btn-outline-secondary {
+  border: 1px solid var(--brand-400);
+}

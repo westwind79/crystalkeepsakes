@@ -1,0 +1,67 @@
+// scripts/fetch-cockpit3d-products.js
+// This runs BEFORE build to generate products JSON from CockPit3D API
+
+const http = require('http');
+
+// Get port from MAMP config (check your MAMP settings)
+const MAMP_PORT = process.env.MAMP_PORT || '8888';
+const API_URL = `http://localhost:${MAMP_PORT}/crystalkeepsakes/api/cockpit3d-data-fetcher.php?action=generate-products`;
+
+console.log('🔄 Fetching products from CockPit3D...');
+console.log(`📍 API URL: ${API_URL}`);
+
+// Make HTTP request
+http.get(API_URL, (res) => {
+  let data = '';
+
+  // Collect response chunks
+  res.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  // Handle complete response
+  res.on('end', () => {
+    try {
+      // Check if response is HTML (error page)
+      if (data.trim().startsWith('<!DOCTYPE') || data.trim().startsWith('<html')) {
+        console.error('❌ Error: Received HTML instead of JSON');
+        console.error('📄 Response preview:', data.substring(0, 200));
+        console.error('');
+        console.error('💡 Troubleshooting:');
+        console.error(`   1. Check MAMP is running on port ${MAMP_PORT}`);
+        console.error('   2. Verify .env file exists with CockPit3D credentials');
+        console.error('   3. Test URL in browser:', API_URL);
+        console.error('   4. Check api/cockpit3d_errors.log for PHP errors');
+        process.exit(1);
+      }
+
+      // Parse JSON
+      const result = JSON.parse(data);
+      
+      if (result.success) {
+        console.log('✅ Products fetched successfully!');
+        console.log(`   📦 Total: ${result.total_count || result.products_count || 0} products`);
+        console.log(`   📁 Static: ${result.static_count || 0} products`);
+        console.log(`   🌐 CockPit3D: ${result.cockpit3d_count || 0} products`);
+        console.log(`   💾 Saved to: ${result.file_path || 'src/data/cockpit3d-products.js'}`);
+        process.exit(0);
+      } else {
+        console.error('❌ Error:', result.error || 'Unknown error');
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error('❌ Error:', error.message);
+      console.error('📄 Response preview:', data.substring(0, 500));
+      process.exit(1);
+    }
+  });
+
+}).on('error', (error) => {
+  console.error('❌ HTTP Request Error:', error.message);
+  console.error('');
+  console.error('💡 Possible causes:');
+  console.error(`   1. MAMP not running on port ${MAMP_PORT}`);
+  console.error('   2. Wrong port number (check MAMP settings)');
+  console.error('   3. PHP project not accessible at /crystalkeepsakes');
+  process.exit(1);
+});

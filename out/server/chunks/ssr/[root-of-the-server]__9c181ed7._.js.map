@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///C:/MAMP/htdocs/crystalkeepsakes/src/app/order-confirmation/page.tsx"],"sourcesContent":["// app/about/page.tsx\r\nimport { Metadata } from 'next'\r\nimport AboutPageClient from './AboutPageClient'\r\n\r\n// Metadata for SEO (Server Component only)\r\nexport const metadata: Metadata = {\r\n  title: 'About CrystalKeepsakes - 3D Crystal Memories',\r\n  description: 'Learn about our precision 3D crystal engraving process and our commitment to preserving your memories in crystal.',\r\n  keywords: '3D crystal engraving, crystal memories, custom crystal art, laser engraving, crystal keepsakes, about us',\r\n  openGraph: {\r\n    title: 'About CrystalKeepsakes - 3D Crystal Memories',\r\n    description: 'Learn about our precision 3D crystal engraving process and our commitment to preserving your memories in crystal.',\r\n    images: ['/img/noahs-keepsake-1.png'],\r\n  }\r\n}\r\n\r\n// Server Component - just renders the client component\r\nexport default function OrderConfirmationPage() {\r\n  return <OrderConfirmation />\r\n}\r\n"],"names":[],"mappings":"AAAA,qBAAqB;;;;;;;AAKd,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;IACb,UAAU;IACV,WAAW;QACT,OAAO;QACP,aAAa;QACb,QAAQ;YAAC;SAA4B;IACvC;AACF;AAGe,SAAS;IACtB,qBAAO,8OAAC;;;;;AACV","debugId":null}}]
+}

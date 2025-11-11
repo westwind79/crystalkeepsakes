@@ -1,0 +1,9 @@
+.breadcrumb {
+	color: red !important;
+	.breadcrumb-item a {
+		color: var(--brand-500);
+	}
+	.breadcrumb-item.active {
+		color: var(--brand-500);
+	}
+}
