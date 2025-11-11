@@ -1,12 +1,10 @@
 # Dependencies
-node_modules/
-vendor/
+/node_modules/
+/vendor/
 
 # Build outputs
-dist/
-build/
-.next/
-out/
+.next
+/out
 
 # Environment files
 .env
