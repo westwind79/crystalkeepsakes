@@ -86,7 +86,7 @@ echo "<h2>📋 Environment Variables Detected</h2>";
 $envVars = [
     'COCKPIT3D_USERNAME' => getEnvVariable('COCKPIT3D_USERNAME'),
     'COCKPIT3D_PASSWORD' => getEnvVariable('COCKPIT3D_PASSWORD'),
-    'COCKPIT3D_RETAILER_ID' => getEnvVariable('COCKPIT3D_RETAILER_ID'),
+    'COCKPIT3D_RETAIL_ID' => getEnvVariable('COCKPIT3D_RETAIL_ID'),
     'COCKPIT3D_API_TOKEN' => getEnvVariable('COCKPIT3D_API_TOKEN'),
     'COCKPIT3D_BASE_URL' => getEnvVariable('COCKPIT3D_BASE_URL'),
     'NEXT_PUBLIC_COCKPIT3D_API_URL' => getEnvVariable('NEXT_PUBLIC_COCKPIT3D_API_URL'),
