@@ -3,8 +3,8 @@
 /vendor/
 
 # Build outputs
-/.next
-/out
+/.next/
+/out/
 
 # Environment files
 .env
@@ -23,7 +23,7 @@
 /dist
 /build
 /vendor
-/out
+/out/
 
 # Misc
 .DS_Store
