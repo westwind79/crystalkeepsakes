@@ -96,7 +96,7 @@ COCKPIT3D_RETAIL_ID=256568874            # ← Your original name
 NEXT_PUBLIC_COCKPIT3D_SHOP_ID=256568874  # ← For Next.js
 ```
 
-**IMPORTANT**: PHP file `cockpit3d-data-fetcher.php` looks for `COCKPIT3D_RETAILER_ID`
+**IMPORTANT**: PHP file `cockpit3d-data-fetcher.php` looks for `COCKPIT3D_RETAIL_ID`
 
 ### Required for Next.js (Build & Runtime)
 
