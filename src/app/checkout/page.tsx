@@ -459,13 +459,16 @@ export default function CheckoutPage() {
                 🎉 You qualify for free standard shipping!
               </div>
             )}
-          </div>
+            </div>
+          )}
 
-          {/* Loading */}
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p className="mt-4">Setting up payment...</p>
-          </div>
+          {/* Loading Payment */}
+          {addressComplete && (
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              <p className="mt-4">Setting up payment...</p>
+            </div>
+          )}
         </div>
       </div>
     )
