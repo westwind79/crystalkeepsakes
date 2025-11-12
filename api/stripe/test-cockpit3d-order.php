@@ -114,7 +114,7 @@ if (!$username || !$password) {
     echo "<p>Please add to your .env file:</p>";
     echo "<pre>COCKPIT3D_USERNAME=your_username
 COCKPIT3D_PASSWORD=your_password
-COCKPIT3D_RETAILER_ID=your_retailer_id</pre>";
+COCKPIT3D_RETAIL_ID=your_retailer_id</pre>";
     echo "</div>";
     echo "</body></html>";
     die();
