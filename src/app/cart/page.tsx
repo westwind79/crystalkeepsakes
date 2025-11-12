@@ -172,88 +172,22 @@ export default function CartPage() {
     return options
   }
 
-  // ✅ PRESERVE: buildCockpitOrder from page-2
-  function buildCockpitOrder(): any {
+  // ✅ FIXED: Import Cockpit3D order builder
+  const buildCockpitOrder = () => {
     const orderNumber = `CK-${Date.now()}`
     
-    return {
-      order_id: orderNumber,
-      customer_name: '',
-      email: '',
-      phone: '',
-      staff_user: 'Web Order',
-      shipping_method: 'air',
-      destination: 'customer_home',
-      shipping_address: {},
-      billing_address: {},
-      items: cart.map(item => ({
-        sku: item.sku || item.productId,
-        qty: item.quantity,
-        price: item.price || (item as any).totalPrice || 0,
-        name: item.name,
-        custom_options: buildCustomOptions(item),
-        // Store only image ID, not full data URL (images are in IndexedDB)
-        custom_image_id: item.customImageId || undefined,
-        custom_image_filename: item.customImageMetadata?.filename || undefined
-      })),
-      total: total
-    }
-  }
-
-  // ✅ PRESERVE: buildCustomOptions from page-2
-  function buildCustomOptions(item: CartItem) {
-    const options: Array<{ option_id: string; option_value: string }> = []
+    // Import and use the proper Cockpit3D order builder
+    const { buildCockpit3DOrder } = require('@/lib/cockpit3d-order-builder')
     
-    const getOptionValue = (option: any): string => {
-      if (!option) return ''
-      if (typeof option === 'string') return option
-      if (typeof option === 'object') return option.name || option.id || String(option)
-      return String(option)
-    }
+    // Build order with proper Cockpit3D structure
+    const cockpitOrder = buildCockpit3DOrder(
+      orderNumber,
+      cart,
+      undefined, // Customer info will be added at checkout
+      undefined  // Retailer ID from env
+    )
     
-    if (item.options.size) {
-      options.push({
-        option_id: 'size',
-        option_value: item.sizeDetails?.name || getOptionValue(item.options.size)
-      })
-    }
-    
-    if (item.options.background) {
-      options.push({
-        option_id: 'background',
-        option_value: getOptionValue(item.options.background)
-      })
-    }
-    
-    if (item.options.lightBase) {
-      options.push({
-        option_id: 'lightBase',
-        option_value: getOptionValue(item.options.lightBase)
-      })
-    }
-    
-    if (item.options.giftStand) {
-      options.push({
-        option_id: 'giftStand',
-        option_value: getOptionValue(item.options.giftStand)
-      })
-    }
-    
-    if (item.options.customText) {
-      const textValue = typeof item.options.customText === 'string' 
-        ? item.options.customText
-        : [
-            item.options.customText.line1 && `Line 1: ${item.options.customText.line1}`,
-            item.options.customText.line2 && `Line 2: ${item.options.customText.line2}`
-          ].filter(Boolean).join(' | ')
-      
-      options.push({
-        option_id: 'customText',
-        option_value: textValue
-      })
-    }
-    
-    return options
+    return cockpitOrder
   }
 
   // ✅ PRESERVE: proceedToCheckout from page-2
