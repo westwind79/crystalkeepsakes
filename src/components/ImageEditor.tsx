@@ -355,12 +355,19 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   }
   
   /**
-   * Save the masked image
+   * Save the masked/edited image
    * FIX: Converts to grayscale (black & white) before saving
+   * FIX: Works with or without a mask image
    */
   const handleSave = async () => {
-    if (!uploadedImage || !maskImage || !imageRef.current || !maskRef.current) {
-      logError('Missing required elements for saving')
+    if (!uploadedImage || !imageRef.current) {
+      logError('Missing uploaded image')
+      return
+    }
+
+    // If mask is required but missing, show error
+    if (maskImage && !maskRef.current) {
+      logError('Mask image not loaded')
       return
     }
 
@@ -380,35 +387,43 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       const ctx = canvas.getContext('2d', { willReadFrequently: true })
       if (!ctx) throw new Error('Canvas context not found')
 
-      // Load images
-      const [uploadedImg, maskImg] = await Promise.all([
-        new Promise<HTMLImageElement>((resolve, reject) => {
-          const img = new Image()
-          img.onload = () => resolve(img)
-          img.onerror = reject
-          img.src = uploadedImage
-        }),
-        new Promise<HTMLImageElement>((resolve, reject) => {
+      // Load uploaded image
+      const uploadedImg = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(img)
+        img.onerror = reject
+        img.src = uploadedImage
+      })
+
+      // Load mask image if it exists
+      let maskImg: HTMLImageElement | null = null
+      if (maskImage) {
+        maskImg = await new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image()
           img.onload = () => resolve(img)
           img.onerror = reject
           img.src = maskImage
         })
-      ])
+      }
 
-      // Get rendered dimensions
-      const maskRect = maskRef.current.getBoundingClientRect()
+      // Get rendered dimensions (use mask if available, otherwise use image)
+      const refRect = maskImage && maskRef.current 
+        ? maskRef.current.getBoundingClientRect()
+        : imageRef.current.getBoundingClientRect()
 
-      // Set canvas to mask's natural dimensions
-      canvas.width = maskImg.naturalWidth
-      canvas.height = maskImg.naturalHeight
+      // Set canvas dimensions
+      const targetWidth = maskImg ? maskImg.naturalWidth : uploadedImg.naturalWidth
+      const targetHeight = maskImg ? maskImg.naturalHeight : uploadedImg.naturalHeight
+      
+      canvas.width = targetWidth
+      canvas.height = targetHeight
 
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Calculate scaling factors
-      const scaleFactorX = maskImg.naturalWidth / maskRect.width
-      const scaleFactorY = maskImg.naturalHeight / maskRect.height
+      const scaleFactorX = targetWidth / refRect.width
+      const scaleFactorY = targetHeight / refRect.height
 
       // Calculate scaled dimensions
       const scaledWidth = imageRef.current.width * scale * scaleFactorX
@@ -421,10 +436,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       // Save context state
       ctx.save()
 
-      // Create clipping mask
-      ctx.beginPath()
-      ctx.rect(0, 0, maskImg.naturalWidth, maskImg.naturalHeight)
-      ctx.clip()
+      // Create clipping mask if mask exists
+      if (maskImg) {
+        ctx.beginPath()
+        ctx.rect(0, 0, targetWidth, targetHeight)
+        ctx.clip()
+      }
 
       // Draw uploaded image
       ctx.drawImage(
@@ -439,8 +456,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       // FIX: Convert to grayscale BEFORE adding the mask
       convertToGrayscale(ctx, canvas)
 
-      // Draw mask on top (after grayscale conversion)
-      ctx.drawImage(maskImg, 0, 0)
+      // Draw mask on top (after grayscale conversion) if it exists
+      if (maskImg) {
+        ctx.drawImage(maskImg, 0, 0)
+      }
 
       // Convert to data URL
       const dataUrl = canvas.toDataURL('image/png', 1.0)
