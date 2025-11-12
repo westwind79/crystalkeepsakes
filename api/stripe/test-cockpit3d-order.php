@@ -105,7 +105,7 @@ echo "</div>";
 // Configuration
 $username = $envVars['COCKPIT3D_USERNAME'];
 $password = $envVars['COCKPIT3D_PASSWORD'];
-$retailerId = $envVars['COCKPIT3D_RETAILER_ID'] ?? '256568874';
+$retailerId = $envVars['COCKPIT3D_RETAIL_ID'] ?? '256568874';
 
 if (!$username || !$password) {
     echo "<div class='error' style='padding: 20px; background: #3c1518; border-left: 4px solid #f48771;'>";
