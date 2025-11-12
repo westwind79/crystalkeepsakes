@@ -3,8 +3,8 @@
 /vendor/
 
 # Build outputs
-.next
-/out
+/.next/
+/out/
 
 # Environment files
 .env
@@ -23,6 +23,7 @@
 /dist
 /build
 /vendor
+/out/
 
 # Misc
 .DS_Store
@@ -51,7 +52,7 @@ coverage/
 stripe.json
 **/stripe*.json
 .htaccess
-Cockpit3D API.pdf-e 
+
 # Environment files
 *.env
 *.env.*
