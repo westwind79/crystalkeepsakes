@@ -813,22 +813,35 @@ class CockPit3DFetcher {
             [
                 'id' => 'rm',
                 'name' => 'Remove Backdrop',
-                'price' => 0
+                'price' => 0,
+                'cockpit3d_option_id' => null  // No backdrop = no option
             ]
         ];
         
         // Find backdrop prices in catalog options
         $twoDPrice = 12; // Fallback
         $threeDPrice = 15; // Fallback
+        $twoDId = '154';  // Default Cockpit3D option ID
+        $threeDId = '155'; // Default Cockpit3D option ID
         
         foreach ($catalog as $category) {
             if (isset($category['options'])) {
                 foreach ($category['options'] as $option) {
-                    if ($option['name'] === '2D Backdrop' && isset($option['price'])) {
-                        $twoDPrice = (float)$option['price'];
+                    if ($option['name'] === '2D Backdrop') {
+                        if (isset($option['price'])) {
+                            $twoDPrice = (float)$option['price'];
+                        }
+                        if (isset($option['id'])) {
+                            $twoDId = (string)$option['id'];
+                        }
                     }
-                    if ($option['name'] === '3D Backdrop' && isset($option['price'])) {
-                        $threeDPrice = (float)$option['price'];
+                    if ($option['name'] === '3D Backdrop') {
+                        if (isset($option['price'])) {
+                            $threeDPrice = (float)$option['price'];
+                        }
+                        if (isset($option['id'])) {
+                            $threeDId = (string)$option['id'];
+                        }
                     }
                 }
             }
@@ -837,13 +850,15 @@ class CockPit3DFetcher {
         $options[] = [
             'id' => '2d',
             'name' => '2D Backdrop',
-            'price' => $twoDPrice
+            'price' => $twoDPrice,
+            'cockpit3d_option_id' => $twoDId
         ];
         
         $options[] = [
             'id' => '3d',
             'name' => '3D Backdrop',
-            'price' => $threeDPrice
+            'price' => $threeDPrice,
+            'cockpit3d_option_id' => $threeDId
         ];
         
         return $options;
