@@ -1,42 +1,84 @@
 // app/products/[slug]/page.tsx
-// v2.0.0 - 2025-01-15 - Fixed dev mode routing
+// v3.0.0 - 2025-01-15 - Static SSG with pre-generated slugs
 import { Metadata } from 'next'
 import Link from 'next/link'
 import ProductDetailClient from '@/components/ProductDetailClient'
 import NextImage from 'next/image'
 
 /**
+ * CRITICAL: Force static rendering for output: 'export'
+ * This prevents the "dynamic routes cannot coexist with static export" error
+ */
+export const dynamic = 'force-static'
+export const dynamicParams = false  // Required for output: 'export'
+
+/**
  * Build-time static generation for all known slugs
- * This pre-renders all product pages at build time for better performance
+ * Pre-renders all product pages at build time for SEO and performance
+ * Reads from cached cockpit3d-products.js file
  */
 export async function generateStaticParams() {
-  const { getProductSlugs } = await import('./generate-params')
-  // returns [{ slug: 'cut-corner-diamond' }, ...]
-  const slugs = await getProductSlugs()
-
-  // Fallback in case your Cockpit PHP endpoint isn't reachable at build time
-  // if (!slugs || slugs.length === 0) {
-  //   return [
-  //     { slug: 'cut-corner-diamond' },
-  //     { slug: 'rectangle-vertical-crystals' },
-  //     // add a couple of your core products here so build never hard-fails
-  //   ]
-  // }
-
-  return slugs
+  try {
+    // Import the cached products file (populated by prebuild script)
+    const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
+    
+    if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
+      console.warn('⚠️ No products found in cached file during build')
+      return []
+    }
+    
+    console.log(`✅ [BUILD] Pre-generating ${cockpit3dProducts.length} product pages`)
+    
+    // Return all slugs for static generation
+    return cockpit3dProducts.map((p: any) => ({
+      slug: p.slug
+    }))
+  } catch (error) {
+    console.error('❌ [BUILD] Failed to load products for static generation:', error)
+    console.error('⚠️ Run: npm run prebuild OR node scripts/fetch-cockpit3d-products.js')
+    // Return empty array - build will succeed but no product pages will be generated
+    return []
+  }
 }
 
 /**
- * CRITICAL FIX: Enable dynamic params for dev mode
- * This allows routes not in generateStaticParams to work in both dev and production
- * - In build: Pre-generates all known product pages
- * - In dev: Allows accessing any product from the data file dynamically
+ * Generate metadata for each product page (SEO)
  */
-export const dynamicParams = true
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  try {
+    const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
+    const product = cockpit3dProducts.find((p: any) => p.slug === params.slug)
+    
+    if (!product) {
+      return {
+        title: 'Product Not Found',
+        description: 'The requested product could not be found.'
+      }
+    }
+    
+    return {
+      title: `${product.name} | Crystal Keepsakes`,
+      description: product.description || product.longDescription || `Shop ${product.name}`,
+      openGraph: {
+        title: product.name,
+        description: product.description,
+        images: product.images?.[0]?.src ? [product.images[0].src] : [],
+      }
+    }
+  } catch (error) {
+    return {
+      title: 'Product | Crystal Keepsakes',
+      description: 'View product details'
+    }
+  }
+}
 
 /**
  * Server Component wrapper
- * Simply renders the ProductDetailClient component
+ * Renders the client-side product detail component
+ * 
+ * NOTE: This is a static page - all data is baked in at build time
+ * No runtime API calls, no dynamic params, SEO-friendly
  */
 export default function ProductPage() {
   return <ProductDetailClient />
