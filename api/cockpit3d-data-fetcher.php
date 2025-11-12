@@ -287,12 +287,22 @@ class CockPit3DFetcher {
             return [];
         }
         
+        console_log("File content length", strlen($content) . " bytes");
         console_log("File content preview", substr($content, 0, 200) . "...");
         
-        // Extract JSON from JavaScript export
-        if (preg_match('/export\s+const\s+staticProducts\s*=\s*(\[.*?\]);/s', $content, $matches)) {
+        // Extract JSON from JavaScript export using a better regex pattern
+        // Match everything between [ and the last ];
+        if (preg_match('/export\s+const\s+staticProducts\s*=\s*(\[[\s\S]*?\]);/s', $content, $matches)) {
             $jsonString = $matches[1];
+            console_log("Extracted JSON string length", strlen($jsonString) . " bytes");
             console_log("Extracted JSON string preview", substr($jsonString, 0, 100) . "...");
+            console_log("Extracted JSON string ending", "..." . substr($jsonString, -50));
+            
+            // Clean up trailing commas before closing brackets (common in JS but invalid in JSON)
+            $jsonString = preg_replace('/,\s*\]/s', ']', $jsonString);
+            $jsonString = preg_replace('/,\s*\}/s', '}', $jsonString);
+            
+            console_log("After cleanup - JSON string ending", "..." . substr($jsonString, -50));
             
             $products = json_decode($jsonString, true);
             
@@ -300,14 +310,43 @@ class CockPit3DFetcher {
                 console_log("✅ Successfully parsed static products", count($products) . " products");
                 if (count($products) > 0) {
                     console_log("First static product", $products[0]);
+                    console_log("Last static product", $products[count($products) - 1]);
                 }
                 return $products;
             } else {
                 console_log("❌ JSON decode error", json_last_error_msg());
+                console_log("JSON error code", json_last_error());
+                // Save problematic JSON for debugging
+                file_put_contents($this->cacheDir . 'debug-static-json.txt', $jsonString);
+                console_log("Saved problematic JSON to debug-static-json.txt for inspection");
                 return [];
             }
         } else {
             console_log("❌ Could not find export pattern in file");
+            console_log("Trying alternative regex patterns...");
+            
+            // Try alternative pattern - match until end of file
+            if (preg_match('/export\s+const\s+staticProducts\s*=\s*(\[.*)/s', $content, $matches)) {
+                $jsonString = $matches[1];
+                // Remove everything after the last ];
+                if (preg_match('/(.*\]);/s', $jsonString, $finalMatches)) {
+                    $jsonString = $finalMatches[1];
+                    console_log("Alternative pattern matched, JSON length", strlen($jsonString));
+                    
+                    // Clean trailing commas
+                    $jsonString = preg_replace('/,\s*\]/s', ']', $jsonString);
+                    $jsonString = preg_replace('/,\s*\}/s', '}', $jsonString);
+                    
+                    $products = json_decode($jsonString, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($products)) {
+                        console_log("✅ Successfully parsed with alternative pattern", count($products) . " products");
+                        return $products;
+                    }
+                }
+            }
+            
+            console_log("❌ All parsing attempts failed");
             return [];
         }
     }
