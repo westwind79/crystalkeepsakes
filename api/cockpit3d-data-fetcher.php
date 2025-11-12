@@ -102,7 +102,7 @@ class CockPit3DFetcher {
         $this->baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://api.cockpit3d.com';
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
+        $this->retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID');
         
         console_log("Base URL", $this->baseUrl);
         console_log("Username", $this->username ? 'SET' : 'MISSING');
