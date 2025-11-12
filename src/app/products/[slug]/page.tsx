@@ -1,9 +1,9 @@
 // app/products/[slug]/page.tsx
-// v1.0.0 - 2025-01-03 - No changes needed (Bootstrap-free wrapper)
+// v2.0.0 - 2025-01-15 - Fixed dev mode routing
 import { Metadata } from 'next'
 import Link from 'next/link'
 import ProductDetailClient from '@/components/ProductDetailClient'
-import NextImage from 'next/image' 
+import NextImage from 'next/image'
 
 /**
  * Build-time static generation for all known slugs
@@ -25,6 +25,14 @@ export async function generateStaticParams() {
 
   return slugs
 }
+
+/**
+ * CRITICAL FIX: Enable dynamic params for dev mode
+ * This allows routes not in generateStaticParams to work in both dev and production
+ * - In build: Pre-generates all known product pages
+ * - In dev: Allows accessing any product from the data file dynamically
+ */
+export const dynamicParams = true
 
 /**
  * Server Component wrapper
