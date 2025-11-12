@@ -175,31 +175,54 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
   /**
    * Set up mask dimensions and aspect ratio
+   * If no mask, use uploaded image dimensions
    */
   useEffect(() => {
-    if (!show || !maskImage || !containerRef.current) return
+    if (!show || !containerRef.current) return
     
-    log('Setting up mask...')
-    
-    const img = new Image()
-    img.onload = () => {
-      if (!containerRef.current) {
-        logError('Container ref lost during image load')
-        return
+    // If we have a mask, use its dimensions
+    if (maskImage) {
+      log('Setting up mask...')
+      
+      const img = new Image()
+      img.onload = () => {
+        if (!containerRef.current) {
+          logError('Container ref lost during image load')
+          return
+        }
+        
+        const aspectRatio = img.naturalWidth / img.naturalHeight
+        log('Aspect ratio:', aspectRatio)
+        
+        containerRef.current.style.aspectRatio = `${aspectRatio}`
+        
+        setMaskDimensions({
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        })
       }
+      img.src = maskImage
+    } else if (uploadedImage) {
+      // No mask - use uploaded image dimensions
+      log('No mask - using uploaded image dimensions')
       
-      const aspectRatio = img.naturalWidth / img.naturalHeight
-      log('Aspect ratio:', aspectRatio)
-      
-      containerRef.current.style.aspectRatio = `${aspectRatio}`
-      
-      setMaskDimensions({
-        width: img.naturalWidth,
-        height: img.naturalHeight
-      })
+      const img = new Image()
+      img.onload = () => {
+        if (!containerRef.current) return
+        
+        const aspectRatio = img.naturalWidth / img.naturalHeight
+        log('Image aspect ratio:', aspectRatio)
+        
+        containerRef.current.style.aspectRatio = `${aspectRatio}`
+        
+        setMaskDimensions({
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        })
+      }
+      img.src = uploadedImage
     }
-    img.src = maskImage
-  }, [show, maskImage])
+  }, [show, maskImage, uploadedImage])
 
   /**
    * Center image when modal opens or image changes
