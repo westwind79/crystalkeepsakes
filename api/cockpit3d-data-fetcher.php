@@ -79,9 +79,9 @@ function console_log($message, $data = null) {
     $currentMode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     if ($currentMode !== 'live') {
         if ($data !== null) {
-            error_log("Ã°Å¸â€Â§ FETCHER: $message - " . json_encode($data));
+            error_log("FETCHER: $message - " . json_encode($data));
         } else {
-            error_log("Ã°Å¸â€Â§ FETCHER: $message");
+            error_log("FETCHER: $message");
         }
     }
 }
