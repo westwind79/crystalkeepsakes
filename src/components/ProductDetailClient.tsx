@@ -423,18 +423,29 @@ export default function ProductDetailClient() {
         throw new Error(`Failed to add to cart: ${cartError.message}`)
       }
       
-      // Success!
+      // Success! Show modal
       setSuccessMessage(`Added ${quantity} ${product.name} to cart!`)
       
-      // Reset form and redirect
-      setTimeout(() => {
-        setQuantity(1)
-        setCustomText({ line1: '', line2: '' })
-        setUploadedImage(null)
-        setFinalMaskedImage(null)
-        
-        router.push('/cart')
-      }, 1500)
+      // Prepare item details for modal
+      const optionsList: string[] = []
+      if (selectedSize) optionsList.push(`Size: ${selectedSize.name}`)
+      if (selectedBackground) optionsList.push(`Background: ${selectedBackground.name}`)
+      if (selectedLightBase && selectedLightBase.id !== 'none') {
+        optionsList.push(`Light Base: ${selectedLightBase.name}`)
+      }
+      if (customText.line1 || customText.line2) {
+        optionsList.push('Custom Text: Yes')
+      }
+      
+      setAddedItemDetails({
+        name: product.name,
+        image: finalMaskedImage || product.images?.[0]?.src || '/placeholder.png',
+        price: totalPrice,
+        quantity: quantity,
+        options: optionsList
+      })
+      
+      setShowAddedModal(true)
       
     } catch (error: any) {
       logger.error('Failed to add to cart', error)
