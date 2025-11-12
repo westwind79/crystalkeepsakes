@@ -719,12 +719,12 @@ export default function ProductDetailClient() {
         </div>
 
         {/* ImageEditor Modal */}
-        {product.requiresImage && product.maskImageUrl && (
+        {product.requiresImage && (
           <ImageEditor
             show={showEditor}
             onHide={() => setShowEditor(false)}
             uploadedImage={uploadedImage}
-            maskImage={product.maskImageUrl}
+            maskImage={product.maskImageUrl || null}
             onSave={handleImageEditorSave}
           />
         )}
