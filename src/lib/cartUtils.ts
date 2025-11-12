@@ -18,6 +18,7 @@ export interface CartItem {
   quantity: number
   options: any
   sizeDetails?: any
+  productImage?: string  // Product's own image (for items without custom images)
   customImageId?: string  // Changed from customImage object to just ID
   customImageMetadata?: {  // Light metadata for display
     filename?: string
@@ -164,6 +165,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       quantity: item.quantity,
       options: cleanedOptions,
       sizeDetails: item.size || item.sizeDetails,
+      productImage: item.productImage || null,  // Store product's own image
       customImageId,
       customImageMetadata,
       cockpit3d_id: item.cockpit3d_id,

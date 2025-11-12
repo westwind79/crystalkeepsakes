@@ -392,6 +392,7 @@ export default function ProductDetailClient() {
         quantity: quantity,
         size: sizeDetails,
         options: productOptions,
+        productImage: product.images?.[0]?.src || null,  // ← ADD PRODUCT'S IMAGE
         customImage: customImage,  // ← THE MASKED IMAGE
         customText: customTextString ? { text: customTextString } : undefined,
         dateAdded: new Date().toISOString(),

@@ -56,5 +56,12 @@ stripe.json
 # Environment files
 *.env
 *.env.*
+<<<<<<< HEAD
 api/debug-cockpit/cockpit3d-data-fetcher.json
 Cockpit3D API.pdf
+=======
+-e 
+# Environment files
+*.env
+*.env.*
+>>>>>>> 421d8c586c1d601abd064077a56388332c154f6c
