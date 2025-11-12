@@ -51,4 +51,7 @@ coverage/
 stripe.json
 **/stripe*.json
 .htaccess
-Cockpit3D API.pdf
+Cockpit3D API.pdf-e 
+# Environment files
+*.env
+*.env.*
