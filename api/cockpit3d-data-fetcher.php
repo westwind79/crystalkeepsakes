@@ -410,19 +410,33 @@ class CockPit3DFetcher {
             if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
                 foreach ($rawProduct['options'] as $option) {
                     if ($option['name'] === 'Size' && isset($option['values'])) {
-                        $transformed['sizes'] = array_map(function($value) use ($rawProduct) {
-                            $price = isset($value['price']) && is_numeric($value['price']) 
-                                ? (float)$value['price'] 
-                                : (float)$rawProduct['price']; // fallback
-
-                            if (!is_numeric($value['price'])) {
-                                console_log("⚠️ SIZE PRICE NOT NUMERIC", $value);
+                        $transformed['sizes'] = array_map(function($value) use ($rawProduct, $rawProducts) {
+                            // Check if change_qty=true (meaning separate product)
+                            $hasChangeQty = isset($value['change_qty']) && $value['change_qty'] === true;
+                            
+                            if ($hasChangeQty && !empty($rawProducts)) {
+                                // Look up price from products list
+                                $price = $this->lookupOptionPrice($value['id'], $value['name'], $rawProducts);
+                                if ($price === null) {
+                                    // Fallback to base price if lookup fails
+                                    $price = (float)$rawProduct['price'];
+                                    console_log("⚠️ SIZE price lookup failed, using base price", [
+                                        'size' => $value['name'],
+                                        'base_price' => $price
+                                    ]);
+                                }
+                            } else if (isset($value['price']) && is_numeric($value['price'])) {
+                                $price = (float)$value['price'];
+                            } else {
+                                $price = (float)$rawProduct['price']; // fallback
+                                console_log("⚠️ SIZE PRICE NOT NUMERIC, using base price", $value);
                             }
 
                             return [
                                 'id' => (string)$value['id'],
                                 'name' => $value['name'],
-                                'price' => $price
+                                'price' => $price,
+                                'cockpit3d_id' => (string)$value['id']  // For order mapping
                             ];
                         }, $option['values']);
                     }
