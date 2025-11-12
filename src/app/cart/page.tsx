@@ -11,11 +11,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Trash2 } from 'lucide-react'
 import { 
+  getCart,
   getCartWithImages, 
   removeFromCart, 
   clearCart, 
   getCartTotal,
-  getImageStorageStats
+  getImageStorageStats,
+  saveCart
 } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
 
@@ -120,18 +122,19 @@ export default function CartPage() {
     }
   }
 
-  // ✅ FIXED: updateQuantity uses cartUtils.saveCart (strips images)
+  // ✅ FIXED: updateQuantity - Get cart WITHOUT images to avoid localStorage quota
   const updateQuantity = async (index: number, newQuantity: number) => {
     if (newQuantity < 1) return
     
     try {
-      const currentCart = await getCartWithImages()
+      // Get cart WITHOUT images (just from localStorage)
+      const currentCart = getCart()
       currentCart[index].quantity = newQuantity
       
-      // ✅ FIXED: Import and use saveCart from cartUtils
-      const { saveCart } = await import('@/lib/cartUtils')
+      // Save back to localStorage
       saveCart(currentCart)
       
+      // Reload cart with images for display
       await loadCart()
       window.dispatchEvent(new Event('cartUpdated'))
     } catch (error) {
@@ -352,11 +355,6 @@ export default function CartPage() {
                     <div className="w-32 h-32 shrink-0">
                       <img 
                         src={displayImage}
-                        alt={item.name}
-                        className="w-full h-full object-contain rounded-lg"
-                      />
-                      <img 
-                        src={item.customImageMetadata}
                         alt={item.name}
                         className="w-full h-full object-contain rounded-lg"
                       />

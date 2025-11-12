@@ -52,5 +52,9 @@ coverage/
 stripe.json
 **/stripe*.json
 .htaccess
-Cockpit3D API.pdf
+
+# Environment files
+*.env
+*.env.*
 api/debug-cockpit/cockpit3d-data-fetcher.json
+Cockpit3D API.pdf
