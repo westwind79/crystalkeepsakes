@@ -13,6 +13,7 @@ import ImageEditor from '@/components/ImageEditor'
 import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/types/orderTypes'
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
+import AddedToCartModal from '@/components/cart/AddedToCartModal'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
