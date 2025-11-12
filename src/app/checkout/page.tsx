@@ -151,6 +151,76 @@ export default function CheckoutPage() {
     }
   }, [shippingMethod])
 
+  // Build Cockpit3D order structure from cart
+  function buildCockpit3DOrder() {
+    console.log('🏗️ Building Cockpit3D order structure')
+    
+    const items = cart.map(item => {
+      const orderItem: any = {
+        product_id: item.cockpit3d_id || item.productId,
+        quantity: item.quantity,
+        options: []
+      }
+
+      // Add size option if present
+      if (item.options?.size) {
+        orderItem.options.push({
+          option_id: '151',
+          value_id: item.options.size.cockpit3d_id || item.options.size.id,
+          name: 'Size',
+          value: item.options.size.name
+        })
+      }
+
+      // Add lightbase option if present and not "none"
+      if (item.options?.lightbase && item.options.lightbase.id !== 'none') {
+        orderItem.options.push({
+          option_id: '152',
+          value_id: item.options.lightbase.cockpit3d_id || item.options.lightbase.id,
+          name: 'Light Base',
+          value: item.options.lightbase.name
+        })
+      }
+
+      // Add background option if present and not "rm"
+      if (item.options?.background && item.options.background.id !== 'rm') {
+        orderItem.options.push({
+          option_id: item.options.background.cockpit3d_option_id || '154',
+          name: item.options.background.name,
+          value: 'true'
+        })
+      }
+
+      // Add text option if present and not "none"
+      if (item.options?.text && item.options.text.id !== 'none') {
+        orderItem.options.push({
+          option_id: item.options.text.cockpit3d_option_id || '199',
+          name: 'Customer text',
+          value: item.options.text.value || ''
+        })
+      }
+
+      // Add custom image reference
+      if (item.customImageId) {
+        orderItem.custom_image = {
+          image_id: item.customImageId,
+          filename: item.customImageMetadata?.filename || 'custom.jpg'
+        }
+      }
+
+      return orderItem
+    })
+
+    console.log('📦 Cockpit3D order items:', items)
+
+    return {
+      items: items,
+      shipping_address: shippingAddress,
+      customer_email: shippingAddress.email,
+      customer_name: shippingAddress.name
+    }
+  }
+
   // Initialize payment
   useEffect(() => {
     async function initializePayment() {
@@ -161,11 +231,26 @@ export default function CheckoutPage() {
           return
         }
 
+        // Check if address is complete
+        if (!addressComplete) {
+          console.log('⏳ Waiting for shipping address...')
+          return
+        }
+
         console.log('🛒 Creating payment intent with PHP backend')
         console.log('Totals:', orderTotals)
+        console.log('Shipping address:', shippingAddress)
+
+        const cockpitOrder = buildCockpit3DOrder()
 
         // This calls PHP: create-payment-intent.php
-        const result = await createPaymentIntent(cart, shippingMethod)
+        const result = await createPaymentIntent(
+          cart, 
+          shippingMethod,
+          cart,
+          `ORD-${Date.now()}`,
+          cockpitOrder
+        )
         
         console.log('✅ Payment intent created:', result.orderNumber)
         setClientSecret(result.clientSecret)
@@ -178,10 +263,10 @@ export default function CheckoutPage() {
       }
     }
 
-    if (cart.length > 0 && orderTotals.total > 0) {
+    if (cart.length > 0 && orderTotals.total > 0 && addressComplete) {
       initializePayment()
     }
-  }, [cart, orderTotals])
+  }, [cart, orderTotals, addressComplete])
 
   if (error) {
     return (
