@@ -112,7 +112,7 @@ export function buildCockpit3DOrder(
   const billingAddress = customer?.billingAddress || customer?.shippingAddress
 
   const order: Cockpit3DOrder = {
-    retailer_id: retailerId || process.env.NEXT_PUBLIC_COCKPIT3D_RETAILER_ID || 'crystal_keepsakes',
+    retailer_id: retailerId || process.env.COCKPIT3D_RETAIL_ID || process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID || '256568874',
     order_id: orderNumber,
     address: {
       email: customer?.email || '',
