@@ -6,7 +6,7 @@ export const config = {
     baseUrl: process.env.COCKPIT3D_BASE_URL,
     username: process.env.COCKPIT3D_USERNAME,
     password: process.env.COCKPIT3D_PASSWORD,
-    apiToken: process.env.COCKPIT3D_RETAILER_ID,
+    apiToken: process.env.COCKPIT3D_API_TOKEN,
   },
   
   stripe: {
