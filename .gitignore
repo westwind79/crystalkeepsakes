@@ -3,8 +3,8 @@
 /vendor/
 
 # Build outputs
-.next
-/out
+/.next/
+/out/
 
 # Environment files
 .env
@@ -20,9 +20,10 @@
 /coverage
 
 # Production
-/dist
-/build
-/vendor
+/dist/
+/build/
+/vendor/
+/out/
 
 # Misc
 .DS_Store
@@ -51,27 +52,9 @@ coverage/
 stripe.json
 **/stripe*.json
 .htaccess
-Cockpit3D API.pdf-e 
+
 # Environment files
 *.env
 *.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+api/debug-cockpit/cockpit3d-data-fetcher.json
+Cockpit3D API.pdf
