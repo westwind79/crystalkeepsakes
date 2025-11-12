@@ -126,6 +126,18 @@ export default function CheckoutPage() {
     taxAmount: 0,
     total: 0
   })
+  const [shippingAddress, setShippingAddress] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    line1: '',
+    line2: '',
+    city: '',
+    state: '',
+    postal_code: '',
+    country: 'US'
+  })
+  const [addressComplete, setAddressComplete] = useState(false)
 
   // Calculate totals when cart or shipping changes
   useEffect(() => {
