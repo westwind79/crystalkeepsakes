@@ -406,23 +406,102 @@ function handlePaymentSuccess($paymentIntent) {
     $localOrderId = $paymentIntent->metadata->local_order_id ?? null;
     
     error_log("💳 Payment succeeded for order: $orderNumber");
-    
-    if (!$conn || !$localOrderId) {
-        return; // Skip if no database or order ID
-    }
+    error_log("💰 Amount: $" . ($paymentIntent->amount / 100));
     
     try {
-        updateOrderStatus($localOrderId, [
-            'status' => 'paid',
-            'stripe_payment_intent_id' => $paymentIntent->id,
-            'amount_paid' => $paymentIntent->amount / 100,
-            'paid_at' => date('Y-m-d H:i:s')
-        ]);
+        // Extract Cockpit3D order data from metadata
+        $cockpitOrderJson = $paymentIntent->metadata->cockpit3d_order ?? null;
         
-        error_log("✅ Order status updated");
+        if ($cockpitOrderJson) {
+            error_log("📦 Processing Cockpit3D order from metadata");
+            
+            $cockpitOrderData = json_decode($cockpitOrderJson, true);
+            $shippingAddress = json_decode($paymentIntent->metadata->shipping_address ?? '{}', true);
+            
+            // Build Cockpit3D order
+            $retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?? '256568874';
+            
+            $nameParts = explode(' ', $cockpitOrderData['customer_name'] ?? '', 2);
+            $firstName = $nameParts[0] ?? '';
+            $lastName = $nameParts[1] ?? '';
+            
+            $cockpit3dOrder = [
+                'retailer_id' => $retailerId,
+                'address' => [
+                    'firstname' => $firstName,
+                    'lastname' => $lastName,
+                    'street' => $shippingAddress['line1'] ?? '',
+                    'city' => $shippingAddress['city'] ?? '',
+                    'region' => $shippingAddress['state'] ?? '',
+                    'postcode' => $shippingAddress['postal_code'] ?? '',
+                    'country' => $shippingAddress['country'] ?? 'US',
+                    'telephone' => $shippingAddress['phone'] ?? '',
+                    'email' => $cockpitOrderData['customer_email'] ?? '',
+                ],
+                'items' => []
+            ];
+            
+            // Add items with options
+            if (isset($cockpitOrderData['items']) && is_array($cockpitOrderData['items'])) {
+                foreach ($cockpitOrderData['items'] as $item) {
+                    $orderItem = [
+                        'product_id' => $item['product_id'],
+                        'qty' => $item['quantity'],
+                        'options' => []
+                    ];
+                    
+                    // Add options
+                    if (isset($item['options']) && is_array($item['options'])) {
+                        foreach ($item['options'] as $option) {
+                            $orderItem['options'][] = [
+                                'id' => $option['option_id'],
+                                'value' => $option['value_id'] ?? $option['value']
+                            ];
+                        }
+                    }
+                    
+                    // Note: Custom images from IndexedDB need to be handled separately
+                    // They can't be accessed from server-side webhook
+                    if (isset($item['custom_image'])) {
+                        error_log("⚠️  Custom image detected but not retrievable from IndexedDB");
+                        error_log("   Image ID: " . $item['custom_image']['image_id']);
+                        // TODO: Implement image upload before payment or email link after
+                    }
+                    
+                    $cockpit3dOrder['items'][] = $orderItem;
+                }
+            }
+            
+            error_log("📤 Sending to Cockpit3D: " . json_encode($cockpit3dOrder));
+            
+            // Send to Cockpit3D
+            $result = sendToCockpit3D($cockpit3dOrder);
+            
+            if ($result['success']) {
+                error_log("✅ Order sent to Cockpit3D successfully");
+                error_log("   Cockpit3D Order ID: " . ($result['data']['id'] ?? 'N/A'));
+            } else {
+                error_log("❌ Failed to send to Cockpit3D: " . ($result['error'] ?? 'Unknown'));
+            }
+        } else {
+            error_log("⚠️  No Cockpit3D order data in metadata");
+        }
+        
+        // Update local database if available
+        if ($conn && $localOrderId) {
+            updateOrderStatus($localOrderId, [
+                'status' => 'paid',
+                'stripe_payment_intent_id' => $paymentIntent->id,
+                'amount_paid' => $paymentIntent->amount / 100,
+                'paid_at' => date('Y-m-d H:i:s')
+            ]);
+            
+            error_log("✅ Local order status updated");
+        }
         
     } catch (Exception $e) {
-        error_log('❌ Error updating order: ' . $e->getMessage());
+        error_log('❌ Error processing payment success: ' . $e->getMessage());
+        error_log('Stack trace: ' . $e->getTraceAsString());
     }
 }
 
