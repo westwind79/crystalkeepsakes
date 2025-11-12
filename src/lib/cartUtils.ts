@@ -165,6 +165,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       quantity: item.quantity,
       options: cleanedOptions,
       sizeDetails: item.size || item.sizeDetails,
+      productImage: item.productImage || null,  // Store product's own image
       customImageId,
       customImageMetadata,
       cockpit3d_id: item.cockpit3d_id,
