@@ -32,14 +32,14 @@ export async function getProductSlugs() {
 
 /**
  * Fallback slugs if cached file doesn't exist
- * Returns empty array so build doesn't fail, but no product pages are pre-rendered
- * They'll be generated on-demand with ISR instead
+ * Returns empty array - build will succeed but no product pages will be generated
+ * IMPORTANT: With output: 'export' and dynamicParams: false, missing slugs = 404
  */
 function getFallbackSlugs() {
   console.log('⚠️ [BUILD] No products file found - returning empty array')
-  console.log('ℹ️  Product pages will be generated on-demand (ISR)')
-  console.log('💡 Run: npm run products:fetch')
+  console.log('⚠️ [BUILD] NO PRODUCT PAGES WILL BE GENERATED!')
+  console.log('💡 Run: npm run prebuild OR node scripts/fetch-cockpit3d-products.js')
   
-  // Return empty array - Next.js will handle these routes dynamically
+  // Return empty array - static export will generate zero product pages
   return []
 }
