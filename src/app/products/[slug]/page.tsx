@@ -43,11 +43,15 @@ export async function generateStaticParams() {
 
 /**
  * Generate metadata for each product page (SEO)
+ * Next.js 15: params must be awaited before accessing properties
  */
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
+    // Await params (Next.js 15 requirement)
+    const { slug } = await params
+    
     const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
-    const product = cockpit3dProducts.find((p: any) => p.slug === params.slug)
+    const product = cockpit3dProducts.find((p: any) => p.slug === slug)
     
     if (!product) {
       return {
