@@ -13,6 +13,7 @@ import ImageEditor from '@/components/ImageEditor'
 import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/types/orderTypes'
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
+import AddedToCartModal from '@/components/cart/AddedToCartModal'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
@@ -97,6 +98,8 @@ export default function ProductDetailClient() {
   const [addingToCart, setAddingToCart] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [showAddedModal, setShowAddedModal] = useState(false)
+  const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
   // Fetch product on mount
   useEffect(() => {
@@ -420,18 +423,29 @@ export default function ProductDetailClient() {
         throw new Error(`Failed to add to cart: ${cartError.message}`)
       }
       
-      // Success!
+      // Success! Show modal
       setSuccessMessage(`Added ${quantity} ${product.name} to cart!`)
       
-      // Reset form and redirect
-      setTimeout(() => {
-        setQuantity(1)
-        setCustomText({ line1: '', line2: '' })
-        setUploadedImage(null)
-        setFinalMaskedImage(null)
-        
-        router.push('/cart')
-      }, 1500)
+      // Prepare item details for modal
+      const optionsList: string[] = []
+      if (selectedSize) optionsList.push(`Size: ${selectedSize.name}`)
+      if (selectedBackground) optionsList.push(`Background: ${selectedBackground.name}`)
+      if (selectedLightBase && selectedLightBase.id !== 'none') {
+        optionsList.push(`Light Base: ${selectedLightBase.name}`)
+      }
+      if (customText.line1 || customText.line2) {
+        optionsList.push('Custom Text: Yes')
+      }
+      
+      setAddedItemDetails({
+        name: product.name,
+        image: finalMaskedImage || product.images?.[0]?.src || '/placeholder.png',
+        price: totalPrice,
+        quantity: quantity,
+        options: optionsList
+      })
+      
+      setShowAddedModal(true)
       
     } catch (error: any) {
       logger.error('Failed to add to cart', error)
@@ -728,6 +742,16 @@ export default function ProductDetailClient() {
             onSave={handleImageEditorSave}
           />
         )}
+
+        {/* Added to Cart Modal */}
+        <AddedToCartModal
+          show={showAddedModal}
+          onClose={() => {
+            setShowAddedModal(false)
+            setAddedItemDetails(null)
+          }}
+          itemDetails={addedItemDetails}
+        />
       </div>
     </div>
   )

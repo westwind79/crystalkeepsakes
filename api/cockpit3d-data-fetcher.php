@@ -90,7 +90,7 @@ class CockPit3DFetcher {
     private $baseUrl;
     private $username;
     private $password;
-    private $retailerId;
+    private $retailId;
     protected $token = null;
     private $tokenExpiry = null;
     private $cacheDir;
@@ -102,12 +102,12 @@ class CockPit3DFetcher {
         $this->baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://api.cockpit3d.com';
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-        $this->retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID');
+        $this->retailId = getEnvVariable('COCKPIT3D_RETAIL_ID');
         
         console_log("Base URL", $this->baseUrl);
         console_log("Username", $this->username ? 'SET' : 'MISSING');
         console_log("Password", $this->password ? 'SET' : 'MISSING');
-        console_log("Retailer ID", $this->retailerId ? 'SET' : 'MISSING');
+        console_log("Retailer ID", $this->retailId ? 'SET' : 'MISSING');
         
         // Set up caching in src/data
         $this->cacheDir = dirname(__DIR__) . '/src/data/';
@@ -127,7 +127,7 @@ class CockPit3DFetcher {
     }
 
     public function hasCredentials() {
-        $hasAll = !empty($this->username) && !empty($this->password) && !empty($this->retailerId);
+        $hasAll = !empty($this->username) && !empty($this->password) && !empty($this->retailId);
         console_log("Has all credentials", $hasAll ? 'YES' : 'NO');
         return $hasAll;
     }
@@ -150,7 +150,7 @@ class CockPit3DFetcher {
         $loginData = [
             'username' => $this->username,
             'password' => $this->password,
-            'retailer_id' => $this->retailerId
+            'retailer_id' => $this->retailId
         ];
         
         console_log("Login data prepared", array_keys($loginData));

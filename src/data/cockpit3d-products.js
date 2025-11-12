@@ -1,4 +1,4 @@
-// Combined processed products (static + CockPit3D) - 2025-11-12 15:07:35
+// Combined processed products (static + CockPit3D) - 2025-11-12 15:53:25
 
 export const cockpit3dProducts = [
     {
@@ -3251,7 +3251,7 @@ export const cockpit3dProducts = [
     }
 ];
 
-export const generatedAt = "2025-11-12T15:07:35-08:00";
+export const generatedAt = "2025-11-12T15:53:25-08:00";
 
 export const isRealTimeData = true;
 
