@@ -872,19 +872,24 @@ class CockPit3DFetcher {
             [
                 'id' => 'none',
                 'name' => 'No Text',
-                'price' => 0
+                'price' => 0,
+                'cockpit3d_option_id' => null
             ]
         ];
         
         // Find text option prices in catalog
         $customTextPrice = 9.5; // Fallback
+        $customTextId = '199';  // Default Cockpit3D option ID for "Customer text"
         
         foreach ($catalog as $category) {
             if (isset($category['options'])) {
                 foreach ($category['options'] as $option) {
-                    if (($option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
+                    if (($option['name'] === 'Customer text' || $option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
                         && isset($option['price'])) {
                         $customTextPrice = (float)$option['price'];
+                        if (isset($option['id'])) {
+                            $customTextId = (string)$option['id'];
+                        }
                         break;
                     }
                 }
