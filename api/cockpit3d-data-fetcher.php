@@ -991,7 +991,7 @@ class CockPit3DFetcher {
                         // Transform each CockPit3D product
                         if (is_array($rawProducts)) {
                             foreach ($rawProducts as $rawProduct) {
-                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog);
+                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog, $rawProducts);
                             }
                         }
                     } else {
