@@ -55,3 +55,7 @@ Cockpit3D API.pdf-e
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
