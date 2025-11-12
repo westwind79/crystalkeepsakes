@@ -1,11 +1,11 @@
 <?php
 // api/cockpit3d-data-fetcher.php
 // Version: 2.2.0 - 2025-11-06 - FIXED OPTIONS LOGIC FOR ALL PRODUCT TYPES
-// âœ… Fixed: Crystals get lightbases FROM PRODUCT OPTIONS (not catalog)
-// âœ… Fixed: Keychains/Ornaments get NO lightbases
-// âœ… Fixed: Lightbase products get NO options at all
-// âœ… Fixed: Removed broken extractLightbaseOptions() method
-// âœ… Added: Proper fallback when product has no lightbase options
+// Fixed: Crystals get lightbases FROM PRODUCT OPTIONS (not catalog)
+// Fixed: Keychains/Ornaments get NO lightbases
+// Fixed: Lightbase products get NO options at all
+// Fixed: Removed broken extractLightbaseOptions() method
+// Added: Proper fallback when product has no lightbase options
 // Previous: Missing logic for products without lightbase options in data
 
 // Only set headers and handle requests if this file is called directly
