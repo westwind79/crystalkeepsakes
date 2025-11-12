@@ -55,3 +55,5 @@ Cockpit3D API.pdf-e
 # Environment files
 *.env
 *.env.*
+api/debug-cockpit/cockpit3d-data-fetcher.json
+Cockpit3D API.pdf
