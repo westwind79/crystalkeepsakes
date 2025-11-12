@@ -157,6 +157,24 @@ try {
         $orderNumber = 'TEST_' . $orderNumber;
     }
     
+    // Store Cockpit3D order data in metadata
+    $metadata = [
+        'order_number' => $orderNumber,
+        'environment' => $mode,
+        'items_count' => count($data->cartItems),
+        'subtotal' => $subtotal,
+        'cart_details' => json_encode($data->cartItems)
+    ];
+    
+    // Add Cockpit3D order data if provided
+    if (isset($data->cockpitOrder)) {
+        error_log("📦 Including Cockpit3D order data");
+        $metadata['cockpit3d_order'] = json_encode($data->cockpitOrder);
+        $metadata['customer_email'] = $data->cockpitOrder->customer_email ?? '';
+        $metadata['customer_name'] = $data->cockpitOrder->customer_name ?? '';
+        $metadata['shipping_address'] = json_encode($data->cockpitOrder->shipping_address ?? []);
+    }
+    
     // Create Stripe Payment Intent
     // Stripe will handle shipping rates and tax via Dashboard settings
     $paymentIntent = \Stripe\PaymentIntent::create([
@@ -165,13 +183,7 @@ try {
         'automatic_payment_methods' => [
             'enabled' => true,
         ],
-        'metadata' => [
-            'order_number' => $orderNumber,
-            'environment' => $mode,
-            'items_count' => count($data->cartItems),
-            'subtotal' => $subtotal,
-            'cart_details' => json_encode($data->cartItems)
-        ]
+        'metadata' => $metadata
     ]);
     
     error_log("✓ Payment intent created: " . $paymentIntent->id);
