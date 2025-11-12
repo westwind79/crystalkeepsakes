@@ -126,6 +126,18 @@ export default function CheckoutPage() {
     taxAmount: 0,
     total: 0
   })
+  const [shippingAddress, setShippingAddress] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    line1: '',
+    line2: '',
+    city: '',
+    state: '',
+    postal_code: '',
+    country: 'US'
+  })
+  const [addressComplete, setAddressComplete] = useState(false)
 
   // Calculate totals when cart or shipping changes
   useEffect(() => {
@@ -139,6 +151,76 @@ export default function CheckoutPage() {
     }
   }, [shippingMethod])
 
+  // Build Cockpit3D order structure from cart
+  function buildCockpit3DOrder() {
+    console.log('🏗️ Building Cockpit3D order structure')
+    
+    const items = cart.map(item => {
+      const orderItem: any = {
+        product_id: item.cockpit3d_id || item.productId,
+        quantity: item.quantity,
+        options: []
+      }
+
+      // Add size option if present
+      if (item.options?.size) {
+        orderItem.options.push({
+          option_id: '151',
+          value_id: item.options.size.cockpit3d_id || item.options.size.id,
+          name: 'Size',
+          value: item.options.size.name
+        })
+      }
+
+      // Add lightbase option if present and not "none"
+      if (item.options?.lightbase && item.options.lightbase.id !== 'none') {
+        orderItem.options.push({
+          option_id: '152',
+          value_id: item.options.lightbase.cockpit3d_id || item.options.lightbase.id,
+          name: 'Light Base',
+          value: item.options.lightbase.name
+        })
+      }
+
+      // Add background option if present and not "rm"
+      if (item.options?.background && item.options.background.id !== 'rm') {
+        orderItem.options.push({
+          option_id: item.options.background.cockpit3d_option_id || '154',
+          name: item.options.background.name,
+          value: 'true'
+        })
+      }
+
+      // Add text option if present and not "none"
+      if (item.options?.text && item.options.text.id !== 'none') {
+        orderItem.options.push({
+          option_id: item.options.text.cockpit3d_option_id || '199',
+          name: 'Customer text',
+          value: item.options.text.value || ''
+        })
+      }
+
+      // Add custom image reference
+      if (item.customImageId) {
+        orderItem.custom_image = {
+          image_id: item.customImageId,
+          filename: item.customImageMetadata?.filename || 'custom.jpg'
+        }
+      }
+
+      return orderItem
+    })
+
+    console.log('📦 Cockpit3D order items:', items)
+
+    return {
+      items: items,
+      shipping_address: shippingAddress,
+      customer_email: shippingAddress.email,
+      customer_name: shippingAddress.name
+    }
+  }
+
   // Initialize payment
   useEffect(() => {
     async function initializePayment() {
@@ -149,11 +231,26 @@ export default function CheckoutPage() {
           return
         }
 
+        // Check if address is complete
+        if (!addressComplete) {
+          console.log('⏳ Waiting for shipping address...')
+          return
+        }
+
         console.log('🛒 Creating payment intent with PHP backend')
         console.log('Totals:', orderTotals)
+        console.log('Shipping address:', shippingAddress)
+
+        const cockpitOrder = buildCockpit3DOrder()
 
         // This calls PHP: create-payment-intent.php
-        const result = await createPaymentIntent(cart, shippingMethod)
+        const result = await createPaymentIntent(
+          cart, 
+          shippingMethod,
+          cart,
+          `ORD-${Date.now()}`,
+          cockpitOrder
+        )
         
         console.log('✅ Payment intent created:', result.orderNumber)
         setClientSecret(result.clientSecret)
@@ -166,10 +263,10 @@ export default function CheckoutPage() {
       }
     }
 
-    if (cart.length > 0 && orderTotals.total > 0) {
+    if (cart.length > 0 && orderTotals.total > 0 && addressComplete) {
       initializePayment()
     }
-  }, [cart, orderTotals])
+  }, [cart, orderTotals, addressComplete])
 
   if (error) {
     return (
@@ -189,9 +286,121 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto">
           
-          {/* Shipping Selection */}
+          {/* Shipping Address Form */}
           <div className="bg-white p-6 rounded shadow mb-6">
-            <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Method</h2>
+            <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Address</h2>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.name}
+                  onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={shippingAddress.email}
+                  onChange={(e) => setShippingAddress({...shippingAddress, email: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone *</label>
+                <input
+                  type="tel"
+                  value={shippingAddress.phone}
+                  onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Address Line 1 *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.line1}
+                  onChange={(e) => setShippingAddress({...shippingAddress, line1: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Address Line 2</label>
+                <input
+                  type="text"
+                  value={shippingAddress.line2}
+                  onChange={(e) => setShippingAddress({...shippingAddress, line2: e.target.value})}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">City *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.city}
+                  onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">State *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.state}
+                  onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Zip Code *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.postal_code}
+                  onChange={(e) => setShippingAddress({...shippingAddress, postal_code: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+            </div>
+            
+            <button
+              onClick={() => {
+                // Validate required fields
+                if (shippingAddress.name && shippingAddress.email && shippingAddress.phone &&
+                    shippingAddress.line1 && shippingAddress.city && shippingAddress.state && 
+                    shippingAddress.postal_code) {
+                  setAddressComplete(true)
+                  console.log('✅ Shipping address complete')
+                } else {
+                  alert('Please fill in all required fields')
+                }
+              }}
+              className="mt-4 w-full bg-[#8ac644] text-black py-3 rounded font-bold hover:bg-[#7ab534]"
+            >
+              Continue to Payment
+            </button>
+          </div>
+
+          {/* Shipping Selection */}
+          {addressComplete && (
+            <div className="bg-white p-6 rounded shadow mb-6">
+              <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Method</h2>
             
             <div className="space-y-3">
               <label className="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50">
@@ -250,13 +459,16 @@ export default function CheckoutPage() {
                 🎉 You qualify for free standard shipping!
               </div>
             )}
-          </div>
+            </div>
+          )}
 
-          {/* Loading */}
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p className="mt-4">Setting up payment...</p>
-          </div>
+          {/* Loading Payment */}
+          {addressComplete && (
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              <p className="mt-4">Setting up payment...</p>
+            </div>
+          )}
         </div>
       </div>
     )

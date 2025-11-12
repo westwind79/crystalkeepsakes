@@ -192,7 +192,9 @@ export default function CartPage() {
         price: item.price || (item as any).totalPrice || 0,
         name: item.name,
         custom_options: buildCustomOptions(item),
-        custom_image_url: item.customImage?.dataUrl || item.options?.rawImageUrl || item.options?.imageUrl || undefined
+        // Store only image ID, not full data URL (images are in IndexedDB)
+        custom_image_id: item.customImageId || undefined,
+        custom_image_filename: item.customImageMetadata?.filename || undefined
       })),
       total: total
     }
@@ -261,8 +263,22 @@ export default function CartPage() {
     try {
       const orderData = buildCockpitOrder()
       
+      // Strip customImage objects (keep only IDs) to avoid quota issues
+      const cartForStorage = cart.map(item => {
+        const { customImage, ...itemWithoutImage } = item
+        return {
+          ...itemWithoutImage,
+          // Keep only the ID and metadata, not the full image data
+          customImageId: item.customImageId,
+          customImageMetadata: item.customImageMetadata
+        }
+      })
+      
+      console.log('💾 Storing order in sessionStorage (images stripped)')
+      console.log('📊 Cart size:', JSON.stringify(cartForStorage).length, 'bytes')
+      
       sessionStorage.setItem('pendingOrder', JSON.stringify({
-        cartItems: cart,
+        cartItems: cartForStorage,
         subtotal: total,
         total: total,
         orderNumber: orderData.order_id,
@@ -272,7 +288,7 @@ export default function CartPage() {
       window.location.href = '/checkout'
       
     } catch (error) {
-      console.error('Checkout error:', error)
+      console.error('❌ Checkout error:', error)
       alert('Failed to proceed to checkout. Please try again.')
       setCheckoutLoading(false)
     }

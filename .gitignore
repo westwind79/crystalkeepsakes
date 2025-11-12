@@ -3,8 +3,10 @@
 /vendor/
 
 # Build outputs
-.next
-/out
+/.next/
+.next/
+/out/
+out/
 
 # Environment files
 .env
@@ -52,6 +54,34 @@ stripe.json
 **/stripe*.json
 .htaccess
 Cockpit3D API.pdf-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
 # Environment files
 *.env
 *.env.*

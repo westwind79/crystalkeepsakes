@@ -351,7 +351,7 @@ class CockPit3DFetcher {
         }
     }
 
-    private function transformCockpit3dProduct($rawProduct, $catalog = []) {
+    private function transformCockpit3dProduct($rawProduct, $catalog = [], $rawProducts = []) {
         console_log("🛠️ Transforming CockPit3D product", $rawProduct['id']);
         
         // Check if this is a lightbase product by name
@@ -410,19 +410,33 @@ class CockPit3DFetcher {
             if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
                 foreach ($rawProduct['options'] as $option) {
                     if ($option['name'] === 'Size' && isset($option['values'])) {
-                        $transformed['sizes'] = array_map(function($value) use ($rawProduct) {
-                            $price = isset($value['price']) && is_numeric($value['price']) 
-                                ? (float)$value['price'] 
-                                : (float)$rawProduct['price']; // fallback
-
-                            if (!is_numeric($value['price'])) {
-                                console_log("⚠️ SIZE PRICE NOT NUMERIC", $value);
+                        $transformed['sizes'] = array_map(function($value) use ($rawProduct, $rawProducts) {
+                            // Check if change_qty=true (meaning separate product)
+                            $hasChangeQty = isset($value['change_qty']) && $value['change_qty'] === true;
+                            
+                            if ($hasChangeQty && !empty($rawProducts)) {
+                                // Look up price from products list
+                                $price = $this->lookupOptionPrice($value['id'], $value['name'], $rawProducts);
+                                if ($price === null) {
+                                    // Fallback to base price if lookup fails
+                                    $price = (float)$rawProduct['price'];
+                                    console_log("⚠️ SIZE price lookup failed, using base price", [
+                                        'size' => $value['name'],
+                                        'base_price' => $price
+                                    ]);
+                                }
+                            } else if (isset($value['price']) && is_numeric($value['price'])) {
+                                $price = (float)$value['price'];
+                            } else {
+                                $price = (float)$rawProduct['price']; // fallback
+                                console_log("⚠️ SIZE PRICE NOT NUMERIC, using base price", $value);
                             }
 
                             return [
                                 'id' => (string)$value['id'],
                                 'name' => $value['name'],
-                                'price' => $price
+                                'price' => $price,
+                                'cockpit3d_id' => (string)$value['id']  // For order mapping
                             ];
                         }, $option['values']);
                     }
@@ -434,7 +448,10 @@ class CockPit3DFetcher {
             // Only for crystal products (NOT keychains/ornaments)
             if (!$isKeychainOrOrnament) {
                 if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
-                    $transformed['lightBases'] = $this->extractProductLightbases($rawProduct['options']);
+                    $transformed['lightBases'] = $this->extractProductLightbases(
+                        $rawProduct['options'],
+                        $rawProducts  // Pass all products for price lookup
+                    );
                     console_log("âœ… Lightbases extracted from product options", count($transformed['lightBases']));
                 } else {
                     $transformed['lightBases'] = [
@@ -703,9 +720,49 @@ class CockPit3DFetcher {
     }
 
     /**
-     * Extract lightbase options from product's OWN options (not catalog)
+     * Look up price for an option value that has change_qty=true
+     * These are separate products in the products list
      */
-    private function extractProductLightbases($productOptions) {
+    private function lookupOptionPrice($valueId, $valueName, $allProducts) {
+        // Try to find by ID first
+        foreach ($allProducts as $product) {
+            if ($product['id'] === $valueId) {
+                console_log("✅ Found price by ID", [
+                    'id' => $valueId,
+                    'name' => $valueName,
+                    'price' => $product['price']
+                ]);
+                return (float)$product['price'];
+            }
+        }
+        
+        // Try to find by matching SKU/name
+        $searchName = str_replace(' ', '_', $valueName);
+        foreach ($allProducts as $product) {
+            if ($product['sku'] === $searchName || 
+                strtolower($product['sku']) === strtolower($searchName)) {
+                console_log("✅ Found price by SKU", [
+                    'sku' => $product['sku'],
+                    'name' => $valueName,
+                    'price' => $product['price']
+                ]);
+                return (float)$product['price'];
+            }
+        }
+        
+        console_log("⚠️ No price found for option", [
+            'id' => $valueId,
+            'name' => $valueName
+        ]);
+        
+        return null;
+    }
+
+    /**
+     * Extract lightbase options from product's OWN options (not catalog)
+     * Now with price lookup for change_qty=true options
+     */
+    private function extractProductLightbases($productOptions, $allProducts = []) {
         $lightbases = [
             [
                 'id' => 'none',
@@ -718,11 +775,27 @@ class CockPit3DFetcher {
         foreach ($productOptions as $option) {
             if ($option['name'] === 'Light Base' && isset($option['values']) && is_array($option['values'])) {
                 foreach ($option['values'] as $value) {
+                    // Check if this option has change_qty = true
+                    $hasChangeQty = isset($value['change_qty']) && $value['change_qty'] === true;
+                    
+                    // If change_qty=true, lookup price from products list
+                    $price = null;
+                    if ($hasChangeQty && !empty($allProducts)) {
+                        $price = $this->lookupOptionPrice($value['id'], $value['name'], $allProducts);
+                    } else if (isset($value['price']) && is_numeric($value['price'])) {
+                        $price = (float)$value['price'];
+                    }
+                    
                     $lightbases[] = [
                         'id' => (string)$value['id'],
                         'name' => $value['name'],
-                        'price' => isset($value['price']) ? (float)$value['price'] : null
+                        'price' => $price,
+                        'cockpit3d_id' => (string)$value['id']  // For order mapping
                     ];
+                    
+                    if ($price === null) {
+                        console_log("⚠️ Lightbase without price", $value['name']);
+                    }
                 }
                 break;
             }
@@ -740,22 +813,35 @@ class CockPit3DFetcher {
             [
                 'id' => 'rm',
                 'name' => 'Remove Backdrop',
-                'price' => 0
+                'price' => 0,
+                'cockpit3d_option_id' => null  // No backdrop = no option
             ]
         ];
         
         // Find backdrop prices in catalog options
         $twoDPrice = 12; // Fallback
         $threeDPrice = 15; // Fallback
+        $twoDId = '154';  // Default Cockpit3D option ID
+        $threeDId = '155'; // Default Cockpit3D option ID
         
         foreach ($catalog as $category) {
             if (isset($category['options'])) {
                 foreach ($category['options'] as $option) {
-                    if ($option['name'] === '2D Backdrop' && isset($option['price'])) {
-                        $twoDPrice = (float)$option['price'];
+                    if ($option['name'] === '2D Backdrop') {
+                        if (isset($option['price'])) {
+                            $twoDPrice = (float)$option['price'];
+                        }
+                        if (isset($option['id'])) {
+                            $twoDId = (string)$option['id'];
+                        }
                     }
-                    if ($option['name'] === '3D Backdrop' && isset($option['price'])) {
-                        $threeDPrice = (float)$option['price'];
+                    if ($option['name'] === '3D Backdrop') {
+                        if (isset($option['price'])) {
+                            $threeDPrice = (float)$option['price'];
+                        }
+                        if (isset($option['id'])) {
+                            $threeDId = (string)$option['id'];
+                        }
                     }
                 }
             }
@@ -764,13 +850,15 @@ class CockPit3DFetcher {
         $options[] = [
             'id' => '2d',
             'name' => '2D Backdrop',
-            'price' => $twoDPrice
+            'price' => $twoDPrice,
+            'cockpit3d_option_id' => $twoDId
         ];
         
         $options[] = [
             'id' => '3d',
             'name' => '3D Backdrop',
-            'price' => $threeDPrice
+            'price' => $threeDPrice,
+            'cockpit3d_option_id' => $threeDId
         ];
         
         return $options;
@@ -784,19 +872,24 @@ class CockPit3DFetcher {
             [
                 'id' => 'none',
                 'name' => 'No Text',
-                'price' => 0
+                'price' => 0,
+                'cockpit3d_option_id' => null
             ]
         ];
         
         // Find text option prices in catalog
         $customTextPrice = 9.5; // Fallback
+        $customTextId = '199';  // Default Cockpit3D option ID for "Customer text"
         
         foreach ($catalog as $category) {
             if (isset($category['options'])) {
                 foreach ($category['options'] as $option) {
-                    if (($option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
+                    if (($option['name'] === 'Customer text' || $option['name'] === 'Custom Text' || $option['name'] === 'Custom Option') 
                         && isset($option['price'])) {
                         $customTextPrice = (float)$option['price'];
+                        if (isset($option['id'])) {
+                            $customTextId = (string)$option['id'];
+                        }
                         break;
                     }
                 }
@@ -806,7 +899,8 @@ class CockPit3DFetcher {
         $options[] = [
             'id' => 'customText',
             'name' => 'Custom Text',
-            'price' => $customTextPrice
+            'price' => $customTextPrice,
+            'cockpit3d_option_id' => $customTextId
         ];
         
         return $options;
@@ -935,7 +1029,7 @@ class CockPit3DFetcher {
                         // Transform each CockPit3D product
                         if (is_array($rawProducts)) {
                             foreach ($rawProducts as $rawProduct) {
-                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog);
+                                $cockpitProducts[] = $this->transformCockpit3dProduct($rawProduct, $rawCatalog, $rawProducts);
                             }
                         }
                     } else {
