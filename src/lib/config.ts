@@ -2,7 +2,7 @@ export const config = {
   isProduction: process.env.NEXT_PUBLIC_ENV_MODE === 'production',
   
   cockpit3d: {
-    retailerId: process.env.NEXT_PUBLIC_COCKPIT3D_RETAILER_ID,
+    retailerId: process.env.COCKPIT3D_RETAIL_ID || process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID,
     baseUrl: process.env.COCKPIT3D_BASE_URL,
     username: process.env.COCKPIT3D_USERNAME,
     password: process.env.COCKPIT3D_PASSWORD,
