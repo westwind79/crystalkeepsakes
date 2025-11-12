@@ -899,7 +899,8 @@ class CockPit3DFetcher {
         $options[] = [
             'id' => 'customText',
             'name' => 'Custom Text',
-            'price' => $customTextPrice
+            'price' => $customTextPrice,
+            'cockpit3d_option_id' => $customTextId
         ];
         
         return $options;
