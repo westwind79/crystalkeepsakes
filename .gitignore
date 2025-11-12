@@ -20,9 +20,9 @@
 /coverage
 
 # Production
-/dist
-/build
-/vendor
+/dist/
+/build/
+/vendor/
 /out/
 
 # Misc
