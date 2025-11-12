@@ -3,8 +3,10 @@
 /vendor/
 
 # Build outputs
-.next
-/out
+/.next/
+.next/
+/out/
+out/
 
 # Environment files
 .env
