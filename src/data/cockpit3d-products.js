@@ -1556,41 +1556,26 @@ export const cockpit3dProducts = [
     {
         "id": "279",
         "name": "Ornament Stand",
-        "price": 25
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 12
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 15
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5
-      }
-    ]
-  },
-  {
-    "id": "104",
+        "slug": "ornament-stand",
+        "sku": "ornament_stand",
+        "basePrice": 25,
+        "description": "Ornament Stand",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/279\/cockpit3d_279_Ornament_Stand.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "104",
     "cockpit3d_id": "104",
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
