@@ -434,7 +434,10 @@ class CockPit3DFetcher {
             // Only for crystal products (NOT keychains/ornaments)
             if (!$isKeychainOrOrnament) {
                 if (isset($rawProduct['options']) && is_array($rawProduct['options'])) {
-                    $transformed['lightBases'] = $this->extractProductLightbases($rawProduct['options']);
+                    $transformed['lightBases'] = $this->extractProductLightbases(
+                        $rawProduct['options'],
+                        $rawProducts  // Pass all products for price lookup
+                    );
                     console_log("âœ… Lightbases extracted from product options", count($transformed['lightBases']));
                 } else {
                     $transformed['lightBases'] = [
