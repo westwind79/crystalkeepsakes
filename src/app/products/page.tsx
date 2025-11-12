@@ -327,7 +327,7 @@ export default function ProductsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <div 
-                key={product.id}
+                key={`${product.id}-${product.slug}`}
                 className="bg-dark-surface rounded-lg overflow-hidden shadow-md hover:shadow-glow-soft transition-all duration-base h-full flex flex-col group"
               >
                 {/* Product Image */}
