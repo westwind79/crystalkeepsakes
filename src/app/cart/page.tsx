@@ -192,7 +192,9 @@ export default function CartPage() {
         price: item.price || (item as any).totalPrice || 0,
         name: item.name,
         custom_options: buildCustomOptions(item),
-        custom_image_url: item.customImage?.dataUrl || item.options?.rawImageUrl || item.options?.imageUrl || undefined
+        // Store only image ID, not full data URL (images are in IndexedDB)
+        custom_image_id: item.customImageId || undefined,
+        custom_image_filename: item.customImageMetadata?.filename || undefined
       })),
       total: total
     }
