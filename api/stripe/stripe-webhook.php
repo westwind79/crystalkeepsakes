@@ -196,7 +196,7 @@ function buildCockpit3DOrder($session, $orderNumber) {
     $firstName = $nameParts[0] ?? '';
     $lastName = $nameParts[1] ?? '';
     
-    $retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?? '256568874';
+    $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
     
     $order = [
         'retailer_id' => $retailerId,
@@ -419,7 +419,7 @@ function handlePaymentSuccess($paymentIntent) {
             $shippingAddress = json_decode($paymentIntent->metadata->shipping_address ?? '{}', true);
             
             // Build Cockpit3D order
-            $retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?? '256568874';
+            $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
             
             $nameParts = explode(' ', $cockpitOrderData['customer_name'] ?? '', 2);
             $firstName = $nameParts[0] ?? '';
