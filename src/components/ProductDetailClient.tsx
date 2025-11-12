@@ -742,6 +742,16 @@ export default function ProductDetailClient() {
             onSave={handleImageEditorSave}
           />
         )}
+
+        {/* Added to Cart Modal */}
+        <AddedToCartModal
+          show={showAddedModal}
+          onClose={() => {
+            setShowAddedModal(false)
+            setAddedItemDetails(null)
+          }}
+          itemDetails={addedItemDetails}
+        />
       </div>
     </div>
   )
