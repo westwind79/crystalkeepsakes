@@ -11,11 +11,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Trash2 } from 'lucide-react'
 import { 
+  getCart,
   getCartWithImages, 
   removeFromCart, 
   clearCart, 
   getCartTotal,
-  getImageStorageStats
+  getImageStorageStats,
+  saveCart
 } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
 
