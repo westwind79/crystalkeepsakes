@@ -400,7 +400,7 @@ export default function CartPage() {
           </div>
 
           {/* ✅ ENHANCED: Sticky Order Summary */}
-          <div className="text-slate-900 bg-white h-max rounded-md p-6 shadow-sm border border-gray-300 sticky top-6">
+          <div className="text-slate-900 bg-white h-max rounded-md p-6 shadow-sm border border-gray-300 sticky top-[var(--header-height)]">
             <h3 className="text-base font-semibold text-slate-900">Order Summary</h3>
             <ul className="text-slate-500 font-medium text-sm divide-y divide-gray-300 mt-4">
               <li className="flex flex-wrap gap-4 py-3">
