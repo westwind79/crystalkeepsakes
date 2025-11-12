@@ -127,7 +127,7 @@ ls -la .env     # Mac/Linux
 # Verify it contains:
 COCKPIT3D_USERNAME=noah.westwind@gmail.com
 COCKPIT3D_PASSWORD=z99rr9,Hod,,bdb,azzo
-COCKPIT3D_RETAILER_ID=256568874
+COCKPIT3D_RETAIL_ID=256568874
 COCKPIT3D_BASE_URL=https://api.cockpit3d.com/
 ```
 
