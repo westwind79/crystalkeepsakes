@@ -703,9 +703,49 @@ class CockPit3DFetcher {
     }
 
     /**
-     * Extract lightbase options from product's OWN options (not catalog)
+     * Look up price for an option value that has change_qty=true
+     * These are separate products in the products list
      */
-    private function extractProductLightbases($productOptions) {
+    private function lookupOptionPrice($valueId, $valueName, $allProducts) {
+        // Try to find by ID first
+        foreach ($allProducts as $product) {
+            if ($product['id'] === $valueId) {
+                console_log("✅ Found price by ID", [
+                    'id' => $valueId,
+                    'name' => $valueName,
+                    'price' => $product['price']
+                ]);
+                return (float)$product['price'];
+            }
+        }
+        
+        // Try to find by matching SKU/name
+        $searchName = str_replace(' ', '_', $valueName);
+        foreach ($allProducts as $product) {
+            if ($product['sku'] === $searchName || 
+                strtolower($product['sku']) === strtolower($searchName)) {
+                console_log("✅ Found price by SKU", [
+                    'sku' => $product['sku'],
+                    'name' => $valueName,
+                    'price' => $product['price']
+                ]);
+                return (float)$product['price'];
+            }
+        }
+        
+        console_log("⚠️ No price found for option", [
+            'id' => $valueId,
+            'name' => $valueName
+        ]);
+        
+        return null;
+    }
+
+    /**
+     * Extract lightbase options from product's OWN options (not catalog)
+     * Now with price lookup for change_qty=true options
+     */
+    private function extractProductLightbases($productOptions, $allProducts = []) {
         $lightbases = [
             [
                 'id' => 'none',
@@ -718,11 +758,27 @@ class CockPit3DFetcher {
         foreach ($productOptions as $option) {
             if ($option['name'] === 'Light Base' && isset($option['values']) && is_array($option['values'])) {
                 foreach ($option['values'] as $value) {
+                    // Check if this option has change_qty = true
+                    $hasChangeQty = isset($value['change_qty']) && $value['change_qty'] === true;
+                    
+                    // If change_qty=true, lookup price from products list
+                    $price = null;
+                    if ($hasChangeQty && !empty($allProducts)) {
+                        $price = $this->lookupOptionPrice($value['id'], $value['name'], $allProducts);
+                    } else if (isset($value['price']) && is_numeric($value['price'])) {
+                        $price = (float)$value['price'];
+                    }
+                    
                     $lightbases[] = [
                         'id' => (string)$value['id'],
                         'name' => $value['name'],
-                        'price' => isset($value['price']) ? (float)$value['price'] : null
+                        'price' => $price,
+                        'cockpit3d_id' => (string)$value['id']  // For order mapping
                     ];
+                    
+                    if ($price === null) {
+                        console_log("⚠️ Lightbase without price", $value['name']);
+                    }
                 }
                 break;
             }
