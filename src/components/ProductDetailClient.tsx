@@ -98,6 +98,8 @@ export default function ProductDetailClient() {
   const [addingToCart, setAddingToCart] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [showAddedModal, setShowAddedModal] = useState(false)
+  const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
   // Fetch product on mount
   useEffect(() => {
