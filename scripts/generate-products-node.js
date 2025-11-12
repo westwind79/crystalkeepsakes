@@ -59,6 +59,8 @@ function loadStaticProducts() {
 
 /**
  * Load Cockpit3D products from raw file
+ * Note: This loads RAW API data. The PHP script would transform these.
+ * For now, we indicate they need PHP transformation.
  */
 function loadCockpitProducts() {
     console.log('\n📦 Loading Cockpit3D products...');
@@ -66,6 +68,7 @@ function loadCockpitProducts() {
     if (!fs.existsSync(RAW_PRODUCTS_PATH)) {
         console.log('⚠️  Cockpit3D products file not found:', RAW_PRODUCTS_PATH);
         console.log('   This is normal if you haven\'t fetched from API yet');
+        console.log('   Run the PHP data fetcher to generate Cockpit3D products');
         return [];
     }
     
@@ -82,6 +85,8 @@ function loadCockpitProducts() {
     try {
         const rawProducts = JSON.parse(match[1]);
         console.log('✅ Successfully loaded', rawProducts.length, 'raw Cockpit3D products');
+        console.log('⚠️  Note: These are RAW products and need transformation');
+        console.log('   The PHP data-fetcher.php handles transformation automatically');
         return rawProducts;
     } catch (err) {
         console.log('❌ JSON parse error:', err.message);
