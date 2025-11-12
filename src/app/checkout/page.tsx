@@ -286,9 +286,121 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto">
           
-          {/* Shipping Selection */}
+          {/* Shipping Address Form */}
           <div className="bg-white p-6 rounded shadow mb-6">
-            <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Method</h2>
+            <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Address</h2>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.name}
+                  onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={shippingAddress.email}
+                  onChange={(e) => setShippingAddress({...shippingAddress, email: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone *</label>
+                <input
+                  type="tel"
+                  value={shippingAddress.phone}
+                  onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Address Line 1 *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.line1}
+                  onChange={(e) => setShippingAddress({...shippingAddress, line1: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Address Line 2</label>
+                <input
+                  type="text"
+                  value={shippingAddress.line2}
+                  onChange={(e) => setShippingAddress({...shippingAddress, line2: e.target.value})}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">City *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.city}
+                  onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">State *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.state}
+                  onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Zip Code *</label>
+                <input
+                  type="text"
+                  value={shippingAddress.postal_code}
+                  onChange={(e) => setShippingAddress({...shippingAddress, postal_code: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+            </div>
+            
+            <button
+              onClick={() => {
+                // Validate required fields
+                if (shippingAddress.name && shippingAddress.email && shippingAddress.phone &&
+                    shippingAddress.line1 && shippingAddress.city && shippingAddress.state && 
+                    shippingAddress.postal_code) {
+                  setAddressComplete(true)
+                  console.log('✅ Shipping address complete')
+                } else {
+                  alert('Please fill in all required fields')
+                }
+              }}
+              className="mt-4 w-full bg-[#8ac644] text-black py-3 rounded font-bold hover:bg-[#7ab534]"
+            >
+              Continue to Payment
+            </button>
+          </div>
+
+          {/* Shipping Selection */}
+          {addressComplete && (
+            <div className="bg-white p-6 rounded shadow mb-6">
+              <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Method</h2>
             
             <div className="space-y-3">
               <label className="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50">
