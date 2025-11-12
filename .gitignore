@@ -63,3 +63,7 @@ debug/
 .cache/
 .parcel-cache/
 .turbo/
+-e 
+# Environment files
+*.env
+*.env.*
