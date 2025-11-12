@@ -351,7 +351,7 @@ class CockPit3DFetcher {
         }
     }
 
-    private function transformCockpit3dProduct($rawProduct, $catalog = []) {
+    private function transformCockpit3dProduct($rawProduct, $catalog = [], $rawProducts = []) {
         console_log("🛠️ Transforming CockPit3D product", $rawProduct['id']);
         
         // Check if this is a lightbase product by name
