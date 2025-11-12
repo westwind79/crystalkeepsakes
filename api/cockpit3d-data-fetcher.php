@@ -79,9 +79,9 @@ function console_log($message, $data = null) {
     $currentMode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     if ($currentMode !== 'live') {
         if ($data !== null) {
-            error_log("Ã°Å¸â€Â§ FETCHER: $message - " . json_encode($data));
+            error_log("FETCHER: $message - " . json_encode($data));
         } else {
-            error_log("Ã°Å¸â€Â§ FETCHER: $message");
+            error_log("FETCHER: $message");
         }
     }
 }
@@ -102,7 +102,7 @@ class CockPit3DFetcher {
         $this->baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://api.cockpit3d.com';
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-        $this->retailerId = getEnvVariable('COCKPIT3D_API_TOKEN');
+        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
         
         console_log("Base URL", $this->baseUrl);
         console_log("Username", $this->username ? 'SET' : 'MISSING');

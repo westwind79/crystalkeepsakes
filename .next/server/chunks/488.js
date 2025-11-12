@@ -1,1 +1,0 @@
-"use strict";exports.id=488,exports.ids=[488],exports.modules={7488:(a,b,c)=>{async function d(){try{let{cockpit3dProducts:a}=await c.e(973).then(c.bind(c,8973));if(!a||!Array.isArray(a))return[];return a.map(a=>({slug:a.slug}))}catch(a){return console.error("❌ [BUILD] Failed to load cached products:",a),[]}}c.d(b,{getProductSlugs:()=>d})}};
