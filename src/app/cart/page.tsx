@@ -342,8 +342,9 @@ export default function CartPage() {
           {/* Cart Items Column */}
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item, index) => {
-              const displayImage = item.customImage?.thumbnail || 
-                                 'https://placehold.co/800x800?text=No+Image'
+              const displayImage = item.customImage?.thumbnail ||  // User's uploaded photo
+                                 item.productImage ||             // Product's own photo
+                                 'https://placehold.co/800x800?text=No+Image'  // Fallback
               
               const displayOptions = getDisplayOptions(item)
               
