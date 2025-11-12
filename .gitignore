@@ -12,6 +12,8 @@ out/
 .env
 .env.*
 !.env.example
+*.env
+*.env.*
 
 # Config files with sensitive data
 /config/config.php
@@ -20,15 +22,16 @@ out/
 
 # Testing
 /coverage
+coverage/
 
 # Production
 /dist
 /build
-/vendor
 
 # Misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # IDE and Editor files
 .idea/
@@ -36,80 +39,27 @@ out/
 *.swp
 *.swo
 
-# OS files
-.DS_Store
-Thumbs.db
-
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Testing
-coverage/
+lerna-debug.log*
 
 # Stripe API keys and other sensitive data
 stripe.json
 **/stripe*.json
-.htaccess
-Cockpit3D API.pdf-e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Debug files
+debug/
+*.local
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Cache directories
+.cache/
+.parcel-cache/
+.turbo/
