@@ -120,18 +120,19 @@ export default function CartPage() {
     }
   }
 
-  // ✅ FIXED: updateQuantity uses cartUtils.saveCart (strips images)
+  // ✅ FIXED: updateQuantity - Get cart WITHOUT images to avoid localStorage quota
   const updateQuantity = async (index: number, newQuantity: number) => {
     if (newQuantity < 1) return
     
     try {
-      const currentCart = await getCartWithImages()
+      // Get cart WITHOUT images (just from localStorage)
+      const currentCart = getCart()
       currentCart[index].quantity = newQuantity
       
-      // ✅ FIXED: Import and use saveCart from cartUtils
-      const { saveCart } = await import('@/lib/cartUtils')
+      // Save back to localStorage
       saveCart(currentCart)
       
+      // Reload cart with images for display
       await loadCart()
       window.dispatchEvent(new Event('cartUpdated'))
     } catch (error) {
