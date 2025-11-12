@@ -88,7 +88,7 @@ next build
 # Cockpit3D API - PHP needs these
 COCKPIT3D_USERNAME=noah.westwind@gmail.com
 COCKPIT3D_PASSWORD=z99rr9,Hod,,bdb,azzo
-COCKPIT3D_RETAILER_ID=256568874          # ← PHP looks for this
+COCKPIT3D_RETAIL_ID=256568874          # ← PHP looks for this
 COCKPIT3D_BASE_URL=https://api.cockpit3d.com/
 
 # Alternative names (for compatibility)
