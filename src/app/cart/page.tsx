@@ -355,11 +355,6 @@ export default function CartPage() {
                         alt={item.name}
                         className="w-full h-full object-contain rounded-lg"
                       />
-                      <img 
-                        src={item.customImageMetadata}
-                        alt={item.name}
-                        className="w-full h-full object-contain rounded-lg"
-                      />
                     </div>
 
                     {/* ✅ ENHANCED: Product Details */}
