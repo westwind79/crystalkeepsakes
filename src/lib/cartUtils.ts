@@ -178,20 +178,38 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     // Clean options to remove any image data
     const cleanedOptions = cleanOptions(item.options)
     
-    // Create cart item with just image ID reference
+    // Create cart item with ALL order data preserved
     const cartItem: CartItem = {
+      // Product identification
       productId: item.productId,
+      cockpit3d_id: item.cockpit3d_id,
       name: item.name,
       sku: item.sku,
-      price: item.price || item.totalPrice,
+      
+      // Pricing (preserve all price fields)
+      basePrice: item.basePrice,
+      optionsPrice: item.optionsPrice,
+      price: item.price || item.totalPrice || item.basePrice,
+      totalPrice: item.totalPrice || (item.price * item.quantity),
       quantity: item.quantity,
-      options: cleanedOptions,
+      
+      // Product configuration (preserve full structure)
+      size: item.size,
       sizeDetails: item.size || item.sizeDetails,
-      productImage: item.productImage || null,  // Store product's own image
+      options: item.options || cleanedOptions,  // Preserve original options array/object
+      productImage: item.productImage || null,
+      
+      // Custom image (IndexedDB reference)
       customImageId,
       customImageMetadata,
-      cockpit3d_id: item.cockpit3d_id,
-      dateAdded: item.dateAdded || new Date().toISOString()
+      
+      // Custom text (preserve full object)
+      customText: item.customText,
+      
+      // Metadata
+      dateAdded: item.dateAdded || new Date().toISOString(),
+      lastModified: item.lastModified || new Date().toISOString(),
+      lineItemId: item.lineItemId
     }
     
     cart.push(cartItem)
