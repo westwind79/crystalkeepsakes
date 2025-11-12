@@ -11,22 +11,44 @@ import { imageDB } from './imageStorageDB'
 import { uploadImageStorage } from './api/upload-image.php'
 
 export interface CartItem {
+  // Product identification
   productId: string
+  cockpit3d_id?: string
   name: string
   sku: string
+  
+  // Pricing
+  basePrice?: number
+  optionsPrice?: number
   price: number
+  totalPrice?: number
   quantity: number
-  options: any
+  
+  // Product configuration
+  size?: any  // Keep for backward compatibility
   sizeDetails?: any
+  options: any
   productImage?: string  // Product's own image (for items without custom images)
-  customImageId?: string  // Changed from customImage object to just ID
-  customImageMetadata?: {  // Light metadata for display
+  
+  // Custom image storage (IndexedDB)
+  customImageId?: string  // Reference to IndexedDB image
+  customImageMetadata?: {
     filename?: string
     maskName?: string
     hasImage: boolean
   }
-  cockpit3d_id?: string
+  
+  // Custom text
+  customText?: {
+    text: string
+    line1?: string
+    line2?: string
+  }
+  
+  // Metadata
   dateAdded: string
+  lastModified?: string
+  lineItemId?: string
 }
 
 /**
