@@ -18,6 +18,7 @@ export interface CartItem {
   quantity: number
   options: any
   sizeDetails?: any
+  productImage?: string  // Product's own image (for items without custom images)
   customImageId?: string  // Changed from customImage object to just ID
   customImageMetadata?: {  // Light metadata for display
     filename?: string
