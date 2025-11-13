@@ -699,25 +699,70 @@ export default function ProductDetailClient() {
             )}
 
             {/* Custom Text */}
-            {product.textOptions && product.textOptions.length > 0 && (
+            {product?.textOptions && product.textOptions.length > 1 && (
               <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Custom Text (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="Line 1"
-                  value={customText.line1}
-                  onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] mb-2"
-                  maxLength={30}
-                />
-                <input
-                  type="text"
-                  placeholder="Line 2"
-                  value={customText.line2}
-                  onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)]"
-                  maxLength={30}
-                />
+                <div className="flex items-center mb-3">
+                  <input
+                    type="checkbox"
+                    id="add-custom-text"
+                    checked={showCustomText}
+                    onChange={(e) => {
+                      setShowCustomText(e.target.checked)
+                      if (!e.target.checked) {
+                        setCustomText({ line1: '', line2: '' })
+                        setTextCharCount({ line1: 0, line2: 0 })
+                      }
+                    }}
+                    className="mr-3 w-5 h-5"
+                  />
+                  <label htmlFor="add-custom-text" className="text-lg font-semibold cursor-pointer">
+                    Add Custom Text {product.textOptions[1]?.price > 0 && (
+                      <span className="text-brand-400">(+${product.textOptions[1].price.toFixed(2)})</span>
+                    )}
+                  </label>
+                </div>
+                
+                {showCustomText && (
+                  <div className="space-y-3 pl-8">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-sm font-medium text-text-secondary">Line 1</label>
+                        <span className="text-xs text-text-tertiary">({textCharCount.line1}/30)</span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Custom Text Line 1"
+                        value={customText.line1}
+                        onChange={(e) => {
+                          const value = e.target.value.slice(0, 30)
+                          setCustomText({ ...customText, line1: value })
+                          setTextCharCount({ ...textCharCount, line1: value.length })
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] focus:border-brand-400 focus:outline-none"
+                        maxLength={30}
+                      />
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-sm font-medium text-text-secondary">Line 2</label>
+                        <span className="text-xs text-text-tertiary">({textCharCount.line2}/30)</span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Custom Text Line 2"
+                        value={customText.line2}
+                        onChange={(e) => {
+                          const value = e.target.value.slice(0, 30)
+                          setCustomText({ ...customText, line2: value })
+                          setTextCharCount({ ...textCharCount, line2: value.length })
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] focus:border-brand-400 focus:outline-none"
+                        maxLength={30}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
