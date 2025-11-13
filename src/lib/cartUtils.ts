@@ -38,6 +38,10 @@ export interface CartItem {
     hasImage: boolean
   }
   
+  // Image URLs for display (data URLs from IndexedDB)
+  rawImageUrl?: string  // Original uploaded image (before masking)
+  maskedImageUrl?: string  // Final masked/edited image (for Cockpit3D)
+  
   // Custom text
   customText?: {
     text: string
