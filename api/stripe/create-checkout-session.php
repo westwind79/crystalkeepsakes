@@ -1,9 +1,7 @@
 <?php
 /**
- * Create Stripe Checkout Session
- * @version 2.0.0
- * @date 2025-11-10
- * @description Creates Stripe Checkout - Stripe handles address, shipping, tax
+ * Stripe Checkout Session Creator - V2.0
+ * Creates a hosted checkout page on stripe.com with shipping & coupons
  */
 
 header('Content-Type: application/json');
