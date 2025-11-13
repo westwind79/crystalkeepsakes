@@ -1,61 +1,240 @@
 // Combined processed products (static + CockPit3D) - 2025-11-12 15:07:35
 
 export const cockpit3dProducts = [
-  {
-    "id": "001",
-    "name": "Static Product",
-    "slug": "static-product",
-    "sku": "static-product",
-    "basePrice": 169,
-    "description": "Short Static Product Description",
-    "longDescription": "Long Description that comes from Static Product 1",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/448/cockpit3d_448_2D_Medium_Plaque_Vertical.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5
-      }
-    ]
-  },
-  {
-    "id": "002",
-    "name": "Static2",
-    "slug": "static2",
-    "sku": "static2",
-    "basePrice": 169,
-    "description": "Short Description that comes from Static Product 2",
-    "longDescription": "Long Description that comes from Static Product 2",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/449/cockpit3d_449_2D_Medium_Plaque_Horizontal.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": 0
-      },
-      {
-        "id": "lightbase-rectangle",
+    {
+        "id": "001",
+        "name": "Static Product",
+        "slug": "static-product",
+        "sku": "static-product",
+        "basePrice": 169,
+        "description": "Short Static Product Description",
+        "longDescription": "Long Description that comes from Static Product 1",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/448\/cockpit3d_448_2D_Medium_Plaque_Vertical.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5
+            }
+        ]
+    },
+    {
+        "id": "002",
+        "name": "Static2",
+        "slug": "static2",
+        "sku": "static2",
+        "basePrice": 169,
+        "description": "Short Description that comes from Static Product 2",
+        "longDescription": "Long Description that comes from Static Product 2",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/449\/cockpit3d_449_2D_Medium_Plaque_Horizontal.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "lightbase-rectangle",
+                "name": "Lightbase Rectangle",
+                "price": 25
+            },
+            {
+                "id": "lightbase-square",
+                "name": "Lightbase Square",
+                "price": 25
+            },
+            {
+                "id": "lightbase-wood-small",
+                "name": "Lightbase Wood Small",
+                "price": 60
+            },
+            {
+                "id": "lightbase-wood-medium",
+                "name": "Lightbase Wood Medium",
+                "price": 60
+            },
+            {
+                "id": "lightbase-wood-long",
+                "name": "Lightbase Wood Long",
+                "price": 60
+            },
+            {
+                "id": "rotating-led-lightbase",
+                "name": "Rotating LED Lightbase",
+                "price": 35
+            },
+            {
+                "id": "wooden-premium-base-mini",
+                "name": "Wooden Premium Base Mini",
+                "price": 60
+            },
+            {
+                "id": "concave-lightbase",
+                "name": "Concave Lightbase",
+                "price": 39
+            },
+            {
+                "id": "ornament-stand",
+                "name": "Ornament Stand",
+                "price": 25
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5
+            }
+        ]
+    },
+    {
+        "id": "104",
+        "name": "Cut Corner Diamond",
+        "slug": "cut-corner-diamond",
+        "sku": "Cut_Corner_Diamond",
+        "basePrice": 70,
+        "description": "Cut Corner Diamond",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/104\/cockpit3d_104_Cut_Corner_Diamond.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "202",
+                "name": "Cut Corner Diamond (5x5cm)",
+                "price": 70,
+                "cockpit3d_id": "202"
+            },
+            {
+                "id": "549",
+                "name": "Cut Corner Diamond (6x6cm)",
+                "price": 70,
+                "cockpit3d_id": "549"
+            },
+            {
+                "id": "550",
+                "name": "Cut Corner Diamond (8x8cm)",
+                "price": 70,
+                "cockpit3d_id": "550"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "207",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "207"
+            },
+            {
+                "id": "476",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "476"
+            },
+            {
+                "id": "857",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "857"
+            },
+            {
+                "id": "206",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "206"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/3d-crystal-diamond-cut-corner-2.png"
+    },
+    {
+        "id": "105",
         "name": "Lightbase Rectangle",
         "slug": "lightbase-rectangle",
         "sku": "Lightbase_Rectangle",

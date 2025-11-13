@@ -162,7 +162,38 @@ export default function CartPage() {
             price: opt.priceModifier || 0
           })
         }
-      })
+      }
+      
+      // Handle background
+      if (item.options.background) {
+        const bg = item.options.background
+        if (typeof bg === 'object' && bg.name && bg.name !== 'None') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg.name,
+            price: bg.price || 0
+          })
+        } else if (typeof bg === 'string' && bg !== 'None' && bg !== 'none') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg,
+            price: 0
+          })
+        }
+      }
+      
+      // Handle custom text
+      if (item.options.customText) {
+        const txt = item.options.customText
+        const textValue = typeof txt === 'string' ? txt : txt.text || `${txt.line1 || ''} ${txt.line2 || ''}`.trim()
+        if (textValue) {
+          optionsArray.push({
+            label: 'Custom Text',
+            value: textValue,
+            price: 0
+          })
+        }
+      }
     }
     
     // Add size if available
@@ -284,7 +315,7 @@ export default function CartPage() {
           <h2 className="text-2xl font-bold text-slate-900">Your Shopping Cart</h2>
           <button
             onClick={handleClearCart}
-            className="text-sm text-red-600 hover:text-red-700 font-medium"
+            className="cursor-pointer text-sm text-red-600 hover:text-red-700 font-medium"
           >
             Clear Cart
           </button>
