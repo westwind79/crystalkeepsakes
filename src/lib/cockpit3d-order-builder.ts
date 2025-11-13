@@ -311,13 +311,17 @@ function getCustomTextValue(item: any): string | string[] | null {
 
   // Check options array for customText category
   if (Array.isArray(item.options)) {
-    const textOptions = item.options
-      .filter((opt: any) => opt.category === 'customText')
-      .map((opt: any) => opt.value)
-      .filter(Boolean)
+    const textOption = item.options.find((opt: any) => opt.category === 'customText')
     
-    if (textOptions.length > 0) {
-      return textOptions.length === 1 ? textOptions[0] : textOptions
+    if (textOption) {
+      // New format: line1 and line2 as separate properties
+      if (textOption.line1 || textOption.line2) {
+        return [textOption.line1, textOption.line2].filter(Boolean)
+      }
+      // Old format: single value string
+      if (textOption.value) {
+        return textOption.value
+      }
     }
   }
 
