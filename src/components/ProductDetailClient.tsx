@@ -245,6 +245,11 @@ export default function ProductDetailClient() {
     if (selectedBackground?.price) total += selectedBackground.price
     if (selectedTextOption?.price) total += selectedTextOption.price
     
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      total += product.textOptions[1].price
+    }
+    
     return total * quantity
   }
   
@@ -256,6 +261,12 @@ export default function ProductDetailClient() {
     if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
     if (selectedBackground?.price) optionsPrice += selectedBackground.price
     if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
+    
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      optionsPrice += product.textOptions[1].price
+    }
+    
     return optionsPrice
   }
 
