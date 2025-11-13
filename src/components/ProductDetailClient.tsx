@@ -738,7 +738,7 @@ export default function ProductDetailClient() {
                           setCustomText({ ...customText, line1: value })
                           setTextCharCount({ ...textCharCount, line1: value.length })
                         }}
-                        className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] focus:border-brand-400 focus:outline-none"
+                        className="w-full px-4 py-2 rounded-lg bg-dark-bg border border-gray-600 text-text-primary placeholder-text-tertiary focus:border-brand-400 focus:outline-none"
                         maxLength={30}
                       />
                     </div>
@@ -757,7 +757,7 @@ export default function ProductDetailClient() {
                           setCustomText({ ...customText, line2: value })
                           setTextCharCount({ ...textCharCount, line2: value.length })
                         }}
-                        className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] focus:border-brand-400 focus:outline-none"
+                        className="w-full px-4 py-2 rounded-lg bg-dark-bg border border-gray-600 text-text-primary placeholder-text-tertiary focus:border-brand-400 focus:outline-none"
                         maxLength={30}
                       />
                     </div>
