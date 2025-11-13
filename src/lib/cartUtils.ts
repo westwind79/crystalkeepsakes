@@ -210,6 +210,10 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       customImageId,
       customImageMetadata,
       
+      // Image URLs for display (stored for quick access)
+      rawImageUrl: rawImageUrl || null,
+      maskedImageUrl: maskedImageUrl || null,
+      
       // Custom text (preserve full object)
       customText: item.customText,
       
