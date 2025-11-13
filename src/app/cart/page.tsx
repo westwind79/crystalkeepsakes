@@ -178,16 +178,16 @@ export default function CartPage() {
   }
 
   /**
-   * Get custom text option details
+   * Get custom text option details - returns two separate lines
    */
-  const getCustomTextDetails = (item: any): {text: string, price: number} | null => {
+  const getCustomTextDetails = (item: any): {line1: string, line2: string, price: number} | null => {
     // Check in options array first
     if (Array.isArray(item.options)) {
       const textOption = item.options.find((opt: any) => opt.category === 'customText')
       if (textOption && (textOption.line1 || textOption.line2)) {
-        const text = [textOption.line1, textOption.line2].filter(Boolean).join(' / ')
         return {
-          text,
+          line1: textOption.line1 || '',
+          line2: textOption.line2 || '',
           price: textOption.priceModifier || 0
         }
       }
@@ -195,9 +195,10 @@ export default function CartPage() {
     
     // Fallback to customText field - extract price from options if available
     if (item.customText) {
-      const text = item.customText.text || 
-                   [item.customText.line1, item.customText.line2].filter(Boolean).join(' / ')
-      if (text) {
+      const line1 = item.customText.line1 || ''
+      const line2 = item.customText.line2 || ''
+      
+      if (line1 || line2) {
         // Try to find the custom text price from optionsPrice or look for text option
         let textPrice = 0
         if (Array.isArray(item.options)) {
@@ -209,7 +210,8 @@ export default function CartPage() {
           }
         }
         return {
-          text,
+          line1,
+          line2,
           price: textPrice
         }
       }
