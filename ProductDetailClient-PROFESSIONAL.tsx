@@ -250,33 +250,16 @@ export default function ProductDetailClient() {
       })
     }
     
-    if (selectedTextOption) {
-      options.push({
-        category: 'textOption',
-        optionId: selectedTextOption.id,
-        name: selectedTextOption.name,
-        value: selectedTextOption.name,
-        priceModifier: selectedTextOption.price
-      })
-    }
-    
-    if (customText.line1) {
+    // Add custom text option with price if enabled
+    if (showCustomText && (customText.line1 || customText.line2)) {
+      const textOption = product?.textOptions?.find(t => t.price > 0) || product?.textOptions?.[1]
+      
       options.push({
         category: 'customText',
-        optionId: 'text_line1',
-        name: 'Text Line 1',
-        value: customText.line1,
-        priceModifier: 0
-      })
-    }
-    
-    if (customText.line2) {
-      options.push({
-        category: 'customText',
-        optionId: 'text_line2',
-        name: 'Text Line 2',
-        value: customText.line2,
-        priceModifier: 0
+        optionId: 'custom-text',
+        name: 'Custom Text',
+        value: `Line 1: ${customText.line1 || 'N/A'}\nLine 2: ${customText.line2 || 'N/A'}`,
+        priceModifier: textOption?.price || 0
       })
     }
     
