@@ -392,7 +392,7 @@ export default function ProductDetailClient() {
   // Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="flex items-center justify-center min-h-screen bg-white text-slate-900">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-[#72B01D] border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-gray-600 text-sm">Loading product...</p>
@@ -404,7 +404,7 @@ export default function ProductDetailClient() {
   // Error state
   if (error && !product) {
     return (
-      <div className="bg-white">
+      <div className="bg-white text-slate-900">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <div className="text-center">
             <p className="text-base font-semibold text-red-600">404</p>
@@ -426,7 +426,7 @@ export default function ProductDetailClient() {
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
 
   return (    
-    <div className="bg-white">
+    <div className="bg-white text-slate-900">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -448,50 +448,52 @@ export default function ProductDetailClient() {
       <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           
-          {/* Image gallery */}
-          <div className="flex flex-col-reverse">
-            <div className="w-full overflow-hidden rounded-lg">
-              {finalMaskedImage ? (
-                <div className="space-y-4">
+          <div className="sticky top-[85px]">
+            {/* Image gallery */}
+            <div className="flex flex-col-reverse">
+              <div className="w-full overflow-hidden rounded-lg">
+                {finalMaskedImage ? (
+                  <div className="space-y-4">
+                    <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+                      <Image
+                        src={finalMaskedImage} 
+                        alt="Customer Preview" 
+                        className="h-full w-full object-cover object-center"
+                        width={1024}
+                        height={1024}
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowEditor(true)}
+                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
+                      >
+                        Edit Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFinalMaskedImage(null)}
+                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  </div>
+                ) : product.images && product.images.length > 1 ? (
+                  <ProductGallery images={product.images} />
+                ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
                     <Image
-                      src={finalMaskedImage} 
-                      alt="Customer Preview" 
-                      className="h-full w-full object-cover object-center"
+                      src={mainImage.src}
+                      alt={product.name}
                       width={1024}
                       height={1024}
+                      className="h-full w-full object-cover object-center"
                     />
                   </div>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowEditor(true)}
-                      className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
-                    >
-                      Edit Image
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFinalMaskedImage(null)}
-                      className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
-                    >
-                      Remove Image
-                    </button>
-                  </div>
-                </div>
-              ) : product.images && product.images.length > 1 ? (
-                <ProductGallery images={product.images} />
-              ) : (
-                <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-                  <Image
-                    src={mainImage.src}
-                    alt={product.name}
-                    width={1024}
-                    height={1024}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
@@ -549,26 +551,24 @@ export default function ProductDetailClient() {
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Upload your image <span className="text-red-500">*</span>
                   </label>
-                  <div className="mt-1 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <label className="mt-1 cursor-pointer flex justify-center rounded-lg border border-dashed border-gray-900/25 px-3 py-4">
                     <div className="text-center">
                       <svg className="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
                         <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clipRule="evenodd" />
                       </svg>
-                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                        <label className="relative cursor-pointer rounded-md bg-white font-semibold text-[#72B01D] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#72B01D] focus-within:ring-offset-2 hover:text-[#5A8E17]">
-                          <span>Upload a file</span>
+                       
+                          <span className="text-green-800">Upload a file</span>
                           <input 
                             type="file" 
                             className="sr-only"
                             accept="image/jpeg,image/png,image/gif"
                             onChange={handleImageUpload}
-                          />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB</p>
+                          /> 
+                        {/*<p className="pl-1">or drag and drop</p>*/}
+                      
+                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB<br/>Minimum dimensions: 500x500 pixels<br/>Higher resolution recommended for best results</p>
                     </div>
-                  </div>
+                  </label>
                   {errors.image && <p className="mt-2 text-sm text-red-600">{errors.image}</p>}
                   {errors.finalImage && <p className="mt-2 text-sm text-red-600">{errors.finalImage}</p>}
                 </div>

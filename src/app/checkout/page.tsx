@@ -283,11 +283,11 @@ export default function CheckoutPage() {
 
   if (loading || !clientSecret) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gray-50 py-12 text-slate-900">
         <div className="max-w-3xl mx-auto">
           
           {/* Shipping Address Form */}
-          <div className="bg-white p-6 rounded shadow mb-6">
+          <div className="bg-white p-6 rounded shadow mb-6 ">
             <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Address</h2>
             
             <div className="grid md:grid-cols-2 gap-4">
