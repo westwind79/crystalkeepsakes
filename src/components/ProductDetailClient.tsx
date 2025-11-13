@@ -33,18 +33,21 @@ interface LightBase {
   id: string
   name: string
   price: number | null
+  cockpit3d_id?: string
 }
 
 interface BackgroundOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface TextOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface ProductImage {
