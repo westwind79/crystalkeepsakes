@@ -411,7 +411,7 @@ export default function CartPage() {
                                 <p className="text-gray-600 italic mt-1">"{customTextDetails.text}"</p>
                               </div>
                               <span className="text-gray-900 font-medium ml-3">
-                                {customTextDetails.price > 0 ? `+$${customTextDetails.price.toFixed(2)}` : 'Included'}
+                                +${customTextDetails.price.toFixed(2)}
                               </span>
                             </div>
                           )}
