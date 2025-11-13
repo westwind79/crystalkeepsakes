@@ -20,7 +20,7 @@ export const dynamicParams = false  // Required for output: 'export'
 export async function generateStaticParams() {
   try {
     // Import the cached products file (populated by prebuild script)
-    const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
+    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
     
     if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
       console.warn('⚠️ No products found in cached file during build')
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Await params (Next.js 15 requirement)
     const { slug } = await params
     
-    const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
+    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
     const product = cockpit3dProducts.find((p: any) => p.slug === slug)
     
     if (!product) {

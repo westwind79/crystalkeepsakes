@@ -52,7 +52,7 @@ const ProductsHero = () => (
   <section className="hero px-8 py-16 text-center">
     <div className="hero-content max-w-xl mx-auto">
       <h1 className="primary-header mb-4">Our Creations</h1>
-      <p className="lead">
+      <p className="lead text-gray-100">
         Welcome to CrystalKeepsakes, where cherished moments are transformed into stunning 3D laser-engraved crystal creations.
       </p>
     </div>
@@ -111,7 +111,7 @@ export default function ProductsPage() {
       }
 
       // Import the generated products file - use relative path
-      const { cockpit3dProducts, generatedAt, sourceInfo } = await import('../../data/cockpit3d-products.js')
+      const { finalProductList: cockpit3dProducts, generatedAt, sourceInfo } = await import('../../data/final-product-list.js')
       
       if (shouldLog) {
         console.log('📦 Products loaded:', {

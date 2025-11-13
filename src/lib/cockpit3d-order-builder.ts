@@ -183,15 +183,13 @@ function buildCockpit3DOrderItem(item: any, index: number): Cockpit3DOrderItem {
   }
 
   // Add custom text as special instructions
-  if (item.customText || item.options?.customText) {
-    const textValue = typeof item.customText === 'string' 
-      ? item.customText
-      : item.customText?.text || ''
+  const customTextValue = getCustomTextValue(item)
+  if (customTextValue) {
+    const textLines = Array.isArray(customTextValue) ? customTextValue : [customTextValue]
+    const textFormatted = textLines.map((line, idx) => `Line ${idx + 1}: ${line}`).join(', ')
     
-    if (textValue) {
-      orderItem.special_instructions = (orderItem.special_instructions || '') + 
-        `\nCustom Text: ${textValue}`
-    }
+    orderItem.special_instructions = (orderItem.special_instructions || '') + 
+      `\nCustom Text: ${textFormatted}`
   }
 
   return orderItem
@@ -311,13 +309,17 @@ function getCustomTextValue(item: any): string | string[] | null {
 
   // Check options array for customText category
   if (Array.isArray(item.options)) {
-    const textOptions = item.options
-      .filter((opt: any) => opt.category === 'customText')
-      .map((opt: any) => opt.value)
-      .filter(Boolean)
+    const textOption = item.options.find((opt: any) => opt.category === 'customText')
     
-    if (textOptions.length > 0) {
-      return textOptions.length === 1 ? textOptions[0] : textOptions
+    if (textOption) {
+      // New format: line1 and line2 as separate properties
+      if (textOption.line1 || textOption.line2) {
+        return [textOption.line1, textOption.line2].filter(Boolean)
+      }
+      // Old format: single value string
+      if (textOption.value) {
+        return textOption.value
+      }
     }
   }
 
