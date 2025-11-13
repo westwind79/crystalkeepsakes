@@ -1,3 +1,5 @@
+// Combined processed products (static + CockPit3D) - 2025-11-12 15:07:35
+
 export const cockpit3dProducts = [
   {
     "id": "001",
@@ -55,45 +57,1486 @@ export const cockpit3dProducts = [
       {
         "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
-        "price": 25
-      },
-      {
-        "id": "lightbase-square",
+        "slug": "lightbase-rectangle",
+        "sku": "Lightbase_Rectangle",
+        "basePrice": 25,
+        "description": "Lightbase Rectangle",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/105\/cockpit3d_105_Lightbase_Rectangle.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "106",
         "name": "Lightbase Square",
-        "price": 25
-      },
-      {
-        "id": "lightbase-wood-small",
+        "slug": "lightbase-square",
+        "sku": "Lightbase_Square",
+        "basePrice": 25,
+        "description": "Lightbase Square",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/106\/cockpit3d_106_Lightbase_Square.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "107",
         "name": "Lightbase Wood Small",
-        "price": 60
-      },
-      {
-        "id": "lightbase-wood-medium",
+        "slug": "lightbase-wood-small",
+        "sku": "Lightbase_Wood_Small",
+        "basePrice": 60,
+        "description": "Lightbase Wood Small",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/107\/cockpit3d_107_Lightbase_Wood_Small.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "108",
         "name": "Lightbase Wood Medium",
-        "price": 60
-      },
-      {
-        "id": "lightbase-wood-long",
+        "slug": "lightbase-wood-medium",
+        "sku": "Lightbase_Wood_Medium",
+        "basePrice": 60,
+        "description": "Lightbase Wood Medium",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/108\/cockpit3d_108_Lightbase_Wood_Medium.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "114",
+        "name": "Rectangle Vertical Crystals",
+        "slug": "rectangle-vertical-crystals",
+        "sku": "Rectangle_Vertical_Crystals",
+        "basePrice": 85,
+        "description": "Rectangle Vertical Crystals",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/114\/cockpit3d_114_Rectangle_Vertical_Crystals.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "1975",
+                "name": "Rectangle Small (6x4cm)",
+                "price": 85,
+                "cockpit3d_id": "1975"
+            },
+            {
+                "id": "230",
+                "name": "Rectangle Medium (8x5cm)",
+                "price": 85,
+                "cockpit3d_id": "230"
+            },
+            {
+                "id": "362",
+                "name": "Rectangle Large (9x6cm)",
+                "price": 85,
+                "cockpit3d_id": "362"
+            },
+            {
+                "id": "363",
+                "name": "Rectangle XLarge (12x8cm)",
+                "price": 85,
+                "cockpit3d_id": "363"
+            },
+            {
+                "id": "745",
+                "name": "Rectangle Mini Mantel (15x10cm)",
+                "price": 85,
+                "cockpit3d_id": "745"
+            },
+            {
+                "id": "747",
+                "name": "Rectangle Mantel (18x12cm)",
+                "price": 85,
+                "cockpit3d_id": "747"
+            },
+            {
+                "id": "748",
+                "name": "Rectangle Mini Presidential (22x16cm)",
+                "price": 85,
+                "cockpit3d_id": "748"
+            },
+            {
+                "id": "749",
+                "name": "Rectangle Presidential (27x18cm)",
+                "price": 85,
+                "cockpit3d_id": "749"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "236",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "236"
+            },
+            {
+                "id": "238",
+                "name": "Lightbase Wood Medium",
+                "price": 60,
+                "cockpit3d_id": "238"
+            },
+            {
+                "id": "366",
+                "name": "Lightbase Wood Long",
+                "price": 60,
+                "cockpit3d_id": "366"
+            },
+            {
+                "id": "477",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "477"
+            },
+            {
+                "id": "764",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "764"
+            },
+            {
+                "id": "765",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "765"
+            },
+            {
+                "id": "235",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "235"
+            },
+            {
+                "id": "1435",
+                "name": "Wooden Light Base with Keepsake Drawer",
+                "price": null,
+                "cockpit3d_id": "1435"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/rectangle-vertical-mask.png"
+    },
+    {
+        "id": "118",
+        "name": "Prestige Crystal",
+        "slug": "prestige-crystal",
+        "sku": "Prestige_Crystal",
+        "basePrice": 235,
+        "description": "Prestige Crystal",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/118\/cockpit3d_118_Prestige_Crystal.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "367",
+                "name": "Prestige Small (13x9cm)",
+                "price": 235,
+                "cockpit3d_id": "367"
+            },
+            {
+                "id": "368",
+                "name": "Prestige Medium (16x13cm)",
+                "price": 235,
+                "cockpit3d_id": "368"
+            },
+            {
+                "id": "369",
+                "name": "Prestige Large (19x15cm)",
+                "price": 235,
+                "cockpit3d_id": "369"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "371",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "371"
+            },
+            {
+                "id": "373",
+                "name": "Lightbase Wood Medium",
+                "price": 60,
+                "cockpit3d_id": "373"
+            },
+            {
+                "id": "374",
+                "name": "Lightbase Wood Long",
+                "price": 60,
+                "cockpit3d_id": "374"
+            },
+            {
+                "id": "478",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "478"
+            },
+            {
+                "id": "844",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "844"
+            },
+            {
+                "id": "845",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "845"
+            },
+            {
+                "id": "370",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "370"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/prestige-mask.png"
+    },
+    {
+        "id": "119",
         "name": "Lightbase Wood Long",
-        "price": 60
-      },
-      {
-        "id": "rotating-led-lightbase",
+        "slug": "lightbase-wood-long",
+        "sku": "Lightbase_Wood_Long",
+        "basePrice": 60,
+        "description": "Lightbase Wood Long",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/119\/cockpit3d_119_Lightbase_Wood_Long.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "122",
+        "name": "Keychains Vertical",
+        "slug": "keychains-vertical",
+        "sku": "Keychains_Vertical",
+        "basePrice": 35,
+        "description": "Keychains Vertical",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/122\/cockpit3d_122_Keychains_Vertical.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/3d-crystal-rectangle-wide-mask.png"
+    },
+    {
+        "id": "148",
+        "name": "Rectangle Horizontal Crystals",
+        "slug": "rectangle-horizontal-crystals",
+        "sku": "Rectangle_Horizontal_Crystals",
+        "basePrice": 85,
+        "description": "Rectangle Horizontal Crystals",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/148\/cockpit3d_148_Rectangle_Horizontal_Crystals.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "1976",
+                "name": "Rectangle Small (6x4cm)",
+                "price": 85,
+                "cockpit3d_id": "1976"
+            },
+            {
+                "id": "690",
+                "name": "Rectangle Wide Medium (8x5cm)",
+                "price": 85,
+                "cockpit3d_id": "690"
+            },
+            {
+                "id": "691",
+                "name": "Rectangle Wide Large (9x6cm)",
+                "price": 85,
+                "cockpit3d_id": "691"
+            },
+            {
+                "id": "692",
+                "name": "Rectangle Wide XLarge (12x8cm)",
+                "price": 85,
+                "cockpit3d_id": "692"
+            },
+            {
+                "id": "746",
+                "name": "Rectangle Wide Mini Mantel (15x10cm)",
+                "price": 85,
+                "cockpit3d_id": "746"
+            },
+            {
+                "id": "750",
+                "name": "Rectangle Wide Mantel (18x12cm)",
+                "price": 85,
+                "cockpit3d_id": "750"
+            },
+            {
+                "id": "751",
+                "name": "Rectangle Wide Mini Presidential (22x16cm)",
+                "price": 85,
+                "cockpit3d_id": "751"
+            },
+            {
+                "id": "752",
+                "name": "Rectangle Wide Presidential (27x18cm)",
+                "price": 85,
+                "cockpit3d_id": "752"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "423",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "423"
+            },
+            {
+                "id": "425",
+                "name": "Lightbase Wood Medium",
+                "price": 60,
+                "cockpit3d_id": "425"
+            },
+            {
+                "id": "426",
+                "name": "Lightbase Wood Long",
+                "price": 60,
+                "cockpit3d_id": "426"
+            },
+            {
+                "id": "480",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "480"
+            },
+            {
+                "id": "766",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "766"
+            },
+            {
+                "id": "864",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "864"
+            },
+            {
+                "id": "422",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "422"
+            },
+            {
+                "id": "1434",
+                "name": "Wooden Light Base with Keepsake Drawer",
+                "price": null,
+                "cockpit3d_id": "1434"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/rectangle-horizontal-mask.png"
+    },
+    {
+        "id": "151",
+        "name": "Keychain Horizontal",
+        "slug": "keychain-horizontal",
+        "sku": "Keychain_Horizontal",
+        "basePrice": 35,
+        "description": "Keychain Horizontal",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/151\/cockpit3d_151_Keychain_Horizontal.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/3d-crystal-rectangle-wide-mask.png"
+    },
+    {
+        "id": "156",
+        "name": "Heart Keychain",
+        "slug": "heart-keychain",
+        "sku": "Heart_Keychain",
+        "basePrice": 55,
+        "description": "Heart Keychain",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/156\/cockpit3d_156_Heart_Keychain.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/heart-keychain-mask.png"
+    },
+    {
+        "id": "158",
+        "name": "Heart Necklace 2D",
+        "slug": "heart-necklace-2d",
+        "sku": "Heart_Necklace_2D",
+        "basePrice": 75,
+        "description": "Heart Necklace 2D",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/158\/cockpit3d_158_Heart_Necklace_2D.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/heart-necklace-mask.png"
+    },
+    {
+        "id": "160",
         "name": "Rotating LED Lightbase",
-        "price": 35
-      },
-      {
-        "id": "wooden-premium-base-mini",
+        "slug": "rotating-led-lightbase",
+        "sku": "Rotating_LED_Lightbase",
+        "basePrice": 35,
+        "description": "Rotating LED Lightbase",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/160\/cockpit3d_160_Rotating_LED_Lightbase.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "166",
+        "name": "Ornament Crystal",
+        "slug": "ornament-crystal",
+        "sku": "Ornament_Crystal",
+        "basePrice": 99,
+        "description": "Ornament Crystal",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/166\/cockpit3d_166_Ornament_Crystal.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/ornament-mask.png"
+    },
+    {
+        "id": "171",
+        "name": "New Wide Heart",
+        "slug": "new-wide-heart",
+        "sku": "New_Wide_Heart",
+        "basePrice": 180,
+        "description": "New Wide Heart",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/171\/cockpit3d_171_New_Wide_Heart.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "717",
+                "name": "Wide Heart small (80x70x40)",
+                "price": 180,
+                "cockpit3d_id": "717"
+            },
+            {
+                "id": "527",
+                "name": "Wide Heart Medium (100x90x50)",
+                "price": 180,
+                "cockpit3d_id": "527"
+            },
+            {
+                "id": "528",
+                "name": "Wide Heart Large (125x110x60)",
+                "price": 180,
+                "cockpit3d_id": "528"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "531",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "531"
+            },
+            {
+                "id": "532",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "532"
+            },
+            {
+                "id": "774",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "774"
+            },
+            {
+                "id": "775",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "775"
+            },
+            {
+                "id": "530",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "530"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/heart-mask.png"
+    },
+    {
+        "id": "173",
+        "name": "Rectangle Necklace 2D",
+        "slug": "rectangle-necklace-2d",
+        "sku": "Rectangle_Necklace_2D",
+        "basePrice": 75,
+        "description": "Rectangle Necklace 2D",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/173\/cockpit3d_173_Rectangle_Necklace_2D.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/rectangle-necklace-mask.png"
+    },
+    {
+        "id": "248",
+        "name": "3D Crystal Candle",
+        "slug": "3d-crystal-candle",
+        "sku": "3D_Crystal_Candle",
+        "basePrice": 180,
+        "description": "3D Crystal Candle",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/248\/cockpit3d_248_3D_Crystal_Candle.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "876",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "876"
+            },
+            {
+                "id": "877",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "877"
+            },
+            {
+                "id": "878",
+                "name": "Lightbase Square",
+                "price": 25,
+                "cockpit3d_id": "878"
+            },
+            {
+                "id": "666",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "666"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/3d-crystal-rectangle-wide-mask.png"
+    },
+    {
+        "id": "251",
+        "name": "3D Crystal Urn \/ Candles",
+        "slug": "3d-crystal-urn-candles",
+        "sku": "Urn_candles",
+        "basePrice": 360,
+        "description": "3D Crystal Urn \/ Candles",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/251\/cockpit3d_251_3D_Crystal_Urn_Candles.jpeg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/crystal-urn-large-mask.png"
+    },
+    {
+        "id": "252",
         "name": "Wooden Premium Base Mini",
-        "price": 60
-      },
-      {
-        "id": "concave-lightbase",
+        "slug": "wooden-premium-base-mini",
+        "sku": "wooden_base_mini",
+        "basePrice": 60,
+        "description": "Wooden Premium Base Mini",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/252\/cockpit3d_252_Wooden_Premium_Base_Mini.png",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "262",
+        "name": "Notched Crystal Tall",
+        "slug": "notched-crystal-tall",
+        "sku": "notched_crystal_tall_bundle",
+        "basePrice": 169,
+        "description": "Notched Crystal Tall",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/262\/cockpit3d_262_Notched_Crystal_Tall.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "901",
+                "name": "2D Notched Small Crystal Tall 6x4x1.2\u201d \/ 15x10x3cm",
+                "price": 169,
+                "cockpit3d_id": "901"
+            },
+            {
+                "id": "900",
+                "name": "3D Notched Small Crystal Tall 6x4x1.2\u201d \/ 15x10x3cm",
+                "price": 169,
+                "cockpit3d_id": "900"
+            },
+            {
+                "id": "727",
+                "name": "2D Notched Crystal Tall  7x5x1.2\" \/ 18x13x3cm",
+                "price": 169,
+                "cockpit3d_id": "727"
+            },
+            {
+                "id": "726",
+                "name": "3D Notched Crystal Tall  7x5x1.2\" \/ 18x13x3cm",
+                "price": 169,
+                "cockpit3d_id": "726"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "719",
+                "name": "Lightbase Wood Medium",
+                "price": 60,
+                "cockpit3d_id": "719"
+            },
+            {
+                "id": "957",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "957"
+            },
+            {
+                "id": "718",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "718"
+            },
+            {
+                "id": "897",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "897"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/notched-vertical-mask.png"
+    },
+    {
+        "id": "266",
+        "name": "Notched Crystal Wide",
+        "slug": "notched-crystal-wide",
+        "sku": "notched_crystal_wide",
+        "basePrice": 169,
+        "description": "Notched Crystal Wide",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/266\/cockpit3d_266_Notched_Crystal_Wide.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "898",
+                "name": "2D Notched Small Crystal Wide 6x4x1.2\u201d \/ 15x10x3cm",
+                "price": 169,
+                "cockpit3d_id": "898"
+            },
+            {
+                "id": "899",
+                "name": "3D Notched Small Crystal Wide 6x4x1.2\u201d \/ 15x10x3cm",
+                "price": 169,
+                "cockpit3d_id": "899"
+            },
+            {
+                "id": "744",
+                "name": "2D Notched Crystal Wide 7x5x1.2\" \/ 18x13x3cm",
+                "price": 169,
+                "cockpit3d_id": "744"
+            },
+            {
+                "id": "743",
+                "name": "3D Notched Crystal Wide 7x5x1.2\" \/ 18x13x3cm",
+                "price": 169,
+                "cockpit3d_id": "743"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "741",
+                "name": "Lightbase Wood Medium",
+                "price": 60,
+                "cockpit3d_id": "741"
+            },
+            {
+                "id": "740",
+                "name": "Lightbase Wood Small",
+                "price": 60,
+                "cockpit3d_id": "740"
+            },
+            {
+                "id": "1436",
+                "name": "Wooden Light Base with Keepsake Drawer",
+                "price": null,
+                "cockpit3d_id": "1436"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/notched-vertical-mask.png"
+    },
+    {
+        "id": "276",
         "name": "Concave Lightbase",
-        "price": 39
-      },
-      {
-        "id": "ornament-stand",
+        "slug": "concave-lightbase",
+        "sku": "concave_lightbase",
+        "basePrice": 39,
+        "description": "Concave Lightbase",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/276\/cockpit3d_276_Concave_Lightbase.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": false,
+        "lightBases": [],
+        "backgroundOptions": [],
+        "textOptions": [],
+        "maskImageUrl": null
+    },
+    {
+        "id": "277",
+        "name": "3D Ball Crystal",
+        "slug": "3d-ball-crystal",
+        "sku": "3d_ball_bundle",
+        "basePrice": 179,
+        "description": "3D Ball Crystal",
+        "longDescription": "",
+        "images": [
+            {
+                "src": "\/img\/products\/cockpit3d\/277\/cockpit3d_277_3D_Ball_Crystal.jpg",
+                "isMain": true
+            }
+        ],
+        "options": [],
+        "requiresImage": true,
+        "sizes": [
+            {
+                "id": "793",
+                "name": "Ball Crystal Medium 10cm",
+                "price": 179,
+                "cockpit3d_id": "793"
+            },
+            {
+                "id": "792",
+                "name": "Ball Crystal Small 8cm",
+                "price": 179,
+                "cockpit3d_id": "792"
+            }
+        ],
+        "lightBases": [
+            {
+                "id": "none",
+                "name": "No Base",
+                "price": null
+            },
+            {
+                "id": "785",
+                "name": "Rotating LED Lightbase",
+                "price": 35,
+                "cockpit3d_id": "785"
+            },
+            {
+                "id": "879",
+                "name": "Wooden Premium Base Mini",
+                "price": null,
+                "cockpit3d_id": "879"
+            },
+            {
+                "id": "880",
+                "name": "Lightbase Rectangle",
+                "price": 25,
+                "cockpit3d_id": "880"
+            },
+            {
+                "id": "784",
+                "name": "Concave Lightbase",
+                "price": 39,
+                "cockpit3d_id": "784"
+            }
+        ],
+        "backgroundOptions": [
+            {
+                "id": "rm",
+                "name": "Remove Backdrop",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "2d",
+                "name": "2D Backdrop",
+                "price": 12,
+                "cockpit3d_option_id": "154"
+            },
+            {
+                "id": "3d",
+                "name": "3D Backdrop",
+                "price": 15,
+                "cockpit3d_option_id": "155"
+            }
+        ],
+        "textOptions": [
+            {
+                "id": "none",
+                "name": "No Text",
+                "price": 0,
+                "cockpit3d_option_id": null
+            },
+            {
+                "id": "customText",
+                "name": "Custom Text",
+                "price": 9.5,
+                "cockpit3d_option_id": "199"
+            }
+        ],
+        "maskImageUrl": "\/img\/masks\/3d-crystal-rectangle-wide-mask.png"
+    },
+    {
+        "id": "279",
         "name": "Ornament Stand",
         "price": 25
       }

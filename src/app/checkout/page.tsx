@@ -50,7 +50,7 @@ function CheckoutForm({ clientSecret, orderTotals }: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 text-gray-900">
       <div className="grid md:grid-cols-2 gap-6">
         {/* Order Summary */}
         <div className="bg-white text-gray-900 p-6 rounded-lg shadow-md">
