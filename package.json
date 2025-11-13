@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/fetch-cockpit3d-products.js",
-    "build": "next build && node scripts/copy-api.js && cp .env.production out/.env",
-    "build:test": "env-cmd -f .env.production.test next build && node scripts/copy-api.js && cp .env.production.test out/.env",
-    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && cp .env.production.root out/.env",
+    "build": "next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production",
+    "build:test": "env-cmd -f .env.production.test next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.test",
+    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.root",
     "start": "next start",
     "lint": "next lint"
   },
@@ -31,6 +31,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",
+    "copyfiles": "^2.4.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "fs-extra": "^11.3.2",

@@ -41,7 +41,7 @@ try {
     $port = getEnvVar('DB_PORT') ?? '8809';
     $database = getEnvVar('DB_NAME') ?? 'crystal_orders';
     $username = getEnvVar('DB_USER') ?? 'ck_admin';
-    $password = getEnvVar('DB_PASSWORD') ?? '[M9hl~a]Pr?f';
+    $password = getEnvVar('DB_PASSWORD') ?? 'your_db_password';
     
     // Create DSN
     $dsn = "mysql:host=$host;port=$port;dbname=$database;charset=utf8mb4";
