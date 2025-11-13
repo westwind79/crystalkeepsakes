@@ -142,34 +142,106 @@ export default function CartPage() {
     }
   }
 
-  // ✅ ENHANCED: Normalize options for display
-  const getDisplayOptions = (item: any): Record<string, string> => {
-    const options: Record<string, string> = {}
+  // ✅ ENHANCED: Normalize options for display with prices
+  const getDisplayOptions = (item: any): Array<{label: string, value: string, price: number}> => {
+    const optionsArray: Array<{label: string, value: string, price: number}> = []
     
-    // New format: options array
+    // Add size first (most important)
+    if (item.sizeDetails?.sizeName || item.size?.sizeName) {
+      const sizeDetails = item.sizeDetails || item.size
+      optionsArray.push({
+        label: 'Size',
+        value: sizeDetails.sizeName || sizeDetails.name,
+        price: sizeDetails.basePrice || sizeDetails.price || 0
+      })
+    }
+    
+    // New format: options array (from ProductDetailClient)
     if (Array.isArray(item.options)) {
       item.options.forEach((opt: any) => {
         if (opt.category === 'customText') {
-          options['Custom Text'] = opt.value
-        } else if (opt.value && opt.value !== 'None') {
-          options[opt.category || opt.name] = opt.value
+          optionsArray.push({
+            label: opt.name || 'Custom Text',
+            value: opt.value,
+            price: opt.priceModifier || 0
+          })
+        } else if (opt.value && opt.value !== 'None' && opt.value !== 'none') {
+          optionsArray.push({
+            label: opt.name || opt.category || 'Option',
+            value: opt.value,
+            price: opt.priceModifier || 0
+          })
         }
       })
     } 
     // Old format: flat object
-    else if (item.options) {
-      Object.entries(item.options).forEach(([key, value]) => {
-        if (value && value !== 'None' && key !== 'imageFilename' && key !== 'maskName') {
-          options[key] = String(value)
+    else if (item.options && typeof item.options === 'object') {
+      // Handle light base
+      if (item.options.lightBase) {
+        const lb = item.options.lightBase
+        if (typeof lb === 'object' && lb.name && lb.name !== 'None') {
+          optionsArray.push({
+            label: 'Light Base',
+            value: lb.name,
+            price: lb.price || 0
+          })
+        } else if (typeof lb === 'string' && lb !== 'None' && lb !== 'none') {
+          optionsArray.push({
+            label: 'Light Base',
+            value: lb,
+            price: 0
+          })
         }
-      })
+      }
+      
+      // Handle background
+      if (item.options.background) {
+        const bg = item.options.background
+        if (typeof bg === 'object' && bg.name && bg.name !== 'None') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg.name,
+            price: bg.price || 0
+          })
+        } else if (typeof bg === 'string' && bg !== 'None' && bg !== 'none') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg,
+            price: 0
+          })
+        }
+      }
+      
+      // Handle custom text
+      if (item.options.customText) {
+        const txt = item.options.customText
+        const textValue = typeof txt === 'string' ? txt : txt.text || `${txt.line1 || ''} ${txt.line2 || ''}`.trim()
+        if (textValue) {
+          optionsArray.push({
+            label: 'Custom Text',
+            value: textValue,
+            price: 0
+          })
+        }
+      }
     }
     
-    if (item.sizeDetails?.sizeName) {
-      options['Size'] = item.sizeDetails.sizeName
+    // Handle standalone customText field
+    if (item.customText && !optionsArray.some(opt => opt.label === 'Custom Text')) {
+      const textValue = typeof item.customText === 'string' 
+        ? item.customText 
+        : item.customText.text || `${item.customText.line1 || ''} ${item.customText.line2 || ''}`.trim()
+      
+      if (textValue) {
+        optionsArray.push({
+          label: 'Custom Text',
+          value: textValue,
+          price: 0
+        })
+      }
     }
     
-    return options
+    return optionsArray
   }
 
   // ✅ FIXED: Import Cockpit3D order builder
