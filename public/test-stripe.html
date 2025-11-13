@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        h1 { color: #acf213; }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .success { color: #acf213; }
+        .error { color: #ff4444; }
+        .info { color: #4a9eff; }
+        button {
+            background: #acf213;
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #8dd010; }
+        button:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #444;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #444;
+            border-top-color: #acf213;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Stripe Payment Intent Test</h1>
+    <p class="info">This will test your Stripe payment integration step-by-step</p>
+
+    <!-- Test 1: Check PHP File -->
+    <div class="test-section">
+        <h2>Test 1: Check PHP File Exists</h2>
+        <button onclick="testPhpFile()">Run Test 1</button>
+        <div id="test1-result"></div>
+    </div>
+
+    <!-- Test 2: Test with Minimal Data -->
+    <div class="test-section">
+        <h2>Test 2: Create Payment Intent (Simple Test)</h2>
+        <button onclick="testSimplePayment()">Run Test 2</button>
+        <div id="test2-result"></div>
+    </div>
+
+    <!-- Test 3: Test with Full Cart Data -->
+    <div class="test-section">
+        <h2>Test 3: Create Payment Intent (Full Cart)</h2>
+        <button onclick="testFullPayment()">Run Test 3</button>
+        <div id="test3-result"></div>
+    </div>
+
+    <!-- Test 4: Check Error Logs -->
+    <div class="test-section">
+        <h2>Test 4: View PHP Error Logs</h2>
+        <button onclick="checkLogs()">View Logs</button>
+        <div id="test4-result"></div>
+    </div>
+
+    <script>
+        const DEV_PORT = '8888';
+        const PHP_ENDPOINT = `http://localhost:${DEV_PORT}/crystalkeepsakes/api/stripe/create-payment-intent.php`;
+
+        function log(elementId, html) {
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        function loading(elementId) {
+            log(elementId, '<div class="loading"></div> Testing...');
+        }
+
+        // Test 1: Check if PHP file exists
+        async function testPhpFile() {
+            loading('test1-result');
+            
+            try {
+                const response = await fetch(PHP_ENDPOINT, {
+                    method: 'GET'
+                });
+                
+                const status = response.status;
+                const text = await response.text();
+                
+                let result = `<p class="info">Status: ${status}</p>`;
+                
+                if (status === 405) {
+                    result += '<p class="success">✅ PHP file exists and is reachable!</p>';
+                    result += '<p class="info">Got expected 405 error (method not allowed) because we used GET instead of POST</p>';
+                } else if (status === 404) {
+                    result += '<p class="error">❌ PHP file NOT found!</p>';
+                    result += '<p>Expected path: ' + PHP_ENDPOINT + '</p>';
+                    result += '<p>Make sure MAMP is running and file exists at:</p>';
+                    result += '<pre>C:\\MAMP\\htdocs\\crystalkeepsakes\\api\\stripe\\create-payment-intent.php</pre>';
+                } else {
+                    result += '<p class="info">Response:</p>';
+                    result += '<pre>' + text.substring(0, 500) + '</pre>';
+                }
+                
+                log('test1-result', result);
+            } catch (error) {
+                log('test1-result', `<p class="error">❌ Error: ${error.message}</p><p>Is MAMP running on port ${DEV_PORT}?</p>`);
+            }
+        }
+
+        // Test 2: Simple payment intent
+        async function testSimplePayment() {
+            loading('test2-result');
+            
+            const testData = {
+                cartItems: [
+                    {
+                        name: 'Test Product',
+                        sku: 'TEST-001',
+                        price: 10.00,
+                        quantity: 1,
+                        options: {}
+                    }
+                ],
+                orderNumber: 'TEST-' + Date.now(),
+                shippingMethod: 'standard',
+                subtotal: 10.00,
+                shippingCost: 5.00,
+                taxAmount: 1.50,
+                total: 16.50
+            };
+
+            console.log('Sending test data:', testData);
+
+            try {
+                const response = await fetch(PHP_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const status = response.status;
+                const contentType = response.headers.get('content-type');
+                
+                let result = `<p class="info">HTTP Status: ${status}</p>`;
+                result += `<p class="info">Content-Type: ${contentType}</p>`;
+
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    
+                    if (status === 200) {
+                        result += '<p class="success">✅ SUCCESS! Payment intent created!</p>';
+                        result += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    } else {
+                        result += '<p class="error">❌ FAILED!</p>';
+                        result += '<p class="error">Error: ' + (data.error || 'Unknown error') + '</p>';
+                        result += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    }
+                } else {
+                    // Not JSON - probably PHP error
+                    const text = await response.text();
+                    result += '<p class="error">❌ PHP Error (not JSON response):</p>';
+                    result += '<pre>' + text.substring(0, 2000) + '</pre>';
+                }
+
+                log('test2-result', result);
+            } catch (error) {
+                log('test2-result', `<p class="error">❌ Network Error: ${error.message}</p>`);
+            }
+        }
+
+        // Test 3: Full cart data
+        async function testFullPayment() {
+            loading('test3-result');
+            
+            const fullData = {
+                cartItems: [
+                    {
+                        name: 'Cut Corner Diamond',
+                        sku: 'Cut_Corner_Diamond',
+                        price: 116.50,
+                        quantity: 1,
+                        options: {
+                            size: 'Cut Corner Diamond (5x5cm)',
+                            background: '2D Backdrop',
+                            lightBase: 'Lightbase Rectangle',
+                            customText: 'Test Text'
+                        }
+                    }
+                ],
+                fullCartItems: [
+                    {
+                        productId: '104',
+                        name: 'Cut Corner Diamond',
+                        sku: 'Cut_Corner_Diamond',
+                        price: 116.50,
+                        quantity: 1,
+                        basePrice: 70,
+                        optionsPrice: 46.50
+                    }
+                ],
+                orderNumber: 'ORD-' + Date.now(),
+                shippingMethod: 'standard',
+                subtotal: 116.50,
+                shippingCost: 5.00,
+                taxAmount: 10.00,
+                total: 131.50,
+                cockpitOrder: {
+                    retailer_id: '256568874',
+                    order_id: 'ORD-' + Date.now(),
+                    items: []
+                }
+            };
+
+            console.log('Sending full cart data:', fullData);
+
+            try {
+                const response = await fetch(PHP_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fullData)
+                });
+
+                const status = response.status;
+                const contentType = response.headers.get('content-type');
+                
+                let result = `<p class="info">HTTP Status: ${status}</p>`;
+
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    
+                    if (status === 200) {
+                        result += '<p class="success">✅ SUCCESS! Full payment intent created!</p>';
+                        result += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    } else {
+                        result += '<p class="error">❌ FAILED!</p>';
+                        result += '<p class="error">Error: ' + (data.error || 'Unknown error') + '</p>';
+                        result += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    }
+                } else {
+                    const text = await response.text();
+                    result += '<p class="error">❌ PHP Error:</p>';
+                    result += '<pre>' + text.substring(0, 2000) + '</pre>';
+                }
+
+                log('test3-result', result);
+            } catch (error) {
+                log('test3-result', `<p class="error">❌ Error: ${error.message}</p>`);
+            }
+        }
+
+        // Test 4: Check logs
+        function checkLogs() {
+            const logPath = 'C:\\MAMP\\htdocs\\crystalkeepsakes\\api\\stripe\\payment_intent_errors.log';
+            
+            let result = '<p class="info">Check PHP error log file at:</p>';
+            result += '<pre>' + logPath + '</pre>';
+            result += '<p class="info">Open this file in a text editor to see detailed error messages.</p>';
+            result += '<p class="info">You can also check MAMP logs:</p>';
+            result += '<ul>';
+            result += '<li>Apache Error Log: MAMP/logs/apache_error.log</li>';
+            result += '<li>PHP Error Log: MAMP/logs/php_error.log</li>';
+            result += '</ul>';
+            
+            log('test4-result', result);
+        }
+
+        // Auto-run test 1 on load
+        window.onload = function() {
+            testPhpFile();
+        };
+    </script>
+</body>
+</html>
