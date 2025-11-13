@@ -203,7 +203,13 @@ export default function ProductDetailClient() {
     let total = selectedSize?.price || product?.basePrice || 0
     if (selectedLightBase?.price) total += selectedLightBase.price
     if (selectedBackground?.price) total += selectedBackground.price
-    if (selectedTextOption?.price) total += selectedTextOption.price
+    
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
+      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
+      total += textOption?.price || 0
+    }
+    
     return total * quantity
   }
   
