@@ -184,6 +184,7 @@ export default function ProductDetailClient() {
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
+      setRawUploadedImage(dataUrl) // Store original raw image
       setUploadedImage(dataUrl)
       setShowEditor(true)
     }
@@ -192,13 +193,14 @@ export default function ProductDetailClient() {
 
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
+   * Receives the masked/compressed image from editor
    */
   const handleImageEditorSave = (compressedImage: string) => {
     logger.info('Image saved from editor', { 
       size: compressedImage.length 
     })
     
-    // Save the masked/compressed image
+    // Save the masked/compressed image (final product)
     setFinalMaskedImage(compressedImage)
     setShowEditor(false)
     
