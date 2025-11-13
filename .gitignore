@@ -303,3 +303,4 @@ debug/
 # Environment files
 *.env
 *.env.*
+src/data/final-product-list.js
