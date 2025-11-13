@@ -137,21 +137,23 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     let customImageMetadata: CartItem['customImageMetadata'] | undefined
     
     // Handle custom image storage in IndexedDB
-    const imageDataUrl = item.customImage?.dataUrl || item.options?.maskedImageUrl
-    if (imageDataUrl) {
+    const maskedImageUrl = item.customImage?.dataUrl || item.options?.maskedImageUrl
+    const rawImageUrl = item.customImage?.originalDataUrl || item.options?.rawImageUrl
+    
+    if (maskedImageUrl) {
       try {
-        // Compress thumbnail
-        const thumbnail = await compressImageToThumbnail(imageDataUrl)
+        // Compress thumbnail from masked image
+        const thumbnail = await compressImageToThumbnail(maskedImageUrl)
         
-        // Store full image and thumbnail in IndexedDB
+        // Store full masked image and thumbnail in IndexedDB
         customImageId = await imageDB.storeImage(
           item.productId,
-          imageDataUrl,
+          maskedImageUrl,
           thumbnail,
           {
             filename: item.customImage?.filename || item.options?.imageFilename,
             mimeType: item.customImage?.mimeType || 'image/png',
-            fileSize: item.customImage?.fileSize || imageDataUrl.length,
+            fileSize: item.customImage?.fileSize || maskedImageUrl.length,
             width: item.customImage?.width,
             height: item.customImage?.height,
             processedAt: item.customImage?.processedAt || new Date().toISOString(),
@@ -166,9 +168,10 @@ export async function addToCart(item: CartItem | any): Promise<void> {
           hasImage: true
         }
         
-        logger.success('Image stored in IndexedDB', {
+        logger.success('Images stored in IndexedDB', {
           imageId: customImageId,
-          originalSizeKB: Math.round(imageDataUrl.length / 1024),
+          hasRawImage: !!rawImageUrl,
+          maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
           thumbnailSizeKB: Math.round(thumbnail.length / 1024)
         })
       } catch (error) {
