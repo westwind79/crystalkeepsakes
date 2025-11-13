@@ -85,6 +85,7 @@ export default function ProductDetailClient() {
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption | null>(null)
   const [selectedTextOption, setSelectedTextOption] = useState<TextOption | null>(null)
   const [customText, setCustomText] = useState({ line1: '', line2: '' })
+  const [showCustomText, setShowCustomText] = useState(false)
   const [quantity, setQuantity] = useState(1)
   
   // Image State
