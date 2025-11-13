@@ -32,18 +32,21 @@ interface LightBase {
   id: string
   name: string
   price: number | null
+  cockpit3d_id?: string
 }
 
 interface BackgroundOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface TextOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface ProductImage {
@@ -84,12 +87,14 @@ export default function ProductDetailClient() {
   const [selectedLightBase, setSelectedLightBase] = useState<LightBase | null>(null)
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption | null>(null)
   const [selectedTextOption, setSelectedTextOption] = useState<TextOption | null>(null)
-  const [customText, setCustomText] = useState({ line1: '', line2: '' })
   const [showCustomText, setShowCustomText] = useState(false)
+  const [customText, setCustomText] = useState({ line1: '', line2: '' })
+  const [textCharCount, setTextCharCount] = useState({ line1: 0, line2: 0 })
   const [quantity, setQuantity] = useState(1)
   
   // Image State
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [rawUploadedImage, setRawUploadedImage] = useState<string | null>(null) // Original before masking
   const [originalFileName, setOriginalFileName] = useState<string>('')
   const [finalMaskedImage, setFinalMaskedImage] = useState<string | null>(null)
   const [showEditor, setShowEditor] = useState(false)
@@ -162,14 +167,23 @@ export default function ProductDetailClient() {
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
+      setRawUploadedImage(dataUrl) // Store original raw image
       setUploadedImage(dataUrl)
       setShowEditor(true)
     }
     reader.readAsDataURL(file)
   }
 
+  /**
+   * Handle save from ImageEditor - THIS IS CRITICAL
+   * Receives the masked/compressed image from editor
+   */
   const handleImageEditorSave = (compressedImage: string) => {
-    logger.info('Image saved from editor', { size: compressedImage.length })
+    logger.info('Image saved from editor', { 
+      size: compressedImage.length 
+    })
+    
+    // Save the masked/compressed image (final product)
     setFinalMaskedImage(compressedImage)
     setShowEditor(false)
     setErrors(prev => {
@@ -210,6 +224,11 @@ export default function ProductDetailClient() {
       total += textOption?.price || 0
     }
     
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      total += product.textOptions[1].price
+    }
+    
     return total * quantity
   }
   
@@ -217,11 +236,11 @@ export default function ProductDetailClient() {
     let optionsPrice = 0
     if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
     if (selectedBackground?.price) optionsPrice += selectedBackground.price
+    if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
     
     // Add custom text price if enabled
-    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
-      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
-      optionsPrice += textOption?.price || 0
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      optionsPrice += product.textOptions[1].price
     }
     
     return optionsPrice
@@ -234,6 +253,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'lightBase',
         optionId: selectedLightBase.id,
+        cockpit3d_option_id: selectedLightBase.cockpit3d_id,
         name: selectedLightBase.name,
         value: selectedLightBase.name,
         priceModifier: selectedLightBase.price || 0
@@ -244,6 +264,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'background',
         optionId: selectedBackground.id,
+        cockpit3d_option_id: selectedBackground.cockpit3d_id,
         name: selectedBackground.name,
         value: selectedBackground.name,
         priceModifier: selectedBackground.price

@@ -6,9 +6,6 @@
 
 /* Tailwind CSS */
 @import "tailwindcss";
-/*@tailwind base;
-@tailwind components;
-@tailwind utilities;*/
 
 /* Import Custom Styles */
 @import './css/variables.css';
@@ -86,8 +83,8 @@ html {
 }
 
 body {
-  background: var(--color-dark-bg);
-  color: var(--color-text-primary);
+  /*background: var(--color-dark-bg);*/
+  /*color: var(--color-text-primary);*/
   font-size: var(--font-size-scale-15-18);
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -103,36 +100,36 @@ main {
 /* Typography */
 h1, .h1 {
   font-size: var(--font-size-scale-33-46);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 h2, .h2 {
   font-size: var(--font-size-scale-27-36);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 h3, .h3 {
   font-size: var(--font-size-scale-23-29);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 h4, .h4 {
   font-size: var(--font-size-scale-20-26);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 h5, .h5 {
   font-size: var(--font-size-scale-17-20);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 h6, .h6 {
   font-size: var(--font-size-scale-15-16);
-  color: inherit;
+  /*color: inherit;*/
 }
 
 a {
-  /*color: var(--color-brand-500);*/
+  color: var(--color-brand-500);
   text-decoration: none;
   transition: color var(--transition-duration-fast), background-color var(--transition-duration-fast);
 }
