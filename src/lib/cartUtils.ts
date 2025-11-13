@@ -145,7 +145,13 @@ export async function addToCart(item: CartItem | any): Promise<void> {
         // Compress thumbnail from masked image
         const thumbnail = await compressImageToThumbnail(maskedImageUrl)
         
-        // Store full masked image and thumbnail in IndexedDB
+        // Compress thumbnail from raw image if available
+        let rawThumbnail: string | undefined
+        if (rawImageUrl) {
+          rawThumbnail = await compressImageToThumbnail(rawImageUrl)
+        }
+        
+        // Store BOTH raw and masked images in IndexedDB
         customImageId = await imageDB.storeImage(
           item.productId,
           maskedImageUrl,
@@ -159,7 +165,9 @@ export async function addToCart(item: CartItem | any): Promise<void> {
             processedAt: item.customImage?.processedAt || new Date().toISOString(),
             maskId: item.customImage?.maskId || item.options?.maskId,
             maskName: item.customImage?.maskName || item.options?.maskName
-          }
+          },
+          rawImageUrl, // Store raw image
+          rawThumbnail // Store raw thumbnail
         )
         
         customImageMetadata = {
@@ -172,6 +180,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
           imageId: customImageId,
           hasRawImage: !!rawImageUrl,
           maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
+          rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
           thumbnailSizeKB: Math.round(thumbnail.length / 1024)
         })
       } catch (error) {
