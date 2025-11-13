@@ -197,30 +197,13 @@ try {
             'allowed_countries' => ['US', 'CA'],
         ],
         
-        // Shipping options
+        // Shipping options - Use your Stripe Dashboard shipping rates
         'shipping_options' => [
-            [
-                'shipping_rate_data' => [
-                    'type' => 'fixed_amount',
-                    'fixed_amount' => ['amount' => 500, 'currency' => 'usd'],
-                    'display_name' => 'Standard Shipping (5-7 business days)',
-                    'delivery_estimate' => [
-                        'minimum' => ['unit' => 'business_day', 'value' => 5],
-                        'maximum' => ['unit' => 'business_day', 'value' => 7],
-                    ],
-                ],
-            ],
-            [
-                'shipping_rate_data' => [
-                    'type' => 'fixed_amount',
-                    'fixed_amount' => ['amount' => 1500, 'currency' => 'usd'],
-                    'display_name' => 'Express Shipping (1-3 business days)',
-                    'delivery_estimate' => [
-                        'minimum' => ['unit' => 'business_day', 'value' => 1],
-                        'maximum' => ['unit' => 'business_day', 'value' => 3],
-                    ],
-                ],
-            ],
+            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
+            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
+            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
+            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
+            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
         ],
         
         // Customer email
