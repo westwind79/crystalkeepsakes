@@ -186,6 +186,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     const cleanedOptions = cleanOptions(item.options)
     
     // Create cart item with ALL order data preserved
+    // NOTE: Do NOT store image data URLs here - they're in IndexedDB only!
     const cartItem: CartItem = {
       // Product identification
       productId: item.productId,
@@ -206,13 +207,12 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       options: item.options || cleanedOptions,  // Preserve original options array/object
       productImage: item.productImage || null,
       
-      // Custom image (IndexedDB reference)
+      // Custom image (IndexedDB reference ONLY - not data URLs!)
       customImageId,
       customImageMetadata,
       
-      // Image URLs for display (stored for quick access)
-      rawImageUrl: rawImageUrl || null,
-      maskedImageUrl: maskedImageUrl || null,
+      // DO NOT store image data URLs in localStorage - causes QuotaExceeded!
+      // Images are loaded from IndexedDB when displaying cart
       
       // Custom text (preserve full object)
       customText: item.customText,
