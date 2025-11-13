@@ -11,6 +11,7 @@ export default function ProductAdminPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
+  // Load customizations on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('productCustomizations');
@@ -21,6 +22,13 @@ export default function ProductAdminPage() {
       console.warn('No existing customizations found');
     }
   }, []);
+
+  // Auto-save customizations whenever they change
+  useEffect(() => {
+    if (Object.keys(editedProducts).length > 0) {
+      localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
+    }
+  }, [editedProducts]);
 
   const getProductData = (productId: string): Product => {
     const sourceProduct = sourceProducts.find((p) => p.id === productId);
