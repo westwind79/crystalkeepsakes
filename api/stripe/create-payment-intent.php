@@ -157,23 +157,38 @@ try {
         $orderNumber = 'TEST_' . $orderNumber;
     }
     
-    // Store Cockpit3D order data in metadata
+    // Store order data in metadata (Stripe limit: 500 chars per field)
+    // Store only essential info - full data saved separately
     $metadata = [
         'order_number' => $orderNumber,
         'environment' => $mode,
         'items_count' => count($data->cartItems),
-        'subtotal' => $subtotal,
-        'cart_details' => json_encode($data->cartItems)
+        'subtotal' => number_format($subtotal, 2)
     ];
     
-    // Add Cockpit3D order data if provided
+    // Add customer info if provided (keep under 500 chars)
     if (isset($data->cockpitOrder)) {
-        error_log("📦 Including Cockpit3D order data");
-        $metadata['cockpit3d_order'] = json_encode($data->cockpitOrder);
-        $metadata['customer_email'] = $data->cockpitOrder->customer_email ?? '';
-        $metadata['customer_name'] = $data->cockpitOrder->customer_name ?? '';
-        $metadata['shipping_address'] = json_encode($data->cockpitOrder->shipping_address ?? []);
+        error_log("📦 Including customer data");
+        $metadata['customer_email'] = substr($data->cockpitOrder->customer_email ?? '', 0, 100);
+        $metadata['customer_name'] = substr($data->cockpitOrder->customer_name ?? '', 0, 100);
+        
+        // Store shipping address as separate fields (not JSON)
+        if (isset($data->cockpitOrder->shipping_address)) {
+            $addr = $data->cockpitOrder->shipping_address;
+            $metadata['ship_city'] = substr($addr->city ?? '', 0, 50);
+            $metadata['ship_state'] = substr($addr->state ?? '', 0, 50);
+            $metadata['ship_zip'] = substr($addr->postal_code ?? '', 0, 20);
+        }
     }
+    
+    // Store full order data in a session file for webhook to retrieve
+    // This avoids Stripe's 500 char metadata limit
+    $orderDataFile = __DIR__ . '/temp_orders/' . $orderNumber . '.json';
+    if (!is_dir(dirname($orderDataFile))) {
+        mkdir(dirname($orderDataFile), 0755, true);
+    }
+    file_put_contents($orderDataFile, json_encode($data, JSON_PRETTY_PRINT));
+    error_log("💾 Saved full order data to: $orderDataFile");
     
     // Create Stripe Payment Intent
     // Stripe will handle shipping rates and tax via Dashboard settings
