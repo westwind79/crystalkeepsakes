@@ -3,8 +3,7 @@
 ═══════════════════════════════════════════════════
 
 1. BUILD (Local):
-   cd /app
-   ./deploy-to-test.sh
+   npm run build:test
    
    ✓ Sets NEXT_PUBLIC_BASE_PATH=/test
    ✓ All assets will use /test/_next/...
