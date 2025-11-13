@@ -86,7 +86,7 @@ echo "<h2>📋 Environment Variables Detected</h2>";
 $envVars = [
     'COCKPIT3D_USERNAME' => getEnvVariable('COCKPIT3D_USERNAME'),
     'COCKPIT3D_PASSWORD' => getEnvVariable('COCKPIT3D_PASSWORD'),
-    'COCKPIT3D_RETAILER_ID' => getEnvVariable('COCKPIT3D_RETAILER_ID'),
+    'COCKPIT3D_RETAIL_ID' => getEnvVariable('COCKPIT3D_RETAIL_ID'),
     'COCKPIT3D_API_TOKEN' => getEnvVariable('COCKPIT3D_API_TOKEN'),
     'COCKPIT3D_BASE_URL' => getEnvVariable('COCKPIT3D_BASE_URL'),
     'NEXT_PUBLIC_COCKPIT3D_API_URL' => getEnvVariable('NEXT_PUBLIC_COCKPIT3D_API_URL'),
@@ -105,7 +105,7 @@ echo "</div>";
 // Configuration
 $username = $envVars['COCKPIT3D_USERNAME'];
 $password = $envVars['COCKPIT3D_PASSWORD'];
-$retailerId = $envVars['COCKPIT3D_RETAILER_ID'] ?? '256568874';
+$retailerId = $envVars['COCKPIT3D_RETAIL_ID'] ?? '256568874';
 
 if (!$username || !$password) {
     echo "<div class='error' style='padding: 20px; background: #3c1518; border-left: 4px solid #f48771;'>";
@@ -114,7 +114,7 @@ if (!$username || !$password) {
     echo "<p>Please add to your .env file:</p>";
     echo "<pre>COCKPIT3D_USERNAME=your_username
 COCKPIT3D_PASSWORD=your_password
-COCKPIT3D_RETAILER_ID=your_retailer_id</pre>";
+COCKPIT3D_RETAIL_ID=your_retailer_id</pre>";
     echo "</div>";
     echo "</body></html>";
     die();

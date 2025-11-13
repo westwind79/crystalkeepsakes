@@ -108,7 +108,7 @@ export default function HomePage() {
               <h1 className="mb-4 hero-headline">
                 MEMORIES<br/>PRESERVED&nbsp;IN<br/>CRYSTAL
               </h1>
-              <h2 className="mb-6 leading-relaxed">
+              <h2 className="mb-6 leading-relaxed text-gray-50">
                 Transform your cherished photos into stunning 3D crystal art pieces. 
                 Our precision laser technology creates beautiful, lasting memories.
               </h2>
@@ -174,7 +174,7 @@ export default function HomePage() {
       {/* Featured Products Section */}
       <section className="bg-dark-bg py-12 md:py-16">
         <div className="w-full max-w-7xl mx-auto px-4">
-          <h2 className="text-center mb-12 text-3xl md:text-4xl font-light">Popular Crystal Designs</h2>
+          <h2 className="text-center mb-12 text-3xl md:text-4xl font-semibold text-gray-50">Popular Crystal Designs</h2>
           
           {/* Product Grid - Tailwind responsive grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">

@@ -133,7 +133,7 @@ export function buildCockpit3DOrder(
   stripePaymentId: string
 ) {
   return {
-    retailer_id: process.env.COCKPIT3D_RETAILER_ID, // Still need this!
+    retailer_id: process.env.COCKPIT3D_RETAIL_ID, // Still need this!
     
     address: {
       email: customerInfo.email,

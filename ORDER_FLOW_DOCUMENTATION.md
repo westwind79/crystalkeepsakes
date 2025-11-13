@@ -381,7 +381,8 @@ Required in `.env`:
 COCKPIT3D_BASE_URL=https://api.cockpit3d.com
 COCKPIT3D_USERNAME=your_username
 COCKPIT3D_PASSWORD=your_password
-NEXT_PUBLIC_COCKPIT3D_RETAILER_ID=your_retailer_id
+COCKPIT3D_RETAIL_ID=your_retailer_id
+NEXT_PUBLIC_COCKPIT3D_SHOP_ID=your_retailer_id
 
 # Stripe
 NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_...
