@@ -268,7 +268,7 @@ export default function CartPage() {
           <h2 className="text-xl font-semibold text-slate-900">Your shopping cart</h2>
           <button
             onClick={handleClearCart}
-            className="text-sm text-red-600 hover:text-red-700 font-medium"
+            className="cursor-pointer text-sm text-red-600 hover:text-red-700 font-medium"
           >
             Clear Cart
           </button>
@@ -369,7 +369,7 @@ export default function CartPage() {
                           <button
                             onClick={() => handleRemoveItem(index)}
                             disabled={removing === index}
-                            className="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50"
+                            className="cursor-pointer p-2 text-red-500 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50"
                           >
                             {removing === index ? (
                               <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
