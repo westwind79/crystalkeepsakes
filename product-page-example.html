@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page Theme Example</title>
+  
+  <!-- Your custom CSS files -->
+  <link rel="stylesheet" href="product-detail-theme.css">
+  <link rel="stylesheet" href="product-options.css">
+  
+  <!-- Tailwind CSS (if using CDN for demo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    /* CSS Variables from your theme */
+    :root {
+      --brand-400: #8DC63F;
+      --brand-500: #72B01D;
+      --brand-600: #5A8E17;
+      --surface-700: #434038;
+      --surface-800: #262626;
+      --header-height: 80px;
+    }
+  </style>
+</head>
+<body class="bg-darker">
+  
+  <!-- Product Page Container -->
+  <div class="product-page">
+    
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs py-4">
+      <div class="container mx-auto px-4">
+        <a href="/">Home</a>  
+        <span class="mx-2 text-gray-600">/</span>
+        <a href="/products">Products</a> 
+        <span class="mx-2 text-gray-600">/</span> 
+        <span class="text-text-tertiary">Crystal Heart - Large</span>
+      </div>
+    </nav>
+    
+    <!-- Product Container -->
+    <div class="product-container">
+      
+      <!-- Product Grid (2 columns) -->
+      <div class="product-grid">
+        
+        <!-- LEFT: Product Image -->
+        <div>
+          <div class="sticky-product-image">
+            <div class="product-image-wrapper">
+              <img 
+                src="https://via.placeholder.com/600x600/1a1a1a/72B01D?text=Product+Image" 
+                alt="Product" 
+                class="product-image"
+              >
+            </div>
+            
+            <!-- Image Action Buttons (if uploaded image) -->
+            <div class="image-actions" style="display: none;">
+              <button class="btn btn-secondary">Edit Image Again</button>
+              <button class="btn btn-secondary">Remove & Show Product</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- RIGHT: Product Info & Options -->
+        <div class="product-info">
+          
+          <!-- Product Title -->
+          <h1 class="product-title">3D Crystal Heart - Large</h1>
+          
+          <!-- Product Description -->
+          <p class="product-description">
+            Transform your cherished memories into stunning 3D crystal art. Our premium crystal hearts 
+            feature precision laser engraving that captures every detail of your photo in breathtaking clarity.
+          </p>
+          
+          <!-- Product Price -->
+          <div class="product-price">
+            <span class="product-price-currency">$</span>
+            129.99
+          </div>
+          
+          <!-- Success Alert (hidden by default) -->
+          <div class="alert alert-success" style="display: none;">
+            <p>Added 1 Crystal Heart to cart!</p>
+          </div>
+          
+          <!-- Error Alert (hidden by default) -->
+          <div class="alert alert-error" style="display: none;">
+            <p>Please select a size before adding to cart.</p>
+          </div>
+          
+          <!-- Image Upload Section -->
+          <div class="product-option-section">
+            <label class="option-label option-label-required">Upload Your Image</label>
+            <input 
+              type="file" 
+              accept="image/jpeg,image/png,image/gif"
+              class="file-upload-input"
+            >
+            <div class="image-requirements">
+              <p><strong>Image Requirements:</strong></p>
+              <ul>
+                <li>File type: JPG, PNG, or GIF</li>
+                <li>Maximum size: 5MB</li>
+                <li>Minimum dimensions: 500x500 pixels</li>
+                <li>Higher resolution recommended for best results</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Size Selection -->
+          <div class="product-option-section">
+            <label class="option-label option-label-required">Select Size</label>
+            <div class="radio-option-group">
+              
+              <label class="crystal-radio">
+                <input type="radio" name="size" value="small" checked>
+                <span>Small (2" x 2")</span>
+                <span class="option-price-tag">$79.99</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="size" value="medium">
+                <span>Medium (3" x 3")</span>
+                <span class="option-price-tag">$99.99</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="size" value="large">
+                <span>Large (4" x 4")</span>
+                <span class="option-price-tag">$129.99</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="size" value="xlarge">
+                <span>Extra Large (5" x 5")</span>
+                <span class="option-price-tag">$159.99</span>
+              </label>
+              
+            </div>
+          </div>
+          
+          <!-- Light Base Options -->
+          <div class="product-option-section">
+            <label class="option-label">Light Base</label>
+            <div class="radio-option-group">
+              
+              <label class="crystal-radio">
+                <input type="radio" name="lightbase" value="none" checked>
+                <span>No Light Base</span>
+                <span class="option-price-tag">$0.00</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="lightbase" value="white">
+                <span>White LED Base</span>
+                <span class="option-price-tag">+$19.99</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="lightbase" value="color">
+                <span>Color-Changing LED Base</span>
+                <span class="option-price-tag">+$29.99</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="lightbase" value="premium">
+                <span>Premium Wooden Base with LED</span>
+                <span class="option-price-tag">+$39.99</span>
+              </label>
+              
+            </div>
+          </div>
+          
+          <!-- Background Options -->
+          <div class="product-option-section">
+            <label class="option-label">Background Style</label>
+            <div class="radio-option-group">
+              
+              <label class="crystal-radio">
+                <input type="radio" name="background" value="clear" checked>
+                <span>Clear Background</span>
+                <span class="option-price-tag">Included</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="background" value="frosted">
+                <span>Frosted Background</span>
+                <span class="option-price-tag">+$5.00</span>
+              </label>
+              
+              <label class="crystal-radio">
+                <input type="radio" name="background" value="gradient">
+                <span>Gradient Background</span>
+                <span class="option-price-tag">+$10.00</span>
+              </label>
+              
+            </div>
+          </div>
+          
+          <!-- Custom Text -->
+          <div class="product-option-section">
+            <label class="option-label">Custom Text (Optional)</label>
+            <input 
+              type="text" 
+              placeholder="Line 1 (e.g., Anniversary 2024)"
+              class="text-input mb-2"
+              maxlength="30"
+            >
+            <input 
+              type="text" 
+              placeholder="Line 2 (e.g., Forever & Always)"
+              class="text-input"
+              maxlength="30"
+            >
+          </div>
+          
+          <!-- Quantity -->
+          <div class="product-option-section">
+            <label class="option-label">Quantity</label>
+            <div class="quantity-control">
+              <button class="quantity-btn" type="button">-</button>
+              <input type="number" value="1" min="1" class="quantity-input" readonly>
+              <button class="quantity-btn" type="button">+</button>
+            </div>
+          </div>
+          
+          <!-- Add to Cart Button -->
+          <button class="btn btn-primary add-to-cart-btn">
+            Add to Cart - $129.99
+          </button>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <!-- Demo: Show different states on button click -->
+  <script>
+    // Simple demo interactions
+    const addToCartBtn = document.querySelector('.add-to-cart-btn');
+    const successAlert = document.querySelector('.alert-success');
+    
+    addToCartBtn.addEventListener('click', function() {
+      successAlert.style.display = 'block';
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+      }, 3000);
+    });
+    
+    // Quantity controls
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+    const quantityInput = document.querySelector('.quantity-input');
+    
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (btn.textContent === '+') {
+          quantityInput.value = currentValue + 1;
+        } else if (btn.textContent === '-' && currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>
