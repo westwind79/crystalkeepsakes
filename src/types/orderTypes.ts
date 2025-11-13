@@ -40,10 +40,13 @@ export interface SizeDetails {
 export interface ProductOption {
   category: string
   optionId: string
+  cockpit3d_option_id?: string
   name: string
   value: string
   priceModifier: number
   skuSuffix?: string
+  line1?: string
+  line2?: string
 }
 
 /**

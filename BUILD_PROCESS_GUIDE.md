@@ -86,17 +86,17 @@ next build
 
 ```env
 # Cockpit3D API - PHP needs these
-COCKPIT3D_USERNAME=noah.westwind@gmail.com
-COCKPIT3D_PASSWORD=z99rr9,Hod,,bdb,azzo
-COCKPIT3D_RETAILER_ID=256568874          # ← PHP looks for this
+COCKPIT3D_USERNAME=your_email@example.com
+COCKPIT3D_PASSWORD=your_cockpit3d_password
+COCKPIT3D_RETAIL_ID=your_retail_id          # ← PHP looks for this
 COCKPIT3D_BASE_URL=https://api.cockpit3d.com/
 
 # Alternative names (for compatibility)
-COCKPIT3D_RETAIL_ID=256568874            # ← Your original name
-NEXT_PUBLIC_COCKPIT3D_SHOP_ID=256568874  # ← For Next.js
+COCKPIT3D_RETAIL_ID=your_retail_id            # ← Your original name
+NEXT_PUBLIC_COCKPIT3D_SHOP_ID=your_shop_id  # ← For Next.js
 ```
 
-**IMPORTANT**: PHP file `cockpit3d-data-fetcher.php` looks for `COCKPIT3D_RETAILER_ID`
+**IMPORTANT**: PHP file `cockpit3d-data-fetcher.php` looks for `COCKPIT3D_RETAIL_ID`
 
 ### Required for Next.js (Build & Runtime)
 
@@ -125,9 +125,9 @@ dir .env        # Windows
 ls -la .env     # Mac/Linux
 
 # Verify it contains:
-COCKPIT3D_USERNAME=noah.westwind@gmail.com
-COCKPIT3D_PASSWORD=z99rr9,Hod,,bdb,azzo
-COCKPIT3D_RETAILER_ID=256568874
+COCKPIT3D_USERNAME=your_email@example.com
+COCKPIT3D_PASSWORD=your_cockpit3d_password
+COCKPIT3D_RETAIL_ID=your_retail_id
 COCKPIT3D_BASE_URL=https://api.cockpit3d.com/
 ```
 

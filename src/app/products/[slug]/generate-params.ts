@@ -10,7 +10,7 @@ export async function getProductSlugs() {
     console.log('📦 [BUILD] Loading product slugs from cached file...')
     
     // FIXED: Import the generated file directly (not network call)
-    const { cockpit3dProducts } = await import('../../../data/cockpit3d-products.js')
+    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
     
     if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
       console.warn('⚠️ No products found in cached file')

@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════
+  DEPLOY TO: https://crystalkeepsakes.com/test
+═══════════════════════════════════════════════════
+
+1. BUILD (Local):
+   npm run build:test
+   
+   ✓ Sets NEXT_PUBLIC_BASE_PATH=/test
+   ✓ All assets will use /test/_next/...
+   ✓ API folder included in build
+   ✓ .env included in output
+
+2. UPLOAD (FTP):
+   ./out/* → /public_html/crystalkeepsakes/test/
+
+3. CREATE .ENV (Server - Parent Directory):
+   Location: /public_html/crystalkeepsakes/.env
+   
+   Content:
+   STRIPE_SECRET_KEY=sk_test_xxxxx
+   COCKPIT3D_RETAILER_ID=256568874
+   NEXT_PUBLIC_ENV_MODE=production
+   SITE_URL=https://crystalkeepsakes.com/test
+
+4. SET PERMISSIONS (SSH):
+   chmod 755 /public_html/crystalkeepsakes/test/api/stripe/*.php
+   chmod 600 /public_html/crystalkeepsakes/.env
+
+5. TEST:
+   https://crystalkeepsakes.com/test
+
+═══════════════════════════════════════════════════
+  ASSET PATHS:
+═══════════════════════════════════════════════════
+
+✓ JavaScript: /test/_next/static/chunks/...
+✓ CSS:        /test/_next/static/css/...
+✓ Images:     /test/img/...
+✓ API:        /test/api/stripe/...
+
+All paths correctly prefixed with /test
+
+═══════════════════════════════════════════════════
+  TROUBLESHOOTING:
+═══════════════════════════════════════════════════
+
+If assets still load from root (crystalkeepsakes.com/_next/):
+1. Check build output: grep "_next" out/index.html
+2. Ensure NEXT_PUBLIC_BASE_PATH was set during build
+3. Clear browser cache completely
+4. Check .env.production has NEXT_PUBLIC_BASE_PATH=/test
+
+═══════════════════════════════════════════════════
