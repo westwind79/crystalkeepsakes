@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { cockpit3dProducts } from '@/data/cockpit3d-products';
+import { finalProductList as cockpit3dProducts } from '@/data/final-product-list';
 import { Product, ProductCustomizations, ProductImage } from '@/types/productTypes';
 import ImageUpload from '@/components/admin/ImageUpload';
 
