@@ -50,7 +50,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "lightbase-rectangle",
@@ -165,27 +165,27 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "207",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 25
       },
       {
         "id": "476",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 35
       },
       {
         "id": "857",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 20
       },
       {
         "id": "206",
         "name": "Lightbase Square",
-        "price": null
+        "price": 25
       }
     ],
     "backgroundOptions": [
@@ -365,47 +365,47 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "236",
         "name": "Lightbase Square",
-        "price": null
+        "price": 0
       },
       {
         "id": "238",
         "name": "Lightbase Wood Medium",
-        "price": null
+        "price": 0
       },
       {
         "id": "366",
         "name": "Lightbase Wood Long",
-        "price": null
+        "price": 0
       },
       {
         "id": "477",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       },
       {
         "id": "764",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "765",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "235",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "1435",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -476,42 +476,42 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "371",
         "name": "Lightbase Square",
-        "price": null
+        "price": 0
       },
       {
         "id": "373",
         "name": "Lightbase Wood Medium",
-        "price": null
+        "price": 0
       },
       {
         "id": "374",
         "name": "Lightbase Wood Long",
-        "price": null
+        "price": 0
       },
       {
         "id": "478",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       },
       {
         "id": "844",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "845",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "370",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -676,47 +676,47 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "423",
         "name": "Lightbase Square",
-        "price": null
+        "price": 0
       },
       {
         "id": "425",
         "name": "Lightbase Wood Medium",
-        "price": null
+        "price": 0
       },
       {
         "id": "426",
         "name": "Lightbase Wood Long",
-        "price": null
+        "price": 0
       },
       {
         "id": "480",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       },
       {
         "id": "766",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "864",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "422",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "1434",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1000,32 +1000,32 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "531",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "532",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       },
       {
         "id": "774",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "775",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "530",
         "name": "Lightbase Square",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1127,27 +1127,27 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "876",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "877",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "878",
         "name": "Lightbase Square",
-        "price": null
+        "price": 0
       },
       {
         "id": "666",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1201,7 +1201,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1298,27 +1298,27 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "719",
         "name": "Lightbase Wood Medium",
-        "price": null
+        "price": 0
       },
       {
         "id": "957",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "718",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "897",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1394,22 +1394,22 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "741",
         "name": "Lightbase Wood Medium",
-        "price": null
+        "price": 0
       },
       {
         "id": "740",
         "name": "Lightbase Wood Small",
-        "price": null
+        "price": 0
       },
       {
         "id": "1436",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1496,27 +1496,27 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": 0
       },
       {
         "id": "785",
         "name": "Rotating LED Lightbase",
-        "price": null
+        "price": 0
       },
       {
         "id": "879",
         "name": "Wooden Premium Base Mini",
-        "price": null
+        "price": 0
       },
       {
         "id": "880",
         "name": "Lightbase Rectangle",
-        "price": null
+        "price": 0
       },
       {
         "id": "784",
         "name": "Concave Lightbase",
-        "price": null
+        "price": 0
       }
     ],
     "backgroundOptions": [
@@ -1592,19 +1592,19 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "1029",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1029"
       },
       {
         "id": "1517",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1517"
       }
     ],
@@ -1664,19 +1664,19 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "940",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "940"
       },
       {
         "id": "1433",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1433"
       }
     ],
@@ -1736,7 +1736,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       }
     ],
@@ -2008,7 +2008,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       }
     ],
@@ -2174,7 +2174,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       }
     ],
@@ -2234,7 +2234,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       }
     ],
@@ -2294,7 +2294,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       }
     ],
@@ -2367,49 +2367,49 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "1867",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1867"
       },
       {
         "id": "1868",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1868"
       },
       {
         "id": "1884",
         "name": "Rotating LED Lightbase",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1884"
       },
       {
         "id": "1885",
         "name": "Lightbase Wood Long",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1885"
       },
       {
         "id": "1886",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1886"
       },
       {
         "id": "1887",
         "name": "Lightbase Square",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1887"
       },
       {
         "id": "1888",
         "name": "Lightbase Rectangle",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1888"
       }
     ],
@@ -2469,7 +2469,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
@@ -2571,49 +2571,49 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "1954",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1954"
       },
       {
         "id": "1955",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1955"
       },
       {
         "id": "1956",
         "name": "Rotating LED Lightbase",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1956"
       },
       {
         "id": "1957",
         "name": "Lightbase Wood Long",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1957"
       },
       {
         "id": "1958",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1958"
       },
       {
         "id": "1959",
         "name": "Lightbase Square",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1959"
       },
       {
         "id": "1960",
         "name": "Lightbase Rectangle",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1960"
       }
     ],
@@ -2673,13 +2673,13 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "2087",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2087"
       },
       {
@@ -2697,7 +2697,7 @@ export const cockpit3dProducts = [
       {
         "id": "2090",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2090"
       },
       {
@@ -2793,7 +2793,7 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
@@ -2908,55 +2908,55 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "2059",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2059"
       },
       {
         "id": "2060",
         "name": "Rotating LED Lightbase",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2060"
       },
       {
         "id": "2061",
         "name": "Concave Lightbase",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2061"
       },
       {
         "id": "2062",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2062"
       },
       {
         "id": "2063",
         "name": "Lightbase Rectangle",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2063"
       },
       {
         "id": "2064",
         "name": "Lightbase Square",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2064"
       },
       {
         "id": "2065",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2065"
       },
       {
         "id": "2066",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2066"
       }
     ],
@@ -3016,55 +3016,55 @@ export const cockpit3dProducts = [
       {
         "id": "none",
         "name": "No Base",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": null
       },
       {
         "id": "1897",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1897"
       },
       {
         "id": "1898",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1898"
       },
       {
         "id": "1899",
         "name": "Rotating LED Lightbase",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1899"
       },
       {
         "id": "1900",
         "name": "Lightbase Wood Long",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1900"
       },
       {
         "id": "1901",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1901"
       },
       {
         "id": "1902",
         "name": "Lightbase Square",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1902"
       },
       {
         "id": "1903",
         "name": "Lightbase Rectangle",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "1903"
       },
       {
         "id": "2110",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 0,
         "cockpit3d_id": "2110"
       }
     ],
