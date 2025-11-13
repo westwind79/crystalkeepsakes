@@ -272,6 +272,8 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
   customImage?: { 
     dataUrl: string
     thumbnail: string
+    rawImageDataUrl?: string
+    rawImageThumbnail?: string
     metadata: any
   } 
 }>> {
@@ -287,8 +289,10 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
             return {
               ...item,
               customImage: {
-                dataUrl: imageRecord.dataUrl,
-                thumbnail: imageRecord.thumbnail,
+                dataUrl: imageRecord.dataUrl, // Masked image
+                thumbnail: imageRecord.thumbnail, // Masked thumbnail
+                rawImageDataUrl: imageRecord.rawImageDataUrl, // Original uploaded image
+                rawImageThumbnail: imageRecord.rawImageThumbnail, // Original thumbnail
                 metadata: imageRecord.metadata
               }
             }
