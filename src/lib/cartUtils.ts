@@ -38,6 +38,10 @@ export interface CartItem {
     hasImage: boolean
   }
   
+  // Image URLs for display (data URLs from IndexedDB)
+  rawImageUrl?: string  // Original uploaded image (before masking)
+  maskedImageUrl?: string  // Final masked/edited image (for Cockpit3D)
+  
   // Custom text
   customText?: {
     text: string
@@ -133,27 +137,37 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     let customImageMetadata: CartItem['customImageMetadata'] | undefined
     
     // Handle custom image storage in IndexedDB
-    const imageDataUrl = item.customImage?.dataUrl || item.options?.maskedImageUrl
-    if (imageDataUrl) {
+    const maskedImageUrl = item.customImage?.dataUrl || item.options?.maskedImageUrl
+    const rawImageUrl = item.customImage?.originalDataUrl || item.options?.rawImageUrl
+    
+    if (maskedImageUrl) {
       try {
-        // Compress thumbnail
-        const thumbnail = await compressImageToThumbnail(imageDataUrl)
+        // Compress thumbnail from masked image
+        const thumbnail = await compressImageToThumbnail(maskedImageUrl)
         
-        // Store full image and thumbnail in IndexedDB
+        // Compress thumbnail from raw image if available
+        let rawThumbnail: string | undefined
+        if (rawImageUrl) {
+          rawThumbnail = await compressImageToThumbnail(rawImageUrl)
+        }
+        
+        // Store BOTH raw and masked images in IndexedDB
         customImageId = await imageDB.storeImage(
           item.productId,
-          imageDataUrl,
+          maskedImageUrl,
           thumbnail,
           {
             filename: item.customImage?.filename || item.options?.imageFilename,
             mimeType: item.customImage?.mimeType || 'image/png',
-            fileSize: item.customImage?.fileSize || imageDataUrl.length,
+            fileSize: item.customImage?.fileSize || maskedImageUrl.length,
             width: item.customImage?.width,
             height: item.customImage?.height,
             processedAt: item.customImage?.processedAt || new Date().toISOString(),
             maskId: item.customImage?.maskId || item.options?.maskId,
             maskName: item.customImage?.maskName || item.options?.maskName
-          }
+          },
+          rawImageUrl, // Store raw image
+          rawThumbnail // Store raw thumbnail
         )
         
         customImageMetadata = {
@@ -162,9 +176,11 @@ export async function addToCart(item: CartItem | any): Promise<void> {
           hasImage: true
         }
         
-        logger.success('Image stored in IndexedDB', {
+        logger.success('Images stored in IndexedDB', {
           imageId: customImageId,
-          originalSizeKB: Math.round(imageDataUrl.length / 1024),
+          hasRawImage: !!rawImageUrl,
+          maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
+          rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
           thumbnailSizeKB: Math.round(thumbnail.length / 1024)
         })
       } catch (error) {
@@ -179,6 +195,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     const cleanedOptions = cleanOptions(item.options)
     
     // Create cart item with ALL order data preserved
+    // NOTE: Do NOT store image data URLs here - they're in IndexedDB only!
     const cartItem: CartItem = {
       // Product identification
       productId: item.productId,
@@ -199,9 +216,12 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       options: item.options || cleanedOptions,  // Preserve original options array/object
       productImage: item.productImage || null,
       
-      // Custom image (IndexedDB reference)
+      // Custom image (IndexedDB reference ONLY - not data URLs!)
       customImageId,
       customImageMetadata,
+      
+      // DO NOT store image data URLs in localStorage - causes QuotaExceeded!
+      // Images are loaded from IndexedDB when displaying cart
       
       // Custom text (preserve full object)
       customText: item.customText,
@@ -252,6 +272,8 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
   customImage?: { 
     dataUrl: string
     thumbnail: string
+    rawImageDataUrl?: string
+    rawImageThumbnail?: string
     metadata: any
   } 
 }>> {
@@ -267,8 +289,10 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
             return {
               ...item,
               customImage: {
-                dataUrl: imageRecord.dataUrl,
-                thumbnail: imageRecord.thumbnail,
+                dataUrl: imageRecord.dataUrl, // Masked image
+                thumbnail: imageRecord.thumbnail, // Masked thumbnail
+                rawImageDataUrl: imageRecord.rawImageDataUrl, // Original uploaded image
+                rawImageThumbnail: imageRecord.rawImageThumbnail, // Original thumbnail
                 metadata: imageRecord.metadata
               }
             }
