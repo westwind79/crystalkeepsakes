@@ -1,0 +1,363 @@
+/* =====================================================
+   PRODUCT OPTIONS STYLING
+   Version: 1.0.0
+   Clean radio buttons, checkboxes, and form controls
+   ===================================================== */
+
+/* ===== CRYSTAL RADIO BUTTONS (Glass-morphism style) ===== */
+.crystal-radio {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(42, 42, 42, 0.6));
+  border: 1px solid rgba(114, 176, 29, 0.15);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+/* Shimmer effect */
+.crystal-radio::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(114, 176, 29, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.crystal-radio:hover::before {
+  left: 100%;
+}
+
+.crystal-radio:hover {
+  background: linear-gradient(135deg, rgba(42, 42, 42, 0.9), rgba(58, 58, 58, 0.7));
+  border-color: rgba(114, 176, 29, 0.4);
+  transform: translateX(4px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(114, 176, 29, 0.15);
+}
+
+.crystal-radio input[type="radio"] {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(114, 176, 29, 0.4);
+  border-radius: 50%;
+  margin-right: 1rem;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(10, 10, 10, 0.8);
+  flex-shrink: 0;
+}
+
+.crystal-radio input[type="radio"]:checked {
+  border-color: #72B01D;
+  background: radial-gradient(circle, #72B01D 0%, #5A8E17 100%);
+  box-shadow: 
+    0 0 0 3px rgba(114, 176, 29, 0.2),
+    0 0 10px rgba(114, 176, 29, 0.4),
+    inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.crystal-radio input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 0.5rem;
+  height: 0.5rem;
+  background: white;
+  border-radius: 50%;
+  animation: radioCheck 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes radioCheck {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.crystal-radio input[type="radio"]:checked ~ span {
+  color: #f5f5f5;
+  font-weight: 600;
+}
+
+.crystal-radio span {
+  color: #d4d4d4;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+/* Selected state styling */
+.crystal-radio:has(input[type="radio"]:checked) {
+  background: linear-gradient(135deg, rgba(114, 176, 29, 0.15), rgba(90, 142, 23, 0.1));
+  border-color: #72B01D;
+  box-shadow: 
+    0 4px 12px rgba(114, 176, 29, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ===== OPTION PRICING ===== */
+.option-price-tag {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  background: rgba(114, 176, 29, 0.15);
+  color: #A8D65E;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid rgba(114, 176, 29, 0.3);
+}
+
+.crystal-radio:hover .option-price-tag {
+  background: rgba(114, 176, 29, 0.25);
+  color: #72B01D;
+}
+
+/* ===== CHECKBOX STYLING ===== */
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(114, 176, 29, 0.15);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover {
+  background: rgba(42, 42, 42, 0.9);
+  border-color: rgba(114, 176, 29, 0.3);
+}
+
+.custom-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(114, 176, 29, 0.4);
+  border-radius: 0.25rem;
+  margin-right: 0.75rem;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  background: #72B01D;
+  border-color: #72B01D;
+}
+
+.custom-checkbox input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+/* ===== SELECT DROPDOWN ===== */
+.custom-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(26, 26, 26, 0.8);
+  border: 2px solid rgba(114, 176, 29, 0.15);
+  border-radius: 0.5rem;
+  color: #f5f5f5;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2372B01D' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.custom-select:hover {
+  background-color: rgba(42, 42, 42, 0.9);
+  border-color: rgba(114, 176, 29, 0.3);
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #72B01D;
+  box-shadow: 0 0 0 3px rgba(114, 176, 29, 0.1);
+}
+
+/* ===== QUANTITY INPUT ===== */
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(114, 176, 29, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+
+.quantity-btn {
+  width: 2rem;
+  height: 2rem;
+  background: rgba(114, 176, 29, 0.2);
+  border: none;
+  border-radius: 0.25rem;
+  color: #72B01D;
+  font-size: 1.125rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn:hover {
+  background: #72B01D;
+  color: white;
+}
+
+.quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.quantity-input {
+  width: 3.5rem;
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.quantity-input:focus {
+  outline: none;
+}
+
+/* Remove spinner buttons */
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* ===== OPTION GROUP HEADERS ===== */
+.option-group-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(114, 176, 29, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.option-group-header::before {
+  content: '';
+  width: 4px;
+  height: 1.25rem;
+  background: linear-gradient(180deg, #72B01D, #5A8E17);
+  border-radius: 2px;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 3rem;
+  height: 1.5rem;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(74, 74, 74, 0.8);
+  border: 1px solid rgba(114, 176, 29, 0.2);
+  transition: 0.3s;
+  border-radius: 1.5rem;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 1rem;
+  width: 1rem;
+  left: 0.25rem;
+  bottom: 0.2rem;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #72B01D;
+  border-color: #72B01D;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(1.5rem);
+}
+
+/* ===== DISABLED STATES ===== */
+.crystal-radio:has(input:disabled),
+.custom-checkbox:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.crystal-radio:has(input:disabled):hover {
+  transform: none;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(42, 42, 42, 0.6));
+  border-color: rgba(114, 176, 29, 0.15);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .crystal-radio,
+  .custom-checkbox {
+    padding: 0.75rem 1rem;
+  }
+  
+  .crystal-radio span,
+  .custom-checkbox label {
+    font-size: 0.875rem;
+  }
+  
+  .option-price-tag {
+    font-size: 0.8125rem;
+    padding: 0.2rem 0.6rem;
+  }
+}
