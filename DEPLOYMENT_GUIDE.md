@@ -31,23 +31,18 @@ This creates the `out` folder with all static files.
 
 ### 2. Upload Files via FTP/SFTP
 
-**Upload Next.js Static Files:**
+**Upload Everything from 'out' folder:**
 ```
 Local: ./out/*
 Server: /public_html/crystalkeepsakes/test/
 ```
 
-**Upload PHP Backend:**
-```
-Local: ./api/*
-Server: /public_html/crystalkeepsakes/api/
-```
+The build automatically includes:
+- All Next.js static files
+- PHP backend in `out/api/`
+- .htaccess file
 
-**Upload .htaccess:**
-```
-Local: ./public/.htaccess
-Server: /public_html/crystalkeepsakes/test/.htaccess
-```
+So you only upload ONE folder!
 
 ### 3. Create Server .env File
 
