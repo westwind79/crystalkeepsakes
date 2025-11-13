@@ -11,6 +11,7 @@ export default function CheckoutHostedPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [debugInfo, setDebugInfo] = useState<any>(null)
 
   useEffect(() => {
     initiateCheckout()
@@ -47,25 +48,68 @@ export default function CheckoutHostedPage() {
 
       // Create checkout session - Call MAMP PHP backend
       const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
-      const response = await fetch(`${phpBackendUrl}/api/stripe/create-checkout-session.php`, {
+      const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
+      
+      const payload = {
+        cartItems: cartForCheckout,
+        subtotal: subtotal,
+        orderNumber: `CK-${Date.now()}`
+      }
+
+      logger.info('🔍 Making API call', { 
+        url: apiUrl,
+        phpBackendUrl,
+        itemCount: cartForCheckout.length,
+        subtotal
+      })
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          cartItems: cartForCheckout,
-          subtotal: subtotal,
-          orderNumber: `CK-${Date.now()}`
-        })
+        body: JSON.stringify(payload)
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session')
+      logger.info('📡 Response received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      })
+
+      let data
+      try {
+        const responseText = await response.text()
+        logger.info('📄 Raw response:', responseText.substring(0, 500))
+        data = JSON.parse(responseText)
+      } catch (parseError: any) {
+        logger.error('Failed to parse response', parseError)
+        setDebugInfo({
+          url: apiUrl,
+          status: response.status,
+          statusText: response.statusText,
+          responsePreview: await response.text()
+        })
+        throw new Error(`Server returned invalid JSON. Status: ${response.status}`)
       }
 
-      const data = await response.json()
+      if (!response.ok) {
+        setDebugInfo({
+          url: apiUrl,
+          status: response.status,
+          statusText: response.statusText,
+          errorData: data,
+          payload: payload
+        })
+        throw new Error(data.error || `Server error: ${response.status}`)
+      }
 
       if (!data.success) {
+        setDebugInfo({
+          url: apiUrl,
+          responseData: data,
+          payload: payload
+        })
         throw new Error(data.error || 'Checkout session creation failed')
       }
 
@@ -112,9 +156,19 @@ export default function CheckoutHostedPage() {
                 Checkout Error
               </h2>
               <p className="text-gray-600 mb-4">{error}</p>
+              
+              {debugInfo && (
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-xs max-h-60 overflow-auto">
+                  <h3 className="font-bold mb-2 text-gray-900">🔍 Debug Information:</h3>
+                  <pre className="whitespace-pre-wrap text-gray-700">
+                    {JSON.stringify(debugInfo, null, 2)}
+                  </pre>
+                </div>
+              )}
+              
               <button
                 onClick={() => router.push('/cart')}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Return to Cart
               </button>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Stripe Backend</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Stripe Backend Tester</h1>
+        <p>Test your PHP backend connection and Stripe integration</p>
+
+        <div class="test-section">
+            <h2>Configuration</h2>
+            <label for="backendUrl">PHP Backend URL:</label>
+            <input type="text" id="backendUrl" value="http://localhost:8888/crystalkeepsakes" />
+            
+            <label for="apiEndpoint">API Endpoint:</label>
+            <select id="apiEndpoint">
+                <option value="/api/stripe/create-checkout-session.php">Create Checkout Session</option>
+            </select>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 1: Backend Connectivity</h2>
+            <p>Check if the PHP backend is reachable</p>
+            <button onclick="testConnectivity()">Test Connection</button>
+            <div id="connectivityResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 2: .env File Check</h2>
+            <p>Verify environment variables are loaded</p>
+            <div id="envCheckResult" class="result info">
+                <strong>Required Variables:</strong><br>
+                ✓ STRIPE_SECRET_KEY or STRIPE_DEVELOPMENT_SECRET_KEY<br>
+                ✓ NEXT_PUBLIC_ENV_MODE<br>
+                <br>
+                <em>These will be checked by the PHP script automatically</em>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 3: Composer Dependencies</h2>
+            <p>Check if Stripe PHP library is installed (vendor/autoload.php)</p>
+            <div id="composerResult" class="result info">
+                <strong>Note:</strong> The PHP script searches for vendor/autoload.php in:<br>
+                • /app/vendor/autoload.php<br>
+                • /app/api/vendor/autoload.php<br>
+                • {DOCUMENT_ROOT}/crystalkeepsakes/vendor/autoload.php<br>
+                <br>
+                <em>Make sure to run: composer install</em>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 4: Create Test Checkout Session</h2>
+            <p>Send a test cart to create a Stripe checkout session</p>
+            <button onclick="testCheckoutSession()">Create Test Session</button>
+            <div id="checkoutResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 5: Full Request Details</h2>
+            <p>View the exact request being sent</p>
+            <button onclick="showRequestDetails()">Show Request</button>
+            <div id="requestDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        function getFullUrl() {
+            const backendUrl = document.getElementById('backendUrl').value;
+            const endpoint = document.getElementById('apiEndpoint').value;
+            return `${backendUrl}${endpoint}`;
+        }
+
+        async function testConnectivity() {
+            const resultDiv = document.getElementById('connectivityResult');
+            resultDiv.innerHTML = '<div class="loading"></div>Testing connection...';
+            
+            try {
+                const url = getFullUrl();
+                const response = await fetch(url, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                resultDiv.innerHTML = `<div class="result success">
+✓ Connection successful!
+URL: ${url}
+Status: ${response.status} ${response.statusText}
+Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}
+                </div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">
+✗ Connection failed!
+Error: ${error.message}
+URL: ${getFullUrl()}
+
+Possible issues:
+1. MAMP is not running
+2. PHP backend URL is incorrect
+3. CORS is blocking the request
+4. Port 8888 is not accessible
+                </div>`;
+            }
+        }
+
+        async function testCheckoutSession() {
+            const resultDiv = document.getElementById('checkoutResult');
+            resultDiv.innerHTML = '<div class="loading"></div>Creating test checkout session...';
+            
+            const testCart = {
+                cartItems: [
+                    {
+                        name: "Test Crystal Product",
+                        sku: "TEST-001",
+                        price: 49.99,
+                        quantity: 1
+                    }
+                ],
+                subtotal: 49.99,
+                orderNumber: `TEST-${Date.now()}`
+            };
+
+            try {
+                const url = getFullUrl();
+                console.log('🔍 Sending request to:', url);
+                console.log('📦 Payload:', testCart);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testCart)
+                });
+
+                console.log('📡 Response status:', response.status);
+
+                const responseText = await response.text();
+                console.log('📄 Raw response:', responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error(`Invalid JSON response: ${responseText.substring(0, 200)}`);
+                }
+
+                if (response.ok && data.success) {
+                    resultDiv.innerHTML = `<div class="result success">
+✓ Checkout session created successfully!
+
+Session ID: ${data.sessionId}
+Order Number: ${data.order_number}
+Checkout URL: ${data.url}
+
+Full Response:
+${JSON.stringify(data, null, 2)}
+                    </div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">
+✗ Checkout session failed!
+Status: ${response.status} ${response.statusText}
+Error: ${data.error || 'Unknown error'}
+
+Full Response:
+${JSON.stringify(data, null, 2)}
+
+Common Issues:
+1. Missing Stripe API keys in .env
+2. Composer dependencies not installed (stripe/stripe-php)
+3. Invalid Stripe API key format
+4. Stripe account not configured properly
+                    </div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">
+✗ Request failed!
+Error: ${error.message}
+
+Possible issues:
+1. PHP backend is not responding
+2. CORS error (check browser console)
+3. Server returned invalid response
+4. Network connectivity issue
+
+Check browser console (F12) for more details.
+                </div>`;
+                console.error('Full error:', error);
+            }
+        }
+
+        function showRequestDetails() {
+            const resultDiv = document.getElementById('requestDetails');
+            
+            const testCart = {
+                cartItems: [
+                    {
+                        name: "Test Crystal Product",
+                        sku: "TEST-001",
+                        price: 49.99,
+                        quantity: 1
+                    }
+                ],
+                subtotal: 49.99,
+                orderNumber: `TEST-${Date.now()}`
+            };
+
+            resultDiv.innerHTML = `<div class="result info">
+<strong>Request Details:</strong>
+
+URL: ${getFullUrl()}
+Method: POST
+Headers:
+  Content-Type: application/json
+
+Payload:
+${JSON.stringify(testCart, null, 2)}
+
+You can test this with curl:
+curl -X POST "${getFullUrl()}" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(testCart)}'
+            </div>`;
+        }
+
+        // Auto-test connectivity on load
+        window.addEventListener('load', () => {
+            setTimeout(testConnectivity, 500);
+        });
+    </script>
+</body>
+</html>
