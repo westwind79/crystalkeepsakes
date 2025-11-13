@@ -254,7 +254,7 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center text-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading your cart...</p>
@@ -265,7 +265,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50">
+      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 text-slate-900">
         <div className="max-w-7xl mx-auto p-6">
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">Your cart is empty</h2>
@@ -283,7 +283,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-green-900 via-gray-300 to-green-100">
+    <div className="min-h-screen bg-gradient-to-tr from-green-900 via-gray-300 to-green-100 text-slate-900">
       <div className="max-w-7xl max-lg:max-w-4xl mx-auto p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -430,7 +430,7 @@ export default function CartPage() {
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity - 1)}
-                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded"
+                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded cursor-pointer"
                           >
                             −
                           </button>
@@ -440,7 +440,7 @@ export default function CartPage() {
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded"
+                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded cursor-pointer"
                           >
                             +
                           </button>
@@ -503,7 +503,7 @@ export default function CartPage() {
                 type="button" 
                 onClick={proceedToCheckout}
                 disabled={checkoutLoading}
-                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {checkoutLoading ? (
                   <span className="flex items-center justify-center">
