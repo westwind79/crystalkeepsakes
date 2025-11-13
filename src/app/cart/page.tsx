@@ -435,20 +435,21 @@ export default function CartPage() {
 
                       <hr className="border-gray-300 my-4" />
 
-                      {/* ✅ ENHANCED: Quantity and Price */}
+                      {/* ✅ ENHANCED: Quantity Controls and Remove Button */}
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-4">
-                          <h4 className="text-sm font-semibold text-slate-900">Qty:</h4>
+                          <h4 className="text-sm font-semibold text-slate-900">Quantity:</h4>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity - 1)}
                             className="flex items-center justify-center w-[18px] h-[18px] bg-blue-600 hover:bg-blue-700 outline-none rounded-sm cursor-pointer"
+                            disabled={item.quantity <= 1}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-2 fill-white" viewBox="0 0 124 124">
                               <path d="M112 50H12C5.4 50 0 55.4 0 62s5.4 12 12 12h100c6.6 0 12-5.4 12-12s-5.4-12-12-12z"></path>
                             </svg>
                           </button>
-                          <span className="font-semibold text-base leading-[16px]">{item.quantity}</span>
+                          <span className="font-semibold text-base leading-[16px] min-w-[20px] text-center">{item.quantity}</span>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity + 1)}
@@ -461,20 +462,19 @@ export default function CartPage() {
                         </div>
                         
                         <div className="flex items-center gap-4">
-                          <h4 className="text-base font-semibold text-slate-900">
-                            ${((item.price) * item.quantity).toFixed(2)}
-                          </h4>
-
                           {/* Remove Button */}
                           <button
                             onClick={() => handleRemoveItem(index)}
                             disabled={removing === index}
-                            className="cursor-pointer p-2 text-red-500 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50"
+                            className="cursor-pointer px-4 py-2 text-red-600 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50 font-medium text-sm border border-red-300 hover:border-red-500"
                           >
                             {removing === index ? (
                               <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                             ) : (
-                              <Trash2 size={20} />
+                              <span className="flex items-center gap-2">
+                                <Trash2 size={16} />
+                                Remove
+                              </span>
                             )}
                           </button>
                         </div>
