@@ -285,6 +285,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'lightBase',
         optionId: selectedLightBase.id,
+        cockpit3d_option_id: selectedLightBase.cockpit3d_id,
         name: selectedLightBase.name,
         value: selectedLightBase.name,
         priceModifier: selectedLightBase.price || 0
@@ -295,6 +296,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'background',
         optionId: selectedBackground.id,
+        cockpit3d_option_id: selectedBackground.cockpit3d_id,
         name: selectedBackground.name,
         value: selectedBackground.name,
         priceModifier: selectedBackground.price
@@ -311,28 +313,21 @@ export default function ProductDetailClient() {
       })
     }
     
-    // ✅ ADD: Custom text as separate options
-    if (customText.line1) {
+    // Add custom text as separate option if enabled
+    if (showCustomText && (customText.line1 || customText.line2)) {
       options.push({
         category: 'customText',
-        optionId: 'text_line1',
-        name: 'Text Line 1',
-        value: customText.line1,
-        priceModifier: 0
+        optionId: 'customText',
+        cockpit3d_option_id: product?.textOptions?.[1]?.cockpit3d_id,
+        name: 'Custom Text',
+        value: '', // Will be in separate field
+        priceModifier: product?.textOptions?.[1]?.price || 0,
+        line1: customText.line1,
+        line2: customText.line2
       })
     }
     
-    if (customText.line2) {
-      options.push({
-        category: 'customText',
-        optionId: 'text_line2',
-        name: 'Text Line 2',
-        value: customText.line2,
-        priceModifier: 0
-      })
-    }
-    
-    return options  // ✅ NOW INCLUDES ALL OPTIONS
+    return options
   }
 
   /**
