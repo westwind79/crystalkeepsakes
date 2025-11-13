@@ -217,7 +217,13 @@ export default function ProductDetailClient() {
     let optionsPrice = 0
     if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
     if (selectedBackground?.price) optionsPrice += selectedBackground.price
-    if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
+    
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
+      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
+      optionsPrice += textOption?.price || 0
+    }
+    
     return optionsPrice
   }
 
