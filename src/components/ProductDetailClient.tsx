@@ -92,6 +92,7 @@ export default function ProductDetailClient() {
   
   // Image State
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [rawUploadedImage, setRawUploadedImage] = useState<string | null>(null) // Original before masking
   const [originalFileName, setOriginalFileName] = useState<string>('')
   const [finalMaskedImage, setFinalMaskedImage] = useState<string | null>(null)
   const [showEditor, setShowEditor] = useState(false)
