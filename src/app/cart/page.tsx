@@ -386,24 +386,52 @@ export default function CartPage() {
                     {/* ✅ ENHANCED: Product Details */}
                     <div className="sm:border-l sm:pl-4 sm:border-gray-300 w-full">
                       <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1">SKU: {item.sku}</p>
                       
-                      {/* ✅ FIXED: Options Display */}
-                      {Object.keys(displayOptions).length > 0 && (
-                        <div className="text-sm text-gray-600 mt-2 space-y-1">
-                          {Object.entries(displayOptions).map(([key, val]) => (
-                            <p key={key}><strong>{key}:</strong> {val}</p>
-                          ))}
+                      {/* ✅ FIXED: Price Breakdown */}
+                      <div className="mt-3 space-y-1 text-sm">
+                        {/* Base Price */}
+                        <div className="flex justify-between items-center text-gray-700">
+                          <span className="font-medium">Base Price:</span>
+                          <span className="font-semibold">${(item.basePrice || item.price || 0).toFixed(2)}</span>
                         </div>
-                      )}
-
-                      {/* ✅ ENHANCED: Specifications */}
-                      <ul className="mt-4 text-sm text-slate-500 font-medium space-y-1">
-                        {item.sku && <li>SKU: {item.sku}</li>}
-                        {item.sizeDetails?.sizeName && <li>Size: {item.sizeDetails.sizeName}</li>}
-                        {item.customImageMetadata?.hasImage && (
-                          <li className="text-emerald-600">✓ Custom Image: {item.customImageMetadata.filename}</li>
+                        
+                        {/* Options with Prices */}
+                        {displayOptions.length > 0 && (
+                          <div className="border-t border-gray-200 pt-2 mt-2">
+                            <p className="font-medium text-gray-700 mb-2">Selected Options:</p>
+                            {displayOptions.map((opt, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-gray-600 pl-3">
+                                <span>
+                                  <span className="font-medium">{opt.label}:</span>{' '}
+                                  <span className="text-gray-700">{opt.value}</span>
+                                </span>
+                                {opt.price > 0 && (
+                                  <span className="text-gray-700 font-medium">+${opt.price.toFixed(2)}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         )}
-                      </ul>
+                        
+                        {/* Custom Image Indicator */}
+                        {item.customImageMetadata?.hasImage && (
+                          <div className="flex items-center gap-2 text-emerald-600 text-xs pt-2">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span>Custom Image Uploaded: {item.customImageMetadata.filename}</span>
+                          </div>
+                        )}
+                        
+                        {/* Total for this item */}
+                        <div className="flex justify-between items-center border-t border-gray-300 pt-2 mt-2">
+                          <span className="font-semibold text-gray-800">Item Total:</span>
+                          <span className="font-bold text-lg text-slate-900">
+                            ${((item.totalPrice || item.price || 0) * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
 
                       <hr className="border-gray-300 my-4" />
 
