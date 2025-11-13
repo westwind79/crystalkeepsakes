@@ -193,14 +193,24 @@ export default function CartPage() {
       }
     }
     
-    // Fallback to customText field
+    // Fallback to customText field - extract price from options if available
     if (item.customText) {
       const text = item.customText.text || 
                    [item.customText.line1, item.customText.line2].filter(Boolean).join(' / ')
       if (text) {
+        // Try to find the custom text price from optionsPrice or look for text option
+        let textPrice = 0
+        if (Array.isArray(item.options)) {
+          const textOpt = item.options.find((opt: any) => 
+            opt.category === 'textOption' || opt.name?.toLowerCase().includes('text')
+          )
+          if (textOpt && textOpt.priceModifier) {
+            textPrice = textOpt.priceModifier
+          }
+        }
         return {
           text,
-          price: 0 // Price might be in options already
+          price: textPrice
         }
       }
     }
