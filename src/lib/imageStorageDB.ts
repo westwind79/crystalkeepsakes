@@ -84,7 +84,9 @@ class ImageStorageDB {
     productId: string,
     dataUrl: string,
     thumbnail: string,
-    metadata?: ImageRecord['metadata']
+    metadata?: ImageRecord['metadata'],
+    rawImageDataUrl?: string,
+    rawImageThumbnail?: string
   ): Promise<string> {
     try {
       const db = await this.ensureDb()
@@ -95,6 +97,8 @@ class ImageStorageDB {
         productId,
         dataUrl,
         thumbnail,
+        rawImageDataUrl,
+        rawImageThumbnail,
         metadata: metadata || {},
         timestamp: Date.now()
       }
@@ -108,7 +112,8 @@ class ImageStorageDB {
           logger.success('Image stored in IndexedDB', {
             id,
             productId,
-            sizeKB: Math.round(dataUrl.length / 1024)
+            maskedSizeKB: Math.round(dataUrl.length / 1024),
+            hasRawImage: !!rawImageDataUrl
           })
           resolve(id)
         }
