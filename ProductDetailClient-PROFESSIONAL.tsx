@@ -700,30 +700,60 @@ export default function ProductDetailClient() {
                 </div>
               )}
 
-              {/* Custom Text */}
+              {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.length > 0 && (
                 <div className="mb-8">
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Custom Text (Optional)
-                  </label>
-                  <div className="space-y-3">
+                  <div className="flex items-center mb-4">
                     <input
-                      type="text"
-                      placeholder="Line 1 (e.g., Anniversary 2024)"
-                      value={customText.line1}
-                      onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                      className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
-                      maxLength={30}
+                      id="add-custom-text"
+                      name="showCustomText"
+                      type="checkbox"
+                      checked={showCustomText}
+                      onChange={(e) => {
+                        setShowCustomText(e.target.checked)
+                        if (!e.target.checked) {
+                          setCustomText({ line1: '', line2: '' })
+                        }
+                      }}
+                      className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
                     />
-                    <input
-                      type="text"
-                      placeholder="Line 2 (e.g., Forever & Always)"
-                      value={customText.line2}
-                      onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                      className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
-                      maxLength={30}
-                    />
+                    <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
+                      Add Custom Text (+${((product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0).toFixed(2)})
+                    </label>
                   </div>
+                  
+                  {showCustomText && (
+                    <div className="ml-7 space-y-3">
+                      <div>
+                        <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
+                          Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="text-line-1"
+                          placeholder="e.g., Anniversary 2024"
+                          value={customText.line1}
+                          onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
+                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          maxLength={30}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="text-line-2" className="block text-sm text-gray-700 mb-1">
+                          Line 2 <span className="text-gray-400">({customText.line2.length}/30)</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="text-line-2"
+                          placeholder="e.g., Forever & Always"
+                          value={customText.line2}
+                          onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
+                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          maxLength={30}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
