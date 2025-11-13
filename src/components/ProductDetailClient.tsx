@@ -258,8 +258,10 @@ export default function ProductDetailClient() {
         category: 'customText',
         optionId: 'custom-text',
         name: 'Custom Text',
-        value: `Line 1: ${customText.line1 || 'N/A'}\nLine 2: ${customText.line2 || 'N/A'}`,
-        priceModifier: textOption?.price || 0
+        value: 'Custom Text Added',
+        priceModifier: textOption?.price || 0,
+        line1: customText.line1,
+        line2: customText.line2
       })
     }
     
