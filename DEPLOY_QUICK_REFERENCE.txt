@@ -1,0 +1,36 @@
+═══════════════════════════════════════════════════
+  DEPLOY TO: https://crystalkeepsakes.com/test
+═══════════════════════════════════════════════════
+
+1. BUILD (Local):
+   cd /app
+   ./deploy-to-test.sh
+
+2. UPLOAD (FTP):
+   ./out/* → /public_html/crystalkeepsakes/test/
+
+3. CREATE .ENV (Server):
+   Location: /public_html/crystalkeepsakes/.env
+   
+   Content:
+   STRIPE_SECRET_KEY=sk_test_xxxxx
+   COCKPIT3D_RETAILER_ID=256568874
+   NEXT_PUBLIC_ENV_MODE=production
+
+4. SET PERMISSIONS (SSH):
+   chmod 755 /public_html/crystalkeepsakes/test/api/stripe/*.php
+   chmod 600 /public_html/crystalkeepsakes/.env
+
+5. TEST:
+   https://crystalkeepsakes.com/test
+
+═══════════════════════════════════════════════════
+  NOTES:
+═══════════════════════════════════════════════════
+
+✓ API folder is INCLUDED in build (at /test/api/)
+✓ All PHP files will be at: https://crystalkeepsakes.com/test/api/
+✓ Frontend will call PHP at same URL path
+✓ Only ONE folder to upload!
+
+═══════════════════════════════════════════════════
