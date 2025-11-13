@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/fetch-cockpit3d-products.js",
-    "build": "next build && node scripts/copy-api.js",
-    "build:testing": "env-cmd -f .env.testing next build && node scripts/copy-api.js",
-    "build:production": "env-cmd -f .env.production next build && node scripts/copy-api.js",
+    "build": "next build && node scripts/copy-api.js && cp .env.production out/.env",
+    "build:test": "env-cmd -f .env.production.test next build && node scripts/copy-api.js && cp .env.production.test out/.env",
+    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && cp .env.production.root out/.env",
     "start": "next start",
     "lint": "next lint"
   },
