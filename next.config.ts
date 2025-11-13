@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
   output: 'export',
   distDir: 'out',
   reactStrictMode: true,

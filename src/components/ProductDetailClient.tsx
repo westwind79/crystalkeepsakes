@@ -33,18 +33,21 @@ interface LightBase {
   id: string
   name: string
   price: number | null
+  cockpit3d_id?: string
 }
 
 interface BackgroundOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface TextOption {
   id: string
   name: string
   price: number
+  cockpit3d_id?: string
 }
 
 interface ProductImage {
@@ -85,11 +88,14 @@ export default function ProductDetailClient() {
   const [selectedLightBase, setSelectedLightBase] = useState<LightBase | null>(null)
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption | null>(null)
   const [selectedTextOption, setSelectedTextOption] = useState<TextOption | null>(null)
+  const [showCustomText, setShowCustomText] = useState(false)
   const [customText, setCustomText] = useState({ line1: '', line2: '' })
+  const [textCharCount, setTextCharCount] = useState({ line1: 0, line2: 0 })
   const [quantity, setQuantity] = useState(1)
   
   // Image State
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [rawUploadedImage, setRawUploadedImage] = useState<string | null>(null) // Original before masking
   const [originalFileName, setOriginalFileName] = useState<string>('')
   const [finalMaskedImage, setFinalMaskedImage] = useState<string | null>(null)
   const [showEditor, setShowEditor] = useState(false)
@@ -181,6 +187,7 @@ export default function ProductDetailClient() {
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
+      setRawUploadedImage(dataUrl) // Store original raw image
       setUploadedImage(dataUrl)
       setShowEditor(true)
     }
@@ -189,13 +196,14 @@ export default function ProductDetailClient() {
 
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
+   * Receives the masked/compressed image from editor
    */
   const handleImageEditorSave = (compressedImage: string) => {
     logger.info('Image saved from editor', { 
       size: compressedImage.length 
     })
     
-    // Save the masked/compressed image
+    // Save the masked/compressed image (final product)
     setFinalMaskedImage(compressedImage)
     setShowEditor(false)
     
@@ -242,6 +250,11 @@ export default function ProductDetailClient() {
     if (selectedBackground?.price) total += selectedBackground.price
     if (selectedTextOption?.price) total += selectedTextOption.price
     
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      total += product.textOptions[1].price
+    }
+    
     return total * quantity
   }
   
@@ -253,6 +266,12 @@ export default function ProductDetailClient() {
     if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
     if (selectedBackground?.price) optionsPrice += selectedBackground.price
     if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
+    
+    // Add custom text price if enabled
+    if (showCustomText && product?.textOptions?.[1]?.price) {
+      optionsPrice += product.textOptions[1].price
+    }
+    
     return optionsPrice
   }
 
@@ -266,6 +285,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'lightBase',
         optionId: selectedLightBase.id,
+        cockpit3d_option_id: selectedLightBase.cockpit3d_id,
         name: selectedLightBase.name,
         value: selectedLightBase.name,
         priceModifier: selectedLightBase.price || 0
@@ -276,6 +296,7 @@ export default function ProductDetailClient() {
       options.push({
         category: 'background',
         optionId: selectedBackground.id,
+        cockpit3d_option_id: selectedBackground.cockpit3d_id,
         name: selectedBackground.name,
         value: selectedBackground.name,
         priceModifier: selectedBackground.price
@@ -292,28 +313,21 @@ export default function ProductDetailClient() {
       })
     }
     
-    // ✅ ADD: Custom text as separate options
-    if (customText.line1) {
+    // Add custom text as separate option if enabled
+    if (showCustomText && (customText.line1 || customText.line2)) {
       options.push({
         category: 'customText',
-        optionId: 'text_line1',
-        name: 'Text Line 1',
-        value: customText.line1,
-        priceModifier: 0
+        optionId: 'customText',
+        cockpit3d_option_id: product?.textOptions?.[1]?.cockpit3d_id,
+        name: 'Custom Text',
+        value: '', // Will be in separate field
+        priceModifier: product?.textOptions?.[1]?.price || 0,
+        line1: customText.line1,
+        line2: customText.line2
       })
     }
     
-    if (customText.line2) {
-      options.push({
-        category: 'customText',
-        optionId: 'text_line2',
-        name: 'Text Line 2',
-        value: customText.line2,
-        priceModifier: 0
-      })
-    }
-    
-    return options  // ✅ NOW INCLUDES ALL OPTIONS
+    return options
   }
 
   /**
@@ -488,271 +502,371 @@ export default function ProductDetailClient() {
 
   return (    
     <div className="min-h-screen"> 
-      <div className="bg-dark-bg mx-auto pt-4 pb-16 px-4">
-        <nav className="breadcrumbs py-4">
-          <div className="container mx-auto px-4">
-            <Link href="/" className="hover:text-brand-400 transition-colors">Home</Link>  
-            <span className="mx-2 text-gray-600">/</span>
-            <Link href="/products" className="hover:text-brand-400 transition-colors">Products</Link> 
-            <span className="mx-2 text-gray-600">/</span> 
-            <span className="text-text-tertiary">{product.name}</span>
-          </div>
-        </nav>        
-        
-        <div className="container bg-slate-600 mx-auto pt-4 pb-16 px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-            
-            {/* Product Image */}
-            <div>
-              {finalMaskedImage ? (
-                // STAGE 1: Show user's uploaded/edited image
+
+      <nav className="breadcrumbs py-4">
+        <div className="container mx-auto px-4">
+          <Link href="/" className="hover:text-brand-400 transition-colors">Home</Link>  
+          <span className="mx-2 text-gray-600">/</span>
+          <Link href="/products" className="hover:text-brand-400 transition-colors">Products</Link> 
+          <span className="mx-2 text-gray-600">/</span> 
+          <span className="text-text-tertiary">{product.name}</span>
+        </div>
+      </nav>        
+      
+      <div className="container mx-auto py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+          
+          {/* Product Image */}
+          <div>
+            {finalMaskedImage ? (
+              // STAGE 1: Show user's uploaded/edited image
                 <div className="sticky top-[var(--header-height)] z-1 mt-4">
-                  <Image
-                    src={finalMaskedImage} 
-                    alt="Customer Preview" 
-                    className="w-full max-w-xs rounded-lg border border-[var(--surface-700)]"
-                    width={1024}
-                    height={1024}
-                  />
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowEditor(true)}
-                      className="btn btn-secondary px-4 py-3 rounded-md cursor-pointer"
-                    >
-                      Edit Image Again
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFinalMaskedImage(null)}
-                      className="btn btn-secondary px-4 py-3 rounded-md cursor-pointer"
-                    >
-                      Remove & Show Product
-                    </button>
-                  </div>
-                </div>
-              ) : product.images && product.images.length > 1 ? (
-                // STAGE 2: Show gallery if multiple images exist
-                <div className="sticky top-[var(--header-height)]">
-                  <ProductGallery images={product.images} />
-                </div>
-              ) : (
-              // STAGE 3: Show single product image as fallback
-                <div className="sticky top-[var(--header-height)]">
-                  <Image
-                    src={mainImage.src}
-                    alt={product.name}
-                    width={1024}
-                    height={1024}
-                    className="w-full h-auto rounded-lg"
-                  />
-                </div>
-              )}
-              
-            </div>
+                  <div className="relative">                    
+                    <div className="relative">
+                      <Image
+                        src={finalMaskedImage} 
+                        alt="Customer Preview" 
+                        className="w-lg block mx-auto rounded-lg border border-[var(--surface-700)]"
+                        width={0}
+                        height={0}
+                        style={{objectFit: "cover",width:'100%'}}
+                      />
 
-            {/* Product Options Form */}
-            <div>
-              <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-              <p className="text-gray-400 mb-6">{product.description}</p>
-              
-              <div className="text-2xl font-bold mb-6">
-                ${calculateTotal().toFixed(2)}
+                      <div className="px-2 pb-2 border-0 bg-slate-200 absolute bottom-0 right-0">
+                        <div className="mt-2 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowEditor(true)}
+                            className="btn btn-secondary px-3 py-2 rounded-md cursor-pointer"
+                          >
+                            Edit Image Again
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFinalMaskedImage(null)}
+                            className="btn btn-secondary px-3 py-2 rounded-md cursor-pointer"
+                          >
+                            Remove & Show Product
+                          </button>
+                        </div>
+                      </div>                      
+                    </div>    
+
+                    {/* Image Info */}
+                      {finalMaskedImage && (
+                        <div className="mt-4 p-2 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <svg className="w-8 h-8 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                            <div className="text-sm text-blue-300 mb-2 p-1 text-blue-500">
+                            <p className="font-semibold mb-1">Image Details:</p>
+                            <ul className="space-y-1 text-xs">
+                              <li>• Image has been masked and processed for engraving</li>
+                              <li>• Converted to black & white for optimal laser quality</li>
+                              <li>• Compressed for faster processing</li>
+                              {originalFileName && <li>• Original: {originalFileName}</li>}
+                            </ul>
+                          </div>
+                          </div>
+                        </div>
+                      )}             
+                </div>                
               </div>
-
-              {/* Success Message */}
-              {successMessage && (
-                <div className="bg-green-900/20 border border-green-500 rounded-lg p-4 mb-6">
-                  <p className="text-green-400">{successMessage}</p>
-                </div>
-              )}
-
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-900/20 border border-red-500 rounded-lg p-4 mb-6">
-                  <p className="text-red-400">{error}</p>
-                </div>
-              )}
-              
-              {/* Image Upload */}
-              {product.requiresImage && (
-                <div className="mb-6">
-                  <label className="block text-xl font-medium mb-2">Upload Image *</label>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif"
-                    onChange={handleImageUpload}
-                    className="block w-full text-sm text-gray-400 border-[var(--primary)] border-1 rounded-lg
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-md file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-[var(--primary)] file:text-white
-                      hover:file:bg-[var(--brand-600)]
-                      file:cursor-pointer cursor-pointer"
-                  />
-                  {errors.image && (
-                    <p className="text-red-400 text-sm mt-2">{errors.image}</p>
-                  )}
-                  {errors.finalImage && (
-                    <p className="text-red-400 text-sm mt-2">{errors.finalImage}</p>
-                  )}
-                  <div className="mt-4 rounded-xl border border-orange-500/30 bg-orange-500/5 px-3 py-1 text-left">
-                    <p className="text-sm mt-2"><strong>Image Requirements:</strong></p>
-                    <ul className="list-inside list-disc font-thin text-sm p-2">
-                      <li>File type: JPG, PNG, or GIF</li>
-                      <li>Maximum size: 5MB</li>
-                      <li>Minimum dimensions: 500x500 pixels</li>
-                      <li>Higher resolution recommended for best results</li>
-                    </ul>
-                  </div> 
-                 
-                </div>
-              )}
-
-              {/* Size Selection */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
-                  <label className="block text-xl font-medium mb-2">Size *</label>
-                  <div className="space-y-2">
-                    {product.sizes.map(size => (
-                      <label key={size.id} className="crystal-radio flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="size"
-                          value={size.id}
-                          checked={selectedSize?.id === size.id}
-                          onChange={() => setSelectedSize(size)}
-                          className="mr-3"
-                        />
-                        <span>
-                          {size.name} {size.price > 0 && `(+$${size.price})`}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                  {errors.size && (
-                    <p className="text-red-400 text-sm mt-2">{errors.size}</p>
-                  )}
-                </div>
-              )}
-
-              {/* Background Options */}
-              {product.backgroundOptions && product.backgroundOptions.length > 0 && (
-                <div className="mb-6">
-                  <label className="block text-xl font-medium mb-2">Background</label>
-                  <div className="space-y-2">
-                    {product.backgroundOptions.map(bg => (
-                      <label key={bg.id} className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="background"
-                          value={bg.id}
-                          checked={selectedBackground?.id === bg.id}
-                          onChange={() => setSelectedBackground(bg)}
-                          className="mr-3"
-                        />
-                        <span>
-                          {bg.name} {bg.price > 0 && `(+$${bg.price})`}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Light Base Options */}
-              {product.lightBases && product.lightBases.length > 0 && (
-                <div className="mb-6">
-                  <label className="block text-xl font-medium mb-2">Light Base</label>
-                  <div className="space-y-2">
-                    {product.lightBases.map(base => (
-                      <label key={base.id} className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="lightBase"
-                          value={base.id}
-                          checked={selectedLightBase?.id === base.id}
-                          onChange={() => setSelectedLightBase(base)}
-                          className="mr-3"
-                        />
-                        <span>
-                          {base.name} {base.price && base.price > 0 && `(+$${base.price})`}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Custom Text */}
-              {product.textOptions && product.textOptions.length > 0 && (
-                <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Custom Text (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="Line 1"
-                    value={customText.line1}
-                    onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)] mb-2"
-                    maxLength={30}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Line 2"
-                    value={customText.line2}
-                    onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)]"
-                    maxLength={30}
-                  />
-                </div>
-              )}
-
-              
-
-              {/* Quantity */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Quantity</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-24 px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)]"
+            ) : product.images && product.images.length > 1 ? (
+              // STAGE 2: Show gallery if multiple images exist
+              <div className="sticky top-[var(--header-height)]">
+                <ProductGallery images={product.images} />
+              </div>
+            ) : (
+            // STAGE 3: Show single product image as fallback
+              <div className="sticky top-[var(--header-height)]">
+                <Image
+                  src={mainImage.src}
+                  alt={product.name}
+                  width={0}
+                  height={0}
+                  className="w-full h-auto rounded-lg"
+                  style={{objectFit: "cover"}}
                 />
               </div>
-
-              {/* Add to Cart Button */}
-              <button
-                onClick={handleAddToCart}
-                disabled={addingToCart}
-                className="cursor-pointer w-full btn btn-primary py-3 rounded-lg text-lg font-semibold disabled:opacity-50"
-              >
-                {addingToCart ? 'Adding to Cart...' : `Add to Cart - $${calculateTotal().toFixed(2)}`}
-              </button>
-            </div>
+            )}
+            
           </div>
 
-          {/* ImageEditor Modal */}
-          {product.requiresImage && (
-            <ImageEditor
-              show={showEditor}
-              onHide={() => setShowEditor(false)}
-              uploadedImage={uploadedImage}
-              maskImage={product.maskImageUrl || null}
-              onSave={handleImageEditorSave}
-            />
-          )}
+          {/* Product Options Form */}
+          <div>
+            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+            <p className="text-gray-400 mb-6">{product.description}</p>
+            
+            <div className="text-2xl font-bold mb-6">
+              ${calculateTotal().toFixed(2)}
+            </div>
 
-          {/* Added to Cart Modal */}
-          <AddedToCartModal
-            show={showAddedModal}
-            onClose={() => {
-              setShowAddedModal(false)
-              setAddedItemDetails(null)
-            }}
-            itemDetails={addedItemDetails}
-          />
+            {/* Success Message */}
+            {successMessage && (
+              <div className="bg-green-900/20 border border-green-500 rounded-lg p-4 mb-6">
+                <p className="text-green-400">{successMessage}</p>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-900/20 border border-red-500 rounded-lg p-4 mb-6">
+                <p className="text-red-400">{error}</p>
+              </div>
+            )}
+            
+            {/* Image Upload */}
+            {product.requiresImage && (
+              <div className="mb-6">
+                <label className="block text-xl font-medium mb-3">Upload Your Image *</label>
+                
+                {/* Clickable Upload Box */}
+                <label 
+                  htmlFor="image-upload"
+                  className="block w-full cursor-pointer"
+                >
+                  <div className="border-2 border-dashed border-brand-400 rounded-lg p-8 bg-dark-surface hover:bg-dark-bg transition-colors text-center">
+                    {finalMaskedImage ? (
+                      <div className="space-y-4">
+                        {/*<img 
+                          src={finalMaskedImage} 
+                          alt="Preview" 
+                          className="max-w-xs mx-auto rounded-lg"
+                        />*/}
+                        <div className="space-y-2">
+                          <p className="text-brand-400 font-semibold">✓ Image Ready!</p>
+                          {originalFileName && (
+                            <p className="text-text-secondary text-sm">{originalFileName}</p>
+                          )}
+                          <p className="text-text-tertiary text-xs">Click to change image</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <svg className="w-16 h-16 mx-auto text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <div>
+                          <p className="text-text-primary font-semibold mb-1">Click to upload your image</p>
+                          <p className="text-text-secondary text-sm">or drag and drop</p>
+                        </div>
+                        <p className="text-text-tertiary text-xs">
+                          JPG, PNG or GIF (max 5MB)<br/>Minimum dimensions: 500x500 pixels<br/>Higher resolution recommended for best results
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </label>
+                
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                
+                {errors.image && (
+                  <p className="text-red-400 text-sm mt-2">{errors.image}</p>
+                )}
+                {errors.finalImage && (
+                  <p className="text-red-400 text-sm mt-2">{errors.finalImage}</p>
+                )}
+                
+
+              </div>
+            )}
+
+            {/* Size Selection */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-xl font-medium mb-2">Size *</label>
+                <div className="space-y-2">
+                  {product.sizes.map(size => (
+                    <label key={size.id} className="crystal-radio flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="size"
+                        value={size.id}
+                        checked={selectedSize?.id === size.id}
+                        onChange={() => setSelectedSize(size)}
+                        className="mr-3"
+                      />
+                      <span>
+                        {size.name} {size.price > 0 && `(+$${size.price})`}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {errors.size && (
+                  <p className="text-red-400 text-sm mt-2">{errors.size}</p>
+                )}
+              </div>
+            )}
+
+            {/* Background Options */}
+            {product.backgroundOptions && product.backgroundOptions.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-xl font-medium mb-2">Background</label>
+                <div className="space-y-2">
+                  {product.backgroundOptions.map(bg => (
+                    <label key={bg.id} className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="background"
+                        value={bg.id}
+                        checked={selectedBackground?.id === bg.id}
+                        onChange={() => setSelectedBackground(bg)}
+                        className="mr-3"
+                      />
+                      <span>
+                        {bg.name} {bg.price > 0 && `(+$${bg.price})`}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Light Base Options */}
+            {product.lightBases && product.lightBases.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-xl font-medium mb-2">Light Base</label>
+                <div className="space-y-2">
+                  {product.lightBases.map(base => (
+                    <label key={base.id} className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="lightBase"
+                        value={base.id}
+                        checked={selectedLightBase?.id === base.id}
+                        onChange={() => setSelectedLightBase(base)}
+                        className="mr-3"
+                      />
+                      <span>
+                        {base.name} {base.price && base.price > 0 && `(+$${base.price})`}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Custom Text */}
+            {product?.textOptions && product.textOptions.length > 1 && (
+              <div className="mb-6">
+                <div className="flex items-center mb-3">
+                  <input
+                    type="checkbox"
+                    id="add-custom-text"
+                    checked={showCustomText}
+                    onChange={(e) => {
+                      setShowCustomText(e.target.checked)
+                      if (!e.target.checked) {
+                        setCustomText({ line1: '', line2: '' })
+                        setTextCharCount({ line1: 0, line2: 0 })
+                      }
+                    }}
+                    className="mr-3 w-5 h-5"
+                  />
+                  <label htmlFor="add-custom-text" className="text-lg font-semibold cursor-pointer">
+                    Add Custom Text {product.textOptions[1]?.price > 0 && (
+                      <span className="text-brand-400">(+${product.textOptions[1].price.toFixed(2)})</span>
+                    )}
+                  </label>
+                </div>
+                
+                {showCustomText && (
+                  <div className="space-y-3 pl-8">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-sm font-medium text-text-secondary">Line 1</label>
+                        <span className="text-xs text-text-tertiary">({textCharCount.line1}/30)</span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Custom Text Line 1"
+                        value={customText.line1}
+                        onChange={(e) => {
+                          const value = e.target.value.slice(0, 30)
+                          setCustomText({ ...customText, line1: value })
+                          setTextCharCount({ ...textCharCount, line1: value.length })
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-dark-bg border border-gray-600 text-text-primary placeholder-text-tertiary focus:border-brand-400 focus:outline-none"
+                        maxLength={30}
+                      />
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-sm font-medium text-text-secondary">Line 2</label>
+                        <span className="text-xs text-text-tertiary">({textCharCount.line2}/30)</span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Custom Text Line 2"
+                        value={customText.line2}
+                        onChange={(e) => {
+                          const value = e.target.value.slice(0, 30)
+                          setCustomText({ ...customText, line2: value })
+                          setTextCharCount({ ...textCharCount, line2: value.length })
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-dark-bg border border-gray-600 text-text-primary placeholder-text-tertiary focus:border-brand-400 focus:outline-none"
+                        maxLength={30}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            
+
+            {/* Quantity */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">Quantity</label>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                className="w-24 px-4 py-2 rounded-lg bg-[var(--surface-800)] border border-[var(--surface-700)]"
+              />
+            </div>
+
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              disabled={addingToCart}
+              className="w-full btn btn-primary py-3 rounded-lg text-lg font-semibold disabled:opacity-50"
+            >
+              {addingToCart ? 'Adding to Cart...' : `Add to Cart - $${calculateTotal().toFixed(2)}`}
+            </button>
+          </div>
         </div>
+
+        {/* ImageEditor Modal */}
+        {product.requiresImage && (
+          <ImageEditor
+            show={showEditor}
+            onHide={() => setShowEditor(false)}
+            uploadedImage={uploadedImage}
+            maskImage={product.maskImageUrl || null}
+            onSave={handleImageEditorSave}
+          />
+        )}
+
+        {/* Added to Cart Modal */}
+        <AddedToCartModal
+          show={showAddedModal}
+          onClose={() => {
+            setShowAddedModal(false)
+            setAddedItemDetails(null)
+          }}
+          itemDetails={addedItemDetails}
+        />
       </div>
     </div>
   )

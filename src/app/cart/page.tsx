@@ -142,34 +142,106 @@ export default function CartPage() {
     }
   }
 
-  // ✅ ENHANCED: Normalize options for display
-  const getDisplayOptions = (item: any): Record<string, string> => {
-    const options: Record<string, string> = {}
+  // ✅ ENHANCED: Normalize options for display with prices
+  const getDisplayOptions = (item: any): Array<{label: string, value: string, price: number}> => {
+    const optionsArray: Array<{label: string, value: string, price: number}> = []
     
-    // New format: options array
+    // Add size first (most important)
+    if (item.sizeDetails?.sizeName || item.size?.sizeName) {
+      const sizeDetails = item.sizeDetails || item.size
+      optionsArray.push({
+        label: 'Size',
+        value: sizeDetails.sizeName || sizeDetails.name,
+        price: sizeDetails.basePrice || sizeDetails.price || 0
+      })
+    }
+    
+    // New format: options array (from ProductDetailClient)
     if (Array.isArray(item.options)) {
       item.options.forEach((opt: any) => {
         if (opt.category === 'customText') {
-          options['Custom Text'] = opt.value
-        } else if (opt.value && opt.value !== 'None') {
-          options[opt.category || opt.name] = opt.value
+          optionsArray.push({
+            label: opt.name || 'Custom Text',
+            value: opt.value,
+            price: opt.priceModifier || 0
+          })
+        } else if (opt.value && opt.value !== 'None' && opt.value !== 'none') {
+          optionsArray.push({
+            label: opt.name || opt.category || 'Option',
+            value: opt.value,
+            price: opt.priceModifier || 0
+          })
         }
       })
     } 
     // Old format: flat object
-    else if (item.options) {
-      Object.entries(item.options).forEach(([key, value]) => {
-        if (value && value !== 'None' && key !== 'imageFilename' && key !== 'maskName') {
-          options[key] = String(value)
+    else if (item.options && typeof item.options === 'object') {
+      // Handle light base
+      if (item.options.lightBase) {
+        const lb = item.options.lightBase
+        if (typeof lb === 'object' && lb.name && lb.name !== 'None') {
+          optionsArray.push({
+            label: 'Light Base',
+            value: lb.name,
+            price: lb.price || 0
+          })
+        } else if (typeof lb === 'string' && lb !== 'None' && lb !== 'none') {
+          optionsArray.push({
+            label: 'Light Base',
+            value: lb,
+            price: 0
+          })
         }
-      })
+      }
+      
+      // Handle background
+      if (item.options.background) {
+        const bg = item.options.background
+        if (typeof bg === 'object' && bg.name && bg.name !== 'None') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg.name,
+            price: bg.price || 0
+          })
+        } else if (typeof bg === 'string' && bg !== 'None' && bg !== 'none') {
+          optionsArray.push({
+            label: 'Background',
+            value: bg,
+            price: 0
+          })
+        }
+      }
+      
+      // Handle custom text
+      if (item.options.customText) {
+        const txt = item.options.customText
+        const textValue = typeof txt === 'string' ? txt : txt.text || `${txt.line1 || ''} ${txt.line2 || ''}`.trim()
+        if (textValue) {
+          optionsArray.push({
+            label: 'Custom Text',
+            value: textValue,
+            price: 0
+          })
+        }
+      }
     }
     
-    if (item.sizeDetails?.sizeName) {
-      options['Size'] = item.sizeDetails.sizeName
+    // Handle standalone customText field
+    if (item.customText && !optionsArray.some(opt => opt.label === 'Custom Text')) {
+      const textValue = typeof item.customText === 'string' 
+        ? item.customText 
+        : item.customText.text || `${item.customText.line1 || ''} ${item.customText.line2 || ''}`.trim()
+      
+      if (textValue) {
+        optionsArray.push({
+          label: 'Custom Text',
+          value: textValue,
+          price: 0
+        })
+      }
     }
     
-    return options
+    return optionsArray
   }
 
   // ✅ FIXED: Import Cockpit3D order builder
@@ -314,41 +386,70 @@ export default function CartPage() {
                     {/* ✅ ENHANCED: Product Details */}
                     <div className="sm:border-l sm:pl-4 sm:border-gray-300 w-full">
                       <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1">SKU: {item.sku}</p>
                       
-                      {/* ✅ FIXED: Options Display */}
-                      {Object.keys(displayOptions).length > 0 && (
-                        <div className="text-sm text-gray-600 mt-2 space-y-1">
-                          {Object.entries(displayOptions).map(([key, val]) => (
-                            <p key={key}><strong>{key}:</strong> {val}</p>
-                          ))}
+                      {/* ✅ FIXED: Price Breakdown */}
+                      <div className="mt-3 space-y-1 text-sm">
+                        {/* Base Price */}
+                        <div className="flex justify-between items-center text-gray-700">
+                          <span className="font-medium">Base Price:</span>
+                          <span className="font-semibold">${(item.basePrice || item.price || 0).toFixed(2)}</span>
                         </div>
-                      )}
-
-                      {/* ✅ ENHANCED: Specifications */}
-                      <ul className="mt-4 text-sm text-slate-500 font-medium space-y-1">
-                        {item.sku && <li>SKU: {item.sku}</li>}
-                        {item.sizeDetails?.sizeName && <li>Size: {item.sizeDetails.sizeName}</li>}
-                        {item.customImageMetadata?.hasImage && (
-                          <li className="text-emerald-600">✓ Custom Image: {item.customImageMetadata.filename}</li>
+                        
+                        {/* Options with Prices */}
+                        {displayOptions.length > 0 && (
+                          <div className="border-t border-gray-200 pt-2 mt-2">
+                            <p className="font-medium text-gray-700 mb-2">Selected Options:</p>
+                            {displayOptions.map((opt, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-gray-600 pl-3">
+                                <span>
+                                  <span className="font-medium">{opt.label}:</span>{' '}
+                                  <span className="text-gray-700">{opt.value}</span>
+                                </span>
+                                {opt.price > 0 && (
+                                  <span className="text-gray-700 font-medium">+${opt.price.toFixed(2)}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         )}
-                      </ul>
+                        
+                        {/* Custom Image Indicator */}
+                        {item.customImageMetadata?.hasImage && (
+                          <div className="flex items-center gap-2 text-emerald-600 text-xs pt-2">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span>Custom Image Uploaded: {item.customImageMetadata.filename}</span>
+                          </div>
+                        )}
+                        
+                        {/* Total for this item */}
+                        <div className="flex justify-between items-center border-t border-gray-300 pt-2 mt-2">
+                          <span className="font-semibold text-gray-800">Item Total:</span>
+                          <span className="font-bold text-lg text-slate-900">
+                            ${((item.totalPrice || item.price || 0) * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
 
                       <hr className="border-gray-300 my-4" />
 
-                      {/* ✅ ENHANCED: Quantity and Price */}
+                      {/* ✅ ENHANCED: Quantity Controls and Remove Button */}
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-4">
-                          <h4 className="text-sm font-semibold text-slate-900">Qty:</h4>
+                          <h4 className="text-sm font-semibold text-slate-900">Quantity:</h4>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity - 1)}
                             className="flex items-center justify-center w-[18px] h-[18px] bg-blue-600 hover:bg-blue-700 outline-none rounded-sm cursor-pointer"
+                            disabled={item.quantity <= 1}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-2 fill-white" viewBox="0 0 124 124">
                               <path d="M112 50H12C5.4 50 0 55.4 0 62s5.4 12 12 12h100c6.6 0 12-5.4 12-12s-5.4-12-12-12z"></path>
                             </svg>
                           </button>
-                          <span className="font-semibold text-base leading-[16px]">{item.quantity}</span>
+                          <span className="font-semibold text-base leading-[16px] min-w-[20px] text-center">{item.quantity}</span>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity + 1)}
@@ -361,20 +462,19 @@ export default function CartPage() {
                         </div>
                         
                         <div className="flex items-center gap-4">
-                          <h4 className="text-base font-semibold text-slate-900">
-                            ${((item.price) * item.quantity).toFixed(2)}
-                          </h4>
-
                           {/* Remove Button */}
                           <button
                             onClick={() => handleRemoveItem(index)}
                             disabled={removing === index}
-                            className="cursor-pointer p-2 text-red-500 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50"
+                            className="cursor-pointer px-4 py-2 text-red-600 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50 font-medium text-sm border border-red-300 hover:border-red-500"
                           >
                             {removing === index ? (
                               <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                             ) : (
-                              <Trash2 size={20} />
+                              <span className="flex items-center gap-2">
+                                <Trash2 size={16} />
+                                Remove
+                              </span>
                             )}
                           </button>
                         </div>
