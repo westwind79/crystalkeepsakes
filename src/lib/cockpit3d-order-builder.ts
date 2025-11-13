@@ -183,15 +183,13 @@ function buildCockpit3DOrderItem(item: any, index: number): Cockpit3DOrderItem {
   }
 
   // Add custom text as special instructions
-  if (item.customText || item.options?.customText) {
-    const textValue = typeof item.customText === 'string' 
-      ? item.customText
-      : item.customText?.text || ''
+  const customTextValue = getCustomTextValue(item)
+  if (customTextValue) {
+    const textLines = Array.isArray(customTextValue) ? customTextValue : [customTextValue]
+    const textFormatted = textLines.map((line, idx) => `Line ${idx + 1}: ${line}`).join(', ')
     
-    if (textValue) {
-      orderItem.special_instructions = (orderItem.special_instructions || '') + 
-        `\nCustom Text: ${textValue}`
-    }
+    orderItem.special_instructions = (orderItem.special_instructions || '') + 
+      `\nCustom Text: ${textFormatted}`
   }
 
   return orderItem
