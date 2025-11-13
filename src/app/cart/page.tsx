@@ -1,9 +1,9 @@
-// app/cart/page.tsx
-// Version: 3.0.0 - 2025-11-11 - MERGED & FIXED
-// ✅ Merged: All functions from original files preserved
-// ✅ Fixed: updateQuantity uses cartUtils.saveCart
-// ✅ Fixed: Options display handles both formats
-// ✅ Enhanced: Layout from page-1/page-2
+// app/cart/page-new.tsx
+// Version: 4.0.0 - 2025-11-12 - COMPLETE CART OVERHAUL
+// ✅ Itemized breakdown of ALL options with individual prices
+// ✅ Custom text display as separate line item with price
+// ✅ Display BOTH raw uploaded image AND final masked image side-by-side
+// ✅ Better visual hierarchy and pricing transparency
 
 'use client'
 
@@ -21,18 +21,23 @@ import {
 } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
 
-// ✅ PRESERVE: Type interface from original files
+// Type interface
 interface CartItem {
   productId: string
   name: string
   sku: string
+  basePrice?: number
+  optionsPrice?: number
   price: number
+  totalPrice?: number
   quantity: number
   options: any
   sizeDetails?: any
   customImage?: {
-    dataUrl: string
-    thumbnail: string
+    dataUrl: string // Masked image for Cockpit3D
+    thumbnail: string // Masked thumbnail
+    rawImageDataUrl?: string // Original uploaded image
+    rawImageThumbnail?: string // Original thumbnail
     metadata: any
   }
   customImageMetadata?: {
@@ -40,6 +45,12 @@ interface CartItem {
     maskName?: string
     hasImage: boolean
   }
+  customText?: {
+    text?: string
+    line1?: string
+    line2?: string
+  }
+  productImage?: string
   cockpit3d_id?: string
   dateAdded: string
 }
@@ -50,23 +61,22 @@ export default function CartPage() {
   const [removing, setRemoving] = useState<number | null>(null)
   const [storageStats, setStorageStats] = useState<any>(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
-  const [total, setTotal] = useState(0) // ✅ PRESERVE: total state
+  const [total, setTotal] = useState(0)
 
-  // ✅ PRESERVE: loadCart from page.tsx
   const loadCart = async () => {
     try {
       setLoading(true)
       const cartWithImages = await getCartWithImages()
       setCart(cartWithImages)
       
-      // ✅ PRESERVE: Calculate total like page-2
+      // Calculate total
       const sum = cartWithImages.reduce((acc, item) => {
-        const itemPrice = item.price || (item as any).totalPrice || 0
+        const itemPrice = item.price || item.totalPrice || 0
         return acc + (itemPrice * item.quantity)
       }, 0)
       setTotal(sum)
       
-      // ✅ PRESERVE: Storage stats from page.tsx
+      // Storage stats
       const stats = await getImageStorageStats()
       setStorageStats(stats)
       
@@ -84,7 +94,6 @@ export default function CartPage() {
   useEffect(() => {
     loadCart()
 
-    // ✅ PRESERVE: Event listener from page.tsx
     const handleCartUpdate = () => {
       loadCart()
     }
@@ -95,7 +104,6 @@ export default function CartPage() {
     }
   }, [])
 
-  // ✅ PRESERVE: handleRemoveItem from page.tsx
   const handleRemoveItem = async (index: number) => {
     setRemoving(index)
     try {
@@ -109,7 +117,6 @@ export default function CartPage() {
     }
   }
 
-  // ✅ PRESERVE: handleClearCart from page.tsx
   const handleClearCart = async () => {
     if (confirm('Are you sure you want to clear your entire cart?')) {
       try {
@@ -122,19 +129,13 @@ export default function CartPage() {
     }
   }
 
-  // ✅ FIXED: updateQuantity - Get cart WITHOUT images to avoid localStorage quota
   const updateQuantity = async (index: number, newQuantity: number) => {
     if (newQuantity < 1) return
     
     try {
-      // Get cart WITHOUT images (just from localStorage)
       const currentCart = getCart()
       currentCart[index].quantity = newQuantity
-      
-      // Save back to localStorage
       saveCart(currentCart)
-      
-      // Reload cart with images for display
       await loadCart()
       window.dispatchEvent(new Event('cartUpdated'))
     } catch (error) {
@@ -142,54 +143,23 @@ export default function CartPage() {
     }
   }
 
-  // ✅ ENHANCED: Normalize options for display with prices
-  const getDisplayOptions = (item: any): Array<{label: string, value: string, price: number}> => {
-    const optionsArray: Array<{label: string, value: string, price: number}> = []
+  /**
+   * Parse options to extract detailed breakdown with prices
+   */
+  const getDetailedOptions = (item: any): Array<{name: string, value: string, price: number}> => {
+    const details: Array<{name: string, value: string, price: number}> = []
     
-    // Add size first (most important)
-    if (item.sizeDetails?.sizeName || item.size?.sizeName) {
-      const sizeDetails = item.sizeDetails || item.size
-      optionsArray.push({
-        label: 'Size',
-        value: sizeDetails.sizeName || sizeDetails.name,
-        price: sizeDetails.basePrice || sizeDetails.price || 0
-      })
-    }
-    
-    // New format: options array (from ProductDetailClient)
+    // Parse options array
     if (Array.isArray(item.options)) {
       item.options.forEach((opt: any) => {
-        if (opt.category === 'customText') {
-          optionsArray.push({
-            label: opt.name || 'Custom Text',
+        // Skip custom text (we'll show it separately)
+        if (opt.category === 'customText') return
+        
+        if (opt.value && opt.value !== 'None') {
+          details.push({
+            name: opt.category || opt.name || 'Option',
             value: opt.value,
             price: opt.priceModifier || 0
-          })
-        } else if (opt.value && opt.value !== 'None' && opt.value !== 'none') {
-          optionsArray.push({
-            label: opt.name || opt.category || 'Option',
-            value: opt.value,
-            price: opt.priceModifier || 0
-          })
-        }
-      })
-    } 
-    // Old format: flat object
-    else if (item.options && typeof item.options === 'object') {
-      // Handle light base
-      if (item.options.lightBase) {
-        const lb = item.options.lightBase
-        if (typeof lb === 'object' && lb.name && lb.name !== 'None') {
-          optionsArray.push({
-            label: 'Light Base',
-            value: lb.name,
-            price: lb.price || 0
-          })
-        } else if (typeof lb === 'string' && lb !== 'None' && lb !== 'none') {
-          optionsArray.push({
-            label: 'Light Base',
-            value: lb,
-            price: 0
           })
         }
       }
@@ -226,72 +196,79 @@ export default function CartPage() {
       }
     }
     
-    // Handle standalone customText field
-    if (item.customText && !optionsArray.some(opt => opt.label === 'Custom Text')) {
-      const textValue = typeof item.customText === 'string' 
-        ? item.customText 
-        : item.customText.text || `${item.customText.line1 || ''} ${item.customText.line2 || ''}`.trim()
-      
-      if (textValue) {
-        optionsArray.push({
-          label: 'Custom Text',
-          value: textValue,
-          price: 0
-        })
+    // Add size if available
+    if (item.sizeDetails?.sizeName) {
+      details.unshift({
+        name: 'Size',
+        value: item.sizeDetails.sizeName,
+        price: item.sizeDetails.basePrice || item.basePrice || 0
+      })
+    }
+    
+    return details
+  }
+
+  /**
+   * Get custom text option details - returns two separate lines
+   */
+  const getCustomTextDetails = (item: any): {line1: string, line2: string, price: number} | null => {
+    // Check in options array first
+    if (Array.isArray(item.options)) {
+      const textOption = item.options.find((opt: any) => opt.category === 'customText')
+      if (textOption && (textOption.line1 || textOption.line2)) {
+        return {
+          line1: textOption.line1 || '',
+          line2: textOption.line2 || '',
+          price: textOption.priceModifier || 0
+        }
       }
     }
     
-    return optionsArray
+    // Fallback to customText field - extract price from options if available
+    if (item.customText) {
+      const line1 = item.customText.line1 || ''
+      const line2 = item.customText.line2 || ''
+      
+      if (line1 || line2) {
+        // Try to find the custom text price from optionsPrice or look for text option
+        let textPrice = 0
+        if (Array.isArray(item.options)) {
+          const textOpt = item.options.find((opt: any) => 
+            opt.category === 'textOption' || opt.name?.toLowerCase().includes('text')
+          )
+          if (textOpt && textOpt.priceModifier) {
+            textPrice = textOpt.priceModifier
+          }
+        }
+        return {
+          line1,
+          line2,
+          price: textPrice
+        }
+      }
+    }
+    
+    return null
   }
 
-  // ✅ FIXED: Import Cockpit3D order builder
   const buildCockpitOrder = () => {
     const orderNumber = `CK-${Date.now()}`
-    
-    // Import and use the proper Cockpit3D order builder
     const { buildCockpit3DOrder } = require('@/lib/cockpit3d-order-builder')
-    
-    // Build order with proper Cockpit3D structure
     const cockpitOrder = buildCockpit3DOrder(
       orderNumber,
       cart,
-      undefined, // Customer info will be added at checkout
-      undefined  // Retailer ID from env
+      undefined,
+      undefined
     )
-    
     return cockpitOrder
   }
 
-  // ✅ PRESERVE: proceedToCheckout from page-2
   async function proceedToCheckout() {
     setCheckoutLoading(true)
     
     try {
-      const orderData = buildCockpitOrder()
-      
-      // Strip customImage objects (keep only IDs) to avoid quota issues
-      const cartForStorage = cart.map(item => {
-        const { customImage, ...itemWithoutImage } = item
-        return {
-          ...itemWithoutImage,
-          // Keep only the ID and metadata, not the full image data
-          customImageId: item.customImageId,
-          customImageMetadata: item.customImageMetadata
-        }
-      })
-      
-      console.log('💾 Storing order in sessionStorage (images stripped)')
-      console.log('📊 Cart size:', JSON.stringify(cartForStorage).length, 'bytes')
-      
-      sessionStorage.setItem('pendingOrder', JSON.stringify({
-        cartItems: cartForStorage,
-        subtotal: total,
-        total: total,
-        orderNumber: orderData.order_id,
-        cockpitOrderData: orderData
-      }))
-      
-      window.location.href = '/checkout'
+      // Redirect to Stripe Hosted Checkout
+      window.location.href = '/checkout-hosted'
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
@@ -300,10 +277,9 @@ export default function CartPage() {
     }
   }
 
-  // ✅ PRESERVE: Loading state from page-2
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center text-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading your cart...</p>
@@ -312,10 +288,9 @@ export default function CartPage() {
     )
   }
 
-  // ✅ PRESERVE: Empty state from page-2
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50">
+      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 text-slate-900">
         <div className="max-w-7xl mx-auto p-6">
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">Your cart is empty</h2>
@@ -333,11 +308,11 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-green-900 via-gray-300 to-green-100">
+    <div className="min-h-screen bg-gradient-to-tr from-green-900 via-gray-300 to-green-100 text-slate-900">
       <div className="max-w-7xl max-lg:max-w-4xl mx-auto p-6">
-        {/* ✅ ENHANCED: Header from page-2 */}
-        <div className="flex items-center justify-between mb-6 text-slate-900">
-          <h2 className="text-xl font-semibold text-slate-900">Your shopping cart</h2>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-900">Your Shopping Cart</h2>
           <button
             onClick={handleClearCart}
             className="cursor-pointer text-sm text-red-600 hover:text-red-700 font-medium"
@@ -346,149 +321,179 @@ export default function CartPage() {
           </button>
         </div>
 
-        {/* ✅ PRESERVE: Storage Stats from page.tsx */}
+        {/* Storage Stats (Dev Mode) */}
         {process.env.NODE_ENV === 'development' && storageStats && (
           <div className="bg-slate-700 rounded-lg p-4 mb-6 text-sm text-gray-300">
             <h3 className="font-bold mb-2">Storage Stats:</h3>
             <div className="grid grid-cols-2 gap-2">
               <div>localStorage: {storageStats.storageHealth.percentUsed.toFixed(1)}% used</div>
               <div>IndexedDB Images: {storageStats.totalImages}</div>
-              <div>localStorage Size: {(storageStats.storageHealth.usedSpace / 1024).toFixed(1)} KB</div>
-              <div>Image Storage: {storageStats.estimatedSizeMB.toFixed(2)} MB</div>
             </div>
           </div>
         )}
 
-        {/* ✅ ENHANCED: 2-column layout from page-2 */}
-        <div className="grid lg:grid-cols-3 gap-4 relative">
-          {/* Cart Items Column */}
-          <div className="lg:col-span-2 space-y-4">
+        {/* 2-column layout */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Cart Items */}
+          <div className="lg:col-span-2 space-y-6">
             {cart.map((item, index) => {
-              const displayImage = item.customImage?.thumbnail ||  // User's uploaded photo
-                                 item.productImage ||             // Product's own photo
-                                 'https://placehold.co/800x800?text=No+Image'  // Fallback
-              
-              const displayOptions = getDisplayOptions(item)
+              const detailedOptions = getDetailedOptions(item)
+              const customTextDetails = getCustomTextDetails(item)
               
               return (
-                <div key={index} className="p-6 text-slate-900 bg-white shadow-sm border border-gray-300 rounded-md relative">
-                  <div className="flex items-start max-sm:flex-col gap-4 max-sm:gap-6">
+                <div key={index} className="bg-white shadow-md border border-gray-300 rounded-lg p-6">
+                  <div className="flex items-start gap-6">
                     
-                    {/* ✅ ENHANCED: Product Image */}
-                    <div className="w-32 h-32 shrink-0">
-                      <img 
-                        src={displayImage}
-                        alt={item.name}
-                        className="w-full h-full object-contain rounded-lg"
-                      />
+                    {/* Images Section - Show BOTH if available */}
+                    <div className="flex-shrink-0">
+                      {item.customImage ? (
+                        <div className="space-y-3">
+                          {/* Original Uploaded Image */}
+                          {item.customImage.rawImageThumbnail && (
+                            <div className="text-center">
+                              <img 
+                                src={item.customImage.rawImageThumbnail}
+                                alt="Your Original"
+                                className="w-32 h-32 object-cover rounded-lg border-2 border-blue-300"
+                              />
+                              <p className="text-xs text-blue-600 font-medium mt-1">Your Original</p>
+                            </div>
+                          )}
+                          
+                          {/* Final Masked Image */}
+                          <div className="text-center">
+                            <img 
+                              src={item.customImage.thumbnail}
+                              alt="Final Engraved Version"
+                              className="w-32 h-32 object-contain rounded-lg border-2 border-green-500"
+                            />
+                            <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
+                          </div>
+                        </div>
+                      ) : (
+                        // Product image fallback
+                        <img 
+                          src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
+                          alt={item.name}
+                          className="w-32 h-32 object-contain rounded-lg"
+                        />
+                      )}
                     </div>
 
-                    {/* ✅ ENHANCED: Product Details */}
-                    <div className="sm:border-l sm:pl-4 sm:border-gray-300 w-full">
-                      <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
-                      <p className="text-xs text-gray-500 mt-1">SKU: {item.sku}</p>
-                      
-                      {/* ✅ FIXED: Price Breakdown */}
-                      <div className="mt-3 space-y-1 text-sm">
-                        {/* Base Price */}
-                        <div className="flex justify-between items-center text-gray-700">
-                          <span className="font-medium">Base Price:</span>
-                          <span className="font-semibold">${(item.basePrice || item.price || 0).toFixed(2)}</span>
+                    {/* Product Details */}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-900">{item.name}</h3>
+                          {item.sku && <p className="text-sm text-gray-500">SKU: {item.sku}</p>}
                         </div>
                         
-                        {/* Options with Prices */}
-                        {displayOptions.length > 0 && (
-                          <div className="border-t border-gray-200 pt-2 mt-2">
-                            <p className="font-medium text-gray-700 mb-2">Selected Options:</p>
-                            {displayOptions.map((opt, idx) => (
-                              <div key={idx} className="flex justify-between items-center text-gray-600 pl-3">
-                                <span>
-                                  <span className="font-medium">{opt.label}:</span>{' '}
-                                  <span className="text-gray-700">{opt.value}</span>
-                                </span>
-                                {opt.price > 0 && (
-                                  <span className="text-gray-700 font-medium">+${opt.price.toFixed(2)}</span>
-                                )}
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => handleRemoveItem(index)}
+                          disabled={removing === index}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                          title="Remove item"
+                        >
+                          {removing === index ? (
+                            <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                          ) : (
+                            <Trash2 size={20} />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* DETAILED OPTIONS BREAKDOWN */}
+                      <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Configuration Details:</h4>
+                        <div className="space-y-2">
+                          {detailedOptions.map((opt, idx) => (
+                            <div key={idx} className="flex justify-between items-center text-sm">
+                              <span className="text-gray-700">
+                                <strong>{opt.name}:</strong> {opt.value}
+                              </span>
+                              <span className="text-gray-900 font-medium">
+                                ${opt.price.toFixed(2)}
+                              </span>
+                            </div>
+                          ))}
+                          
+                          {/* Custom Text Line Item */}
+                          {customTextDetails && (
+                            <div className="flex justify-between items-start text-sm pt-2 border-t border-gray-300">
+                              <div className="flex-1">
+                                <strong className="text-gray-700">Custom Text:</strong>
+                                <div className="mt-1 space-y-1">
+                                  {customTextDetails.line1 && (
+                                    <p className="text-gray-600 italic">Line 1: "{customTextDetails.line1}"</p>
+                                  )}
+                                  {customTextDetails.line2 && (
+                                    <p className="text-gray-600 italic">Line 2: "{customTextDetails.line2}"</p>
+                                  )}
+                                </div>
                               </div>
-                            ))}
-                          </div>
-                        )}
+                              <span className="text-gray-900 font-medium ml-3">
+                                +${customTextDetails.price.toFixed(2)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         
-                        {/* Custom Image Indicator */}
-                        {item.customImageMetadata?.hasImage && (
-                          <div className="flex items-center gap-2 text-emerald-600 text-xs pt-2">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                            </svg>
-                            <span>Custom Image Uploaded: {item.customImageMetadata.filename}</span>
-                          </div>
-                        )}
-                        
-                        {/* Total for this item */}
-                        <div className="flex justify-between items-center border-t border-gray-300 pt-2 mt-2">
-                          <span className="font-semibold text-gray-800">Item Total:</span>
-                          <span className="font-bold text-lg text-slate-900">
-                            ${((item.totalPrice || item.price || 0) * item.quantity).toFixed(2)}
+                        {/* Total Item Price */}
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-gray-400">
+                          <span className="text-sm font-bold text-gray-800">Item Total:</span>
+                          <span className="text-lg font-bold text-blue-600">
+                            ${item.price.toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      <hr className="border-gray-300 my-4" />
+                      {/* Image Metadata */}
+                      {item.customImageMetadata?.hasImage && (
+                        <div className="text-sm text-emerald-600 bg-emerald-50 rounded px-3 py-2 mb-3">
+                          ✓ Custom Image: {item.customImageMetadata.filename}
+                        </div>
+                      )}
 
-                      {/* ✅ ENHANCED: Quantity Controls and Remove Button */}
+                      {/* Quantity Controls and Line Total */}
                       <div className="flex items-center justify-between flex-wrap gap-4">
-                        <div className="flex items-center gap-4">
-                          <h4 className="text-sm font-semibold text-slate-900">Quantity:</h4>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-semibold text-gray-700">Qty:</span>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity - 1)}
-                            className="flex items-center justify-center w-[18px] h-[18px] bg-blue-600 hover:bg-blue-700 outline-none rounded-sm cursor-pointer"
-                            disabled={item.quantity <= 1}
+                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded cursor-pointer"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-2 fill-white" viewBox="0 0 124 124">
-                              <path d="M112 50H12C5.4 50 0 55.4 0 62s5.4 12 12 12h100c6.6 0 12-5.4 12-12s-5.4-12-12-12z"></path>
-                            </svg>
+                            −
                           </button>
-                          <span className="font-semibold text-base leading-[16px] min-w-[20px] text-center">{item.quantity}</span>
+                          <span className="text-lg font-bold text-gray-900 min-w-[2rem] text-center">
+                            {item.quantity}
+                          </span>
                           <button 
                             type="button"
                             onClick={() => updateQuantity(index, item.quantity + 1)}
-                            className="flex items-center justify-center w-[18px] h-[18px] bg-blue-600 hover:bg-blue-700 outline-none rounded-sm cursor-pointer"
+                            className="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded cursor-pointer"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-2 fill-white" viewBox="0 0 42 42">
-                              <path d="M37.059 16H26V4.941C26 2.224 23.718 0 21 0s-5 2.224-5 4.941V16H4.941C2.224 16 0 18.282 0 21s2.224 5 4.941 5H16v11.059C16 39.776 18.282 42 21 42s5-2.224 5-4.941V26h11.059C39.776 26 42 23.718 42 21s-2.224-5-4.941-5z"></path>
-                            </svg>
+                            +
                           </button>
                         </div>
                         
-                        <div className="flex items-center gap-4">
-                          {/* Remove Button */}
-                          <button
-                            onClick={() => handleRemoveItem(index)}
-                            disabled={removing === index}
-                            className="cursor-pointer px-4 py-2 text-red-600 hover:bg-red-500 hover:text-white rounded transition-colors disabled:opacity-50 font-medium text-sm border border-red-300 hover:border-red-500"
-                          >
-                            {removing === index ? (
-                              <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-                            ) : (
-                              <span className="flex items-center gap-2">
-                                <Trash2 size={16} />
-                                Remove
-                              </span>
-                            )}
-                          </button>
+                        <div className="text-right">
+                          <p className="text-xs text-gray-500">Line Total</p>
+                          <p className="text-2xl font-bold text-slate-900">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
                         </div>
                       </div>
 
-                      {/* ✅ ENHANCED: Debug Info */}
+                      {/* Debug Info */}
                       {process.env.NODE_ENV === 'development' && (
-                        <div className="w-full mt-3 p-2 rounded border border-blue-200 bg-blue-50">
+                        <div className="mt-3 p-2 rounded border border-blue-200 bg-blue-50">
                           <small className="text-blue-700">
-                            <strong>Debug:</strong><br/>
-                            SKU: {item.sku || 'N/A'} | 
-                            Cockpit3D ID: {item.cockpit3d_id || 'N/A'}<br/>
-                            Image: {item.customImageMetadata?.hasImage ? 'Yes' : 'No'} | 
-                            {item.customImage && ` ${(item.customImage.metadata?.fileSize / 1024).toFixed(1)}KB`}
+                            <strong>Debug:</strong> SKU: {item.sku} | 
+                            Base: ${item.basePrice?.toFixed(2)} | 
+                            Options: ${item.optionsPrice?.toFixed(2)} | 
+                            Has Raw Image: {item.customImage?.rawImageDataUrl ? 'Yes' : 'No'}
                           </small>
                         </div>
                       )}
@@ -499,54 +504,60 @@ export default function CartPage() {
             })}
           </div>
 
-          {/* ✅ ENHANCED: Sticky Order Summary */}
-          <div className="text-slate-900 bg-white h-max rounded-md p-6 shadow-sm border border-gray-300 sticky top-[var(--header-height)]">
-            <h3 className="text-base font-semibold text-slate-900">Order Summary</h3>
-            <ul className="text-slate-500 font-medium text-sm divide-y divide-gray-300 mt-4">
-              <li className="flex flex-wrap gap-4 py-3">
-                Subtotal 
-                <span className="ml-auto font-semibold text-slate-900">${total.toFixed(2)}</span>
-              </li>
-              <li className="flex flex-wrap gap-4 py-3">
-                Shipping 
-                <span className="ml-auto font-semibold text-slate-900">Calculated at checkout</span>
-              </li>
-              <li className="flex flex-wrap gap-4 py-3">
-                Tax 
-                <span className="ml-auto font-semibold text-slate-900">Calculated at checkout</span>
-              </li>
-              <li className="flex flex-wrap gap-4 py-3 font-semibold text-slate-900 text-lg">
-                Total 
-                <span className="ml-auto">${total.toFixed(2)}</span>
-              </li>
-            </ul>
-            
-            {/* ✅ FIXED: Checkout Button that uses proceedToCheckout */}
-            <button 
-              type="button" 
-              onClick={proceedToCheckout}
-              disabled={checkoutLoading}
-              className="mt-6 text-sm font-medium px-4 py-2.5 tracking-wide w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {checkoutLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                'Proceed to Checkout'
-              )}
-            </button>
-            <p className="text-center text-slate-500 text-xs mt-4">
-              🔒 Secure checkout powered by Stripe
-            </p>
+          {/* Order Summary (Sticky) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white shadow-md border border-gray-300 rounded-lg p-6 sticky top-6">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Order Summary</h3>
+              
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-semibold text-gray-900">${total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-500 italic">At checkout</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-500 italic">At checkout</span>
+                </div>
+                
+                <div className="border-t-2 border-gray-300 pt-3 mt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-slate-900">Total</span>
+                    <span className="text-2xl font-bold text-blue-600">${total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <button 
+                type="button" 
+                onClick={proceedToCheckout}
+                disabled={checkoutLoading}
+                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {checkoutLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  'Proceed to Checkout'
+                )}
+              </button>
+              
+              <p className="text-center text-gray-500 text-xs mt-4">
+                🔒 Secure checkout powered by Stripe
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* ✅ PRESERVE: Continue Shopping Link */}
+        {/* Continue Shopping */}
         <div className="text-center mt-8">
           <Link 
             href="/products" 
@@ -556,14 +567,12 @@ export default function CartPage() {
           </Link>
         </div>
 
-        {/* ✅ ENHANCED: Full Debug Section */}
+        {/* Full Debug Section */}
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-8 pt-4 border-t border-gray-300">
             <h6 className="text-amber-600 font-semibold mb-3">🔧 Developer Mode - Cart Debug</h6>
-            
-            <div className="bg-slate-900 p-4 rounded mb-3">
-              <h6 className="text-slate-400 text-sm mb-2">📦 Raw Cart Data (with IndexedDB images)</h6>
-              <pre className="text-slate-100 text-xs overflow-auto" style={{ maxHeight: '300px' }}>
+            <div className="bg-slate-900 p-4 rounded overflow-auto max-h-96">
+              <pre className="text-slate-100 text-xs">
                 {JSON.stringify(cart, null, 2)}
               </pre>
             </div>
