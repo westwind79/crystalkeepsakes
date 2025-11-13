@@ -392,7 +392,14 @@ export default function CartPage() {
                             <div className="flex justify-between items-start text-sm pt-2 border-t border-gray-300">
                               <div className="flex-1">
                                 <strong className="text-gray-700">Custom Text:</strong>
-                                <p className="text-gray-600 italic mt-1">"{customTextDetails.text}"</p>
+                                <div className="mt-1 space-y-1">
+                                  {customTextDetails.line1 && (
+                                    <p className="text-gray-600 italic">Line 1: "{customTextDetails.line1}"</p>
+                                  )}
+                                  {customTextDetails.line2 && (
+                                    <p className="text-gray-600 italic">Line 2: "{customTextDetails.line2}"</p>
+                                  )}
+                                </div>
                               </div>
                               <span className="text-gray-900 font-medium ml-3">
                                 +${customTextDetails.price.toFixed(2)}
