@@ -499,7 +499,7 @@ export default function ProductDetailClient() {
         </div>
       </nav>        
       
-      <div className="container mx-auto py-4">
+      <div className="container mx-auto pt-4 pb-16 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           
           {/* Product Image */}
@@ -725,7 +725,7 @@ export default function ProductDetailClient() {
             <button
               onClick={handleAddToCart}
               disabled={addingToCart}
-              className="w-full btn btn-primary py-3 rounded-lg text-lg font-semibold disabled:opacity-50"
+              className="cursor-pointer w-full btn btn-primary py-3 rounded-lg text-lg font-semibold disabled:opacity-50"
             >
               {addingToCart ? 'Adding to Cart...' : `Add to Cart - $${calculateTotal().toFixed(2)}`}
             </button>

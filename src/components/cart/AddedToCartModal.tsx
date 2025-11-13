@@ -116,7 +116,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             {/* View Cart Button */}
             <button
               onClick={handleViewCart}
-              className="w-full px-6 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-brand-500/50 group"
+              className="cursor-pointer w-full px-6 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-brand-500/50 group"
             >
               <span>View Cart & Checkout</span>
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -125,7 +125,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             {/* Continue Shopping Button */}
             <button
               onClick={handleContinueShopping}
-              className="w-full px-6 py-4 bg-transparent border-2 border-gray-600 hover:border-brand-400 text-text-primary hover:text-brand-400 rounded-lg font-semibold transition-all duration-300"
+              className="cursor-pointer w-full px-6 py-4 bg-transparent border-2 border-gray-600 hover:border-brand-400 text-text-primary hover:text-brand-400 rounded-lg font-semibold transition-all duration-300"
             >
               Continue Shopping
             </button>
