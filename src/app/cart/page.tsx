@@ -234,26 +234,8 @@ export default function CartPage() {
     setCheckoutLoading(true)
     
     try {
-      const orderData = buildCockpitOrder()
-      
-      const cartForStorage = cart.map(item => {
-        const { customImage, ...itemWithoutImage } = item
-        return {
-          ...itemWithoutImage,
-          customImageId: item.customImageId,
-          customImageMetadata: item.customImageMetadata
-        }
-      })
-      
-      sessionStorage.setItem('pendingOrder', JSON.stringify({
-        cartItems: cartForStorage,
-        subtotal: total,
-        total: total,
-        orderNumber: orderData.order_id,
-        cockpitOrderData: orderData
-      }))
-      
-      window.location.href = '/checkout'
+      // Redirect to Stripe Hosted Checkout
+      window.location.href = '/checkout-hosted'
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
