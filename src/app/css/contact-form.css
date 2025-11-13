@@ -1,0 +1,37 @@
+/* Contact Form Styling */
+.contact-form {
+  background: var(--component-light-bg);
+  color: var(--component-light-text);
+}
+
+.contact-form .form-control {
+  background: var(--surface-50);
+  border: 1px solid var(--brand-600);
+  color: var(--surface-900);
+  transition: all var(--transition-base);
+}
+
+.contact-form .form-control:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 0.2rem var(--glow-subtle);
+}
+
+.contact-form .form-control:disabled {
+  background: var(--surface-100);
+  cursor: not-allowed;
+}
+
+.contact-form .form-label {
+  color: var(--surface-700);
+  font-weight: 500;
+}
+
+/* Error state styling */
+.contact-form .form-control.is-invalid {
+  border-color: var(--error-light);
+  background-image: none;
+}
+
+.contact-form .form-control.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(249, 65, 68, 0.25);
+}

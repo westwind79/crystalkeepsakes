@@ -1,0 +1,400 @@
+/* =====================================================
+   GLOBAL STYLES - TAILWIND VERSION
+   Version: 3.0
+   Date: 2025-11-02
+   ===================================================== */
+
+/* Tailwind CSS */
+@import "tailwindcss";
+
+/* Import Custom Styles */
+@import './css/variables.css';
+@import './css/buttons.css';
+@import './css/animations.css'; 
+@import './css/hero.css';
+
+
+/* =====================================================
+   CUSTOM THEME CONFIGURATION
+   ===================================================== */
+@theme {
+  /* Brand Colors */
+  --color-brand-300: #A8D65E;
+  --color-brand-400: #8DC63F;
+  --color-brand-500: #72B01D;
+  --color-brand-600: #5A8E17;
+  
+  /* Dark Background Colors */
+  --color-dark-bg: #0a0a0a;
+  --color-dark-bg-secondary: #1a1a1a;
+  --color-dark-surface: #1a1a1a;
+  
+  /* Text Colors */
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #d4d4d4;
+  --color-text-tertiary: #a3a3a3;
+  --color-text-inverse: #1a1a1a;
+  
+  /* Component Colors */
+  --color-component-light-bg: #f5f5f5;
+  --color-component-light-text: #1a1a1a;
+  --color-component-dark-bg: #1a1a1a;
+  --color-component-dark-text: #f5f5f5;
+  
+  /* Border Colors */
+  --color-border-subtle: rgba(114, 176, 29, 0.2);
+  
+  /* Spacing */
+  --spacing-header: 80px;
+  
+  /* Font Sizes - Responsive */
+  --font-size-scale-15-16: clamp(0.9375rem, 0.9rem + 0.1875vw, 1rem);
+  --font-size-scale-15-18: clamp(0.9375rem, 0.825rem + 0.5625vw, 1.125rem);
+  --font-size-scale-17-20: clamp(1.0625rem, 0.95rem + 0.5625vw, 1.25rem);
+  --font-size-scale-20-26: clamp(1.25rem, 1.025rem + 1.125vw, 1.625rem);
+  --font-size-scale-23-29: clamp(1.4375rem, 1.1rem + 1.6875vw, 1.8125rem);
+  --font-size-scale-27-36: clamp(1.6875rem, 1.2375rem + 2.25vw, 2.25rem);
+  --font-size-scale-33-46: clamp(2.0625rem, 1.4375rem + 3.125vw, 2.875rem);
+  
+  /* Transitions */
+  --transition-duration-fast: 150ms;
+  --transition-duration-base: 300ms;
+  --transition-duration-slow: 500ms;
+  
+  /* Box Shadows */
+  --shadow-brand: 0 8px 16px rgba(114, 176, 29, 0.3);
+}
+
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
+
+/* Respect user motion preferences */
+@media screen and (prefers-reduced-motion: reduce) {
+  * {
+    transition: 0.01s !important;
+  }
+}
+
+html {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  /*background: var(--color-dark-bg);*/
+  /*color: var(--color-text-primary);*/
+  font-size: var(--font-size-scale-15-18);
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  /*padding-top: var(--spacing-header);*/
+  flex: 1;
+}
+
+/* Typography */
+h1, .h1 {
+  font-size: var(--font-size-scale-33-46);
+  /*color: inherit;*/
+}
+
+h2, .h2 {
+  font-size: var(--font-size-scale-27-36);
+  /*color: inherit;*/
+}
+
+h3, .h3 {
+  font-size: var(--font-size-scale-23-29);
+  /*color: inherit;*/
+}
+
+h4, .h4 {
+  font-size: var(--font-size-scale-20-26);
+  /*color: inherit;*/
+}
+
+h5, .h5 {
+  font-size: var(--font-size-scale-17-20);
+  /*color: inherit;*/
+}
+
+h6, .h6 {
+  font-size: var(--font-size-scale-15-16);
+  /*color: inherit;*/
+}
+
+a {
+  color: var(--color-brand-500);
+  text-decoration: none;
+  transition: color var(--transition-duration-fast), background-color var(--transition-duration-fast);
+}
+
+a:hover {
+  color: var(--color-brand-400);
+}
+
+
+/* =====================================================
+   CART BADGE STYLES - FIXED
+   ===================================================== */
+.cart-badge {
+  position: absolute;
+  top: 25px;
+  right: -25px;
+  background: #A8D65E !important;
+  color: #000000 !important;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border: 2px solid #0a0a0a;
+  z-index: 10;
+}
+
+.cart-icon-link:hover .cart-badge {
+  background: #8DC63F !important;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+
+/* =====================================================
+   COMPONENT STYLES
+   ===================================================== */
+
+/* Card Styles */
+.card {
+  background: var(--color-dark-bg-secondary);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all var(--transition-duration-base);
+  border: 0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: var(--shadow-brand);
+}
+
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  color: var(--color-text-secondary);
+}
+
+/* Process Steps */
+.process-section {
+  background-color: var(--color-component-light-bg);
+  color: var(--color-component-light-text);
+  padding: 3rem 0;
+}
+
+.process-step {
+  text-align: center;
+  padding: 2rem;
+}
+
+.process-icon {
+  font-size: 3.75rem;
+  margin-bottom: 1rem;
+}
+
+.process-step h5 {
+  color: var(--color-component-light-text);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.process-step p {
+  color: #374151;
+}
+
+/* Background Utilities */
+.bg-green {
+  background-color: var(--color-brand-600);
+  color: var(--color-text-primary);
+}
+
+.bg-green-gradient {
+  background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%);
+  color: var(--color-text-primary);
+}
+
+/* Category Filter */
+.category-filter {
+  margin-bottom: 1.5rem;
+}
+
+/* Product Grid */
+.product-grid {
+  padding-bottom: 3rem;
+}
+
+/* Footer */
+footer {
+  background: var(--color-dark-surface);
+  color: var(--color-text-secondary);
+  padding: 3rem 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+footer h5,
+footer h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+footer a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-duration-fast);
+  font-size: 0.875rem;
+}
+
+footer a:hover {
+  color: var(--color-brand-400);
+}
+
+footer .list-unstyled li {
+  margin-bottom: 0.5rem;
+}
+
+footer hr {
+  border-color: var(--color-border-subtle);
+  margin: 2rem 0;
+}
+
+/* =====================================================
+   UTILITY CLASSES
+   ===================================================== */
+
+/* Loading & Animations */
+.loading-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.page-transition {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all var(--transition-duration-base);
+}
+
+.spinner-border {
+  color: var(--color-brand-500);
+  margin: auto;
+}
+
+/* Development & Debug Styles */
+.dev-mode-alert {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #dc2626;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+.debug-info {
+  color: #dc2626;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+/* Spacer */
+.spacer-gradient {
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-brand-300), var(--color-brand-500));
+}
+
+/* =====================================================
+   SWIPER CUSTOMIZATION
+   ===================================================== */
+.mySwiper {
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px 0 50px;
+}
+
+.mySwiper .swiper-slide {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--color-dark-bg-secondary);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* =====================================================
+   KEYFRAME ANIMATIONS
+   ===================================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   HELPER CLASSES (Tailwind-like utilities)
+   ===================================================== */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}

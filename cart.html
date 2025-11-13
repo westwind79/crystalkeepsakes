@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Diagnostic Tool - CrystalKeepsakes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a19 0%, #2a2a29 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(42, 42, 41, 0.8);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(138, 198, 68, 0.3);
+        }
+        h1 {
+            color: #8ac644;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            color: #999;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        .status-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8ac644;
+        }
+        .status-box.error {
+            border-left-color: #ff5555;
+        }
+        .status-box h2 {
+            color: #8ac644;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: 600;
+            color: #8ac644;
+        }
+        .value {
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+        .success {
+            color: #8ac644;
+        }
+        .error {
+            color: #ff5555;
+        }
+        .warning {
+            color: #ffa500;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #8ac644;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+        .btn {
+            background: #8ac644;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #7ab534;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #ff5555;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #ff3333;
+        }
+        .card-item {
+            background: rgba(138, 198, 68, 0.1);
+            border: 1px solid rgba(138, 198, 68, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .card-item h3 {
+            color: #8ac644;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Cart Diagnostic Tool</h1>
+        <p class="subtitle">Debug tool for CrystalKeepsakes cart issues - Version 1.0.0 | Date: 2025-11-08</p>
+
+        <!-- Status Overview -->
+        <div class="status-box" id="statusBox">
+            <h2>📊 Cart Status</h2>
+            <div class="info-row">
+                <span class="label">Items in Cart:</span>
+                <span class="value" id="itemCount">-</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Total Quantity:</span>
+                <span class="value" id="totalQty">-</span>
+            </div>
+            <div class="info-row">
+                <span class="label">localStorage Available:</span>
+                <span class="value" id="localStorageStatus">-</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Cart Key Exists:</span>
+                <span class="value" id="cartKeyExists">-</span>
+            </div>
+        </div>
+
+        <!-- Cart Contents -->
+        <div class="status-box">
+            <h2>📦 Cart Items</h2>
+            <div id="cartItems"></div>
+        </div>
+
+        <!-- Raw Data -->
+        <div class="status-box">
+            <h2>🔍 Raw localStorage Data</h2>
+            <pre id="rawData">Loading...</pre>
+        </div>
+
+        <!-- Actions -->
+        <div class="status-box">
+            <h2>⚡ Actions</h2>
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn" onclick="testCartEvent()">📢 Test Cart Event</button>
+            <button class="btn" onclick="addTestItem()">➕ Add Test Item</button>
+            <button class="btn btn-danger" onclick="clearCart()">🗑️ Clear Cart</button>
+        </div>
+
+        <!-- Event Log -->
+        <div class="status-box">
+            <h2>📝 Event Log</h2>
+            <pre id="eventLog">Waiting for events...</pre>
+        </div>
+    </div>
+
+    <script>
+        let eventLogLines = [];
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            eventLogLines.unshift(`[${timestamp}] ${message}`);
+            if (eventLogLines.length > 10) eventLogLines.pop();
+            document.getElementById('eventLog').textContent = eventLogLines.join('\n');
+        }
+
+        function refreshData() {
+            log('Refreshing cart data...');
+            
+            // Check localStorage availability
+            const hasLocalStorage = typeof localStorage !== 'undefined';
+            document.getElementById('localStorageStatus').textContent = hasLocalStorage ? '✅ Yes' : '❌ No';
+            document.getElementById('localStorageStatus').className = hasLocalStorage ? 'value success' : 'value error';
+
+            if (!hasLocalStorage) {
+                document.getElementById('statusBox').className = 'status-box error';
+                log('❌ localStorage is not available!');
+                return;
+            }
+
+            // Get cart data
+            let cart = [];
+            try {
+                const cartData = localStorage.getItem('cart');
+                document.getElementById('cartKeyExists').textContent = cartData ? '✅ Yes' : '❌ No';
+                document.getElementById('cartKeyExists').className = cartData ? 'value success' : 'value error';
+                
+                if (cartData) {
+                    cart = JSON.parse(cartData);
+                    log(`✅ Cart loaded: ${cart.length} items`);
+                } else {
+                    log('⚠️ Cart key not found in localStorage');
+                }
+            } catch (e) {
+                log(`❌ Error parsing cart: ${e.message}`);
+                document.getElementById('rawData').textContent = `Error: ${e.message}`;
+                return;
+            }
+
+            // Update counts
+            const itemCount = cart.length;
+            const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            
+            document.getElementById('itemCount').textContent = itemCount;
+            document.getElementById('totalQty').textContent = totalQty;
+
+            // Display cart items
+            const cartItemsDiv = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p class="warning">⚠️ Cart is empty</p>';
+            } else {
+                cartItemsDiv.innerHTML = cart.map((item, index) => `
+                    <div class="card-item">
+                        <h3>${index + 1}. ${item.name || 'Unknown Product'}</h3>
+                        <div class="info-row">
+                            <span class="label">SKU:</span>
+                            <span class="value">${item.sku || 'N/A'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Price:</span>
+                            <span class="value">$${(item.price || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Quantity:</span>
+                            <span class="value">${item.quantity || 1}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Has Custom Image:</span>
+                            <span class="value">${item.customImage ? '✅ Yes' : '❌ No'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Date Added:</span>
+                            <span class="value">${item.dateAdded || 'N/A'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Show raw data
+            try {
+                const allKeys = Object.keys(localStorage);
+                const allData = {};
+                allKeys.forEach(key => {
+                    if (key === 'cart') {
+                        try {
+                            allData[key] = JSON.parse(localStorage.getItem(key));
+                        } catch {
+                            allData[key] = localStorage.getItem(key);
+                        }
+                    } else if (key.startsWith('fullimg_') || key.startsWith('cart')) {
+                        allData[key] = `<data> (${localStorage.getItem(key)?.length || 0} chars)`;
+                    }
+                });
+                document.getElementById('rawData').textContent = JSON.stringify(allData, null, 2);
+            } catch (e) {
+                document.getElementById('rawData').textContent = `Error: ${e.message}`;
+            }
+        }
+
+        function testCartEvent() {
+            log('🔔 Dispatching cartUpdated event...');
+            window.dispatchEvent(new Event('cartUpdated'));
+            log('✅ Event dispatched');
+        }
+
+        function addTestItem() {
+            log('➕ Adding test item to cart...');
+            try {
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                cart.push({
+                    productId: 'test-' + Date.now(),
+                    name: 'Test Product',
+                    sku: 'TEST-SKU',
+                    price: 19.99,
+                    quantity: 1,
+                    options: {},
+                    dateAdded: new Date().toISOString()
+                });
+                localStorage.setItem('cart', JSON.stringify(cart));
+                window.dispatchEvent(new Event('cartUpdated'));
+                log('✅ Test item added successfully');
+                refreshData();
+            } catch (e) {
+                log(`❌ Failed to add test item: ${e.message}`);
+            }
+        }
+
+        function clearCart() {
+            if (confirm('Are you sure you want to clear the cart?')) {
+                log('🗑️ Clearing cart...');
+                localStorage.removeItem('cart');
+                window.dispatchEvent(new Event('cartUpdated'));
+                log('✅ Cart cleared');
+                refreshData();
+            }
+        }
+
+        // Listen for cart updates
+        window.addEventListener('cartUpdated', () => {
+            log('🔔 cartUpdated event received');
+            refreshData();
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cart') {
+                log('🔔 storage event received for cart key');
+                refreshData();
+            }
+        });
+
+        // Initial load
+        refreshData();
+        log('✅ Diagnostic tool initialized');
+    </script>
+</body>
+</html>

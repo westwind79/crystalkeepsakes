@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Backend Diagnostics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-url {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .test-url label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .test-url input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .test-url input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .results {
+            margin-top: 30px;
+        }
+        .check-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+            transition: all 0.3s ease;
+        }
+        .check-item:hover {
+            transform: translateX(5px);
+        }
+        .check-item.pass {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .check-item.fail {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .check-item.info {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+        }
+        .check-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .check-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+        }
+        .check-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pass {
+            background: #28a745;
+            color: white;
+        }
+        .status-fail {
+            background: #dc3545;
+            color: white;
+        }
+        .status-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .check-message {
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .check-value {
+            font-family: monospace;
+            font-size: 13px;
+            color: #333;
+            background: rgba(0,0,0,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .summary h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .summary-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .paths-list {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        .paths-list li {
+            margin-left: 20px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Stripe Backend Diagnostics</h1>
+            <p>Check if your PHP backend is ready for Stripe checkout</p>
+        </div>
+
+        <div class="content">
+            <div class="test-url">
+                <label>PHP Backend URL:</label>
+                <input type="text" id="backendUrl" value="http://localhost:8888/crystalkeepsakes">
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="runDiagnostics()" id="runBtn">
+                    🚀 Run Diagnostics
+                </button>
+                <button class="btn-secondary" onclick="clearResults()">
+                    🗑️ Clear Results
+                </button>
+            </div>
+
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        async function runDiagnostics() {
+            const btn = document.getElementById('runBtn');
+            const container = document.getElementById('resultsContainer');
+            const backendUrl = document.getElementById('backendUrl').value;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Running...';
+            
+            container.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="loading" style="width: 40px; height: 40px;"></div><p style="margin-top: 15px;">Running diagnostics...</p></div>';
+
+            try {
+                const url = `${backendUrl}/api/stripe/diagnose.php`;
+                console.log('Testing:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data);
+                
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="check-item fail">
+                        <div class="check-header">
+                            <div class="check-title">❌ Connection Error</div>
+                            <span class="check-status status-fail">FAILED</span>
+                        </div>
+                        <div class="check-message">${error.message}</div>
+                        <div class="check-value">
+URL: ${backendUrl}/api/stripe/diagnose.php
+
+Possible issues:
+1. MAMP is not running
+2. Backend URL is incorrect
+3. Port 8888 is not accessible
+4. diagnose.php file is missing
+
+Make sure MAMP is running and try again.
+                        </div>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Run Diagnostics';
+            }
+        }
+
+        function displayResults(data) {
+            const container = document.getElementById('resultsContainer');
+            
+            let html = '<div class="results">';
+            
+            // Summary
+            const summary = data.summary;
+            const isReady = summary.ready === 'YES';
+            
+            html += `
+                <div class="summary" style="${isReady ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%);' : ''}">
+                    <h2>${isReady ? '✅' : '❌'} ${summary.message}</h2>
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-value">${summary.passed}</span>
+                            <span class="stat-label">Passed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${summary.failed}</span>
+                            <span class="stat-label">Failed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${summary.total_checks}</span>
+                            <span class="stat-label">Total Checks</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Individual checks
+            for (const [key, check] of Object.entries(data.checks)) {
+                const statusClass = check.status.toLowerCase();
+                html += `
+                    <div class="check-item ${statusClass}">
+                        <div class="check-header">
+                            <div class="check-title">${check.test}</div>
+                            <span class="check-status status-${statusClass}">${check.status}</span>
+                        </div>
+                        <div class="check-message">${check.message}</div>
+                        <div class="check-value">${escapeHtml(String(check.value))}</div>
+                        ${check.searched_paths ? `
+                            <ul class="paths-list">
+                                <strong>Searched paths:</strong>
+                                ${check.searched_paths.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                        ${check.looking_for ? `
+                            <div class="paths-list"><strong>Looking for:</strong> ${check.looking_for}</div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function clearResults() {
+            document.getElementById('resultsContainer').innerHTML = '';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostics, 500);
+        });
+    </script>
+</body>
+</html>
