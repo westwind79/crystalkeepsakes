@@ -8,8 +8,14 @@ echo "🚀 Building for production /test subfolder..."
 # Copy production env
 cp .env.production.test .env.production
 
+# Export env vars for build
+export $(cat .env.production | grep -v '^#' | xargs)
+
 # Build static site
 yarn build
+
+# Copy .env.production to output
+cp .env.production out/.env
 
 echo "✅ Build complete!"
 echo ""
