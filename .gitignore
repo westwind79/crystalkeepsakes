@@ -340,3 +340,7 @@ src/data/final-product-list.js
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
