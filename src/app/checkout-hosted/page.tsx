@@ -46,7 +46,7 @@ export default function CheckoutHostedPage() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
       // Create checkout session - Call MAMP PHP backend
-      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888'
+      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
       const response = await fetch(`${phpBackendUrl}/api/stripe/create-checkout-session.php`, {
         method: 'POST',
         headers: {
