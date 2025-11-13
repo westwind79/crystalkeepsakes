@@ -12,8 +12,10 @@ const STORE_NAME = 'cartImages'
 interface ImageRecord {
   id: string
   productId: string
-  dataUrl: string
-  thumbnail: string
+  dataUrl: string // Masked/processed image (for Cockpit3D)
+  thumbnail: string // Thumbnail of masked image
+  rawImageDataUrl?: string // Original uploaded image (before masking)
+  rawImageThumbnail?: string // Thumbnail of original image
   metadata: {
     filename?: string
     mimeType?: string
