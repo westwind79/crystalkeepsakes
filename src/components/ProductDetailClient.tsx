@@ -520,52 +520,58 @@ export default function ProductDetailClient() {
           <div>
             {finalMaskedImage ? (
               // STAGE 1: Show user's uploaded/edited image
-              <div className="sticky top-[var(--header-height)] z-1 mt-4">
-                <Image
-                  src={finalMaskedImage} 
-                  alt="Customer Preview" 
-                  className="w-auto max-w-xs mx-auto rounded-lg border border-[var(--surface-700)]"
-                  width={0}
-                  height={0}
-                  style={{objectFit: "cover",width:'100%'}}
-                />
+                <div className="sticky top-[var(--header-height)] z-1 mt-4">
+                  <div className="relative">                    
+                    <div className="relative">
+                      <Image
+                        src={finalMaskedImage} 
+                        alt="Customer Preview" 
+                        className="w-lg block mx-auto rounded-lg border border-[var(--surface-700)]"
+                        width={0}
+                        height={0}
+                        style={{objectFit: "cover",width:'100%'}}
+                      />
 
-                {/* Image Info */}
-                {finalMaskedImage && (
-                  <div className="mt-4 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
-                      <div className="text-sm text-blue-300 mb-6 my-3 p-3">
-                      <p className="font-semibold mb-1">Image Details:</p>
-                      <ul className="space-y-1 text-xs">
-                        <li>• Image has been masked and processed for engraving</li>
-                        <li>• Converted to black & white for optimal laser quality</li>
-                        <li>• Compressed for faster processing</li>
-                        {originalFileName && <li>• Original: {originalFileName}</li>}
-                      </ul>
-                    </div>
-                    </div>
-                  </div>
-                )}
+                      <div className="px-2 pb-2 border-0 bg-slate-200 absolute bottom-0 right-0">
+                        <div className="mt-2 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowEditor(true)}
+                            className="btn btn-secondary px-3 py-2 rounded-md cursor-pointer"
+                          >
+                            Edit Image Again
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFinalMaskedImage(null)}
+                            className="btn btn-secondary px-3 py-2 rounded-md cursor-pointer"
+                          >
+                            Remove & Show Product
+                          </button>
+                        </div>
+                      </div>                      
+                    </div>    
 
-                <div className="mt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowEditor(true)}
-                    className="btn btn-secondary px-4 py-3 rounded-md cursor-pointer"
-                  >
-                    Edit Image Again
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFinalMaskedImage(null)}
-                    className="btn btn-secondary px-4 py-3 rounded-md cursor-pointer"
-                  >
-                    Remove & Show Product
-                  </button>
-                </div>
+                    {/* Image Info */}
+                      {finalMaskedImage && (
+                        <div className="mt-4 p-2 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <svg className="w-8 h-8 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                            <div className="text-sm text-blue-300 mb-2 p-1 text-blue-500">
+                            <p className="font-semibold mb-1">Image Details:</p>
+                            <ul className="space-y-1 text-xs">
+                              <li>• Image has been masked and processed for engraving</li>
+                              <li>• Converted to black & white for optimal laser quality</li>
+                              <li>• Compressed for faster processing</li>
+                              {originalFileName && <li>• Original: {originalFileName}</li>}
+                            </ul>
+                          </div>
+                          </div>
+                        </div>
+                      )}             
+                </div>                
               </div>
             ) : product.images && product.images.length > 1 ? (
               // STAGE 2: Show gallery if multiple images exist
