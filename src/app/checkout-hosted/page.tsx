@@ -45,8 +45,9 @@ export default function CheckoutHostedPage() {
       // Calculate totals
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
-      // Create checkout session
-      const response = await fetch('/api/stripe/create-checkout-session.php', {
+      // Create checkout session - Call MAMP PHP backend
+      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888'
+      const response = await fetch(`${phpBackendUrl}/api/stripe/create-checkout-session.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
