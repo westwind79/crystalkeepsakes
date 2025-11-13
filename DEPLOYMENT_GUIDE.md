@@ -4,15 +4,15 @@
 
 ```
 /public_html/crystalkeepsakes/
-├── .env                          # PHP environment variables
-├── api/                          # PHP backend files
-│   └── stripe/
-│       ├── create-checkout-session.php
-│       └── (other PHP files)
-└── test/                         # Next.js static site
+├── .env                          # PHP environment variables (create manually)
+└── test/                         # Upload entire 'out' folder here
     ├── .htaccess
     ├── index.html
     ├── _next/
+    ├── api/                      # PHP backend (included in build)
+    │   └── stripe/
+    │       ├── create-checkout-session.php
+    │       └── (other PHP files)
     ├── products/
     ├── cart/
     └── (all built files)
