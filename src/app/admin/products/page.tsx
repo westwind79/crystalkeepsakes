@@ -84,7 +84,24 @@ export default finalProductList;
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
-    alert('final-product-list.js generated! Replace the file in your src/data/ folder.');
+    
+    // Also save product-customizations.json for git commit
+    const customizationsJson = JSON.stringify({
+      version: "1.0",
+      lastUpdated: new Date().toISOString(),
+      customizations: editedProducts
+    }, null, 2);
+    const jsonBlob = new Blob([customizationsJson], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = 'product-customizations.json';
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
+    
+    alert('Generated:\n- final-product-list.js (use in app)\n- product-customizations.json (commit to git)');
   };
 
   const hasCustomizations = (productId: string) => {
