@@ -122,7 +122,6 @@ COCKPIT3D_RETAILER_ID=your_retailer_id</pre>";
 	echo "</body></html>";
 	die();
 }
-}
 
 // Test both environments
 $environments = [
