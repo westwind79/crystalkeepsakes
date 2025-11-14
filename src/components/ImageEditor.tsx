@@ -685,6 +685,33 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Inline Animation Styles */}
+      <style jsx global>{`
+        @keyframes backdropFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes modalSlide {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        .animate-backdrop-fade {
+          animation: backdropFade 0.2s ease-out;
+        }
+        
+        .animate-modal-slide {
+          animation: modalSlide 0.3s ease-out;
+        }
+      `}</style>
     </>
   )
 }
