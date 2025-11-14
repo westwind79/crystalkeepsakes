@@ -21,9 +21,9 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
     : cockpit3dProducts.slice(0, limit)
 
   return (
-    <section className="bg-dark-bg py-16 md:py-20">
+    <section className="bg-white py-16 md:py-20">
       <div className="w-full max-w-7xl mx-auto px-4">
-        <h2 className="text-center mb-12 text-3xl md:text-4xl font-light tracking-wide text-gray-50">
+        <h2 className="text-center mb-12 text-3xl md:text-4xl font-light tracking-wide text-gray-900">
           {title}
         </h2>
         
@@ -37,38 +37,38 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
                 href={`/products/${product.slug}`}
                 className="group block"
               >
-                <div className="relative bg-surface-800 rounded-lg overflow-hidden border border-surface-700 hover:border-brand-500 transition-all duration-300 h-full flex flex-col">
+                <div className="relative bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-brand-500 hover:shadow-lg transition-all duration-300 h-full flex flex-col">
                   {/* Featured Badge */}
                   {product.featured && (
-                    <div className="absolute top-4 right-4 z-10 bg-brand-500 text-white text-xs px-3 py-1 rounded-full font-medium">
+                    <div className="absolute top-4 right-4 z-10 bg-brand-500 text-white text-xs px-3 py-1 rounded-full font-medium shadow-md">
                       Featured
                     </div>
                   )}
                   
                   {/* Image */}
-                  <div className="relative h-64 bg-surface-900 overflow-hidden">
+                  <div className="relative h-64 bg-gray-50 overflow-hidden">
                     <Image 
                       src={mainImage}
                       alt={product.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   
                   {/* Content */}
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-light text-gray-50 mb-2 group-hover:text-brand-400 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-brand-500 transition-colors">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-gray-400 mb-4 flex-grow line-clamp-2">
+                    <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-2">
                       {product.description}
                     </p>
                     
-                    <div className="flex justify-between items-center pt-4 border-t border-surface-700">
-                      <span className="text-2xl font-light text-brand-400">
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                      <span className="text-2xl font-light text-brand-500">
                         ${product.basePrice}
                       </span>
-                      <span className="text-sm text-brand-500 group-hover:text-brand-400 transition-colors">
+                      <span className="text-sm font-medium text-brand-500 group-hover:text-brand-600 transition-colors">
                         View Details →
                       </span>
                     </div>
@@ -82,7 +82,7 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
         <div className="text-center mt-12">
           <Link 
             href="/products" 
-            className="inline-block px-8 py-3 border border-brand-500 text-brand-500 rounded hover:bg-brand-500 hover:text-white transition-all duration-300 font-light tracking-wide"
+            className="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-white rounded-lg transition-all duration-200 font-medium tracking-wide"
           >
             View All Designs
           </Link>
