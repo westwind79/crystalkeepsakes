@@ -1,9 +1,9 @@
 // page.tsx - Homepage
-// Version: 3.0.0 - Elegant & Modern Light Theme
+// Version: 3.1.0 - Hybrid Theme
+// ✅ Dark hero with custom background images (visual impact)
+// ✅ GSAP animations
 // ✅ Fixed Swiper image sizing
-// ✅ GSAP animations (page load + ScrollTrigger)
-// ✅ Light elegant design
-// ✅ Consistent spacing and typography
+// ✅ Rest of page: Light elegant theme
 
 'use client'
 
@@ -64,10 +64,10 @@ export default function HomePage() {
     const shouldLog = envMode === 'development' || envMode === 'testing'
     
     if (shouldLog) {
-      console.log('🏠 Homepage loaded - Elegant Light Theme v3.0', {
+      console.log('🏠 Homepage loaded - Hybrid Theme v3.1', {
         component: 'HomePage',        
         timestamp: new Date().toISOString(),
-        features: ['Light Theme', 'GSAP', 'Swiper Fixed', 'ScrollTrigger']
+        features: ['Dark Hero', 'Light Content', 'GSAP', 'Swiper Fixed']
       })
     }
 
@@ -82,7 +82,7 @@ export default function HomePage() {
         delay: 0.2
       })
 
-      // Hero headline: Stagger words
+      // Hero headline
       gsap.from('.hero-headline', {
         opacity: 0,
         y: 30,
@@ -145,12 +145,19 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="home bg-white">
+    <div className="home">
       
-      {/* Hero Section - Light & Elegant */}
+      {/* Hero Section - DARK with Custom Background Image */}
       <section 
         ref={heroRef} 
-        className="relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 py-16 sm:py-20 lg:py-28"
+        className="hero relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
+        style={{
+          background: `linear-gradient(
+            45deg, 
+            rgba(17, 17, 17, 0.9) 30%,
+            rgba(28, 200, 28, 0.2) 125%
+          ), url('/img/flag-background-2.png') center/cover no-repeat`
+        }}
       >
         <div className="container mx-auto px-4 xl:max-w-7xl">
           
@@ -158,13 +165,13 @@ export default function HomePage() {
 
             {/* Left: Hero Content */}
             <div className="hero-content text-center lg:text-left">
-              <h1 className="hero-headline text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight tracking-tight">
+              <h1 className="hero-headline text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 leading-tight tracking-tight">
                 MEMORIES<br/>
                 PRESERVED IN<br/>
-                <span className="text-brand-500 font-normal">CRYSTAL</span>
+                <span className="text-brand-400 font-normal">CRYSTAL</span>
               </h1>
               
-              <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
                 Transform your cherished photos into stunning 3D crystal art pieces. 
                 Our precision laser technology creates beautiful, lasting memories.
               </p>
@@ -173,14 +180,14 @@ export default function HomePage() {
               <div className="hero-cta flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link 
                   href="/products" 
-                  className="inline-flex items-center justify-center px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 text-base"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 text-base"
                   data-testid="browse-designs-btn"
                 >
                   Browse Designs
                 </Link>
                 <Link 
                   href="/about" 
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-500 text-brand-500 hover:bg-gray-50 font-medium rounded-lg transition-all duration-200 text-base"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-400 text-brand-400 hover:bg-brand-400 hover:text-white font-medium rounded-lg transition-all duration-200 text-base"
                   data-testid="learn-more-btn"
                 >
                   Learn More
@@ -233,6 +240,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* REST OF PAGE - Light Elegant Theme */}
+      
       {/* Featured Products Section */}
       <section ref={featuredRef}>
         <FeaturedProducts limit={6} title="Featured Designs" />
@@ -288,7 +297,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 xl:max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Text Content - 8 columns */}
+            {/* Text Content - 7 columns */}
             <div className="lg:col-span-7">
               <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-6">
                 Crafted with Precision
@@ -331,7 +340,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Green Gradient */}
       <section className="bg-gradient-to-br from-brand-500 to-brand-600 py-16 sm:py-20 text-center text-white">
         <div className="container mx-auto px-4 xl:max-w-4xl">
           <h2 className="text-3xl sm:text-4xl font-light mb-6">
