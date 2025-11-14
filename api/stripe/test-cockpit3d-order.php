@@ -107,9 +107,6 @@ echo "</div>";
 $environment = $envVars['NEXT_PUBLIC_ENV_MODE'];
 $username = $envVars['COCKPIT3D_USERNAME'];
 $password = $envVars['COCKPIT3D_PASSWORD'];
-<<<<<<< Updated upstream
-$retailerId = $envVars['COCKPIT3D_RETAIL_ID'] ?? '256568874';
-=======
 $retailerId = $envVars['COCKPIT3D_RETAILER_ID'] ?? '256568874';
 $cockpitLoginPath = $envVars['COCKPIT3D_LOGIN_PATH'];
 
