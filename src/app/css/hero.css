@@ -1,10 +1,14 @@
-/* HERO SECTIONS - Dark Minimal */
+/* =====================================================
+   HERO SECTIONS - Using Theme Variables
+   ===================================================== */
+
+/* Base Hero - Dark with Green Laser Overlay */
 .hero { 
   min-height: 35vh;
   background: linear-gradient(
     135deg, 
-    rgba(17, 17, 17, 0.95) 0%, 
-    rgba(28, 200, 28, 0.15) 100%
+    rgba(10, 10, 10, 0.95) 0%, 
+    rgba(114, 176, 29, 0.15) 100%
   ), url('/img/laser-background.png') center/cover no-repeat;
   position: relative;
   overflow: hidden;
@@ -13,28 +17,39 @@
   justify-content: center;
 }
 
-/* Homepage hero - larger */
+/* Homepage Hero - Larger, More Dramatic */
 .home .hero {
   min-height: 70vh;
   background: linear-gradient(
       45deg, 
       rgba(17, 17, 17, 0.9) 30%,
-      rgba(28, 200, 28, 0.2) 125%
+      rgba(114, 176, 29, 0.2) 125%
   ), url('/img/flag-background-2.png') center/cover no-repeat;
 }
 
-/* About page hero */
+/* About Page Hero */
 .about .hero {
   background: linear-gradient(
-      rgba(28, 200, 28, 0.2), 
+      rgba(114, 176, 29, 0.2), 
       rgba(28, 28, 28, 0.8)
   ), url('/img/emerald-laser-background.jpg') center/cover no-repeat;
 }
 
-/* Products page hero */
+/* Products Page Hero */
 .products .hero {
   background: linear-gradient(
-      rgba(28, 200, 28, 0.2), 
+      rgba(114, 176, 29, 0.2), 
       rgba(28, 28, 28, 0.8)
   ), url('/img/green-laser-background.jpg') center/cover no-repeat;
+}
+
+/* Hero Content Styling */
+.hero h1 {
+  color: var(--color-text-white);
+  font-weight: var(--font-light);
+  line-height: 1.1;
+}
+
+.hero p {
+  color: var(--color-text-white-muted);
 }
