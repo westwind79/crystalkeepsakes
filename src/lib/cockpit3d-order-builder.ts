@@ -82,6 +82,14 @@ export function buildCockpit3DOrder(
   customer?: CustomerInfo,
   retailerId?: string
 ): Cockpit3DOrder {
+  console.log('🏗️ [COCKPIT3D BUILDER] Starting order build')
+  console.log('🏗️ [COCKPIT3D BUILDER] Input:', {
+    orderNumber,
+    itemCount: cartItems.length,
+    hasCustomer: !!customer,
+    retailerId
+  })
+  
   logger.info('Building Cockpit3D order', {
     orderNumber,
     itemCount: cartItems.length,
@@ -89,8 +97,16 @@ export function buildCockpit3DOrder(
   })
 
   // Build items array
+  console.log('🏗️ [COCKPIT3D BUILDER] Processing cart items...')
   const items: Cockpit3DOrderItem[] = cartItems.map((item, index) => {
+    console.log(`🏗️ [COCKPIT3D BUILDER] Processing item ${index + 1}/${cartItems.length}:`, {
+      name: item.name,
+      sku: item.sku,
+      cockpit3d_id: item.cockpit3d_id,
+      quantity: item.quantity
+    })
     const orderItem = buildCockpit3DOrderItem(item, index)
+    console.log(`🏗️ [COCKPIT3D BUILDER] Built order item ${index + 1}:`, JSON.stringify(orderItem, null, 2))
     return orderItem
   })
 
