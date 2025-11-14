@@ -645,7 +645,7 @@ export default function ProductDetailClient() {
                   </div>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
                       {product.sizes.map((size) => (
                         <label
                           key={size.id}
@@ -665,7 +665,7 @@ export default function ProductDetailClient() {
                           />
                           <span className="block text-center">{size.name}</span>
                           {size.price > 0 && (
-                            <span className="block text-center text-xs mt-1">+${size.price}</span>
+                            <span className="block text-center text-xs mt-1">${size.price}</span>
                           )}
                         </label>
                       ))}

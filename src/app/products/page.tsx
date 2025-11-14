@@ -238,7 +238,7 @@ export default function ProductsPage() {
                   setError('')
                   fetchProducts()
                 }} 
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+                className="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
               >
                 🔄 Retry
               </button>
@@ -276,9 +276,9 @@ export default function ProductsPage() {
         <div className="flex gap-1 justify-start">
           <button
             onClick={() => setProductType('all')}
-            className={`px-2 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-2 rounded-lg font-semibold transition-all ${
               productType === 'all'
-                ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
+                ? 'cursor-pointer bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
                 : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
             }`}
           >
@@ -318,7 +318,7 @@ export default function ProductsPage() {
             </h3>
             <button 
               onClick={() => setSelectedCategory('all')}
-              className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
+              className="cursor-pointer px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
             >
               View All Products
             </button>
@@ -392,7 +392,7 @@ export default function ProductsPage() {
                     {/* View Details Button */}
                     <Link 
                       href={`/products/${product.slug}`}
-                      className="block w-full px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-center rounded-lg transition-colors font-medium"
+                      className="block w-full px-4 py-2 btn-primary hover:bg-brand-600 text-white text-center rounded-lg transition-colors font-medium"
                     >
                       View Details
                     </Link>
