@@ -218,13 +218,18 @@ export default function ProductsPage() {
       <div className="min-h-screen bg-white">
         <ProductsBreadcrumbs />
 
+        {/* Page Title */}
+        <div className="container mx-auto px-4 py-12">
+          <h1 className="text-3xl font-light text-gray-900 mb-2">Our Creations</h1>
+        </div>
+        
         {/* Error Alert */}
-        <div className="py-12 px-4">
-          <div className="max-w-2xl mx-auto bg-red-900/20 border border-red-500 rounded-lg p-6">
-            <h4 className="text-xl font-semibold text-red-400 mb-3">
+        <div className="container mx-auto px-4 pb-12">
+          <div className="max-w-2xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6">
+            <h4 className="text-xl font-semibold text-red-600 mb-3">
               ⚠️ Error Loading Products
             </h4>
-            <p className="text-text-secondary mb-4">{error}</p>
+            <p className="text-gray-700 mb-4">{error}</p>
             <hr className="border-red-500/30 mb-4" />
             <div className="flex gap-3 flex-wrap">
               <button 
