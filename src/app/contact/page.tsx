@@ -192,9 +192,17 @@ export default function ContactPage() {
       </nav>
       
       {/* Contact Form Section */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
+            
+            {/* Page Title */}
+            <div className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-light text-gray-900 mb-3">Contact Us</h1>
+              <p className="text-lg text-gray-600">
+                Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              </p>
+            </div>
             
             {/* Status Alert */}
             {submitStatus && (
