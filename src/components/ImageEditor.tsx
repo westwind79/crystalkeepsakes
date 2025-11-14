@@ -534,7 +534,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       {/* Modal Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div 
-          className="image-editor-modal relative w-full max-w-[90vw] mx-auto my-8"
+          className="image-editor-modal relative w-full max-w-[90vw] mx-auto my-8 animate-modal-slide"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Modal Content - uses your custom .image-editor-modal CSS */}
