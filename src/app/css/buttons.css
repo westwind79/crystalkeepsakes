@@ -1,44 +1,29 @@
-/* Buttons */
+/* BUTTONS - Simplified */
 .btn {
-  display: inline-block; 
-  border: 0 none transparent; 
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
   font-weight: 500;
-  font-size: var(--font-scale-13-14);
-  transition: all var(--transition-base); 
+  transition: all 200ms ease;
+  border: none;
 }
 
 .btn-primary {
-  background: var(--primary);
-  border: 1px solid var(--primary);
-  color: var(--surface-50);
-/*  box-shadow: var(--glow-effect);*/
+  background: #72B01D;
+  color: white;
 }
 
 .btn-primary:hover {
-  color: var(--surface-50);
-  animation: glowPulse 1.25s ease-in-out infinite;
-  border: 1px solid var(--primary);
-  background: var(--primary-dark); 
-  box-shadow: var(--glow-intense);
+  background: #5A8E17;
 }
-.btn-outline-light {  
-  border: 1px solid var(--primary);
-}
+
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
+  border: 1px solid #72B01D;
+  color: #72B01D;
 }
 
 .btn-secondary:hover {
-  background: var(--surface-900);  
-  border: 1px solid var(--primary-light);
-  color: var(--surface-50);
-  box-shadow: var(--glow-soft);
-}
-.btn-outline-danger {
-  border: 1px solid var(--error-light);
-}
-.btn-outline-secondary {
-  border: 1px solid var(--brand-400);
+  background: #72B01D;
+  color: white;
 }
