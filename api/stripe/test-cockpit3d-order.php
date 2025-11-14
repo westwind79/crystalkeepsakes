@@ -112,7 +112,6 @@ $retailerId = $envVars['COCKPIT3D_RETAIL_ID'] ?? '256568874';
 =======
 $retailerId = $envVars['COCKPIT3D_RETAILER_ID'] ?? '256568874';
 $cockpitLoginPath = $envVars['COCKPIT3D_LOGIN_PATH'];
->>>>>>> Stashed changes
 
 if (!$username || !$password) {
 	echo "<div class='error' style='padding: 20px; background: #3c1518; border-left: 4px solid #f48771;'>";
@@ -121,17 +120,11 @@ if (!$username || !$password) {
 	echo "<p>Please add to your .env file:</p>";
 	echo "<pre>COCKPIT3D_USERNAME=your_username
 COCKPIT3D_PASSWORD=your_password
-<<<<<<< Updated upstream
-COCKPIT3D_RETAIL_ID=your_retailer_id</pre>";
-    echo "</div>";
-    echo "</body></html>";
-    die();
-=======
 COCKPIT3D_RETAILER_ID=your_retailer_id</pre>";
 	echo "</div>";
 	echo "</body></html>";
 	die();
->>>>>>> Stashed changes
+}
 }
 
 // Test both environments
