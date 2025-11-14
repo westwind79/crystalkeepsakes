@@ -1,16 +1,13 @@
-// app/products/page.tsx
-// v2.1.0 - 2025-11-05 - Consolidated hero section (DRY principle)
 'use client'
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import Breadcrumbs from '@/components/BreadCrumbs'
 
-// Environment logging
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
 const shouldLog = ENV_MODE === 'development' || ENV_MODE === 'testing'
 
-// Product Type Constants
 const PRODUCT_TYPES = {
   ALL: 'all',
   CRYSTALS: 'crystals',
@@ -19,7 +16,6 @@ const PRODUCT_TYPES = {
 
 type ProductType = typeof PRODUCT_TYPES[keyof typeof PRODUCT_TYPES]
 
-// Helper: Determine if product is a light base
 const isLightBase = (product: Product): boolean => {
   const name = product.name.toLowerCase()
   return (
@@ -32,7 +28,6 @@ const isLightBase = (product: Product): boolean => {
   )
 }
 
-// Product interface
 interface Product {
   id: number | string
   name: string
@@ -45,25 +40,6 @@ interface Product {
   sku?: string
 }
 
-/**
- * Breadcrumbs Component - Unified Style
- */
-const ProductsBreadcrumbs = () => (
-  <nav aria-label="Breadcrumb" className="border-b border-gray-200 bg-white">
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center space-x-2 py-4 text-sm">
-        <Link href="/" className="font-medium text-gray-500 hover:text-gray-900">
-          Home
-        </Link>
-        <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-        </svg>
-        <span className="font-medium text-gray-500">Products</span>
-      </div>
-    </div>
-  </nav>
-)
-
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -71,91 +47,25 @@ export default function ProductsPage() {
   const [productType, setProductType] = useState<ProductType>('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
 
-  // Fetch products on mount
   useEffect(() => {
     fetchProducts()
   }, [])
 
-  // Reset category when product type changes
   useEffect(() => {
     setSelectedCategory('all')
   }, [productType])
 
-  // Development logging
-  useEffect(() => {
-    if (shouldLog) {
-      console.log('📦 Products Page:', {
-        environment: ENV_MODE,
-        productsCount: products.length,
-        loading,
-        error: error || 'none'
-      })
-    }
-  }, [products, loading, error])
-
-  /**
-   * Fetch products from generated file or API fallback
-   */
   const fetchProducts = async () => {
     try {
-      if (shouldLog) {
-        console.log('📄 Loading products from generated file...')
-      }
-
-      // Import the generated products file - use relative path
-      const { finalProductList: cockpit3dProducts, generatedAt, sourceInfo } = await import('../../data/final-product-list.js')
-      
-      if (shouldLog) {
-        console.log('📦 Products loaded:', {
-          count: cockpit3dProducts.length,
-          generatedAt,
-          sourceInfo
-        })
-      }
-
-      setProducts(cockpit3dProducts || [])
-      
-      if (shouldLog) {
-        console.log(`✅ Loaded ${cockpit3dProducts?.length || 0} products`)
-      }
-
+      const { finalProductList } = await import('@/data/final-product-list.js')
+      setProducts(finalProductList || [])
     } catch (err: any) {
-      console.error('❌ Error loading products from file:', err)
-      
-      // Fallback to API if file doesn't exist
-      if (shouldLog) {
-        console.log('⚠️ File not found, trying API fallback...')
-      }
-      
-      try {
-        const response = await fetch('/api/products', {
-          cache: 'no-store'
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-        }
-        
-        const data = await response.json()
-        
-        if (data.success) {
-          setProducts(data.products || [])
-          
-          if (shouldLog) {
-            console.log(`✅ Loaded ${data.products?.length || 0} products from API`)
-          }
-        } else {
-          throw new Error(data.error || 'Failed to load products')
-        }
-      } catch (apiErr: any) {
-        setError(apiErr.message)
-      }
+      setError(err.message)
     } finally {
       setLoading(false)
     }
   }
 
-  // Filter by product type
   const filterByType = (prods: Product[]): Product[] => {
     switch (productType) {
       case 'crystals': return prods.filter(p => !isLightBase(p))
@@ -165,139 +75,69 @@ export default function ProductsPage() {
   }
 
   const typeFiltered = filterByType(products)
-  
-  // Get unique categories from type-filtered products
-  const categories = ['all', ...new Set(
-    typeFiltered.flatMap(p => p.categories?.filter(c => c !== 'lightbases') || [])
-  )]
-
-  // Filter products by category
   const filteredProducts = selectedCategory === 'all' 
     ? typeFiltered
     : typeFiltered.filter(p => p.categories?.includes(selectedCategory))
 
-  /**
-   * Loading State
-   */
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <ProductsBreadcrumbs />
-
-        {/* Page Title */}
-        <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-light text-gray-900 mb-2">Our Creations</h1>
-          <p className="text-gray-600 mb-8">
-            Discover stunning 3D laser-engraved crystal designs
-          </p>
-        </div>
-        
-        {/* Loading Spinner */}
-        <div className="container mx-auto px-4 pb-12">
-          <div className="text-center">
-            <div 
-              className="inline-block w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" 
-              role="status"
-            >
-              <span className="sr-only">Loading...</span>
-            </div>
-            <p className="mt-4 text-lg text-gray-600">
-              Loading products...
-            </p>
-          </div>
+        <section className="hero px-8 py-16 text-center">
+          <h1 className="text-4xl font-light text-white mb-4">Our Creations</h1>
+        </section>
+        <Breadcrumbs items={[{ label: 'Products' }]} />
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="inline-block w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
     )
   }
 
-  /**
-   * Error State
-   */
   if (error) {
     return (
       <div className="min-h-screen bg-white">
-        <ProductsBreadcrumbs />
-
-        {/* Page Title */}
+        <section className="hero px-8 py-16 text-center">
+          <h1 className="text-4xl font-light text-white mb-4">Our Creations</h1>
+        </section>
+        <Breadcrumbs items={[{ label: 'Products' }]} />
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-light text-gray-900 mb-2">Our Creations</h1>
-        </div>
-        
-        {/* Error Alert */}
-        <div className="container mx-auto px-4 pb-12">
           <div className="max-w-2xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6">
-            <h4 className="text-xl font-semibold text-red-600 mb-3">
-              ⚠️ Error Loading Products
-            </h4>
-            <p className="text-gray-700 mb-4">{error}</p>
-            <hr className="border-red-500/30 mb-4" />
-            <div className="flex gap-3 flex-wrap">
-              <button 
-                onClick={() => {
-                  setLoading(true)
-                  setError('')
-                  fetchProducts()
-                }} 
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
-              >
-                🔄 Retry
-              </button>
-              <Link 
-                href="/" 
-                className="px-4 py-2 bg-transparent border border-gray-400 hover:bg-gray-800 text-white rounded-lg transition-colors font-medium"
-              >
-                ← Back to Home
-              </Link>
-            </div>
-            {shouldLog && (
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <small className="text-text-tertiary">
-                  Environment: {ENV_MODE}<br />
-                  Check browser console for details
-                </small>
-              </div>
-            )}
+            <h4 className="text-xl font-semibold text-red-600 mb-3">Error Loading Products</h4>
+            <p className="text-gray-700">{error}</p>
           </div>
         </div>
       </div>
     )
   }
 
-  /**
-   * Main Products View
-   */
   return (
     <div className="min-h-screen bg-white">
-      <ProductsBreadcrumbs />
-      
-      {/* Page Title & Description */}
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl sm:text-4xl font-light text-gray-900 mb-3">Our Creations</h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
-          Discover stunning 3D laser-engraved crystal designs. Each piece is crafted with precision to preserve your cherished memories.
-        </p>
-      </div>
+      <section className="hero px-8 py-16 text-center">
+        <h1 className="text-4xl font-light text-white mb-4">Our Creations</h1>
+        <p className="text-lg text-gray-200">Discover stunning 3D laser-engraved crystal designs</p>
+      </section>
 
-      {/* Product Type Filter (Crystals vs Light Bases) */}
+      <Breadcrumbs items={[{ label: 'Products' }]} />
+
       <section className="border-b border-gray-200 bg-gray-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex gap-2 justify-start flex-wrap">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setProductType('all')}
               className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                 productType === 'all'
-                  ? 'bg-brand-500 text-white shadow-sm'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+                  ? 'bg-brand-500 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400'
               }`}
             >
-              All Products ({products.length})
+              All ({products.length})
             </button>
             <button
               onClick={() => setProductType('crystals')}
               className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                 productType === 'crystals'
-                  ? 'bg-brand-500 text-white shadow-sm'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+                  ? 'bg-brand-500 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400'
               }`}
             >
               💎 Crystals ({products.filter(p => !isLightBase(p)).length})
@@ -306,8 +146,8 @@ export default function ProductsPage() {
               onClick={() => setProductType('lightbases')}
               className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                 productType === 'lightbases'
-                  ? 'bg-brand-500 text-white shadow-sm'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+                  ? 'bg-brand-500 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400'
               }`}
             >
               💡 Light Bases ({products.filter(p => isLightBase(p)).length})
@@ -316,91 +156,38 @@ export default function ProductsPage() {
         </div>
       </section>
 
-    
-
-      {/* Products Grid Section */}
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-16">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                No products found in this category
-              </h3>
-              <button 
-                onClick={() => setSelectedCategory('all')}
-                className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-sm"
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.slug}`}
+                className="bg-white rounded-xl border border-gray-200 hover:border-brand-500 hover:shadow-lg transition-all duration-300 overflow-hidden group"
               >
-                View All Products
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <div 
-                  key={`${product.id}-${product.slug}`}
-                  className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-200 hover:border-brand-500 transition-all duration-300 h-full flex flex-col group"
-                >
-                  {/* Product Image */}
-                  <div className="relative h-52 bg-gray-50 overflow-hidden">
-                    <Image
-                      src={product.images[0]?.src || 'https://placehold.co/800x800?text=No+Image'}
-                      alt={product.name}
-                      fill
-                      className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    />
- 
-
-                    {/* Light Base Badge */}
-                    {isLightBase(product) && (
-                      <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-sm">
-                        💡 Light Base
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="flex flex-col flex-grow p-5">
-                    {/* Product Title */}
-                    <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-brand-600 transition-colors">
-                      {product.name}
-                    </h3>
-
-                    {/* Category Badge */}
-                    {product.categories && product.categories.length > 0 && (
-                      <div className="mb-3">
-                        <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded font-medium">
-                          {product.categories[0]}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Price and Size Info - Push to bottom */}
-                    <div className="mt-auto">
-                      <div className="flex justify-between items-center mb-4 pt-3 border-t border-gray-200">
-                        <span className="text-2xl font-light text-brand-500">
-                          ${product.basePrice.toFixed(2)}
-                        </span>
-                        {product.sizes && product.sizes.length > 1 && (
-                          <span className="text-sm text-gray-500">
-                            {product.sizes.length} sizes
-                          </span>
-                        )}
-                      </div>
-
-                      {/* View Details Button */}
-                      <Link 
-                        href={`/products/${product.slug}`}
-                        className="block w-full px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-center rounded-lg transition-all duration-200 font-medium text-sm"
-                      >
-                        View Details
-                      </Link>
-                    </div>
+                <div className="relative h-52 bg-gray-50">
+                  <Image
+                    src={product.images[0]?.src || 'https://placehold.co/800x800?text=No+Image'}
+                    alt={product.name}
+                    fill
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {isLightBase(product) && (
+                    <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-semibold">💡</div>
+                  )}
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-semibold text-gray-900 mb-2 group-hover:text-brand-600 transition-colors">
+                    {product.name}
+                  </h3>
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+                    <span className="text-2xl font-light text-brand-500">${product.basePrice}</span>
+                    <span className="text-sm text-brand-500 font-medium">View →</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </div>
