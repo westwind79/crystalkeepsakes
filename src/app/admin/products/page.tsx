@@ -268,7 +268,7 @@ export default finalProductList;
                 className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
               >
                 <span>💾</span>
-                <span>Generate final-product-list.js</span>
+                <span>Save Products</span>
               </button>
             </div>
           </div>
