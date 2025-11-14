@@ -151,6 +151,9 @@ export default function HomePage() {
       {/* Featured Products Section */}
       <FeaturedProducts limit={6} title="Featured Designs" />
 
+      {/* Testimonials Section */}
+      <Testimonials />
+
       {/* Process Section */}
       <section className="process-section bg-component-light-bg py-12 md:py-16">
         <div className="w-full max-w-7xl mx-auto px-4">
