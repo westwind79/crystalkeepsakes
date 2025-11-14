@@ -184,8 +184,16 @@ export default function ProductsPage() {
       <div className="min-h-screen bg-white">
         <ProductsBreadcrumbs />
 
+        {/* Page Title */}
+        <div className="container mx-auto px-4 py-12">
+          <h1 className="text-3xl font-light text-gray-900 mb-2">Our Creations</h1>
+          <p className="text-gray-600 mb-8">
+            Discover stunning 3D laser-engraved crystal designs
+          </p>
+        </div>
+        
         {/* Loading Spinner */}
-        <div className="py-12">
+        <div className="container mx-auto px-4 pb-12">
           <div className="text-center">
             <div 
               className="inline-block w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" 
@@ -193,12 +201,9 @@ export default function ProductsPage() {
             >
               <span className="sr-only">Loading...</span>
             </div>
-            <p className="mt-4 text-xl text-text-secondary">
-              Loading products from CockPit3D...
+            <p className="mt-4 text-lg text-gray-600">
+              Loading products...
             </p>
-            {shouldLog && (
-              <p className="text-text-tertiary text-sm mt-2">Environment: {ENV_MODE}</p>
-            )}
           </div>
         </div>
       </div>
