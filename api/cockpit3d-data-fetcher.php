@@ -102,10 +102,6 @@ class CockPit3DFetcher {
         $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-<<<<<<< Updated upstream
-        $this->retailId = getEnvVariable('COCKPIT3D_RETAIL_ID');
-        
-=======
         $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
        
         // Fallbacks for safety
@@ -120,11 +116,10 @@ class CockPit3DFetcher {
           throw new Exception('Invalid COCKPIT3D_BASE_URL: ' . $this->baseUrl);
         }
 
->>>>>>> Stashed changes
         console_log("Base URL", $this->baseUrl);
         console_log("Username", $this->username ? 'SET' : 'MISSING');
         console_log("Password", $this->password ? 'SET' : 'MISSING');
-        console_log("Retailer ID", $this->retailId ? 'SET' : 'MISSING');
+        console_log("Retailer ID", $this->retailerId ? 'SET' : 'MISSING');
         
         // Set up caching in src/data
         $this->cacheDir = dirname(__DIR__) . '/src/data/';
