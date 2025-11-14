@@ -267,9 +267,16 @@ export default function ProductsPage() {
    * Main Products View
    */
   return (
-    <div className="min-h-screen bg-dark-bg text-dark-text">
-      <ProductsHero />
+    <div className="min-h-screen bg-white">
       <ProductsBreadcrumbs />
+      
+      {/* Page Title & Description */}
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-3xl sm:text-4xl font-light text-gray-900 mb-3">Our Creations</h1>
+        <p className="text-lg text-gray-600 max-w-3xl">
+          Discover stunning 3D laser-engraved crystal designs. Each piece is crafted with precision to preserve your cherished memories.
+        </p>
+      </div>
 
       {/* Product Type Filter (Crystals vs Light Bases) */}
       <section className="container mx-auto px-4 mb-6">
