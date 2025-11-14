@@ -72,11 +72,6 @@ http.get(API_URL, (res) => {
         console.log(`   💾 Saved to: ${result.file_path || 'src/data/cockpit3d-products.js'}`);
         process.exit(0);
       }
-    } catch (error) {
-      console.error('❌ Error:', error.message);
-      console.error('📄 Response preview:', data.substring(0, 500));
-      process.exit(1);
-    }
   });
 
 }).on('error', (error) => {
