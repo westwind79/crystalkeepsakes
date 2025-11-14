@@ -139,7 +139,7 @@ class CockPit3DFetcher {
     }
 
     public function hasCredentials() {
-        $hasAll = !empty($this->username) && !empty($this->password) && !empty($this->retailId);
+        $hasAll = !empty($this->username) && !empty($this->password) && !empty($this->retailerId);
         console_log("Has all credentials", $hasAll ? 'YES' : 'NO');
         return $hasAll;
     }
