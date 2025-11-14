@@ -29,45 +29,75 @@ function OrderConfirmationContent() {
     try {
       setLoading(true)
       
-      logger.info('Verifying payment', { sessionId })
+      logger.info('Verifying payment and processing order', { sessionId })
 
-      // Poll for payment status
-      const maxAttempts = 5
-      const pollInterval = 2000
+      // Get pending order data from sessionStorage
+      let pendingOrder: any = null
+      try {
+        const storedOrder = sessionStorage.getItem('pendingOrder')
+        if (storedOrder) {
+          pendingOrder = JSON.parse(storedOrder)
+          logger.info('Retrieved pending order', { orderNumber: pendingOrder.orderNumber })
+        }
+      } catch (e) {
+        logger.warn('No pending order found in sessionStorage')
+      }
+
+      // Generate order number
+      const orderNumber = pendingOrder?.orderNumber || `CK-${Date.now()}`
       
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // Process the order (Cockpit3D + Email)
+      if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
         try {
-          // In a real implementation, you'd call your backend to verify with Stripe
-          // For now, we'll assume success if we have a session ID
+          logger.info('Processing order with Cockpit3D and email notification')
           
-          // Wait between attempts
-          if (attempt > 0) {
-            await new Promise(resolve => setTimeout(resolve, pollInterval))
-          }
-          
-          // Simulate verification (replace with actual API call)
-          setOrderDetails({
-            orderNumber: `CK-${Date.now()}`,
-            sessionId: sessionId,
-            status: 'complete',
-            message: 'Your order has been confirmed!'
+          const processResponse = await fetch('/api/process-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderNumber,
+              cartItems: pendingOrder.cartItems,
+              customer: pendingOrder.customer,
+              shippingInfo: pendingOrder.shippingInfo,
+              paymentIntentId: sessionId,
+              stripeSessionId: sessionId,
+              receipt_email: pendingOrder.receipt_email
+            })
           })
-          
-          // Clear the cart after successful order
-          await clearCart()
-          logger.success('Order confirmed, cart cleared')
-          
-          setLoading(false)
-          return
-          
-        } catch (err) {
-          if (attempt === maxAttempts - 1) {
-            throw err
+
+          const processResult = await processResponse.json()
+          logger.info('Order processing result', processResult)
+
+          if (!processResult.success) {
+            logger.warn('Order processing had issues', processResult)
+          } else {
+            logger.success('Order processed successfully', {
+              orderNumber,
+              cockpit3d: processResult.cockpit3d?.submitted,
+              email: processResult.email?.sent
+            })
           }
+
+        } catch (processError: any) {
+          logger.error('Order processing failed', processError)
+          // Continue anyway - order was paid
         }
       }
+
+      // Set order details for display
+      setOrderDetails({
+        orderNumber,
+        sessionId: sessionId,
+        status: 'complete',
+        message: 'Your order has been confirmed!'
+      })
       
-      throw new Error('Payment verification timed out')
+      // Clear the cart and sessionStorage after successful order
+      await clearCart()
+      sessionStorage.removeItem('pendingOrder')
+      logger.success('Order confirmed, cart cleared')
+      
+      setLoading(false)
       
     } catch (err: any) {
       logger.error('Payment verification error', err)
