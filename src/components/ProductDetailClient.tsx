@@ -291,7 +291,19 @@ export default function ProductDetailClient() {
   }
 
   const handleAddToCart = async () => {
+    console.log('🛒 [ADD TO CART] Starting add to cart process')
+    console.log('🛒 [ADD TO CART] Product:', {
+      id: product?.id,
+      name: product?.name,
+      sku: product?.sku,
+      cockpit3d_id: product?.cockpit3d_id,
+      basePrice: product?.basePrice,
+      requiresImage: product?.requiresImage,
+      maskImageUrl: product?.maskImageUrl
+    })
+    
     if (!validateForm()) {
+      console.error('❌ [ADD TO CART] Validation failed:', errors)
       logger.warn('Form validation failed', errors)
       return
     }
