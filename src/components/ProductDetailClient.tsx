@@ -116,9 +116,10 @@ export default function ProductDetailClient() {
   const fetchProduct = async (slug: string) => {
     try {
       logger.info('Fetching product', { slug, envMode: ENV_MODE })
-      const { cockpit3dProducts } = await import('@/data/cockpit3d-products.js')
-      logger.info(`Loaded ${cockpit3dProducts.length} products from cache`)
-      const foundProduct = cockpit3dProducts.find((p: Product) => p.slug === slug)
+      // Use final-product-list.js which includes admin customizations
+      const { finalProductList } = await import('@/data/final-product-list.js')
+      logger.info(`Loaded ${finalProductList.length} products from final-product-list`)
+      const foundProduct = finalProductList.find((p: Product) => p.slug === slug)
       
       if (!foundProduct) {
         throw new Error('Product not found')
