@@ -347,7 +347,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || hasSubmitted}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 shadow-sm hover:shadow-md"
               >
                 {isSubmitting ? 'Sending...' : hasSubmitted ? 'Message Sent' : 'Send Message'}
               </button>
