@@ -84,14 +84,6 @@ echo "<div class='env-block'>";
 echo "<h2>📋 Environment Variables Detected</h2>";
 
 $envVars = [
-<<<<<<< Updated upstream
-    'COCKPIT3D_USERNAME' => getEnvVariable('COCKPIT3D_USERNAME'),
-    'COCKPIT3D_PASSWORD' => getEnvVariable('COCKPIT3D_PASSWORD'),
-    'COCKPIT3D_RETAIL_ID' => getEnvVariable('COCKPIT3D_RETAIL_ID'),
-    'COCKPIT3D_API_TOKEN' => getEnvVariable('COCKPIT3D_API_TOKEN'),
-    'COCKPIT3D_BASE_URL' => getEnvVariable('COCKPIT3D_BASE_URL'),
-    'NEXT_PUBLIC_COCKPIT3D_API_URL' => getEnvVariable('NEXT_PUBLIC_COCKPIT3D_API_URL'),
-=======
 	'NEXT_PUBLIC_ENV_MODE' => getEnvVariable('NEXT_PUBLIC_ENV_MODE'),
 	'COCKPIT3D_USERNAME' => getEnvVariable('COCKPIT3D_USERNAME'),
 	'COCKPIT3D_PASSWORD' => getEnvVariable('COCKPIT3D_PASSWORD'),
@@ -99,7 +91,6 @@ $envVars = [
 	'COCKPIT3D_BASE_URL' => getEnvVariable('COCKPIT3D_BASE_URL'),
 	'COCKPIT3D_DEV_URL' => getEnvVariable('COCKPIT3D_DEV_URL'),
 	'COCKPIT3D_LOGIN_PATH' => getEnvVariable('COCKPIT3D_LOGIN_PATH'),
->>>>>>> Stashed changes
 ];
 
 echo "<table>";
