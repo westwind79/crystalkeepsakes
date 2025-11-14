@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 // Raw Cockpit3D Catalog API data - 2025-11-13 11:54:09
-=======
-// Raw Cockpit3D Catalog API data - 2025-11-11 21:50:53
->>>>>>> Stashed changes
 
 export const cockpit3dRawCatalog = [
     {
