@@ -57,11 +57,12 @@ http.get(API_URL, (res) => {
   });
 
 }).on('error', (error) => {
-  console.error('❌ HTTP Request Error:', error.message);
-  console.error('');
-  console.error('💡 Possible causes:');
-  console.error(`   1. MAMP not running on port ${MAMP_PORT}`);
-  console.error('   2. Wrong port number (check MAMP settings)');
-  console.error('   3. PHP project not accessible at /crystalkeepsakes');
-  process.exit(1);
+  console.warn('⚠️ Could not fetch from Cockpit3D:', error.message);
+  console.warn('');
+  console.warn('💡 Skipping Cockpit3D fetch - using existing product data');
+  console.warn('   This is normal in containerized environments without MAMP');
+  console.warn('   If you need fresh data, run this on your local machine with MAMP');
+  console.warn('');
+  console.log('✅ Build will continue with existing product files');
+  process.exit(0);  // Exit successfully so build continues
 });
