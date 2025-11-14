@@ -46,28 +46,20 @@ interface Product {
 }
 
 /**
- * Hero Component - Single source of truth
- */
-const ProductsHero = () => (
-  <section className="hero px-8 py-16 text-center">
-    <div className="hero-content max-w-xl mx-auto">
-      <h1 className="primary-header mb-4">Our Creations</h1>
-      <p className="lead text-gray-100">
-        Welcome to CrystalKeepsakes, where cherished moments are transformed into stunning 3D laser-engraved crystal creations.
-      </p>
-    </div>
-  </section>
-)
-
-/**
- * Breadcrumbs Component - Single source of truth
+ * Breadcrumbs Component - Unified Style
  */
 const ProductsBreadcrumbs = () => (
-  <nav className="breadcrumbs py-4">
-    <div className="container mx-auto px-4">
-      <Link href="/" className="hover:text-brand-400 transition-colors">Home</Link>  
-      <span className="mx-2 text-gray-600">/</span>
-      <span className="text-text-tertiary">Products</span>
+  <nav aria-label="Breadcrumb" className="border-b border-gray-200 bg-white">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center space-x-2 py-4 text-sm">
+        <Link href="/" className="font-medium text-gray-500 hover:text-gray-900">
+          Home
+        </Link>
+        <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+        </svg>
+        <span className="font-medium text-gray-500">Products</span>
+      </div>
     </div>
   </nav>
 )
