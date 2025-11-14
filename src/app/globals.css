@@ -80,6 +80,7 @@ html {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
