@@ -244,6 +244,9 @@ export default function CheckoutPage() {
         const cockpitOrder = buildCockpit3DOrder()
         const orderNumber = `CK-${Date.now()}`
 
+        console.log('🏗️ [CHECKOUT] Building Cockpit3D Order')
+        console.log('🏗️ [CHECKOUT] Cockpit3D Order:', JSON.stringify(cockpitOrder, null, 2))
+
         // Store pending order data for order confirmation page
         const pendingOrder = {
           orderNumber,
@@ -267,8 +270,15 @@ export default function CheckoutPage() {
           cockpitOrderData: cockpitOrder
         }
         
+        console.log('💾 [CHECKOUT] Storing Pending Order:', {
+          orderNumber,
+          itemCount: cart.length,
+          customer: pendingOrder.customer,
+          shippingInfo: pendingOrder.shippingInfo
+        })
+        
         sessionStorage.setItem('pendingOrder', JSON.stringify(pendingOrder))
-        console.log('💾 Stored pending order for confirmation', orderNumber)
+        console.log('✅ [CHECKOUT] Pending order stored successfully')
 
         // This calls PHP: create-payment-intent.php
         const result = await createPaymentIntent(
