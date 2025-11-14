@@ -99,11 +99,28 @@ class CockPit3DFetcher {
     public function __construct() {
         console_log("🚀 Initializing CockPit3DFetcher...");
 
-        $this->baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://api.cockpit3d.com';
+        $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
+<<<<<<< Updated upstream
         $this->retailId = getEnvVariable('COCKPIT3D_RETAIL_ID');
         
+=======
+        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
+       
+        // Fallbacks for safety
+        if (!$this->baseUrl) {
+          $this->baseUrl = 'https://api.cockpit3d.com';
+        }
+        $this->baseUrl = rtrim($this->baseUrl, '/');
+
+        // Validate base URL early to avoid "No host part" errors
+        $parts = parse_url($this->baseUrl);
+        if (!$parts || empty($parts['scheme']) || empty($parts['host'])) {
+          throw new Exception('Invalid COCKPIT3D_BASE_URL: ' . $this->baseUrl);
+        }
+
+>>>>>>> Stashed changes
         console_log("Base URL", $this->baseUrl);
         console_log("Username", $this->username ? 'SET' : 'MISSING');
         console_log("Password", $this->password ? 'SET' : 'MISSING');
@@ -155,7 +172,17 @@ class CockPit3DFetcher {
         
         console_log("Login data prepared", array_keys($loginData));
 
+        // Allow login path override via env, default to current value
+        $loginPath = rtrim(getEnvVariable('COCKPIT3D_LOGIN_PATH') ?: '/rest/V2/login', '/');
+        $url = $this->baseUrl . $loginPath;
+
         $ch = curl_init();
+        $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?: 'development';
+        $baseUrl = $mode === 'production'
+          ? (getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com')
+           : (getEnvVariable('COCKPIT3D_DEV_URL')   ?: 'https://c3d-profit-dev.host.alva.tools');
+        $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
+        
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/rest/V2/login');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -184,12 +211,25 @@ class CockPit3DFetcher {
         }
 
         $this->token = trim(json_decode($response), '"');
-        $this->tokenExpiry = time() + 3600; // Token valid for 1 hour
+        
+        $decoded = json_decode($response, true);
+            if (is_string($decoded)) {
+              $this->token = trim($decoded, "\" \t\n\r\0\x0B");
+            } elseif (is_array($decoded)) {
+              $this->token = $decoded['token'] ?? $decoded['data']['token'] ?? '';
+            } else {
+              $this->token = '';
+            }
+            $this->tokenExpiry = time() + 3600; // Token valid for 1 hour
+            if (empty($this->token)) {
+              console_log("Authentication returned empty token");
+              throw new Exception("Authentication failed: empty token");
+            }
 
-        if (empty($this->token)) {
-            console_log("❌ Empty token received");
-            throw new Exception("Authentication failed: Empty token received");
-        }
+            if (empty($this->token)) {
+                console_log("❌ Empty token received");
+                throw new Exception("Authentication failed: Empty token received");
+            }
         
         console_log("✅ Authentication successful", "Token: " . substr($this->token, 0, 20) . "...");
     }
@@ -241,13 +281,17 @@ class CockPit3DFetcher {
         return $data;
     }
 
+    public function getOrders() {
+        console_log("📦 Fetching Orders from API...");
+        return $this->makeRequest('/rest/V2/orders');
+    }
     public function getProducts() {
-        console_log("📦 Fetching products from API...");
+        console_log("📦 Fetching Products from API...");
         return $this->makeRequest('/rest/V2/products');
     }
 
     public function getCatalog() {
-        console_log("📚 Fetching catalog from API...");
+        console_log("📚 Fetching Catalog from API...");
         return $this->makeRequest('/rest/V2/catalog');
     }
 
@@ -399,7 +443,7 @@ class CockPit3DFetcher {
             ];
         } else {
             $transformed['images'][] = [
-                'src' => "https://placehold.co/600x400",
+                'src' => "https://placehold.co/800x800",
                 'isMain' => true
             ];
         }
@@ -985,7 +1029,7 @@ class CockPit3DFetcher {
 
     // NEW: Generate the combined products file (static + CockPit3D)
     public function generateProcessedProductsFile($refresh = false) {
-        console_log("Ã°Å¸â€Â§ Generating processed products file (static + CockPit3D)...");
+        console_log("Generating processed products file (static + CockPit3D)...");
         
         try {
             // First, ensure we have raw data
@@ -1085,10 +1129,13 @@ class CockPit3DFetcher {
             return [
                 'success' => true,
                 'products_count' => count($allProducts),
+                'total_count' => count($allProducts),
                 'static_count' => count($staticProducts),
                 'cockpit3d_count' => count($cockpitProducts),
-                'file_size' => $result
-            ];
+                'file_size' => $result,
+                'file_path' => $processedProductsFile,
+                'output_path' => $processedProductsFile
+             ];
             
         } catch (Exception $e) {
             console_log("❌ Error generating processed products file", $e->getMessage());
@@ -1120,6 +1167,15 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
         }
 
         switch ($action) {
+            case 'get-orders':
+                console_log("📦 Pulling Orders...");
+                $data = $fetcher->getOrders();
+                echo json_encode([
+                    'success' => true,
+                    'data' => $data,
+                    'count' => is_array($data) ? count($data) : 0
+                ]);
+                break;
             case 'products':
                 console_log("📦 Handling products action...");
                 $data = $fetcher->getProducts();
@@ -1141,13 +1197,13 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
                 break;
 
             case 'generate-raw':
-                console_log("Ã°Å¸â€Â§ Handling generate-raw action...");
+                console_log("Handling generate-raw action...");
                 $result = $fetcher->generateRawFiles($refresh);
                 echo json_encode($result);
                 break;
 
             case 'generate-products':
-                console_log("Ã°Å¸â€Â§ Handling generate-products action...");
+                console_log("Handling generate-products action...");
                 $result = $fetcher->generateProcessedProductsFile($refresh);
                 echo json_encode($result);
                 break;

@@ -7,7 +7,7 @@ const http = require('http');
 const MAMP_PORT = process.env.MAMP_PORT || '8888';
 const API_URL = `http://localhost:${MAMP_PORT}/crystalkeepsakes/api/cockpit3d-data-fetcher.php?action=generate-products`;
 
-console.log('🔄 Fetching products from CockPit3D...');
+console.log('[FETCH] Fetching products from CockPit3D...');
 console.log(`📍 API URL: ${API_URL}`);
 
 // Make HTTP request

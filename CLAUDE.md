@@ -3,7 +3,7 @@
 - npm run dev: Build and launch local development environment
 
 # Code style
-- Use NEXTjs and TypeScript with Bootstrap
+- Use NEXTjs and TypeScript with Tailwind
 - always comment code
 - version and date stamp each file
 - Destructure imports when possible (eg. import { foo } from 'bar')
