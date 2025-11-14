@@ -12,6 +12,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCards, Autoplay } from 'swiper/modules'
+import FeaturedProducts from '@/components/FeaturedProducts'
+import Testimonials from '@/components/Testimonials'
 
 // Import Swiper styles - only on this page
 import 'swiper/css'
@@ -22,31 +24,6 @@ import './css/swiper.css'
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
-
-// Temporary product data (will be replaced with Cockpit3D API)
-const featuredProducts = [
-  {
-    id: 1,
-    name: "Rectangle Crystal Block",
-    price: 89.99,
-    image: "/img/products/3d-rectangle-wide.jpg",
-    description: "Perfect for landscape photos and family portraits"
-  },
-  {
-    id: 2,
-    name: "Heart Crystal",
-    price: 79.99,
-    image: "/img/products/lalena-gift-square.jpg", 
-    description: "Ideal for romantic memories and special moments"
-  },
-  {
-    id: 3,
-    name: "Square Crystal Block",
-    price: 69.99,
-    image: "/img/products/brooks-memorial.jpg",
-    description: "Classic design for any cherished memory"
-  }
-]
 
 const heroSwiperSlides = [
   {
