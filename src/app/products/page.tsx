@@ -215,8 +215,7 @@ export default function ProductsPage() {
    */
   if (error) {
     return (
-      <div className="min-h-screen bg-dark-bg text-dark-text pt-[100px]">
-        <ProductsHero />
+      <div className="min-h-screen bg-white">
         <ProductsBreadcrumbs />
 
         {/* Error Alert */}
