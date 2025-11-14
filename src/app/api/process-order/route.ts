@@ -10,6 +10,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
+    console.log('🔵 [PROCESS ORDER API] Received request')
+    console.log('🔵 [PROCESS ORDER API] Raw body:', JSON.stringify(body, null, 2))
+    
     const {
       orderNumber,
       cartItems,
@@ -21,11 +24,26 @@ export async function POST(request: NextRequest) {
     } = body
 
     if (!orderNumber || !cartItems || cartItems.length === 0) {
+      console.error('❌ [PROCESS ORDER API] Missing required fields:', {
+        hasOrderNumber: !!orderNumber,
+        hasCartItems: !!cartItems,
+        cartItemsLength: cartItems?.length
+      })
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
+
+    console.log('✅ [PROCESS ORDER API] Validation passed')
+    console.log('🔵 [PROCESS ORDER API] Order Details:', {
+      orderNumber,
+      itemCount: cartItems.length,
+      hasCustomer: !!customer,
+      paymentIntentId,
+      customer,
+      shippingInfo
+    })
 
     logger.info('Processing complete order', {
       orderNumber,
