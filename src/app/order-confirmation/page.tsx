@@ -30,6 +30,7 @@ function OrderConfirmationContent() {
       setLoading(true)
       
       logger.info('Verifying payment and processing order', { sessionId })
+      console.log('🔍 [ORDER CONFIRMATION] Starting verification for session:', sessionId)
 
       // Get pending order data from sessionStorage
       let pendingOrder: any = null
@@ -37,35 +38,48 @@ function OrderConfirmationContent() {
         const storedOrder = sessionStorage.getItem('pendingOrder')
         if (storedOrder) {
           pendingOrder = JSON.parse(storedOrder)
+          console.log('📥 [ORDER CONFIRMATION] Retrieved Pending Order:', {
+            orderNumber: pendingOrder.orderNumber,
+            itemCount: pendingOrder.cartItems?.length,
+            customer: pendingOrder.customer,
+            hasShippingInfo: !!pendingOrder.shippingInfo
+          })
           logger.info('Retrieved pending order', { orderNumber: pendingOrder.orderNumber })
         }
       } catch (e) {
+        console.warn('⚠️ [ORDER CONFIRMATION] No pending order found in sessionStorage')
         logger.warn('No pending order found in sessionStorage')
       }
 
       // Generate order number
       const orderNumber = pendingOrder?.orderNumber || `CK-${Date.now()}`
+      console.log('🔢 [ORDER CONFIRMATION] Order Number:', orderNumber)
       
       // Process the order (Cockpit3D + Email)
       if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
         try {
+          const orderPayload = {
+            orderNumber,
+            cartItems: pendingOrder.cartItems,
+            customer: pendingOrder.customer,
+            shippingInfo: pendingOrder.shippingInfo,
+            paymentIntentId: sessionId,
+            stripeSessionId: sessionId,
+            receipt_email: pendingOrder.receipt_email
+          }
+          
+          console.log('📤 [ORDER CONFIRMATION] Sending to /api/process-order')
+          console.log('📤 [ORDER CONFIRMATION] Payload:', JSON.stringify(orderPayload, null, 2))
           logger.info('Processing order with Cockpit3D and email notification')
           
           const processResponse = await fetch('/api/process-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderNumber,
-              cartItems: pendingOrder.cartItems,
-              customer: pendingOrder.customer,
-              shippingInfo: pendingOrder.shippingInfo,
-              paymentIntentId: sessionId,
-              stripeSessionId: sessionId,
-              receipt_email: pendingOrder.receipt_email
-            })
+            body: JSON.stringify(orderPayload)
           })
 
           const processResult = await processResponse.json()
+          console.log('📨 [ORDER CONFIRMATION] API Response:', JSON.stringify(processResult, null, 2))
           logger.info('Order processing result', processResult)
 
           if (!processResult.success) {
