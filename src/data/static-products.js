@@ -1,4 +1,31 @@
 // Combined processed products (static) - 2025-10-10 21:24:23
+// Canonical option catalogs used by the fetcher to enrich Cockpit3D products
+
+// Light base options: stable slugs + retail prices
+export const staticLightBases = [
+  { id: "lightbase-rectangle", name: "Lightbase Rectangle", price: 25 },
+  { id: "lightbase-square",    name: "Lightbase Square",    price: 25 },
+  { id: "rotating-led",        name: "Rotating LED Lightbase", price: 35 },
+  { id: "wood-mini",           name: "Wooden Premium Base Mini", price: 60 },
+  { id: "wood-small",          name: "Lightbase Wood Small", price: 60 },
+  { id: "wood-medium",         name: "Lightbase Wood Medium", price: 60 },
+  { id: "wood-long",           name: "Lightbase Wood Long",  price: 60 },
+  { id: "concave",             name: "Concave Lightbase",    price: 39 },
+];
+
+// Backdrop options: stable slugs + retail prices
+export const staticBackdropOptions = [
+  { id: "rm", name: "Remove Backdrop", price: 0 },
+  { id: "2d", name: "2D Backdrop",     price: 12 },
+  { id: "3d", name: "3D Backdrop",     price: 15 },
+];
+
+// Text options: stable slugs + retail prices
+export const staticTextOptions = [
+  { id: "none",       name: "No Text",     price: 0 },
+  { id: "customText", name: "Custom Text", price: 9.5 },
+];
+
 export const staticProducts = [
     
     {
