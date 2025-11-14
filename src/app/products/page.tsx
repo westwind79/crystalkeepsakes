@@ -279,38 +279,40 @@ export default function ProductsPage() {
       </div>
 
       {/* Product Type Filter (Crystals vs Light Bases) */}
-      <section className="container mx-auto px-4 mb-6">
-        <div className="flex gap-1 justify-start">
-          <button
-            onClick={() => setProductType('all')}
-            className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-              productType === 'all'
-                ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
-            }`}
-          >
-            All Products ({products.length})
-          </button>
-          <button
-            onClick={() => setProductType('crystals')}
-            className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-              productType === 'crystals'
-                ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
-            }`}
-          >
-            💎 Crystals ({products.filter(p => !isLightBase(p)).length})
-          </button>
-          <button
-            onClick={() => setProductType('lightbases')}
-            className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-              productType === 'lightbases'
-                ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
-            }`}
-          >
-            💡 Light Bases ({products.filter(p => isLightBase(p)).length})
-          </button>
+      <section className="border-b border-gray-200 bg-gray-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex gap-2 justify-start flex-wrap">
+            <button
+              onClick={() => setProductType('all')}
+              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+                productType === 'all'
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+              }`}
+            >
+              All Products ({products.length})
+            </button>
+            <button
+              onClick={() => setProductType('crystals')}
+              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+                productType === 'crystals'
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+              }`}
+            >
+              💎 Crystals ({products.filter(p => !isLightBase(p)).length})
+            </button>
+            <button
+              onClick={() => setProductType('lightbases')}
+              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+                productType === 'lightbases'
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-brand-400 hover:text-brand-600'
+              }`}
+            >
+              💡 Light Bases ({products.filter(p => isLightBase(p)).length})
+            </button>
+          </div>
         </div>
       </section>
 
