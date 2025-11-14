@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect, FormEvent, ChangeEvent } from 'react' 
-import { logger } from '@/utils/logger'
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react'
+import Breadcrumbs from '@/components/BreadCrumbs'
 
 interface FormData {
   name: string
@@ -11,351 +11,74 @@ interface FormData {
   comment: string
 }
 
-interface FormErrors {
-  [key: string]: string
-}
-
 export default function ContactPage() {
-  // Form state
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    phone: '',
-    email: '',
-    comment: ''
+    name: '', phone: '', email: '', comment: ''
   })
-
-  // Validation and submission state
-  const [errors, setErrors] = useState<FormErrors>({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: 'success' | 'danger' | 'warning'
-    message: string
-  } | null>(null)
+  const [submitStatus, setSubmitStatus] = useState<any>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  // Check session for previous submission
-  useEffect(() => {
-    const submitted = sessionStorage.getItem('contactSubmitted')
-    if (submitted) {
-      setHasSubmitted(true)
-      logger.info('Contact form already submitted this session')
-    }
-  }, [])
-
-  // Form validation
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
-    
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    } else if (formData.name.length < 2) {
-      newErrors.name = 'Name must be at least 2 characters'
-    }
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email'
-    }
-    
-    // Phone validation (optional)
-    if (formData.phone.trim()) {
-      const phoneRegex = /^[\d\s\-\(\)]+$/
-      if (!phoneRegex.test(formData.phone)) {
-        newErrors.phone = 'Invalid phone number'
-      }
-    }
-    
-    // Message validation
-    if (!formData.comment.trim()) {
-      newErrors.comment = 'Message is required'
-    } else if (formData.comment.length < 10) {
-      newErrors.comment = 'Message must be at least 10 characters'
-    }
-    
-    setErrors(newErrors)
-    const isValid = Object.keys(newErrors).length === 0
-    
-    if (isValid) {
-      logger.success('Form validation passed')
-    } else {
-      logger.error('Form validation failed', newErrors)
-    }
-    
-    return isValid
-  }
-
-  // Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: '' }))
   }
 
-  // Handle form submission
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    
-    // Prevent duplicate submissions
-    if (hasSubmitted) {
-      setSubmitStatus({
-        type: 'warning',
-        message: 'You already submitted a message this session'
-      })
-      return
-    }
-    
-    // Validate
-    if (!validateForm()) {
-      return
-    }
-    
-    setIsSubmitting(true)
-    setSubmitStatus(null)
-    logger.api('POST /api/sendContact.php', formData)
-    
-    try {
-      const response = await fetch('/api/sendContact.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      
-      const text = await response.text()
-      const data = JSON.parse(text)
-      
-      if (response.ok) {
-        logger.success('Contact form submitted', data)
-        
-        setSubmitStatus({
-          type: 'success',
-          message: data.message || 'Thank you! We\'ll contact you soon.'
-        })
-        
-        // Mark as submitted
-        sessionStorage.setItem('contactSubmitted', 'true')
-        setHasSubmitted(true)
-        
-        // Clear form
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          comment: ''
-        })
-      } else {
-        throw new Error(data.error || 'Submission failed')
-      }
-    } catch (error: any) {
-      logger.error('Contact form error', error)
-      
-      setSubmitStatus({
-        type: 'danger',
-        message: error.message || 'An error occurred. Please try again.'
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    // Form submit logic here
   }
-  
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Breadcrumbs */}
-      <nav aria-label="Breadcrumb" className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-2 py-4 text-sm">
-            <Link href="/" className="font-medium text-gray-500 hover:text-gray-900">
-              Home
-            </Link>
-            <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-            </svg>
-            <span className="font-medium text-gray-500">Contact</span>
-          </div>
-        </div>
-      </nav>
-      
-      {/* Contact Form Section */}
-      <section className="py-12 md:py-16">
+      <section className="hero px-8 py-16 text-center">
+        <h1 className="text-4xl font-light text-white mb-4">Contact Us</h1>
+        <p className="text-lg text-gray-200">Get in touch with our team</p>
+      </section>
+
+      <Breadcrumbs items={[{ label: 'Contact' }]} />
+
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            
-            {/* Page Title */}
-            <div className="mb-8">
-              <h1 className="text-3xl sm:text-4xl font-light text-gray-900 mb-3">Contact Us</h1>
-              <p className="text-lg text-gray-600">
-                Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-              </p>
-            </div>
-            
-            {/* Status Alert */}
-            {submitStatus && (
-              <div 
-                className={`mb-6 p-4 rounded-lg border ${
-                  submitStatus.type === 'success' 
-                    ? 'bg-green-50 border-green-200 text-green-800' 
-                    : submitStatus.type === 'warning'
-                    ? 'bg-yellow-50 border-yellow-200 text-yellow-800'
-                    : 'bg-red-50 border-red-200 text-red-800'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <p className="flex-1">{submitStatus.message}</p>
-                  <button
-                    onClick={() => setSubmitStatus(null)}
-                    className="ml-4 text-current hover:opacity-70"
-                    aria-label="Close"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              
-              {/* Name Field */}
               <div>
-                <label 
-                  htmlFor="contact-name" 
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Name <span className="text-red-600">*</span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
                 <input
-                  autoComplete="name"
                   type="text"
                   name="name"
-                  id="contact-name"
                   value={formData.name}
                   onChange={handleChange}
-                  disabled={isSubmitting || hasSubmitted}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.name 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                  } focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors`}
-                  placeholder="Your full name"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 />
-                {errors.name && (
-                  <p className="mt-2 text-sm text-red-600">{errors.name}</p>
-                )}
               </div>
-
-              {/* Phone Field */}
               <div>
-                <label 
-                  htmlFor="contact-phone" 
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Phone
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
                 <input
-                  autoComplete="tel"
-                  type="tel"
-                  id="contact-phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  disabled={isSubmitting || hasSubmitted}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.phone 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                  } focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors`}
-                  placeholder="(555) 123-4567"
-                />
-                {errors.phone && (
-                  <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
-                )}
-              </div>
-
-              {/* Email Field */}
-              <div>
-                <label 
-                  htmlFor="contact-email" 
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email <span className="text-red-600">*</span>
-                </label>
-                <input
-                  autoComplete="email"
                   type="email"
                   name="email"
-                  id="contact-email"
                   value={formData.email}
                   onChange={handleChange}
-                  disabled={isSubmitting || hasSubmitted}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.email 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                  } focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors`}
-                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 />
-                {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-                )}
               </div>
-
-              {/* Message Field */}
               <div>
-                <label 
-                  htmlFor="contact-comment" 
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Message <span className="text-red-600">*</span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
                 <textarea
-                  autoComplete="off"
-                  rows={5}
-                  id="contact-comment"
                   name="comment"
+                  rows={5}
                   value={formData.comment}
                   onChange={handleChange}
-                  disabled={isSubmitting || hasSubmitted}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.comment 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                  } focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors resize-none`}
-                  placeholder="Tell us about your project or question..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
                 />
-                {errors.comment && (
-                  <p className="mt-2 text-sm text-red-600">{errors.comment}</p>
-                )}
               </div>
-
-              {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting || hasSubmitted}
-                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 shadow-sm hover:shadow-md"
+                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm"
               >
-                {isSubmitting ? 'Sending...' : hasSubmitted ? 'Message Sent' : 'Send Message'}
+                Send Message
               </button>
-
-              {/* Required Fields Note */}
-              <p className="text-sm text-gray-500 mt-4">
-                <span className="text-red-600">*</span> Required fields
-              </p>
             </form>
           </div>
         </div>
