@@ -1,37 +1,16 @@
-/* =====================================================
-   GLOBAL STYLES - TAILWIND VERSION
-   Version: 3.1 - Cohesive Dark Heroes + Light Content
-   ===================================================== */
-
-/* Tailwind CSS */
+/* GLOBAL STYLES - Simplified & Cohesive */
 @import "tailwindcss";
-
-/* Import Custom Styles */
 @import './css/variables.css';
-@import './css/buttons.css';
-@import './css/animations.css'; 
 @import './css/hero.css';
 
-/* Base Styles */
 html {
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
 body {
-  font-size: 1rem;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Inter, system-ui, sans-serif;
   background: #ffffff;
   color: #374151;
-}
-
-main {
-  flex: 1;
 }
 
 /* Typography */
@@ -40,29 +19,20 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 300;
 }
 
-/* Links - Only apply green in specific contexts, not globally */
+/* Links - Inherit by default */
 a {
   color: inherit;
   text-decoration: none;
   transition: color 150ms ease;
 }
 
-/* Breadcrumb links get gray styling */
+/* Breadcrumb specific */
 .breadcrumb-link {
   color: #6B7280;
 }
 
 .breadcrumb-link:hover {
   color: #111827;
-}
-
-/* Content area links get green */
-.content-link {
-  color: #72B01D;
-}
-
-.content-link:hover {
-  color: #5A8E17;
 }
 
 /* Cart Badge */

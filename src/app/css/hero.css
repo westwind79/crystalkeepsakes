@@ -1,39 +1,21 @@
-/* ALL PAGES HERO */
+/* HERO SECTIONS - Dark Minimal */
 .hero { 
-  min-height: 25vh;
+  min-height: 35vh;
   background: linear-gradient(
-    35deg, 
-    rgba(28, 200, 28, 0.2) 10%, 
-    rgba(17, 17, 17, 0.9) 150%
-  ), url('/img/hero/laser-background.png') center/cover no-repeat;
+    135deg, 
+    rgba(17, 17, 17, 0.95) 0%, 
+    rgba(28, 200, 28, 0.15) 100%
+  ), url('/img/laser-background.png') center/cover no-repeat;
   position: relative;
-  overflow: hidden;  
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.hero-content {
-  
-  h1 {
-    line-height: 1.05;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: var(--font-scale-24-30);
-    margin-bottom: 20px; 
-    background: -webkit-linear-gradient(var(--surface-100), var(--primary));
-  /*  background: -webkit-linear-gradient(var(--primary), var(--surface-300));*/
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  h2 {  
-    font-size: var(--font-scale-20-24); 
-  }
-  p {  
-    /*font-size: var(--font-scale-17-20); */
-  }
-}
- 
-/* HOME PAGE HERO */
+/* Homepage hero - larger */
 .home .hero {
-  min-height: 75vh;
+  min-height: 70vh;
   background: linear-gradient(
       45deg, 
       rgba(17, 17, 17, 0.9) 30%,
@@ -41,47 +23,18 @@
   ), url('/img/flag-background-2.png') center/cover no-repeat;
 }
 
-.home .hero-content h1 {
-  font-size: var(--font-scale-43-62); 
-}
-
-.home .hero-content p {
-  font-size: var(--font-scale-20-26); 
-}
-
-
+/* About page hero */
 .about .hero {
   background: linear-gradient(
       rgba(28, 200, 28, 0.2), 
       rgba(28, 28, 28, 0.8)
   ), url('/img/emerald-laser-background.jpg') center/cover no-repeat;
 }
+
+/* Products page hero */
 .products .hero {
   background: linear-gradient(
       rgba(28, 200, 28, 0.2), 
       rgba(28, 28, 28, 0.8)
   ), url('/img/green-laser-background.jpg') center/cover no-repeat;
 }
-
-/* Hero Section */
-.hero {
-  
-}
-
-.hero-headline {  
-  line-height: 1.2;
-}
- 
-.hero-cta {
-  display: flex;
-  gap: 0.75rem;
-  /*justify-content: space-between;*/
-  flex-direction: column;
-}
-
-@media (min-width: 640px) {
-  .hero-cta {
-    flex-direction: row;
-  }
-}
-
