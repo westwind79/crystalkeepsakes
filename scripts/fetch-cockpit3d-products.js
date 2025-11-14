@@ -21,7 +21,6 @@ http.get(API_URL, (res) => {
 
   // Handle complete response
   res.on('end', () => {
-    try {
       // Check if response is empty
       if (!data || data.trim() === '') {
         console.warn('⚠️ Warning: Empty response from PHP endpoint');
