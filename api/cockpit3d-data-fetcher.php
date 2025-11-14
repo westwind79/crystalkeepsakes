@@ -162,7 +162,7 @@ class CockPit3DFetcher {
         $loginData = [
             'username' => $this->username,
             'password' => $this->password,
-            'retailer_id' => $this->retailId
+            'retailer_id' => $this->retailerId
         ];
         
         console_log("Login data prepared", array_keys($loginData));
