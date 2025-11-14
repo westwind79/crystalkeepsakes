@@ -349,14 +349,28 @@ export default function ProductDetailClient() {
         basePrice: selectedSize?.price || product.basePrice
       }
       
+      console.log('📐 [ADD TO CART] Size Details:', sizeDetails)
+      
       const productOptions = buildProductOptions()
+      console.log('⚙️ [ADD TO CART] Product Options:', JSON.stringify(productOptions, null, 2))
       
       const customTextString = customText.line1 || customText.line2
         ? `${customText.line1}${customText.line2 ? '\n' + customText.line2 : ''}`
         : undefined
       
+      if (customTextString) {
+        console.log('✍️ [ADD TO CART] Custom Text:', customTextString)
+      }
+      
       const optionsPrice = calculateOptionsPrice()
       const totalPrice = calculateTotal()
+      
+      console.log('💰 [ADD TO CART] Pricing:', {
+        basePrice: selectedSize?.price || product.basePrice,
+        optionsPrice,
+        totalPrice,
+        quantity
+      })
       
       const lineItem: OrderLineItem = {
         lineItemId: `line_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -376,6 +390,19 @@ export default function ProductDetailClient() {
         dateAdded: new Date().toISOString(),
         lastModified: new Date().toISOString()
       }
+      
+      console.log('📦 [ADD TO CART] Complete Line Item:', JSON.stringify({
+        ...lineItem,
+        customImage: lineItem.customImage ? {
+          filename: lineItem.customImage.filename,
+          mimeType: lineItem.customImage.mimeType,
+          fileSize: lineItem.customImage.fileSize,
+          width: lineItem.customImage.width,
+          height: lineItem.customImage.height,
+          maskId: lineItem.customImage.maskId,
+          dataUrlLength: lineItem.customImage.dataUrl?.length
+        } : undefined
+      }, null, 2))
       
       logger.order('Adding item to cart', {
         productId: lineItem.productId,
