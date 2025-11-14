@@ -37,6 +37,8 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         const result = await response.json();
 
         if (result.success) {
+          // Add new image to array
+          // First image becomes main if no main exists
           const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
           
           newImages.push({
@@ -56,14 +58,19 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
     setUploading(false);
     setUploadProgress('');
     onImagesUpdated(newImages);
+    
+    // Reset input
     event.target.value = '';
   };
 
   const handleRemoveImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
+    
+    // If we removed the main image, set the first remaining image as main
     if (images[index].isMain && newImages.length > 0) {
       newImages[0].isMain = true;
     }
+    
     onImagesUpdated(newImages);
   };
 
@@ -95,7 +102,10 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
           className="hidden"
           id={`file-upload-${productId}`}
         />
-        <label htmlFor={`file-upload-${productId}`} className="cursor-pointer inline-block">
+        <label
+          htmlFor={`file-upload-${productId}`}
+          className="cursor-pointer inline-block"
+        >
           {uploading ? (
             <div>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
@@ -103,11 +113,25 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             </div>
           ) : (
             <div>
-              <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              <p className="mt-2 text-sm text-gray-600">Click to upload images or drag and drop</p>
-              <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF, WEBP up to 10MB each</p>
+              <p className="mt-2 text-sm text-gray-600">
+                Click to upload images or drag and drop
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                PNG, JPG, GIF up to 10MB each
+              </p>
             </div>
           )}
         </label>
@@ -119,22 +143,66 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
           <h4 className="font-semibold text-gray-700">Current Images ({images.length})</h4>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images.map((image, index) => (
-              <div key={index} className="relative group border rounded-lg overflow-hidden bg-gray-50">
+              <div
+                key={index}
+                className="relative group border rounded-lg overflow-hidden bg-gray-50"
+              >
+                {/* Image Preview */}
                 <div className="aspect-square">
-                  <img src={image.src} alt={image.alt || `Image ${index + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={image.src}
+                    alt={image.alt || `Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+
+                {/* Main Badge */}
                 {image.isMain && (
-                  <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">MAIN</div>
+                  <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
+                    MAIN
+                  </div>
                 )}
+
+                {/* Action Buttons */}
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                   {!image.isMain && (
-                    <button onClick={() => handleSetMainImage(index)} className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700" title="Set as main image">Set Main</button>
+                    <button
+                      onClick={() => handleSetMainImage(index)}
+                      className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 transition-colors"
+                      title="Set as main image"
+                    >
+                      Set Main
+                    </button>
                   )}
-                  <button onClick={() => handleRemoveImage(index)} className="bg-red-600 text-white text-xs px-3 py-1.5 rounded hover:bg-red-700" title="Remove image">Remove</button>
+                  <button
+                    onClick={() => handleRemoveImage(index)}
+                    className="bg-red-600 text-white text-xs px-3 py-1.5 rounded hover:bg-red-700 transition-colors"
+                    title="Remove image"
+                  >
+                    Remove
+                  </button>
                 </div>
+
+                {/* Reorder Buttons */}
                 <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {index > 0 && (<button onClick={() => handleReorderImages(index, index - 1)} className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700" title="Move left">←</button>)}
-                  {index < images.length - 1 && (<button onClick={() => handleReorderImages(index, index + 1)} className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700" title="Move right">→</button>)}
+                  {index > 0 && (
+                    <button
+                      onClick={() => handleReorderImages(index, index - 1)}
+                      className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700"
+                      title="Move left"
+                    >
+                      ←
+                    </button>
+                  )}
+                  {index < images.length - 1 && (
+                    <button
+                      onClick={() => handleReorderImages(index, index + 1)}
+                      className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700"
+                      title="Move right"
+                    >
+                      →
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
