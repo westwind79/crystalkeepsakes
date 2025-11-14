@@ -242,13 +242,40 @@ export default function CheckoutPage() {
         console.log('Shipping address:', shippingAddress)
 
         const cockpitOrder = buildCockpit3DOrder()
+        const orderNumber = `CK-${Date.now()}`
+
+        // Store pending order data for order confirmation page
+        const pendingOrder = {
+          orderNumber,
+          cartItems: cart,
+          customer: {
+            firstName: shippingAddress.name.split(' ')[0] || '',
+            lastName: shippingAddress.name.split(' ').slice(1).join(' ') || '',
+            email: shippingAddress.email,
+            phone: shippingAddress.phone,
+            shippingAddress: {
+              street1: shippingAddress.line1,
+              street2: shippingAddress.line2,
+              city: shippingAddress.city,
+              state: shippingAddress.state,
+              zipCode: shippingAddress.postal_code,
+              country: shippingAddress.country
+            }
+          },
+          shippingInfo: shippingAddress,
+          receipt_email: shippingAddress.email,
+          cockpitOrderData: cockpitOrder
+        }
+        
+        sessionStorage.setItem('pendingOrder', JSON.stringify(pendingOrder))
+        console.log('💾 Stored pending order for confirmation', orderNumber)
 
         // This calls PHP: create-payment-intent.php
         const result = await createPaymentIntent(
           cart, 
           shippingMethod,
           cart,
-          `ORD-${Date.now()}`,
+          orderNumber,
           cockpitOrder
         )
         
