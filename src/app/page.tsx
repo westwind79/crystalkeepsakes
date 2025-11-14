@@ -149,58 +149,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products Section */}
-      <section className="bg-dark-bg py-12 md:py-16">
-        <div className="w-full max-w-7xl mx-auto px-4">
-          <h2 className="text-center mb-12 text-3xl md:text-4xl font-semibold text-gray-50">Popular Crystal Designs</h2>
-          
-          {/* Product Grid - Tailwind responsive grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
-            {featuredProducts.map(product => (
-              <div 
-                key={product.id} 
-                className="card h-full flex flex-col bg-dark-surface rounded-lg overflow-hidden border border-border-subtle hover:border-brand-500 transition-colors"
-              >
-                {/* Product Image */}
-                <div className="h-64 relative bg-dark-bg-secondary">
-                  <Image 
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                
-                {/* Product Details */}
-                <div className="p-6 flex flex-col flex-grow">
-                  <h5 className="text-xl font-semibold text-text-primary mb-3">{product.name}</h5>
-                  <p className="text-text-secondary mb-4 flex-grow">{product.description}</p>
-                  
-                  {/* Price and CTA */}
-                  <div className="flex justify-between items-center pt-4 border-t border-border-subtle">
-                    <span className="text-3xl font-bold text-brand-400">${product.price}</span>
-                    <Link 
-                      href={`/products/${product.id}`}
-                      className="bg-brand-600 text-white px-6 py-2 rounded hover:bg-brand-500 transition-colors font-medium"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* View All Button */}
-          <div className="text-center mt-8">
-            <Link 
-              href="/products" 
-              className="bg-brand-600 text-white px-8 py-3 rounded text-lg hover:bg-brand-500 transition-colors inline-block font-semibold"
-            >
-              View All Designs
-            </Link>
-          </div>
-        </div>
-      </section>
+      <FeaturedProducts limit={6} title="Featured Designs" />
 
       {/* Process Section */}
       <section className="process-section bg-component-light-bg py-12 md:py-16">
