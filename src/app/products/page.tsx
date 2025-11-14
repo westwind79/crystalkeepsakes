@@ -319,38 +319,36 @@ export default function ProductsPage() {
     
 
       {/* Products Grid Section */}
-      <section className="container mx-auto px-4 pb-12">
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-16">
-            <h3 className="text-2xl font-semibold text-text-primary mb-4">
-              No products found in this category
-            </h3>
-            <button 
-              onClick={() => setSelectedCategory('all')}
-              className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
-            >
-              View All Products
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div 
-                key={`${product.id}-${product.slug}`}
-                className="bg-dark-surface rounded-lg overflow-hidden shadow-md hover:shadow-glow-soft transition-all duration-base h-full flex flex-col group"
+      <section className="bg-gray-50 py-12">
+        <div className="container mx-auto px-4">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                No products found in this category
+              </h3>
+              <button 
+                onClick={() => setSelectedCategory('all')}
+                className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-sm"
               >
-                {/* Product Image */}
-                <div className="flex justify-center relative rounded-lg overflow-hidden h-52">
-                  <div className="relative group transition-transform duration-500 transform ease-in-out hover:scale-110 w-full">
+                View All Products
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <div 
+                  key={`${product.id}-${product.slug}`}
+                  className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-200 hover:border-brand-500 transition-all duration-300 h-full flex flex-col group"
+                >
+                  {/* Product Image */}
+                  <div className="relative h-52 bg-gray-50 overflow-hidden">
                     <Image
-                    src={product.images[0]?.src || 'https://placehold.co/800x800?text=No+Image'}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-transform duration-base group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 35vw"
-                  />
-                  <div className="absolute inset-0 bg-black opacity-10"></div>
-                </div>
+                      src={product.images[0]?.src || 'https://placehold.co/800x800?text=No+Image'}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    />
  
 
                   {/* Light Base Badge */}
