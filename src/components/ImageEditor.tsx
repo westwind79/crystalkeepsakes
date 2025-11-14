@@ -527,12 +527,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     <>
       {/* Modal Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/70 z-[1040] transition-opacity"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 animate-backdrop-fade"
         onClick={!isProcessing ? onHide : undefined}
       />
 
       {/* Modal Dialog */}
-      <div className="fixed inset-0 z-[1050] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div 
           className="image-editor-modal relative w-full max-w-[90vw] mx-auto my-8"
           onClick={(e) => e.stopPropagation()}
