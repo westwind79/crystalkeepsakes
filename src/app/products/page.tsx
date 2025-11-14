@@ -351,64 +351,57 @@ export default function ProductsPage() {
                     />
  
 
-                  {/* Light Base Badge */}
-                  {isLightBase(product) && (
-                    <div className="absolute top-2 right-2 bg-yellow-600/90 text-white px-2 py-1 rounded text-xs font-semibold">
-                      💡 Light Base
+                    {/* Light Base Badge */}
+                    {isLightBase(product) && (
+                      <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-sm">
+                        💡 Light Base
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="flex flex-col flex-grow p-5">
+                    {/* Product Title */}
+                    <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-brand-600 transition-colors">
+                      {product.name}
+                    </h3>
+
+                    {/* Category Badge */}
+                    {product.categories && product.categories.length > 0 && (
+                      <div className="mb-3">
+                        <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded font-medium">
+                          {product.categories[0]}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Price and Size Info - Push to bottom */}
+                    <div className="mt-auto">
+                      <div className="flex justify-between items-center mb-4 pt-3 border-t border-gray-200">
+                        <span className="text-2xl font-light text-brand-500">
+                          ${product.basePrice.toFixed(2)}
+                        </span>
+                        {product.sizes && product.sizes.length > 1 && (
+                          <span className="text-sm text-gray-500">
+                            {product.sizes.length} sizes
+                          </span>
+                        )}
+                      </div>
+
+                      {/* View Details Button */}
+                      <Link 
+                        href={`/products/${product.slug}`}
+                        className="block w-full px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-center rounded-lg transition-all duration-200 font-medium text-sm"
+                      >
+                        View Details
+                      </Link>
                     </div>
-                  )}
-
-                  {/* Is Featured */}
-                 {/* {isFeatured(product) && (
-                    <span className="absolute top-0 left-0 inline-flex mt-3 ml-3 px-3 py-2 rounded-lg z-10 bg-red-500 text-sm font-medium text-white select-none">
-                      Featured
-                    </span>
-                  )} 
-                */}
-              </div>                           
-
-                {/* Card Body */}
-                <div className="flex flex-col flex-grow p-4">
-                  {/* Product Title */}
-                  <h4 className="text-xs font-semibold text-text-primary mb-2 line-clamp-2">
-                    {product.name}
-                  </h4>
-
-                  {/* Category Badge */}
-                  {product.categories && product.categories.length > 0 && (
-                    <div className="mb-3">
-                      <span className="inline-block px-2 py-1 bg-brand-600 text-white text-xs rounded font-medium">
-                        {product.categories[0]}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Price and Size Info - Push to bottom */}
-                  <div className="mt-auto">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-2xl font-bold text-brand-400">
-                        ${product.basePrice.toFixed(2)}
-                      </span>
-                      {product.sizes && product.sizes.length > 1 && (
-                        <small className="text-text-tertiary text-sm">
-                          {product.sizes.length} sizes
-                        </small>
-                      )}
-                    </div>
-
-                    {/* View Details Button */}
-                    <Link 
-                      href={`/products/${product.slug}`}
-                      className="block w-full px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-center rounded-lg transition-colors font-medium"
-                    >
-                      View Details
-                    </Link>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   )
