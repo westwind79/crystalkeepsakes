@@ -72,6 +72,15 @@ export default function ProductsPage() {
   const [productType, setProductType] = useState<ProductType>('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
 
+  // Read category from URL on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const categoryParam = urlParams.get('category')
+    if (categoryParam) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [])
+
   // Fetch products on mount
   useEffect(() => {
     fetchProducts()
@@ -81,6 +90,20 @@ export default function ProductsPage() {
   useEffect(() => {
     setSelectedCategory('all')
   }, [productType])
+
+  // Update URL when category changes
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category)
+    
+    // Update URL
+    const url = new URL(window.location.href)
+    if (category === 'all') {
+      url.searchParams.delete('category')
+    } else {
+      url.searchParams.set('category', category)
+    }
+    window.history.pushState({}, '', url)
+  }
 
   // Development logging
   useEffect(() => {
