@@ -196,22 +196,42 @@ export default finalProductList;
   };
 
   // Save and download final product list
-  const saveFinalProducts = () => {
+  const saveFinalProducts = async () => {
     const content = generateFinalProducts();
-    const blob = new Blob([content], { type: 'application/javascript' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'final-product-list.js';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    // Also save to localStorage
+    
+    // Save to localStorage
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
 
-    alert(`✅ final-product-list.js generated with ${Object.keys(editedProducts).length} customized products!\n\nReplace the file in your src/data/ folder.`);
+    // Save to server
+    try {
+      const response = await fetch('/api/admin/save-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Products saved successfully!\n\n${Object.keys(editedProducts).length} products customized\n\nFile updated: ${result.path}\n\nRefresh your product pages to see changes.`);
+      } else {
+        throw new Error(result.error || 'Save failed');
+      }
+    } catch (error: any) {
+      console.error('Save error:', error);
+      alert(`❌ Error saving to server: ${error.message}\n\nDownloading file instead...`);
+      
+      // Fallback to download
+      const blob = new Blob([content], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'final-product-list.js';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   };
 
   const hasCustomizations = (productId: string) => {
@@ -248,7 +268,7 @@ export default finalProductList;
                 className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
               >
                 <span>💾</span>
-                <span>Generate final-product-list.js</span>
+                <span>Save Products</span>
               </button>
             </div>
           </div>
