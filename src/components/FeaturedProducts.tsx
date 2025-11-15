@@ -11,11 +11,11 @@ interface FeaturedProductsProps {
 }
 
 export default function FeaturedProducts({ limit = 6, title = "Featured Designs" }: FeaturedProductsProps) {
-  const featured = cockpit3dProducts
+  const featured = finalProductList
     .filter(p => p.featured === true)
     .slice(0, limit)
   
-  const products = featured.length > 0 ? featured : cockpit3dProducts.slice(0, limit)
+  const products = featured.length > 0 ? featured : finalProductList.slice(0, limit)
 
   return (
     <section className="bg-white py-16 md:py-20">
