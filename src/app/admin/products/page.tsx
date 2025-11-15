@@ -442,7 +442,6 @@ export default finalProductList;
                             </p>
                             <div className="flex flex-wrap gap-2">
                               {(() => {
-                                const { getProductCategories, getCategoryLabel } = require('@/utils/categoriesConfig');
                                 const categories = getProductCategories(selectedProductData);
                                 
                                 if (categories.length === 0) {
