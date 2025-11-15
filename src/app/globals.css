@@ -4,10 +4,13 @@
 
 @import "tailwindcss";
 @import './css/variables.css';
+@import './css/navigation.css';
 @import './css/buttons.css';
 @import './css/hero.css';
 @import './css/modal.css';
 @import './css/product-options.css';
+@import './css/cards.css';
+@import './css/main.css';
 
 /* ==================== BASE STYLES ==================== */
 html {
