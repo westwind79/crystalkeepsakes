@@ -207,3 +207,7 @@ docs/_build/
 *.env.*
 =======
 >>>>>>> origin/frontend-edits
+-e 
+# Environment files
+*.env
+*.env.*
