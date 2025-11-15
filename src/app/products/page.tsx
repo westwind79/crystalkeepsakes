@@ -285,7 +285,7 @@ export default function ProductsPage() {
                 : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
             }`}
           >
-            💎 Crystals ({products.filter(p => !isLightBase(p)).length})
+            💎 Crystals ({products.filter(p => !isLightbaseProduct(p)).length})
           </button>
           <button
             onClick={() => setProductType('lightbases')}
@@ -295,7 +295,7 @@ export default function ProductsPage() {
                 : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
             }`}
           >
-            💡 Light Bases ({products.filter(p => isLightBase(p)).length})
+            💡 Light Bases ({products.filter(p => isLightbaseProduct(p)).length})
           </button>
         </div>
       </section>
