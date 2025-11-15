@@ -189,16 +189,11 @@ export default function ProductsPage() {
   }
 
   const typeFiltered = filterByType(products)
-  
-  // Get unique categories from type-filtered products
-  const categories = ['all', ...new Set(
-    typeFiltered.flatMap(p => p.categories?.filter(c => c !== 'lightbases') || [])
-  )]
 
-  // Filter products by category
+  // Filter products by category using categoriesConfig helper
   const filteredProducts = selectedCategory === 'all' 
     ? typeFiltered
-    : typeFiltered.filter(p => p.categories?.includes(selectedCategory))
+    : filterProductsByCategory(typeFiltered, selectedCategory)
 
   /**
    * Loading State
