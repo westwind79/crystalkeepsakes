@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import ProductCard from '@/components/ProductCard'
 import { 
   isLightbaseProduct, 
   isFeaturedProduct,
