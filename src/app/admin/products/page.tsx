@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '@/data/cockpit3d-products';
 import ProductGallery2 from '@/components/ProductGallery2';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig';
 
 // Types
 interface ProductImage {
