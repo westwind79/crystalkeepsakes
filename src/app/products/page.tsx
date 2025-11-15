@@ -300,7 +300,46 @@ export default function ProductsPage() {
         </div>
       </section>
 
-    
+      {/* Category Filter Section */}
+      <section className="container mx-auto px-4 mb-8">
+        <div className="bg-dark-surface rounded-lg p-6 border border-gray-700">
+          <h3 className="text-lg font-semibold text-text-primary mb-4">Filter by Category</h3>
+          <div className="flex flex-wrap gap-2">
+            {PRODUCT_CATEGORIES
+              .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
+              .map(category => {
+                const count = filterProductsByCategory(typeFiltered, category.value).length
+                const isActive = selectedCategory === category.value
+                
+                return (
+                  <button
+                    key={category.value}
+                    onClick={() => setSelectedCategory(isActive ? 'all' : category.value)}
+                    disabled={count === 0}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
+                      isActive
+                        ? 'bg-brand-500 text-white border-2 border-brand-500'
+                        : count > 0
+                        ? 'bg-dark-bg border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400 cursor-pointer'
+                        : 'bg-gray-800 border-2 border-gray-700 text-gray-600 cursor-not-allowed'
+                    }`}
+                  >
+                    {category.label} ({count})
+                  </button>
+                )
+              })}
+            
+            {selectedCategory !== 'all' && (
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className="px-4 py-2 rounded-lg font-medium text-sm bg-transparent border-2 border-red-500 text-red-400 hover:bg-red-500/10 transition-all"
+              >
+                ✕ Clear Filter
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* Products Grid Section */}
       <section className="container mx-auto px-4 pb-12">
