@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { cockpit3dProducts } from '@/data/cockpit3d-products'
+import { finalProductList } from '@/data/final-product-list'
 import ProductCard from './ProductCard'
 
 interface FeaturedProductsProps {
