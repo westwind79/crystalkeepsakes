@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Products - Visual Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f3f4f6;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 40px; color: #111; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid #e5e7eb;
+        }
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #72B01D;
+            transform: translateY(-4px);
+        }
+        .image-container {
+            position: relative;
+            height: 250px;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+        .featured-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lightbase-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(146, 64, 14, 0.2);
+        }
+        .content {
+            padding: 20px;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 8px;
+        }
+        .description {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: 300;
+            color: #72B01D;
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            background: #d1fae5;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: #065f46;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Featured Products Implementation Preview</h1>
+        
+        <div class="status">
+            ✅ Implementation Complete - All badges are now live!
+        </div>
+        
+        <div class="grid">
+            <!-- Featured Product -->
+            <div class="card">
+                <div class="image-container">
+                    💎
+                    <div class="featured-badge">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        Featured
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">Cut Corner Diamond</div>
+                    <div class="description">Beautiful 3D crystal with cut corner diamond shape</div>
+                    <div class="footer">
+                        <div class="price">$35.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lightbase Product -->
+            <div class="card">
+                <div class="image-container">
+                    💡
+                    <div class="lightbase-badge">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                        </svg>
+                        Light Base
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">Lightbase Rectangle</div>
+                    <div class="description">Illuminated rectangular base for your crystal</div>
+                    <div class="footer">
+                        <div class="price">$25.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured + Lightbase -->
+            <div class="card">
+                <div class="image-container">
+                    ⭐💡
+                    <div class="featured-badge">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        Featured
+                    </div>
+                    <div class="lightbase-badge">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                        </svg>
+                        Light Base
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">Premium LED Lightbase</div>
+                    <div class="description">Featured lightbase with rotating LED display</div>
+                    <div class="footer">
+                        <div class="price">$35.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Product (No Badges) -->
+            <div class="card">
+                <div class="image-container">
+                    ❤️
+                </div>
+                <div class="content">
+                    <div class="title">Heart Keychain</div>
+                    <div class="description">Beautiful heart-shaped crystal keychain</div>
+                    <div class="footer">
+                        <div class="price">$55.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ornament Stand (NO Lightbase Badge) -->
+            <div class="card">
+                <div class="image-container">
+                    🎄
+                </div>
+                <div class="content">
+                    <div class="title">Ornament Stand</div>
+                    <div class="description">Display stand for ornament crystals ✅ Bug Fixed!</div>
+                    <div class="footer">
+                        <div class="price">$25.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Crystal -->
+            <div class="card">
+                <div class="image-container">
+                    🔮
+                </div>
+                <div class="content">
+                    <div class="title">3D Ball Crystal</div>
+                    <div class="description">Stunning 3D laser-engraved ball crystal</div>
+                    <div class="footer">
+                        <div class="price">$179.00</div>
+                        <span style="color: #72B01D; font-weight: 500;">View Details →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: white; border-radius: 12px; border: 2px solid #e5e7eb;">
+            <h2 style="margin-bottom: 16px; color: #111;">✨ Implementation Highlights</h2>
+            <ul style="color: #374151; line-height: 2; padding-left: 20px;">
+                <li><strong>Featured Badge:</strong> Gold gradient with star icon (top-right)</li>
+                <li><strong>Lightbase Badge:</strong> Amber with lightbulb icon (top-left)</li>
+                <li><strong>Bug Fixed:</strong> Ornament Stand no longer shows lightbase badge</li>
+                <li><strong>Both Badges:</strong> Featured lightbases show both badges correctly</li>
+                <li><strong>Admin Control:</strong> Easy toggle in admin panel</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
