@@ -1,10 +1,16 @@
 // app/products/page.tsx
-// v2.1.0 - 2025-11-05 - Consolidated hero section (DRY principle)
+// v3.0.0 - 2025-11-15 - Added categories filtering with categoriesConfig
 'use client'
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { 
+  isLightbaseProduct, 
+  isFeaturedProduct,
+  PRODUCT_CATEGORIES,
+  filterProductsByCategory 
+} from '@/utils/categoriesConfig'
 
 // Environment logging
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
@@ -18,19 +24,6 @@ const PRODUCT_TYPES = {
 } as const
 
 type ProductType = typeof PRODUCT_TYPES[keyof typeof PRODUCT_TYPES]
-
-// Helper: Determine if product is a light base
-const isLightBase = (product: Product): boolean => {
-  const name = product.name.toLowerCase()
-  return (
-    product.categories?.includes('lightbases') ||
-    name.includes('lightbase') ||
-    name.includes('light base') ||
-    name.includes('stand') ||
-    name.includes('rotating led') ||
-    name.includes('wooden premium')
-  )
-}
 
 // Product interface
 interface Product {
