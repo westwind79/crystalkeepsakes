@@ -430,6 +430,50 @@ export default finalProductList;
                           </label>
                         </div>
 
+                        {/* Categories Section */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            🏷️ Product Categories (Auto-detected)
+                          </label>
+                          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-xs text-blue-600 mb-3">
+                              Categories are automatically detected based on product name and type. The system will categorize this product as:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {(() => {
+                                const { getProductCategories, getCategoryLabel } = require('@/utils/categoriesConfig');
+                                const categories = getProductCategories(selectedProductData);
+                                
+                                if (categories.length === 0) {
+                                  return <span className="text-xs text-gray-500">No categories detected</span>;
+                                }
+                                
+                                return categories.map((cat: string) => (
+                                  <span 
+                                    key={cat}
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
+                                    {getCategoryLabel(cat)}
+                                  </span>
+                                ));
+                              })()}
+                            </div>
+                            <div className="mt-3 text-xs text-gray-600">
+                              <strong>Detection Rules:</strong>
+                              <ul className="list-disc list-inside mt-1 space-y-1">
+                                <li>Featured: ✓ if "Featured product" is checked above</li>
+                                <li>Light Bases: Product IDs 105-108, 119, 160, 252, 276 (excludes ID 279)</li>
+                                <li>3D Crystals: Name contains "3D", "ball", "dome", "monument"</li>
+                                <li>2D Crystals: Name contains "2D" or "plaque"</li>
+                                <li>Keychains & Necklaces: Name contains "keychain" or "necklace"</li>
+                                <li>Ornaments: Name contains "ornament" or ID is 279</li>
+                                <li>Heart Shapes: Name contains "heart"</li>
+                                <li>Pet Series: Name contains "pet", "dog", "cat", "paw"</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Mask Image Selector */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
