@@ -349,7 +349,7 @@ export default function ProductsPage() {
             
             {selectedCategory !== 'all' && (
               <button
-                onClick={() => setSelectedCategory('all')}
+                onClick={() => handleCategoryChange('all')}
                 className="px-4 py-2 rounded-lg font-medium text-sm bg-transparent border-2 border-red-500 text-red-400 hover:bg-red-500/10 transition-all"
               >
                 ✕ Clear Filter
