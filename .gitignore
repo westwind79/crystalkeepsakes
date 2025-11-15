@@ -220,3 +220,7 @@ docs/_build/
 *.env
 *.env.*
 *.zip
+-e 
+# Environment files
+*.env
+*.env.*
