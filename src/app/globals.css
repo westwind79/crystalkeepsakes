@@ -6,6 +6,7 @@
 @import './css/variables.css';
 @import './css/buttons.css';
 @import './css/hero.css';
+@import './css/modal.css';
 
 /* ==================== BASE STYLES ==================== */
 html {
