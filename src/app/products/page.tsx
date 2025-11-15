@@ -1,42 +1,170 @@
+// app/products/page.tsx
+// v2.1.0 - 2025-11-05 - Consolidated hero section (DRY principle)
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import Breadcrumbs from '@/components/BreadCrumbs'
-import ProductCard from '@/components/ProductCard'
 
-const isLightBase = (product: any): boolean => {
+// Environment logging
+const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
+const shouldLog = ENV_MODE === 'development' || ENV_MODE === 'testing'
+
+// Product Type Constants
+const PRODUCT_TYPES = {
+  ALL: 'all',
+  CRYSTALS: 'crystals',
+  LIGHTBASES: 'lightbases'
+} as const
+
+type ProductType = typeof PRODUCT_TYPES[keyof typeof PRODUCT_TYPES]
+
+// Helper: Determine if product is a light base
+const isLightBase = (product: Product): boolean => {
   const name = product.name.toLowerCase()
   return (
     product.categories?.includes('lightbases') ||
     name.includes('lightbase') ||
     name.includes('light base') ||
-    name.includes('stand')
+    name.includes('stand') ||
+    name.includes('rotating led') ||
+    name.includes('wooden premium')
   )
 }
 
+// Product interface
+interface Product {
+  id: number | string
+  name: string
+  slug: string
+  basePrice: number
+  description?: string
+  images: Array<{ src: string; isMain: boolean }>
+  categories?: string[]
+  sizes?: Array<{ id: string | number; name: string; price: number }>
+  sku?: string
+}
+
+/**
+ * Hero Component - Single source of truth
+ */
+const ProductsHero = () => (
+  <section className="hero px-8 py-16 text-center">
+    <div className="hero-content max-w-xl mx-auto">
+      <h1 className="primary-header mb-4">Our Creations</h1>
+      <p className="lead text-gray-100">
+        Welcome to CrystalKeepsakes, where cherished moments are transformed into stunning 3D laser-engraved crystal creations.
+      </p>
+    </div>
+  </section>
+)
+
+/**
+ * Breadcrumbs Component - Single source of truth
+ */
+const ProductsBreadcrumbs = () => (
+  <nav className="breadcrumbs py-4">
+    <div className="container mx-auto px-4">
+      <Link href="/" className="hover:text-brand-400 transition-colors">Home</Link>  
+      <span className="mx-2 text-gray-600">/</span>
+      <span className="text-text-tertiary">Products</span>
+    </div>
+  </nav>
+)
+
 export default function ProductsPage() {
-  const [products, setProducts] = useState<any[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [productType, setProductType] = useState<string>('all')
+  const [productType, setProductType] = useState<ProductType>('all')
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
+  // Fetch products on mount
   useEffect(() => {
     fetchProducts()
   }, [])
 
+  // Reset category when product type changes
+  useEffect(() => {
+    setSelectedCategory('all')
+  }, [productType])
+
+  // Development logging
+  useEffect(() => {
+    if (shouldLog) {
+      console.log('📦 Products Page:', {
+        environment: ENV_MODE,
+        productsCount: products.length,
+        loading,
+        error: error || 'none'
+      })
+    }
+  }, [products, loading, error])
+
+  /**
+   * Fetch products from generated file or API fallback
+   */
   const fetchProducts = async () => {
     try {
-      const { finalProductList } = await import('@/data/final-product-list.js')
-      setProducts(finalProductList || [])
+      if (shouldLog) {
+        console.log('📄 Loading products from generated file...')
+      }
+
+      // Import the generated products file - use relative path
+      const { finalProductList: cockpit3dProducts, generatedAt, sourceInfo } = await import('../../data/final-product-list.js')
+      
+      if (shouldLog) {
+        console.log('📦 Products loaded:', {
+          count: cockpit3dProducts.length,
+          generatedAt,
+          sourceInfo
+        })
+      }
+
+      setProducts(cockpit3dProducts || [])
+      
+      if (shouldLog) {
+        console.log(`✅ Loaded ${cockpit3dProducts?.length || 0} products`)
+      }
+
     } catch (err: any) {
-      setError(err.message)
+      console.error('❌ Error loading products from file:', err)
+      
+      // Fallback to API if file doesn't exist
+      if (shouldLog) {
+        console.log('⚠️ File not found, trying API fallback...')
+      }
+      
+      try {
+        const response = await fetch('/api/products', {
+          cache: 'no-store'
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          setProducts(data.products || [])
+          
+          if (shouldLog) {
+            console.log(`✅ Loaded ${data.products?.length || 0} products from API`)
+          }
+        } else {
+          throw new Error(data.error || 'Failed to load products')
+        }
+      } catch (apiErr: any) {
+        setError(apiErr.message)
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  const filterByType = (prods: any[]): any[] => {
+  // Filter by product type
+  const filterByType = (prods: Product[]): Product[] => {
     switch (productType) {
       case 'crystals': return prods.filter(p => !isLightBase(p))
       case 'lightbases': return prods.filter(p => isLightBase(p))
@@ -44,25 +172,48 @@ export default function ProductsPage() {
     }
   }
 
-  const filteredProducts = filterByType(products)
+  const typeFiltered = filterByType(products)
+  
+  // Get unique categories from type-filtered products
+  const categories = ['all', ...new Set(
+    typeFiltered.flatMap(p => p.categories?.filter(c => c !== 'lightbases') || [])
+  )]
 
+  // Filter products by category
+  const filteredProducts = selectedCategory === 'all' 
+    ? typeFiltered
+    : typeFiltered.filter(p => p.categories?.includes(selectedCategory))
+
+  /**
+   * Loading State
+   */
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <section className="hero px-8 py-16 text-center products">
-          <h1 className="text-4xl font-light text-white mb-4">Our Creations</h1>
-          <p className="text-lg text-gray-200">Discover stunning 3D laser-engraved crystal designs</p>
-        </section>
-        <Breadcrumbs items={[{ label: 'Products' }]} />
-        <div className="container mx-auto px-4 py-12 text-center">
-          <div className="inline-block w-12 h-12 border-4 border-[#72B01D] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-dark-bg text-dark-text pt-[100px]">
+        <ProductsHero />
+        <ProductsBreadcrumbs />
+
+        {/* Loading Spinner */}
+        <div className="py-12">
+          <div className="text-center">
+            <div 
+              className="inline-block w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" 
+              role="status"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
+            <p className="mt-4 text-xl text-text-secondary">
+              Loading products from CockPit3D...
+            </p>
+            {shouldLog && (
+              <p className="text-text-tertiary text-sm mt-2">Environment: {ENV_MODE}</p>
+            )}
+          </div>
         </div>
       </div>
     )
   }
 
-<<<<<<< HEAD
-=======
   /**
    * Error State
    */
@@ -87,7 +238,7 @@ export default function ProductsPage() {
                   setError('')
                   fetchProducts()
                 }} 
-                className="cursor-pointer px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
               >
                 🔄 Retry
               </button>
@@ -115,68 +266,19 @@ export default function ProductsPage() {
   /**
    * Main Products View
    */
->>>>>>> origin/frontend-edits
   return (
-    <div className="min-h-screen bg-white products">
-      <section className="hero px-8 py-16 text-center">
-        <h1 className="text-4xl font-light text-white mb-4">Our Creations</h1>
-        <p className="text-lg text-gray-200">Discover stunning 3D laser-engraved crystal designs</p>
-      </section>
+    <div className="min-h-screen bg-dark-bg text-dark-text">
+      <ProductsHero />
+      <ProductsBreadcrumbs />
 
-<<<<<<< HEAD
-      <Breadcrumbs items={[{ label: 'Products' }]} />
-
-      <section className="border-b border-gray-200 bg-gray-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setProductType('all')}
-              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-                productType === 'all'
-                  ? 'bg-[#72B01D] text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-[#72B01D]'
-              }`}
-            >
-              All ({products.length})
-            </button>
-            <button
-              onClick={() => setProductType('crystals')}
-              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-                productType === 'crystals'
-                  ? 'bg-[#72B01D] text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-[#72B01D]'
-              }`}
-            >
-              💎 Crystals ({products.filter(p => !isLightBase(p)).length})
-            </button>
-            <button
-              onClick={() => setProductType('lightbases')}
-              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-                productType === 'lightbases'
-                  ? 'bg-[#72B01D] text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-[#72B01D]'
-              }`}
-            >
-              💡 Light Bases ({products.filter(p => isLightBase(p)).length})
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-=======
       {/* Product Type Filter (Crystals vs Light Bases) */}
       <section className="container mx-auto px-4 mb-6">
         <div className="flex gap-1 justify-start">
           <button
             onClick={() => setProductType('all')}
-            className={`px-3 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-2 py-2 rounded-lg font-semibold transition-all ${
               productType === 'all'
-                ? 'cursor-pointer bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
+                ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
                 : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
             }`}
           >
@@ -216,7 +318,7 @@ export default function ProductsPage() {
             </h3>
             <button 
               onClick={() => setSelectedCategory('all')}
-              className="cursor-pointer px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
+              className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
             >
               View All Products
             </button>
@@ -290,17 +392,16 @@ export default function ProductsPage() {
                     {/* View Details Button */}
                     <Link 
                       href={`/products/${product.slug}`}
-                      className="block w-full px-4 py-2 btn-primary hover:bg-brand-600 text-white text-center rounded-lg transition-colors font-medium"
+                      className="block w-full px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-center rounded-lg transition-colors font-medium"
                     >
                       View Details
                     </Link>
                   </div>
                 </div>
               </div>
->>>>>>> origin/frontend-edits
             ))}
           </div>
-        </div>
+        )}
       </section>
     </div>
   )

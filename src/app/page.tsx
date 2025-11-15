@@ -138,7 +138,7 @@ export default function HomePage() {
                 <span className="text-[#8DC63F] font-normal">CRYSTAL</span>
               </h1>
               
-              <p className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-gray-200 mb-16 leading-relaxed max-w-xl mx-auto lg:mx-0">
                 Transform your cherished photos into stunning 3D crystal art pieces. 
                 Our precision laser technology creates beautiful, lasting memories.
               </p>
@@ -185,8 +185,9 @@ export default function HomePage() {
                       src={slide.image}
                       alt={slide.name}  
                       fill
-                      sizes="450px"
-                      className="object-contain"
+                      width={0}
+                      height={0}
+                      className="w-full object-cover"
                       priority={slide.priority}
                     />          
                   </SwiperSlide>

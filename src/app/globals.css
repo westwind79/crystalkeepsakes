@@ -24,7 +24,11 @@ body {
   color: var(--color-text-secondary);
   background-color: var(--color-bg-white);
 }
-
+.dev-mode-alert {
+  background: red;
+  color: white;
+  padding: .25rem;
+}
 /* ==================== TYPOGRAPHY ==================== */
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-primary);
@@ -40,10 +44,7 @@ h4 { font-size: var(--text-2xl); }
 h5 { font-size: var(--text-xl); }
 h6 { font-size: var(--text-lg); }
 
-p {
-  margin: 0;
-}
-
+p {}
 /* ==================== LINKS ==================== */
 a {
   color: inherit;
