@@ -58,6 +58,10 @@
   --light-text: var(--surface-900);
   --light-text-secondary: var(--surface-700);
 
+  /* Text Colors */
+  --text-bright: var(--surface-50);
+  --text-lg: 1.125rem;
+
   /* Component Context */
   --component-dark-bg: var(--dark-bg);
   --component-dark-text: var(--dark-text);
