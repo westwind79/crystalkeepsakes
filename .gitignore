@@ -219,3 +219,4 @@ docs/_build/
 # Environment files
 *.env
 *.env.*
+*.zip
