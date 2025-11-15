@@ -152,6 +152,7 @@ docs/_build/
 # Environment files
 *.env
 *.env.*
+<<<<<<< HEAD
 -e 
 # Environment files
 *.env
@@ -204,3 +205,5 @@ docs/_build/
 # Environment files
 *.env
 *.env.*
+=======
+>>>>>>> origin/frontend-edits
