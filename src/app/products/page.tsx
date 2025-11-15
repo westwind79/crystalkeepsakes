@@ -332,7 +332,7 @@ export default function ProductsPage() {
                 return (
                   <button
                     key={category.value}
-                    onClick={() => setSelectedCategory(isActive ? 'all' : category.value)}
+                    onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
                     disabled={count === 0}
                     className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
                       isActive
