@@ -1,6 +1,7 @@
 /* Import Bootstrap CSS */
-@import "tailwindcss";
 @import './css/variables.css';
+
+@import "tailwindcss";
 @import './css/buttons.css';
 @import './css/hero.css';
 @import './css/breadcrumbs.css';
@@ -36,14 +37,13 @@ html {
   flex-direction: column;
 }
 body { 
-  background: var(--surface-900);
-  color: var(--surface-50);
+ 
   font-size: var(--font-scale-15-18);
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  &.dev-mode {
+  .dev-mode {
     background: red;
     color: red;
   }
@@ -119,14 +119,7 @@ h4, .h4 { color: inherit; font-size: var(--font-scale-20-26); }
 h5, .h5 { color: inherit; font-size: var(--font-scale-17-20); }
 h6, .h6 { color: inherit; font-size: var(--font-scale-15-16); }
 
-a {
-  color: var(--primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  &:hover {
-    color: var(--primary-light);
-  }
-}
+ 
 
 
 .btn-light {
