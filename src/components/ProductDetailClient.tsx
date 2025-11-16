@@ -442,7 +442,7 @@ export default function ProductDetailClient() {
       
       setAddedItemDetails({
         name: product.name,
-        image: finalMaskedImage || product.images?.[0]?.src || '/placeholder.png',
+        image: finalMaskedImage || mainImage?.src || '/placeholder.png',
         price: totalPrice,
         quantity: quantity,
         options: optionsList
