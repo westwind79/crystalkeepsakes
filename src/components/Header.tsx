@@ -172,11 +172,10 @@ export default function Header() {
           aria-hidden="true"
         />
       )}
-
-      {/* MOBILE MENU PANEL - Slide from right */}
+{/* MOBILE MENU PANEL - Slide from right */}
       <div 
         className={`
-          fixed top-0 right-0 bottom-0 w-[300px] 
+          fixed top-[var(--header-height)] right-0 bottom-0 w-[300px] 
           bg-gray-900 z-999 lg:hidden
           transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
@@ -188,14 +187,14 @@ export default function Header() {
         aria-labelledby="mobile-menu-title"
       >
         {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gray-800">
-          <h2 
+        <div className="flex items-center justify-between px-6 py-2 border-b border-gray-700 bg-gray-800">
+          <p 
             id="mobile-menu-title"
             className="text-xl font-semibold text-white m-0 uppercase tracking-wider"
           >
             Menu
-          </h2>
-          <button 
+          </p>
+          {/*<button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="
               w-10 h-10 flex items-center justify-center 
@@ -219,7 +218,7 @@ export default function Header() {
                 d="M6 18L18 6M6 6l12 12" 
               />
             </svg>
-          </button>
+          </button>*/}
         </div>
 
         {/* Mobile Menu Body */}
@@ -257,6 +256,7 @@ export default function Header() {
           </div>
         </div>
       </div>
+      
     </>
   )
 }

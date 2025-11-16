@@ -172,8 +172,7 @@ h6, .h6 { color: inherit; font-size: var(--font-scale-15-16); }
 /* =====================================================
    HEADER.CSS STYLES
    ===================================================== */
- 
-main { padding-top: var(--header-height); }
+  
 header {
   position: sticky;
   top: 0;

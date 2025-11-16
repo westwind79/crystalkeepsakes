@@ -1,7 +1,7 @@
 :root {
-
+  --header-height: 80px;
  /* Primary Colors - Laser Green */
-  
+ 
   --brand-100: #ecf5e4;  /* Lightest */  
   --brand-200: #d1e7bc;  
   --brand-300: #a3d77a;  /* Light accent */
