@@ -6,8 +6,11 @@ import Image from 'next/image'
 import { isLightbaseProduct, isFeaturedProduct, isOnSale } from '@/utils/categoriesConfig'
 
 export default function ProductCard({ product }) {
+  // Find the main image or fallback to first image
+  const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
+  
   const [imageSrc, setImageSrc] = useState(
-    product.images?.[0]?.src || 'https://placehold.co/800x800?text=No+Image'
+    mainImage?.src || 'https://placehold.co/800x800?text=No+Image'
   )
 
   const handleImageError = () => {
