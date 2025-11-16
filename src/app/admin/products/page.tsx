@@ -245,10 +245,10 @@ export default finalProductList;
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Enhanced Product Admin</h1>
+              <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
               <p className="text-sm text-gray-600 mt-1">
                 Complete control over products, prices, and options
               </p>
@@ -277,7 +277,7 @@ export default finalProductList;
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-12 gap-6">
           {/* Product List - Left Column */}
           <div className="col-span-12 lg:col-span-3">

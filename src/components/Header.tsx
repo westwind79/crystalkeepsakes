@@ -70,11 +70,11 @@ export default function Header() {
               href="/" 
               className="hover:text-brand-400 transition-colors no-underline flex-shrink-0"
             >
-              <div className="brand-text">
+              <div className="">
                 <div className="text-white text-xl lg:text-2xl font-bold tracking-wider">
                   CRYSTALKEEPSAKES
                 </div>
-                <div className="text-xs lg:text-sm text-brand-400 font-light tracking-[2px] mt-0.5">
+                <div className="text-xs lg:text-lg text-green font-medium tracking-[2px] mt-0.5">
                   LIGHT. LASER. LOVE.
                 </div>
               </div>
