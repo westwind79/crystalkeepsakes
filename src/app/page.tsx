@@ -98,8 +98,9 @@ export default function HomePage() {
         delay: 0.4
       })
 
-      // ScrollTrigger animations
+      // ScrollTrigger animations with fallback
       if (featuredRef.current) {
+        gsap.set(featuredRef.current, { opacity: 1 })
         gsap.from(featuredRef.current, {
           scrollTrigger: {
             trigger: featuredRef.current,
@@ -114,6 +115,7 @@ export default function HomePage() {
       }
 
       if (processRef.current) {
+        gsap.set('.process-step', { opacity: 1 })
         gsap.from('.process-step', {
           scrollTrigger: {
             trigger: processRef.current,
