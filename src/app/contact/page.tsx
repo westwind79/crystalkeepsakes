@@ -125,6 +125,12 @@ export default function ContactPage() {
       <section className="bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
+            {submitStatus && (
+              <div className={`mb-6 p-4 rounded-lg ${submitStatus.success ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
+                {submitStatus.message}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
@@ -133,9 +139,12 @@ export default function ContactPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Your full name"
                 />
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
               </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
                 <input
@@ -143,9 +152,55 @@ export default function ContactPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="your.email@example.com"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  placeholder="(555) 123-4567"
                 />
               </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Topic *</label>
+                <select
+                  name="topic"
+                  value={formData.topic}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.topic ? 'border-red-500' : 'border-gray-300'}`}
+                >
+                  {CONTACT_TOPICS.map(topic => (
+                    <option key={topic.value} value={topic.value}>{topic.label}</option>
+                  ))}
+                </select>
+                {errors.topic && <p className="mt-1 text-sm text-red-600">{errors.topic}</p>}
+              </div>
+              
+              {formData.topic === 'order_problem' && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Order Number *</label>
+                  <input
+                    type="text"
+                    name="orderNumber"
+                    value={formData.orderNumber}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.orderNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="e.g., ORD-12345"
+                  />
+                  {errors.orderNumber && <p className="mt-1 text-sm text-red-600">{errors.orderNumber}</p>}
+                  <p className="mt-2 text-xs text-gray-600">Please provide your order number so we can assist you quickly.</p>
+                </div>
+              )}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
                 <textarea
@@ -153,14 +208,18 @@ export default function ContactPage() {
                   rows={5}
                   value={formData.comment}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none ${errors.comment ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Tell us more about your inquiry..."
                 />
+                {errors.comment && <p className="mt-1 text-sm text-red-600">{errors.comment}</p>}
               </div>
+              
               <button
                 type="submit"
-                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm"
+                disabled={isSubmitting}
+                className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm"
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
