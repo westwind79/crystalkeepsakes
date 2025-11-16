@@ -73,6 +73,65 @@ export const PRODUCT_CATEGORIES = [
     description: 'Unique laser engraving and custom creations',
     path: '/products?category=custom',
   },
+  {
+    value: 'wedding',
+    label: 'Wedding',
+    description: 'Perfect keepsakes for wedding celebrations',
+    path: '/products?category=wedding',
+  },
+  {
+    value: 'anniversary',
+    label: 'Anniversary',
+    description: 'Celebrate years of love and memories',
+    path: '/products?category=anniversary',
+  },
+  {
+    value: 'birthday',
+    label: 'Birthday',
+    description: 'Special birthday gifts and keepsakes',
+    path: '/products?category=birthday',
+  },
+  {
+    value: 'graduation',
+    label: 'Graduation',
+    description: 'Commemorate academic achievements',
+    path: '/products?category=graduation',
+  },
+  {
+    value: 'baby',
+    label: 'Baby & Family',
+    description: 'Celebrate new arrivals and family milestones',
+    path: '/products?category=baby',
+  },
+  {
+    value: 'retirement',
+    label: 'Retirement',
+    description: 'Honor career milestones and achievements',
+    path: '/products?category=retirement',
+  },
+  {
+    value: 'holiday',
+    label: 'Holiday & Seasonal',
+    description: 'Festive crystal gifts for any season',
+    path: '/products?category=holiday',
+  },
+];
+
+/**
+ * Occasions that can be manually assigned to products
+ * These are separate from auto-detected product type categories
+ */
+export const OCCASION_CATEGORIES = [
+  { value: 'memorial', label: 'Memorial & Tribute' },
+  { value: 'pet', label: 'Pet Memorial' },
+  { value: 'custom', label: 'Custom Projects' },
+  { value: 'wedding', label: 'Wedding' },
+  { value: 'anniversary', label: 'Anniversary' },
+  { value: 'birthday', label: 'Birthday' },
+  { value: 'graduation', label: 'Graduation' },
+  { value: 'baby', label: 'Baby & Family' },
+  { value: 'retirement', label: 'Retirement' },
+  { value: 'holiday', label: 'Holiday & Seasonal' },
 ];
 
 /**
