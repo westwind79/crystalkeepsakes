@@ -383,40 +383,75 @@ export default function ProductsPage() {
           <div className="sm:col-span-2">            
             {/* Category Filter Section */}
             <section className="xs:relative md:sticky top-40">
-              <div className="">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
 
-                <h3 className="text-lg font-semibold text-text-primary mb-4">Filter by Category</h3>
-                <div className="flex flex-col gap-2">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                  </svg>
+                  Categories
+                </h3>
+
+                <div className="space-y-2">
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
                     .map(category => {
                       const count = filterProductsByCategory(typeFiltered, category.value).length
                       const isActive = selectedCategory === category.value
                       
+                      // Category icons
+                      const categoryIcons = {
+                        'featured': '⭐',
+                        '3d-crystals': '🔮',
+                        '2d-crystals': '💎',
+                        'keychains-necklaces': '🔑',
+                        'ornaments': '🎄',
+                        'heart-shapes': '❤️',
+                        'memorial': '🕊️',
+                        'pet': '🐾',
+                        'custom': '⚙️',
+                        'sale': '💰'
+                      };
+                      
                       return (
                         <button
                           key={category.value}
                           onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
                           disabled={count === 0}
-                          className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
+                          className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-left flex items-center justify-between group ${
                             isActive
-                              ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)]'
+                              ? 'bg-[#72B01D] text-white shadow-md'
                               : count > 0
-                              ? 'bg-dark-bg border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400 cursor-pointer'
-                              : 'bg-gray-800 border-2 border-gray-700 text-gray-600 cursor-not-allowed'
+                              ? 'bg-white text-gray-700 hover:bg-gray-100 hover:text-[#72B01D] hover:shadow-sm border border-gray-200 cursor-pointer'
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
                           }`}
                         >
-                          {category.label} ({count})
+                          <span className="flex items-center gap-3">
+                            <span className="text-lg">{categoryIcons[category.value] || '📦'}</span>
+                            <span className="font-medium">{category.label}</span>
+                          </span>
+                          <span className={`text-sm px-2 py-1 rounded-full ${
+                            isActive 
+                              ? 'bg-white/20 text-white' 
+                              : count > 0
+                              ? 'bg-gray-100 text-gray-600 group-hover:bg-[#72B01D]/10 group-hover:text-[#72B01D]'
+                              : 'bg-gray-200 text-gray-400'
+                          }`}>
+                            {count}
+                          </span>
                         </button>
                       )
                     })}
                   
-                  {selectedCategory !== 'all' && (
+                  {selectedCategory !== 'all' && selectedCategory !== 'featured' && selectedCategory !== 'sale' && (
                     <button
                       onClick={() => handleCategoryChange('all')}
-                      className="px-4 py-2 rounded-lg font-medium text-sm bg-transparent border-2 border-red-500 text-red-400 hover:bg-red-500/10 transition-all"
+                      className="w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
                     >
-                      ✕ Clear Filter
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                      Clear Filter
                     </button>
                   )}
                 </div>
