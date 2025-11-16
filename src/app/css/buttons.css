@@ -24,21 +24,21 @@
   border-radius: 0.375rem;
   font-weight: 500;
   font-size: var(--font-scale-13-14);
-  transition: all var(--transition-base); 
+  /*transition: all var(--transition-base); */
 }
 
 .btn-primary {
   background: var(--primary);
   border: 1px solid var(--primary);
   color: var(--surface-50) !important;
-/*  box-shadow: var(--glow-effect);*/
+  box-shadow: var(--glow-effect);
 }
 
 .btn-primary:hover {
   /*animation: glowPulse 1.25s ease-in-out infinite;*/
   border: 1px solid var(--primary);
   background: var(--primary-dark); 
-  box-shadow: var(--glow-intense);
+  /*box-shadow: var(--glow-intense);*/
   color: var(--surface-50);
 }
 
@@ -50,7 +50,7 @@
 .btn-outline-light:hover {
   background: var(--primary);
   color: var(--surface-50);
-  box-shadow: var(--glow-effect);
+  /*box-shadow: var(--glow-effect);*/
 }
 
 .btn-secondary {
@@ -64,11 +64,11 @@
   color: var(--surface-50);
   box-shadow: var(--glow-strong);
 }
-
+/*
 .btn-outline-danger {
   border: 1px solid var(--error-light);
 }
 
 .btn-outline-secondary {
   border: 1px solid var(--brand-400);
-}
+}*/

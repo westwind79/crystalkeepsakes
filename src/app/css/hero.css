@@ -1,15 +1,11 @@
 .hero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     min-height: 25vh;
     background: linear-gradient(35deg,#1cc81c33 10%,#111111e6 150%),url(/img/hero/laser-background.png) center/cover no-repeat;
-    color: var(--text-primary);
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-    padding: 0 20px
+    .home & {
+        min-height: 75vh; 
+    }
 }
+
 
 .hero-content h1 {
     line-height: 1.1;
@@ -35,20 +31,6 @@
     background: linear-gradient(#1cc81c33,#1c1c1ccc),url(/img/green-laser-background.jpg) center/cover no-repeat
 }
 
-.home .hero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 75vh;
-    background: linear-gradient(45deg,#111111e6 30%,#1cc81c33 125%),url(/img/flag-background-2.png) center/cover no-repeat;
-    color: var(--neutral-white);
-    text-align: center;
-    padding: 0 20px
-}
-
-.home .hero-content {
-    max-width: 600px
-}
 
 .home .hero-content h1 {
     font-size: var(--font-scale-43-62);
