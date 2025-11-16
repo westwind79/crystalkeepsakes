@@ -75,9 +75,16 @@ const ProductsHero = () => (
 /**
  * Breadcrumbs Component - Single source of truth
  */
-const ProductsBreadcrumbs = () => (
-  <Breadcrumbs items={[{ label: 'Products' }]} />
-)
+const ProductsBreadcrumbs = ({ breadcrumbs }: { breadcrumbs?: string[] }) => {
+  const items = breadcrumbs 
+    ? breadcrumbs.map((label, index) => ({
+        label,
+        href: index === 0 ? '/' : index === 1 ? '/products' : undefined
+      }))
+    : [{ label: 'Products' }];
+  
+  return <Breadcrumbs items={items} />;
+}
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
