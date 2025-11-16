@@ -210,6 +210,28 @@ export default function ProductsPage() {
     : filterProductsByCategory(typeFiltered, selectedCategory)
 
   /**
+   * Get breadcrumb path based on current filters
+   */
+  const getBreadcrumbPath = () => {
+    const path = ['Home', 'Products'];
+    
+    if (productType === 'crystals') {
+      path.push('Crystals');
+    } else if (productType === 'lightbases') {
+      path.push('Light Bases');
+    }
+    
+    if (selectedCategory !== 'all') {
+      const categoryLabel = PRODUCT_CATEGORIES.find(cat => cat.value === selectedCategory)?.label;
+      if (categoryLabel) {
+        path.push(categoryLabel);
+      }
+    }
+    
+    return path;
+  };
+
+  /**
    * Loading State
    */
   if (loading) {
