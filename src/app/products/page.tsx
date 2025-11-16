@@ -317,7 +317,7 @@ export default function ProductsPage() {
     <div className="products min-h-screen">
       
       <ProductsHero />
-      <ProductsBreadcrumbs />
+      <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
       <div className="container-full mx-auto bg-white px-4 relative">       
         
