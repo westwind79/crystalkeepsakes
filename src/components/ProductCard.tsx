@@ -201,13 +201,13 @@ export default function ProductCard({ product }) {
         {/* On Sale Badge */}
         {onSale && ( 
           <div className="absolute top-0 right-12 z-2">
-            <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase z-10">Sale</span> 
+            <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase z-2">Sale</span> 
           </div>
         )}
 
         {/* Featured Badge */}
         {isFeatured && (
-          <div className="absolute right-4 bottom-4 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-10">
+          <div className="absolute right-4 bottom-4 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
             <svg 
               className="w-4 h-4" 
               fill="currentColor" 
@@ -221,7 +221,7 @@ export default function ProductCard({ product }) {
         
         {/* Lightbase Badge */}
         {isLightbase && (
-          <div className="absolute top-3 left-3 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 text-xs font-semibold z-10">
+          <div className="absolute top-3 left-3 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 text-xs font-semibold z-2">
             <svg 
               className="w-4 h-4" 
               fill="currentColor" 
