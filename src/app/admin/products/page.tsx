@@ -70,6 +70,7 @@ interface Product {
   textOptions?: TextOption[];
   requiresImage?: boolean;
   featured?: boolean;
+  sale?: boolean;
   maskImageUrl?: string | null;
 }
 
@@ -278,6 +279,36 @@ export default finalProductList;
 
       {/* Main Content */}
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        {/* Stats */}
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="bg-blue-50 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-blue-600">Source</div>
+            <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">On Sale</div>
+            <div className="text-2xl font-bold text-green-900">
+              {Object.keys(selectedProductData.sale).length}
+            </div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">Featured</div>
+            <div className="text-2xl font-bold text-green-900">
+              {Object.keys(selectedProductData.featured).length}
+            </div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">Customized</div>
+            <div className="text-2xl font-bold text-green-900">
+              {Object.keys(editedProducts).length}
+            </div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-purple-600">Total</div>
+            <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-12 gap-6">
           {/* Product List - Left Column */}
           <div className="col-span-12 lg:col-span-3">
@@ -473,6 +504,7 @@ export default finalProductList;
                             <div className="mt-3 text-xs text-gray-600">
                               <strong>Detection Rules:</strong>
                               <ul className="list-disc list-inside mt-1 space-y-1">
+                                <li>Sale: ✓ if "On Sale" is checked above</li>
                                 <li>Featured: ✓ if "Featured product" is checked above</li>
                                 <li>Light Bases: Product IDs 105-108, 119, 160, 252, 276 (excludes ID 279)</li>
                                 <li>3D Crystals: Name contains "3D", "ball", "dome", "monument"</li>
@@ -903,25 +935,7 @@ export default finalProductList;
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Stats */}
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <div className="bg-blue-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-blue-600">Source</div>
-                  <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
-                </div>
-                <div className="bg-green-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-green-600">Customized</div>
-                  <div className="text-2xl font-bold text-green-900">
-                    {Object.keys(editedProducts).length}
-                  </div>
-                </div>
-                <div className="bg-purple-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-purple-600">Total</div>
-                  <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
-                </div>
-              </div>
+              </div>             
             </div>
           )}
         </div>
