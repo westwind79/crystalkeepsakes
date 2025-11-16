@@ -299,38 +299,82 @@ export default function ProductsPage() {
       <div className="container-full mx-auto bg-white px-4 relative">       
         
         {/* Product Type Filter (Crystals vs Light Bases) */}
-        <section className="my-4 sticky bg-white py-4 top-[var(--header-height)] z-10">
-          <div className="flex gap-1 justify-start">
-            <button
-              onClick={() => setProductType('all')}
-              className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-                productType === 'all'
-                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
-              }`}
-            >
-              All Products ({products.length})
-            </button>
-            <button
-              onClick={() => setProductType('crystals')}
-              className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-                productType === 'crystals'
-                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
-              }`}
-            >
-              💎 Crystals ({products.filter(p => !isLightbaseProduct(p)).length})
-            </button>
-            <button
-              onClick={() => setProductType('lightbases')}
-              className={`px-2 py-2 rounded-lg font-semibold transition-all ${
-                productType === 'lightbases'
-                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
-              }`}
-            >
-              💡 Light Bases ({products.filter(p => isLightbaseProduct(p)).length})
-            </button>
+        <section className="my-6 sticky bg-white py-6 top-[var(--header-height)] z-10 border-b border-gray-200">
+          <div className="flex flex-wrap gap-3 justify-start items-center">
+            {/* Main Type Filters */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setProductType('all')}
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+                  productType === 'all'
+                    ? 'bg-[#72B01D] text-white shadow-lg hover:bg-[#5A8E17]'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+                }`}
+              >
+                All Products <span className="ml-1.5 font-normal text-sm opacity-90">({products.length})</span>
+              </button>
+              <button
+                onClick={() => setProductType('crystals')}
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+                  productType === 'crystals'
+                    ? 'bg-[#72B01D] text-white shadow-lg hover:bg-[#5A8E17]'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+                }`}
+              >
+                💎 Crystals <span className="ml-1.5 font-normal text-sm opacity-90">({products.filter(p => !isLightbaseProduct(p)).length})</span>
+              </button>
+              <button
+                onClick={() => setProductType('lightbases')}
+                className={`px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+                  productType === 'lightbases'
+                    ? 'bg-[#72B01D] text-white shadow-lg hover:bg-[#5A8E17]'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+                }`}
+              >
+                💡 Light Bases <span className="ml-1.5 font-normal text-sm opacity-90">({products.filter(p => isLightbaseProduct(p)).length})</span>
+              </button>
+            </div>
+
+            {/* Quick Filters - Featured & Sale */}
+            <div className="flex gap-2 ml-auto">
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.featured === true;
+              }).length > 0 && (
+                <button
+                  onClick={() => handleCategoryChange(selectedCategory === 'featured' ? 'all' : 'featured')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                    selectedCategory === 'featured'
+                      ? 'bg-amber-500 text-white shadow-lg'
+                      : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  Featured
+                </button>
+              )}
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.sale === true;
+              }).length > 0 && (
+                <button
+                  onClick={() => handleCategoryChange(selectedCategory === 'sale' ? 'all' : 'sale')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                    selectedCategory === 'sale'
+                      ? 'bg-red-500 text-white shadow-lg'
+                      : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
+                  </svg>
+                  On Sale
+                </button>
+              )}
+            </div>
           </div>
         </section>
 
