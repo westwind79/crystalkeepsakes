@@ -361,7 +361,7 @@ export default function ProductsPage() {
 
                 <div className="space-y-2 overflow-y-auto h-screen">
                   {PRODUCT_CATEGORIES
-                    .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
+                    .filter(cat => cat.value !== 'all') // Filter out only 'all'
                     .map(category => {
                       const count = filterProductsByCategory(products, category.value).length
                       const isActive = selectedCategory === category.value
