@@ -52,8 +52,27 @@ export default function HomePage() {
   const processRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
+    // Ensure elements are visible by default (fallback if animations fail)
+    const elements = ['.hero-content', '.hero-cta a', '.hero-swiper']
+    elements.forEach(el => {
+      const element = document.querySelector(el)
+      if (element) {
+        (element as HTMLElement).style.opacity = '1'
+      }
+    })
+
     const ctx = gsap.context(() => {
-      // Hero animations
+      // Hero animations - use set to ensure visibility first
+      gsap.set('.hero-content', { opacity: 1 })
+      gsap.set('.hero-cta a', { opacity: 1 })
+      gsap.set('.hero-swiper', { opacity: 1 })
+
+      // Only animate on devices that support it well
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (prefersReducedMotion) {
+        return // Skip animations if user prefers reduced motion
+      }
+
       gsap.from('.hero-content', {
         opacity: 0,
         y: 40,
