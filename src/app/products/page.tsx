@@ -106,10 +106,7 @@ export default function ProductsPage() {
     fetchProducts()
   }, [])
 
-  // Reset category when product type changes
-  useEffect(() => {
-    setSelectedCategory('all')
-  }, [productType])
+  // Product type filtering removed - now using category filtering only
 
   // Update URL when category changes
   const handleCategoryChange = (category: string) => {
