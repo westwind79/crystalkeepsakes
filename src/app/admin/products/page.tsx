@@ -199,6 +199,37 @@ export default finalProductList;
 
   // Save and download final product list
   const saveFinalProducts = async () => {
+    // Validate: Check if any product has sale=true but no salePrice
+    const invalidProducts = Object.entries(editedProducts)
+      .filter(([id, data]) => data.sale === true && (!data.salePrice || data.salePrice <= 0))
+      .map(([id]) => {
+        const product = sourceProducts.find(p => p.id === id);
+        return product?.name || id;
+      });
+
+    if (invalidProducts.length > 0) {
+      alert(`❌ Cannot Save: Missing Sale Prices\n\nThe following products are marked "On Sale" but have no sale price set:\n\n${invalidProducts.join('\n')}\n\nPlease set a sale price for each product marked as "On Sale".`);
+      return;
+    }
+
+    // Validate: Check if sale price is less than base price
+    const invalidPriceProducts = Object.entries(editedProducts)
+      .filter(([id, data]) => {
+        if (!data.sale || !data.salePrice) return false;
+        const product = sourceProducts.find(p => p.id === id);
+        const basePrice = data.basePrice ?? product?.basePrice ?? 0;
+        return data.salePrice >= basePrice;
+      })
+      .map(([id]) => {
+        const product = sourceProducts.find(p => p.id === id);
+        return product?.name || id;
+      });
+
+    if (invalidPriceProducts.length > 0) {
+      alert(`❌ Cannot Save: Invalid Sale Prices\n\nThe following products have a sale price that is NOT less than the original price:\n\n${invalidPriceProducts.join('\n')}\n\nSale price must be lower than the original price.`);
+      return;
+    }
+
     const content = generateFinalProducts();
     
     // Save to localStorage
