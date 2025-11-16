@@ -656,7 +656,21 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+              {product.sale && product.salePrice ? (
+                <div className="flex items-center gap-3">
+                  <p className="text-2xl tracking-tight text-gray-500 line-through">
+                    ${product.basePrice?.toFixed(2)}
+                  </p>
+                  <p className="text-3xl font-bold tracking-tight text-red-600">
+                    ${calculateTotal().toFixed(2)}
+                  </p>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Save {Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
+                  </span>
+                </div>
+              ) : (
+                <p className="text-3xl tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+              )}
             </div>
 
             <div className="mt-6">
