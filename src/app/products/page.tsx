@@ -346,11 +346,11 @@ export default function ProductsPage() {
 
         <div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">
 
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 h-screen">            
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 mb-6 md:mb-0">            
             {/* Category Filter Section */}
             
-            <section className="">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <section className="md:sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto">
+              <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
 
                 <h5 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
