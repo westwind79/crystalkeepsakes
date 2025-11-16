@@ -199,10 +199,12 @@ export default function ProductDetailClient() {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
     
+    // Only validate size if product actually HAS sizes defined and available
     if (product?.sizes && product.sizes.length > 0 && !selectedSize) {
       newErrors.size = 'Please select a size'
     }
     
+    // Only validate image if product explicitly requires it
     if (product?.requiresImage) {
       if (!uploadedImage) {
         newErrors.image = 'Please upload an image'
@@ -212,7 +214,23 @@ export default function ProductDetailClient() {
     }
     
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    const isValid = Object.keys(newErrors).length === 0
+    
+    // Log validation result for debugging
+    if (!isValid) {
+      console.log('❌ [VALIDATION] Failed with errors:', newErrors)
+      console.log('❌ [VALIDATION] Product state:', {
+        hasSizes: product?.sizes?.length || 0,
+        selectedSize: selectedSize?.name || 'none',
+        requiresImage: product?.requiresImage,
+        hasUploadedImage: !!uploadedImage,
+        hasMaskedImage: !!finalMaskedImage
+      })
+    } else {
+      console.log('✅ [VALIDATION] Passed')
+    }
+    
+    return isValid
   }
 
   const calculateTotal = (): number => {
