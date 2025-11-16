@@ -390,7 +390,7 @@ export default function ProductDetailClient() {
         quantity: quantity,
         size: sizeDetails,
         options: productOptions,
-        productImage: product.images?.[0]?.src || null,
+        productImage: mainImage?.src || null,
         customImage: customImage,
         customText: customTextString ? { text: customTextString } : undefined,
         dateAdded: new Date().toISOString(),
