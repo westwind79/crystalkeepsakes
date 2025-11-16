@@ -268,7 +268,7 @@ export default function CartPage() {
             <p className="text-slate-600 mb-6">Add some beautiful crystal keepsakes to get started!</p>
             <Link 
               href="/products" 
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+              className="inline-block px-6 py-3 bg-[var(--brand-400)] hover:bg-[var(--brand-500)] text-white font-medium rounded-md transition-colors"
             >
               Continue Shopping
             </Link>

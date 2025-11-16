@@ -142,12 +142,12 @@ export default function HomePage() {
                 Transform your cherished photos into stunning 3D crystal art pieces. 
                 Our precision laser technology creates beautiful, lasting memories.
               </p>
-
-              <div className="hero-cta">
-                <Link href="/products">
+ 
+              <div className="hero-cta grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+                <Link href="/products" className="btn-primary inline-flex px-3 py-2 text-centeralign-center justify-center rounded-lg">
                   Browse Designs
                 </Link>
-                <Link href="/about">
+                <Link href="/about" className="btn btn-outline-light inline-flex px-3 py-2 align-center justify-center rounded-lg"> 
                   Learn More
                 </Link>
               </div>
@@ -174,14 +174,14 @@ export default function HomePage() {
                 className="mySwiper" 
               >
                 {heroSwiperSlides.map(slide => (
-                  <SwiperSlide key={slide.id}>
+                  <SwiperSlide key={slide.id} className="rounded-2xl">
                     <Image 
                       src={slide.image}
                       alt={slide.name}  
                       fill
                       width={0}
                       height={0}
-                      className="w-full object-cover"
+                      className="w-full object-cover rounded-xl p-4"
                       priority={slide.priority}
                     />          
                   </SwiperSlide>
@@ -202,7 +202,7 @@ export default function HomePage() {
       <Testimonials />
 
       {/* Process Section - Alternating Background */}
-      <section ref={processRef} className="bg-gray-50 py-16 sm:py-20 lg:py-24">
+      <section ref={processRef} className="bg-gray-100 py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 xl:max-w-7xl">
           <h2 className="text-center text-3xl sm:text-4xl font-light text-gray-900 mb-12">
             How We Create Your Crystal
@@ -237,7 +237,7 @@ export default function HomePage() {
       </section>
 
       {/* About Preview - Light Background */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <section className="bg-[var(--surface-200)] py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 xl:max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">

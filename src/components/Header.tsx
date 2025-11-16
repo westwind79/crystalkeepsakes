@@ -68,13 +68,18 @@ export default function Header() {
             {/* LOGO / BRAND */}
             <Link 
               href="/" 
-              className="hover:text-brand-400 transition-colors no-underline flex-shrink-0"
+              className="flex justify-center gap-3 transition-colors no-underline flex-shrink-0"
             >
+              <div className="brand-img"> 
+                <svg id="Layer_1" className="xs:w-12 sm:w-12 md:w-12 lg:w-15" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92.93 84.163">
+                  <polygon points="24.753 84.163 0 71.889 28.032 81.483 7.453 58.266 32.67 77.845 18.076 47.813 39.35 75.565 30.941 39.241 44.686 75.868 47.965 0 51.245 75.868 64.99 39.241 55.58 75.565 77.854 46.813 63.26 77.845 87.477 59.266 67.898 81.483 92.93 71.889 71.178 84.163 24.753 84.163" fill="#72b01d"/>
+                </svg>
+              </div>
               <div className="">
-                <div className="text-white text-xl lg:text-2xl font-bold tracking-wider">
+                <div className="text-white hover:text-none text-xl lg:text-2xl font-bold tracking-wider">
                   CRYSTALKEEPSAKES
                 </div>
-                <div className="text-xs lg:text-lg text-green font-medium tracking-[2px] mt-0.5">
+                <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px]">
                   LIGHT. LASER. LOVE.
                 </div>
               </div>
@@ -82,18 +87,18 @@ export default function Header() {
 
             {/* DESKTOP NAVIGATION */}
             <div className="hidden lg:flex items-center gap-1">
-              <ul className="flex items-center gap-2 m-0 p-0 list-none">
+              <ul className="flex items-center gap-1 m-0 p-0 list-none px-4">
                 {navItems.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       className={`overflow-hidden
-                        group relative block px-4 py-2 
+                        group relative block px-6 py-2 
                         uppercase text-sm font-medium tracking-wide 
-                        transition-colors duration-300 no-underline
+                        transition-colors duration-200 no-underline
                         ${isActive(item.href) 
-                          ? 'text-brand-500' 
-                          : 'text-gray-300 hover:text-brand-400'
+                          ? 'text-[var(--surface-300)]' 
+                          : 'text-[var(--brand-400)] hover:text-[var(--brand-100)]'
                         }
                       `}
                     >
@@ -102,11 +107,11 @@ export default function Header() {
                       <span 
                         className={`
                           absolute left-1/2 -bottom-0 h-[1px] 
-                          bg-brand-500 transition-all duration-300
+                          bg-[var(--brand-400)] transition-all duration-200
                           -translate-x-1/2
                           ${isActive(item.href) 
-                            ? 'w-full shadow-[0_10px_25px_8px_#acf213]' 
-                            : 'w-0 group-hover:w-full group-hover:shadow-[0_12px_25px_8px_#acf213]'
+                            ? 'w-full shadow-[0_10px_25px_8px_var(--brand-350)]' 
+                            : 'w-0 group-hover:w-full group-hover:shadow-[0_12px_25px_8px_var(--brand-350)]'
                           }
                         `}
                       />
@@ -123,12 +128,12 @@ export default function Header() {
             <div className="flex lg:hidden items-center gap-3">            
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="
+                className="cursor-pointer
                   w-10 h-10 flex flex-col justify-center items-center gap-1
-                  bg-brand-400 rounded border-0 
-                  hover:bg-brand-500 transition-colors
-                  focus:outline-none focus:ring-2 focus:ring-brand-400 
-                  focus:ring-offset-2 focus:ring-offset-black
+                  bg-[var(--brand-800)] rounded border-0 
+                  hover:bg-[var(--brand-350)] transition-colors
+                  focus:outline-none focus:ring-1 focus:ring-[var(--brand-350)] 
+                  focus:ring-offset-1 focus:ring-offset-[var(--brand-350)]
                 "
                 type="button"
                 aria-label="Toggle navigation"
@@ -150,7 +155,7 @@ export default function Header() {
                 <span 
                   className={`
                     block w-6 h-0.5 bg-white transition-all duration-300
-                    ${isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''}
+                    ${isMobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''}
                   `}
                 />
               </button>

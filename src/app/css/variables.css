@@ -1,9 +1,11 @@
 :root {
 
  /* Primary Colors - Laser Green */
-  --brand-100: #ecf5e4;  /* Lightest */
-  --brand-200: #d1e7bc;
+  
+  --brand-100: #ecf5e4;  /* Lightest */  
+  --brand-200: #d1e7bc;  
   --brand-300: #a3d77a;  /* Light accent */
+  --brand-350: #acf213;
   --brand-400: #8ac644;
   --brand-500: #72B01D;  /* Primary */
   --brand-600: #5c8d17;
