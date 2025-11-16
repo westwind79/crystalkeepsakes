@@ -292,7 +292,7 @@ export default function ProductsPage() {
    * Main Products View
    */
   return (
-    <div className="products min-h-screen">
+    <div className="products min-h-screen relative">
       
       <ProductsHero />
       <ProductsBreadcrumbs />
@@ -375,10 +375,10 @@ export default function ProductsPage() {
 
         <div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">
 
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 h-screen">            
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2">            
             {/* Category Filter Section */}
             
-            <section className="">
+            <section className="relative">
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
 
                 <h5 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -388,7 +388,7 @@ export default function ProductsPage() {
                   Categories
                 </h5>
 
-                <div className="space-y-2 overflow-y-auto h-screen">
+                <div className="space-y-2">
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
                     .map(category => {
@@ -414,7 +414,7 @@ export default function ProductsPage() {
                           key={category.value}
                           onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
                           disabled={count === 0}
-                          className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-left flex items-center justify-between group ${
+                          className={`w-full px-4 py-2 rounded-lg font-medium transition-all duration-200 text-left flex items-center justify-between group ${
                             isActive
                               ? 'bg-[#72B01D] text-white shadow-md'
                               : count > 0
@@ -422,7 +422,7 @@ export default function ProductsPage() {
                               : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
                           }`}
                         >
-                          <span className="flex items-center gap-3">
+                          <span className="flex items-center gap-2">
                             <span className="text-lg">{categoryIcons[category.value] || '📦'}</span>
                             <span className="font-medium">{category.label}</span>
                           </span>
@@ -472,7 +472,7 @@ export default function ProductsPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-3 gap-6">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
