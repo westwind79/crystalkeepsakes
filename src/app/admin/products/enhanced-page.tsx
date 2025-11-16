@@ -235,7 +235,7 @@ export default finalProductList;
             <div className="flex gap-3">
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors ${
                   showPreview
                     ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -245,7 +245,7 @@ export default finalProductList;
               </button>
               <button
                 onClick={saveFinalProducts}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
+                className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
               >
                 <span>💾</span>
                 <span>Generate final-product-list.js</span>
@@ -271,7 +271,7 @@ export default finalProductList;
                   <button
                     key={product.id}
                     onClick={() => setSelectedProduct(product)}
-                    className={`w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${
+                    className={`cursor-pointer w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${
                       selectedProduct?.id === product.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
                     }`}
                   >
@@ -331,9 +331,9 @@ export default finalProductList;
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        className={`cursor-pointer flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                           activeTab === tab.id
-                            ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50'
+                            ? 'cursor-pointer border-b-2 border-blue-600 text-blue-600 bg-blue-50'
                             : 'text-gray-600 hover:bg-gray-50'
                         }`}
                       >
@@ -694,7 +694,7 @@ export default finalProductList;
                           delete newEditedProducts[selectedProduct.id];
                           setEditedProducts(newEditedProducts);
                         }}
-                        className="w-full px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                        className="cursor-pointer w-full px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
                       >
                         🔄 Reset to Original
                       </button>

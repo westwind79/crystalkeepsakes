@@ -37,7 +37,6 @@ html {
   flex-direction: column;
 }
 body { 
- 
   font-size: var(--font-scale-15-18);
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -173,7 +172,7 @@ h6, .h6 { font-size: inherit }
    HEADER.CSS STYLES
    ===================================================== */
   
-header {
+/*header {
   position: sticky;
   top: 0;
   height: var(--header-height); 
@@ -181,7 +180,7 @@ header {
   backdrop-filter: blur(10px);
   box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
   z-index: 1030;
-}
+}*/
 
 header .navbar {
   padding: 15px 0;
@@ -518,8 +517,8 @@ footer .text-muted {
 
 .labelSale {
   position: absolute; 
-  padding: 14px 9px 13px; 
-  line-height: 10px;
+  padding: 14px 6px 13px; 
+  width: 28px;
   text-transform: uppercase;
   writing-mode: vertical-lr; 
     &:after {
