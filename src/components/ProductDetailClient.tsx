@@ -199,13 +199,15 @@ export default function ProductDetailClient() {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
     
-    // Only validate size if product actually HAS sizes defined and available
-    if (product?.sizes && product.sizes.length > 0 && !selectedSize) {
+    // Only validate size if product has sizes AND none is selected
+    // Skip validation if product doesn't have sizes array or it's empty
+    const hasSizes = product?.sizes && Array.isArray(product.sizes) && product.sizes.length > 0
+    if (hasSizes && !selectedSize) {
       newErrors.size = 'Please select a size'
     }
     
     // Only validate image if product explicitly requires it
-    if (product?.requiresImage) {
+    if (product?.requiresImage === true) {
       if (!uploadedImage) {
         newErrors.image = 'Please upload an image'
       } else if (!finalMaskedImage) {
@@ -216,19 +218,17 @@ export default function ProductDetailClient() {
     setErrors(newErrors)
     const isValid = Object.keys(newErrors).length === 0
     
-    // Log validation result for debugging
-    if (!isValid) {
-      console.log('❌ [VALIDATION] Failed with errors:', newErrors)
-      console.log('❌ [VALIDATION] Product state:', {
-        hasSizes: product?.sizes?.length || 0,
-        selectedSize: selectedSize?.name || 'none',
-        requiresImage: product?.requiresImage,
-        hasUploadedImage: !!uploadedImage,
-        hasMaskedImage: !!finalMaskedImage
-      })
-    } else {
-      console.log('✅ [VALIDATION] Passed')
-    }
+    // Detailed logging for debugging
+    console.log('🔍 [VALIDATION] Checking form...', {
+      hasSizes,
+      sizesCount: product?.sizes?.length || 0,
+      selectedSize: selectedSize?.name || null,
+      requiresImage: product?.requiresImage,
+      hasUploadedImage: !!uploadedImage,
+      hasMaskedImage: !!finalMaskedImage,
+      errors: newErrors,
+      isValid
+    })
     
     return isValid
   }
