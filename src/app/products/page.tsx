@@ -329,8 +329,8 @@ export default function ProductsPage() {
       <div className="container-full mx-auto bg-white px-4 relative">       
         
         {/* Product Type Filter (Crystals vs Light Bases) */}
-        <section className="my-6 sticky bg-white py-6 top-[var(--header-height)] z-10 border-b border-gray-200">
-          <div className="flex flex-wrap gap-3 justify-start items-center">
+        <section className="sticky bg-white pt-4 pb-4 mb-4 top-[var(--header-height)] z-10 border-b border-gray-200">
+          <div className="flex flex-wrap gap-1 lg:gap-3 justify-start items-center">
             {/* Main Type Filters */}
             <div className="flex gap-2">
               <button
@@ -402,21 +402,22 @@ export default function ProductsPage() {
           </div>
         </section>
 
-        <div className="grid sm:grid-cols-4 md:grid-cols-6 gap-3">
+        <div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">
 
-          <div className="sm:col-span-2">            
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 h-screen">            
             {/* Category Filter Section */}
-            <section className="xs:relative md:sticky top-40">
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            
+            <section className="">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
 
-                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <h5 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                   </svg>
                   Categories
-                </h3>
+                </h5>
 
-                <div className="space-y-2">
+                <div className="space-y-2 overflow-y-auto h-screen">
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
                     .map(category => {
@@ -483,7 +484,7 @@ export default function ProductsPage() {
             </section>
           </div>
 
-          <div className="sm:col-span-3 md:col-span-5">
+          <div className="sm:col-span-3 md:col-span-4 lg:col-span-5">
             {/* Products Grid Section */}
             <section className="product-grid">
               
@@ -539,7 +540,7 @@ export default function ProductsPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
