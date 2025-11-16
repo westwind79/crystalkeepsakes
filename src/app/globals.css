@@ -112,12 +112,12 @@ body {
 }
 
 /* Typography */
-h1, .h1 { color: inherit; font-size: var(--font-scale-33-46); }
-h2, .h2 { color: inherit; font-size: var(--font-scale-27-36); }
-h3, .h3 { color: inherit; font-size: var(--font-scale-23-29); }
-h4, .h4 { color: inherit; font-size: var(--font-scale-20-26); }
-h5, .h5 { color: inherit; font-size: var(--font-scale-17-20); }
-h6, .h6 { color: inherit; font-size: var(--font-scale-15-16); }
+h1, .h1 { font-size: var(--font-scale-33-46); }
+h2, .h2 { font-size: var(--font-scale-27-36); }
+h3, .h3 { font-size: var(--font-scale-23-29); }
+h4, .h4 { font-size: var(--font-scale-20-26); }
+h5, .h5 { font-size: var(--font-scale-17-20); }
+h6, .h6 { font-size: var(--font-scale-15-16); }
 
  
 

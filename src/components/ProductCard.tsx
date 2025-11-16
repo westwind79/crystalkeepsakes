@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { isLightbaseProduct, isFeaturedProduct, isOnSale } from '@/utils/categoriesConfig'
+import { isLightbaseProduct, isFeaturedProduct } from '@/utils/categoriesConfig'
 
 export default function ProductCard({ product }) {
   const [imageSrc, setImageSrc] = useState(
@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
 
   const isLightbase = isLightbaseProduct(product)
   const isFeatured = isFeaturedProduct(product)
-  const onSale = isOneSale(product)
+  // const onSale = isOneSale(product)
 
   return (
     <Link
@@ -35,11 +35,11 @@ export default function ProductCard({ product }) {
         />
         
         {/* On Sale Badge */}
-        {onSale && (
+        {/*{isOnSale && (
           <div className="absolute top-3 right-3 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-10">
             <div class="productLable"><span class="labelSale">Sale</span></div>
           </div>
-        )}
+        )}*/}
 
         {/* Featured Badge */}
         {isFeatured && (
