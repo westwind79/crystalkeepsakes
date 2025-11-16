@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
 
   const isLightbase = isLightbaseProduct(product)
   const isFeatured = isFeaturedProduct(product)
-  // const onSale = isOneSale(product)
+  const onSale = isOnSale(product)
 
   return (
     <Link
