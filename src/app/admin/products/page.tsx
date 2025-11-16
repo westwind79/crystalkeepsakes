@@ -288,13 +288,19 @@ export default finalProductList;
           <div className="bg-green-50 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">On Sale</div>
             <div className="text-2xl font-bold text-green-900">
-              {Object.keys(selectedProductData.sale).length}
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.sale === true;
+              }).length}
             </div>
           </div>
           <div className="bg-green-50 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">Featured</div>
             <div className="text-2xl font-bold text-green-900">
-              {Object.keys(selectedProductData.featured).length}
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.featured === true;
+              }).length}
             </div>
           </div>
           <div className="bg-green-50 rounded-lg p-4 text-center">
