@@ -337,10 +337,7 @@ export default function ProductsPage() {
 
             {/* Quick Filters - Featured & Sale */}
             <div className="flex gap-2 ml-auto">
-              {sourceProducts.filter(p => {
-                const productData = editedProducts[p.id] || p;
-                return productData.featured === true;
-              }).length > 0 && (
+              {products.filter(p => p.featured === true).length > 0 && (
                 <button
                   onClick={() => handleCategoryChange(selectedCategory === 'featured' ? 'all' : 'featured')}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
@@ -355,10 +352,7 @@ export default function ProductsPage() {
                   Featured
                 </button>
               )}
-              {sourceProducts.filter(p => {
-                const productData = editedProducts[p.id] || p;
-                return productData.sale === true;
-              }).length > 0 && (
+              {products.filter(p => p.sale === true).length > 0 && (
                 <button
                   onClick={() => handleCategoryChange(selectedCategory === 'sale' ? 'all' : 'sale')}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
