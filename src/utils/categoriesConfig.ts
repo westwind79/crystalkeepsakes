@@ -216,6 +216,7 @@ export const getProductCategories = (product: any): string[] => {
   const categories: string[] = [];
   
   if (isFeaturedProduct(product)) categories.push('featured');
+  if (isOnSale(product)) categories.push('sale');
   if (isLightbaseProduct(product)) categories.push('lightbases');
   if (is3DCrystal(product)) categories.push('3d-crystals');
   if (is2DCrystal(product)) categories.push('2d-crystals');
