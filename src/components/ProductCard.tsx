@@ -35,9 +35,9 @@ export default function ProductCard({ product }) {
         />
         
         {/* On Sale Badge */}
-        {onSale && (
-          <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-full shadow-lg text-xs font-bold uppercase tracking-wide z-10">
-            Sale
+        {onSale && ( 
+          <div className="absolute top-0 right-12 z-10">
+            <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase z-10">Sale</span> 
           </div>
         )}
 
