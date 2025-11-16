@@ -221,7 +221,7 @@ export default function ProductsPage() {
         <section className="bg-white py-8">
           <div className="text-center">
             <div 
-              className="inline-block w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" 
+              className="inline-block w-12 h-12 border-4 border-[var(--brand-500)] border-t-transparent rounded-full animate-spin" 
               role="status"
             >
               <span className="sr-only">Loading...</span>
@@ -296,17 +296,17 @@ export default function ProductsPage() {
       <ProductsHero />
       <ProductsBreadcrumbs />
 
-      <div className="bg-white py-8">       
-
+      <div className="container-full mx-auto bg-white px-4 relative">       
+        
         {/* Product Type Filter (Crystals vs Light Bases) */}
-        <section className="container mx-auto px-4 mb-6">
+        <section className="my-4 sticky bg-white py-4 top-[var(--header-height)] z-10">
           <div className="flex gap-1 justify-start">
             <button
               onClick={() => setProductType('all')}
               className={`px-2 py-2 rounded-lg font-semibold transition-all ${
                 productType === 'all'
-                  ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
+                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
+                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
               }`}
             >
               All Products ({products.length})
@@ -315,8 +315,8 @@ export default function ProductsPage() {
               onClick={() => setProductType('crystals')}
               className={`px-2 py-2 rounded-lg font-semibold transition-all ${
                 productType === 'crystals'
-                  ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
+                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
+                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
               }`}
             >
               💎 Crystals ({products.filter(p => !isLightbaseProduct(p)).length})
@@ -325,8 +325,8 @@ export default function ProductsPage() {
               onClick={() => setProductType('lightbases')}
               className={`px-2 py-2 rounded-lg font-semibold transition-all ${
                 productType === 'lightbases'
-                  ? 'bg-brand-500 text-white border-2 border-brand-500 shadow-glow-soft'
-                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400'
+                  ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)] shadow-glow-soft'
+                  : 'cursor-pointer bg-transparent border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400'
               }`}
             >
               💡 Light Bases ({products.filter(p => isLightbaseProduct(p)).length})
@@ -334,69 +334,80 @@ export default function ProductsPage() {
           </div>
         </section>
 
-        {/* Category Filter Section */}
-        <section className="container mx-auto px-4 mb-8">
-          <div className="bg-dark-surface rounded-lg p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-text-primary mb-4">Filter by Category</h3>
-            <div className="flex flex-wrap gap-2">
-              {PRODUCT_CATEGORIES
-                .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
-                .map(category => {
-                  const count = filterProductsByCategory(typeFiltered, category.value).length
-                  const isActive = selectedCategory === category.value
-                  
-                  return (
-                    <button
-                      key={category.value}
-                      onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
-                      disabled={count === 0}
-                      className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
-                        isActive
-                          ? 'bg-brand-500 text-white border-2 border-brand-500'
-                          : count > 0
-                          ? 'bg-dark-bg border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-400 cursor-pointer'
-                          : 'bg-gray-800 border-2 border-gray-700 text-gray-600 cursor-not-allowed'
-                      }`}
-                    >
-                      {category.label} ({count})
-                    </button>
-                  )
-                })}
-              
-              {selectedCategory !== 'all' && (
-                <button
-                  onClick={() => handleCategoryChange('all')}
-                  className="px-4 py-2 rounded-lg font-medium text-sm bg-transparent border-2 border-red-500 text-red-400 hover:bg-red-500/10 transition-all"
-                >
-                  ✕ Clear Filter
-                </button>
-              )}
-            </div>
-          </div>
-        </section>
+        <div className="grid sm:grid-cols-4 md:grid-cols-6 gap-3">
 
-        {/* Products Grid Section */}
-        <section className="container mx-auto px-4 pb-12">
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-16">
-              <h3 className="text-2xl font-semibold text-text-primary mb-4">
-                No products found in this category
-              </h3>
-              <button 
-                onClick={() => setSelectedCategory('all')}
-                className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
-              >
-                View All Products
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-        </section>
+          <div className="sm:col-span-2">            
+            {/* Category Filter Section */}
+            <section className="xs:relative md:sticky top-40">
+              <div className="">
+
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Filter by Category</h3>
+                <div className="flex flex-col gap-2">
+                  {PRODUCT_CATEGORIES
+                    .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
+                    .map(category => {
+                      const count = filterProductsByCategory(typeFiltered, category.value).length
+                      const isActive = selectedCategory === category.value
+                      
+                      return (
+                        <button
+                          key={category.value}
+                          onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
+                          disabled={count === 0}
+                          className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
+                            isActive
+                              ? 'bg-[var(--brand-500)] text-white border-2 border-[var(--brand-500)]'
+                              : count > 0
+                              ? 'bg-dark-bg border-2 border-gray-600 text-text-secondary hover:border-brand-400 hover:bg-[var(--brand-500)]/10 hover:text-brand-400 cursor-pointer'
+                              : 'bg-gray-800 border-2 border-gray-700 text-gray-600 cursor-not-allowed'
+                          }`}
+                        >
+                          {category.label} ({count})
+                        </button>
+                      )
+                    })}
+                  
+                  {selectedCategory !== 'all' && (
+                    <button
+                      onClick={() => handleCategoryChange('all')}
+                      className="px-4 py-2 rounded-lg font-medium text-sm bg-transparent border-2 border-red-500 text-red-400 hover:bg-red-500/10 transition-all"
+                    >
+                      ✕ Clear Filter
+                    </button>
+                  )}
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div className="sm:col-span-3 md:col-span-5">
+            {/* Products Grid Section */}
+            <section className="product-grid">
+              
+              {filteredProducts.length === 0 ? (
+                <div className="text-center py-16">
+                  <h3 className="text-2xl font-semibold text-text-primary mb-4">
+                    No products found in this category
+                  </h3>
+                  <button 
+                    onClick={() => setSelectedCategory('all')}
+                    className="px-6 py-3 bg-[var(--brand-500)] hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
+                  >
+                    View All Products
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                  {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
+
+            </section>
+          </div>
+
+        </div>
       </div>
     </div>
   )
