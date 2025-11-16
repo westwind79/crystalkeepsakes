@@ -10,6 +10,7 @@ import Breadcrumbs from '@/components/BreadCrumbs'
 import { 
   isLightbaseProduct, 
   isFeaturedProduct,
+  isOnSale,
   PRODUCT_CATEGORIES,
   filterProductsByCategory 
 } from '@/utils/categoriesConfig'
