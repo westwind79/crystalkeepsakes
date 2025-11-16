@@ -8,6 +8,12 @@ export const PRODUCT_CATEGORIES = [
     path: '/products',
   },
   {
+    value: 'sale',
+    label: 'On Sale',
+    description: 'Special Deals',
+    path: '/products?category=sale',
+  },
+  {
     value: 'featured',
     label: 'Featured',
     description: 'Our most popular crystal designs',
@@ -77,6 +83,7 @@ export const PRODUCT_TYPES = {
   LIGHTBASE: 'lightbase',
   ACCESSORY: 'accessory',
   FEATURED: 'featured',
+  SALE: 'sale',
   ALL: 'all'
 };
 
@@ -117,6 +124,13 @@ export const isLightbaseProduct = (product: any): boolean => {
  */
 export const isFeaturedProduct = (product: any): boolean => {
   return product?.featured === true;
+};
+
+/**
+ * Helper function to determine if a product is on Sale
+ */
+export const isOnSale = (product: any): boolean => {
+  return product?.sale === true;
 };
 
 /**
