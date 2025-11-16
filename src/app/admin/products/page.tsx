@@ -73,6 +73,7 @@ interface Product {
   sale?: boolean;
   salePrice?: number;
   maskImageUrl?: string | null;
+  occasions?: string[];
 }
 
 interface ProductCustomizations {
