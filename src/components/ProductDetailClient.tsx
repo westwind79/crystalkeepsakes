@@ -216,7 +216,12 @@ export default function ProductDetailClient() {
   }
 
   const calculateTotal = (): number => {
-    let total = selectedSize?.price || product?.basePrice || 0
+    // Use sale price if product is on sale, otherwise use regular price
+    const basePrice = (product?.sale && product?.salePrice) 
+      ? product.salePrice 
+      : (selectedSize?.price || product?.basePrice || 0);
+    
+    let total = basePrice;
     if (selectedLightBase?.price) total += selectedLightBase.price
     if (selectedBackground?.price) total += selectedBackground.price
     
