@@ -312,12 +312,12 @@ export default finalProductList;
       {/* Main Content */}
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="mt-6 grid grid-cols-3 gap-3">
-          <div className="bg-blue-50 rounded-lg p-4 text-center">
+        <div className="m-6 grid lg:grid-cols-5 gap-2">
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-blue-600">Source</div>
             <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 text-center">
+          <div className="bg-green-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">On Sale</div>
             <div className="text-2xl font-bold text-green-900">
               {sourceProducts.filter(p => {
@@ -326,7 +326,7 @@ export default finalProductList;
               }).length}
             </div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 text-center">
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">Featured</div>
             <div className="text-2xl font-bold text-green-900">
               {sourceProducts.filter(p => {
@@ -335,13 +335,13 @@ export default finalProductList;
               }).length}
             </div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 text-center">
+          <div className="bg-yellow-200 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">Customized</div>
             <div className="text-2xl font-bold text-green-900">
               {Object.keys(editedProducts).length}
             </div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-4 text-center">
+          <div className="bg-purple-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-purple-600">Total</div>
             <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
           </div>
