@@ -27,7 +27,7 @@ export default function FAQPage() {
             45deg, 
             rgba(17, 17, 17, 0.9) 30%,
             rgba(28, 200, 28, 0.2) 125%
-          ), url('/img/flag-background-2.png') center/cover no-repeat`
+          ), url('/img/green-laser-background.jpg') center/cover no-repeat`
         }}
       >
         <div className="container mx-auto px-4 xl:max-w-7xl">
