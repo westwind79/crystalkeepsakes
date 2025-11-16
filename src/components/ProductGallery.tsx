@@ -48,9 +48,11 @@ export default function ProductGallery({ images = [] }) {
       {images.length > 1 && (
         <div className="thumbnails">
           <div className="row g-2">
+            
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
               return (
+                
                 <div key={idx} className="col-3">
                   <div 
                     className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
@@ -62,7 +64,7 @@ export default function ProductGallery({ images = [] }) {
                       overflow: 'hidden'
                     }}
                     onClick={() => setActiveIndex(idx)}
-                  >
+                  > 
                     <Image
                       src={thumbSrc || 'https://placehold.co/800x800?text=No+Image'}
                       alt={`Thumbnail ${idx + 1}`}
@@ -73,6 +75,7 @@ export default function ProductGallery({ images = [] }) {
                       }}
                     />
                   </div>
+
                 </div>
               )
             })}
