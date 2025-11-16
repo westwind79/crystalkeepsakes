@@ -115,12 +115,24 @@ export default function HomePage() {
 
   return (
     <div className="home">
-
-      <section ref={heroRef} className="hero relative flex align-center justify-center text-center overflow-hidden min-h-[75vh]">
+      
+      {/* ORIGINAL Dark Hero */}
+      <section 
+        ref={heroRef} 
+        className="hero relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
+        style={{
+          background: `linear-gradient(
+            45deg, 
+            rgba(17, 17, 17, 0.9) 30%,
+            rgba(28, 200, 28, 0.2) 125%
+          ), url('/img/flag-background-2.png') center/cover no-repeat`
+        }}
+      >
         <div className="container mx-auto px-4 xl:max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">     
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
             <div className="hero-content text-center lg:text-left">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white mb-6 leading-tight tracking-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 leading-tight tracking-tight">
                 MEMORIES<br/>
                 PRESERVED IN<br/>
                 <span className="text-[#8DC63F] font-normal">CRYSTAL</span>
@@ -134,13 +146,13 @@ export default function HomePage() {
               <div className="hero-cta flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link 
                   href="/products" 
-                  className="btn btn-primary"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-[#72B01D] hover:bg-[#5A8E17] text-white font-medium rounded-lg shadow-lg transition-all duration-200"
                 >
                   Browse Designs
                 </Link>
                 <Link 
                   href="/about" 
-                  className="btn btn-outline-light"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white font-medium rounded-lg transition-all duration-200"
                 >
                   Learn More
                 </Link>
@@ -181,13 +193,14 @@ export default function HomePage() {
                   </SwiperSlide>
                 ))}
               </Swiper>
-            </div>            
+            </div>
+            
           </div>
         </div>
       </section>
 
       {/* Featured Products - Light Theme */}
-      <section ref={featuredRef} className="bg-white">
+      <section ref={featuredRef}>
         <FeaturedProducts limit={6} title="Featured Designs" />
       </section>
 
