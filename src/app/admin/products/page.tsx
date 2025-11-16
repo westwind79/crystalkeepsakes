@@ -312,7 +312,7 @@ export default finalProductList;
       {/* Main Content */}
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="m-6 grid lg:grid-cols-5 gap-2">
+        <div className="my-6 grid lg:grid-cols-5 gap-2">
           <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-blue-600">Source</div>
             <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
@@ -352,9 +352,9 @@ export default finalProductList;
           <div className="col-span-12 lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-4 border-b bg-gray-50">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900">
                   Products ({sourceProducts.length})
-                </h2>
+                </p>
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
                 {sourceProducts.map((product) => (
@@ -403,9 +403,9 @@ export default finalProductList;
           <div className="col-span-12 lg:col-span-5">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-4 border-b bg-gray-50">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900">
                   {selectedProduct ? `Edit: ${selectedProduct.name}` : 'Select a Product'}
-                </h2>
+                </p>
               </div>
 
               {selectedProduct && selectedProductData ? (
@@ -959,7 +959,7 @@ export default finalProductList;
             <div className="col-span-12 lg:col-span-4">
               <div className="bg-white rounded-lg shadow-sm border">
                 <div className="p-4 border-b bg-gray-50">
-                  <h2 className="text-lg font-semibold text-gray-900">Preview</h2>
+                  <p className="text-lg font-semibold text-gray-900">Preview</p>
                 </div>
                 <div className="p-6 overflow-y-auto" style={{ maxHeight: '75vh' }}>
                   {selectedProduct && selectedProductData ? (
