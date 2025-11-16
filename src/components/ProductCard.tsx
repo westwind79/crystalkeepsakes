@@ -80,9 +80,22 @@ export default function ProductCard({ product }) {
         </p>
 
         <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-          <span className="text-2xl font-light text-[#72B01D]">
-            ${product.basePrice?.toFixed(2) || '0.00'}
-          </span>
+          <div className="flex flex-col">
+            {onSale && product.salePrice ? (
+              <>
+                <span className="text-sm text-gray-500 line-through">
+                  ${product.basePrice?.toFixed(2) || '0.00'}
+                </span>
+                <span className="text-2xl font-bold text-red-600">
+                  ${product.salePrice.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <span className="text-2xl font-light text-[#72B01D]">
+                ${product.basePrice?.toFixed(2) || '0.00'}
+              </span>
+            )}
+          </div>
           <span className="text-sm font-medium text-[#72B01D] group-hover:text-[#5A8E17] transition-colors">
             View Details →
           </span>
