@@ -143,17 +143,11 @@ export default function HomePage() {
                 Our precision laser technology creates beautiful, lasting memories.
               </p>
 
-              <div className="hero-cta flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link 
-                  href="/products" 
-                  className="inline-flex items-center justify-center px-8 py-4 bg-[#72B01D] hover:bg-[#5A8E17] text-white font-medium rounded-lg shadow-lg transition-all duration-200"
-                >
+              <div className="hero-cta">
+                <Link href="/products">
                   Browse Designs
                 </Link>
-                <Link 
-                  href="/about" 
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white font-medium rounded-lg transition-all duration-200"
-                >
+                <Link href="/about">
                   Learn More
                 </Link>
               </div>
