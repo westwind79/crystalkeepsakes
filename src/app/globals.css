@@ -528,28 +528,30 @@ footer .text-muted {
   line-height: 10px;
   text-transform: uppercase;
   writing-mode: vertical-lr; }
-  .labelSale:after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    border-top: 0;
-    border-left: 14px solid #ce0000;
-    border-right: 14px solid #ce0000;
-    border-bottom: 8px solid transparent; }
-  .labelSalefixLabel {
-    position: absolute;
-    top: 0;
-    right: 51px;
-    padding: 10px 9px;
-    color: #fff;
-    background-color: var(--vela-color-primary);
-    z-index: 3;
-    font-size: 12px;
-    line-height: 10px;
-    text-transform: uppercase;
-    writing-mode: vertical-lr;
-    background-color: #535353;}
-    .labelSalefixLabel:after {
-      border-left: 14px solid #535353;
-      border-right: 14px solid #535353; }
+  
+.labelSale:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border-top: 0;
+  border-left: 14px solid #ce0000;
+  border-right: 14px solid #ce0000;
+  border-bottom: 8px solid transparent; }
+
+.labelSalefixLabel {
+  position: absolute;
+  top: 0;
+  right: 51px;
+  padding: 10px 9px;
+  color: #fff;
+  background-color: var(--vela-color-primary);
+  z-index: 3;
+  font-size: 12px;
+  line-height: 10px;
+  text-transform: uppercase;
+  writing-mode: vertical-lr;
+  background-color: #535353;}
+.labelSalefixLabel:after {
+  border-left: 14px solid #535353;
+  border-right: 14px solid #535353; }
