@@ -31,15 +31,19 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <section className="hero px-8 py-16 text-center">
-        <h1 className="text-4xl font-light text-white mb-4">Contact Us</h1>
-        <p className="text-lg text-gray-200">Get in touch with our team</p>
+    <div className="min-h-screen contact">
+      <section className="hero flex align-center justify-center text-center">
+        <div className="hero-content max-w-xl mx-auto">
+          <h1 className="hero-header text-4xl font-light text-white mb-4">Contact Us</h1>
+          <p className="text-lg text-gray-200">
+            Everything you need to know about our 3D crystal keepsakes
+          </p>
+        </div>
       </section>
 
       <Breadcrumbs items={[{ label: 'Contact' }]} />
 
-      <section className="py-12">
+      <section className="bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <form onSubmit={handleSubmit} className="space-y-6">

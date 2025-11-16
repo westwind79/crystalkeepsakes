@@ -1,13 +1,13 @@
 /* Import Bootstrap CSS */
-@import "tailwindcss";
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
 @import './css/variables.css';
-@import './css/buttons.css';
+
+@import './css/swiper.css';
+@import './css/modal.css';
 @import './css/hero.css';
 @import './css/breadcrumbs.css';
-@import './css/modal.css';
-@import './css/product-options.css';
-@import './css/swiper.css'; 
-@import './css/contact-form.css';
+/*@import './css/contact-form.css';*/
 
 /* =====================================================
    CSS VARIABLES & BASE SETUP
