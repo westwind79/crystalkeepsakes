@@ -44,12 +44,29 @@ interface Product {
  * Hero Component - Single source of truth
  */
 const ProductsHero = () => (
-  <section className="hero flex align-center justify-center text-center">
-    <div className="hero-content max-w-xl mx-auto">
-      <h1 className="hero-header text-4xl font-light text-white mb-4">Our Creations</h1>
-      <p className="text-lg text-gray-200">
-        Everything you need to know about our 3D crystal keepsakes
-      </p>
+  <section  
+    className="hero relative overflow-hidden bg-[#0a0a0a] pb-8 pt-16"
+    style={{
+      background: `linear-gradient(
+        45deg, 
+        rgba(17, 17, 17, 0.9) 30%,
+        rgba(28, 200, 28, 0.2) 125%
+      ), url('/img/flag-background-2.png') center/cover no-repeat`
+    }}
+  >
+    <div className="container mx-auto px-4 xl:max-w-7xl">
+      <div className="flex justify-center items-center">
+
+        <div className="hero-content text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 leading-tight tracking-tight">Our <span className="text-[#8DC63F] font-normal">Creations</span>
+          </h1>
+          
+          <p className="text-lg sm:text-xl text-gray-100 mb-16 leading-relaxed max-w-xl mx-auto lg:mx-0">
+            Transform your cherished photos into stunning 3D crystal art pieces. 
+            Our precision laser technology creates beautiful, lasting memories.
+          </p>
+        </div>           
+      </div>
     </div>
   </section>
 )
@@ -196,7 +213,7 @@ export default function ProductsPage() {
    */
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-bg text-dark-text pt-[100px]">
+      <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
         <ProductsHero />
         <ProductsBreadcrumbs />
 
@@ -226,7 +243,7 @@ export default function ProductsPage() {
    */
   if (error) {
     return (
-      <div className="min-h-screen bg-dark-bg text-dark-text pt-[100px]">
+      <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
         <ProductsHero />
         <ProductsBreadcrumbs />
 
