@@ -199,21 +199,10 @@ export default function ProductsPage() {
     }
   }
 
-  // Filter by product type
-  const filterByType = (prods: Product[]): Product[] => {
-    switch (productType) {
-      case 'crystals': return prods.filter(p => !isLightbaseProduct(p))
-      case 'lightbases': return prods.filter(p => isLightbaseProduct(p))
-      default: return prods
-    }
-  }
-
-  const typeFiltered = filterByType(products)
-
   // Filter products by category using categoriesConfig helper
   const filteredProducts = selectedCategory === 'all' 
-    ? typeFiltered
-    : filterProductsByCategory(typeFiltered, selectedCategory)
+    ? products
+    : filterProductsByCategory(products, selectedCategory)
 
   /**
    * Get breadcrumb path based on current filters
