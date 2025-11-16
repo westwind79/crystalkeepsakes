@@ -363,7 +363,7 @@ export default function ProductsPage() {
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all' && cat.value !== 'lightbases') // Filter out 'all' and 'lightbases' since we have separate filter
                     .map(category => {
-                      const count = filterProductsByCategory(typeFiltered, category.value).length
+                      const count = filterProductsByCategory(products, category.value).length
                       const isActive = selectedCategory === category.value
                       
                       // Category icons
