@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-10 bg-black/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-10 bg-[var(--brand-900)]/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
@@ -175,7 +175,7 @@ export default function Header() {
 {/* MOBILE MENU PANEL - Slide from right */}
       <div 
         className={`
-          fixed top-[var(--header-height)] right-0 bottom-0 w-[300px] 
+          fixed top-0 right-0 bottom-0 w-[300px] 
           bg-gray-900 z-999 lg:hidden
           transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
