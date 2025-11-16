@@ -71,6 +71,7 @@ interface Product {
   requiresImage?: boolean;
   featured?: boolean;
   sale?: boolean;
+  salePrice?: number;
   maskImageUrl?: string | null;
 }
 
