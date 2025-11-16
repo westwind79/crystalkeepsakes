@@ -254,7 +254,8 @@ export const is2DCrystal = (product: any): boolean => {
 };
 
 /**
- * Helper function to determine if a product is pet-related
+ * Helper function to determine if a product is pet-related (legacy auto-detection)
+ * NOTE: Pet is now primarily assigned manually via occasions
  */
 export const isPetProduct = (product: any): boolean => {
   if (!product) return false;
@@ -268,12 +269,14 @@ export const isPetProduct = (product: any): boolean => {
 /**
  * Helper function to get product categories
  * Returns an array of category values that apply to the product
+ * Combines auto-detected categories (product types) with manually assigned occasions
  */
 export const getProductCategories = (product: any): string[] => {
   if (!product) return [];
   
   const categories: string[] = [];
   
+  // Auto-detected categories based on product type and flags
   if (isFeaturedProduct(product)) categories.push('featured');
   if (isOnSale(product)) categories.push('sale');
   if (isLightbaseProduct(product)) categories.push('lightbases');
@@ -282,7 +285,18 @@ export const getProductCategories = (product: any): string[] => {
   if (isKeychainOrNecklace(product)) categories.push('keychains-necklaces');
   if (isOrnament(product)) categories.push('ornaments');
   if (isHeartShape(product)) categories.push('heart-shapes');
+  
+  // Legacy auto-detection for pet (kept for backwards compatibility)
   if (isPetProduct(product)) categories.push('pet');
+  
+  // Add manually assigned occasions
+  if (product.occasions && Array.isArray(product.occasions)) {
+    product.occasions.forEach((occasion: string) => {
+      if (!categories.includes(occasion)) {
+        categories.push(occasion);
+      }
+    });
+  }
   
   return categories;
 };
