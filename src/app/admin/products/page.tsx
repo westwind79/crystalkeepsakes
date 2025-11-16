@@ -595,9 +595,78 @@ export default finalProductList;
                                 <li>Keychains & Necklaces: Name contains "keychain" or "necklace"</li>
                                 <li>Ornaments: Name contains "ornament" or ID is 279</li>
                                 <li>Heart Shapes: Name contains "heart"</li>
-                                <li>Pet Series: Name contains "pet", "dog", "cat", "paw"</li>
                               </ul>
                             </div>
+                          </div>
+                        </div>
+
+                        {/* Occasions Section - Manual Assignment */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            🎉 Occasions & Themes (Manual Selection)
+                          </label>
+                          <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg space-y-3">
+                            <p className="text-xs text-purple-600 mb-3">
+                              Select one or more occasions that this product is suitable for. These will be used for filtering on the products page.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2">
+                              {OCCASION_CATEGORIES.map((occasion) => {
+                                const isSelected = selectedProductData.occasions?.includes(occasion.value) || false;
+                                
+                                return (
+                                  <label 
+                                    key={occasion.value}
+                                    className={`flex items-center space-x-2 p-2 rounded-lg border-2 cursor-pointer transition-all ${
+                                      isSelected 
+                                        ? 'bg-purple-100 border-purple-500' 
+                                        : 'bg-white border-gray-200 hover:border-purple-300'
+                                    }`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={isSelected}
+                                      onChange={(e) => {
+                                        const currentOccasions = selectedProductData.occasions || [];
+                                        let updatedOccasions;
+                                        
+                                        if (e.target.checked) {
+                                          // Add occasion
+                                          updatedOccasions = [...currentOccasions, occasion.value];
+                                        } else {
+                                          // Remove occasion
+                                          updatedOccasions = currentOccasions.filter((o: string) => o !== occasion.value);
+                                        }
+                                        
+                                        updateProduct(selectedProduct.id, { occasions: updatedOccasions });
+                                      }}
+                                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">{occasion.label}</span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                            
+                            {selectedProductData.occasions && selectedProductData.occasions.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-purple-200">
+                                <p className="text-xs font-semibold text-purple-700 mb-2">
+                                  Selected Occasions ({selectedProductData.occasions.length}):
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {selectedProductData.occasions.map((occ: string) => {
+                                    const occasionData = OCCASION_CATEGORIES.find(o => o.value === occ);
+                                    return (
+                                      <span 
+                                        key={occ}
+                                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                                      >
+                                        {occasionData?.label || occ}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
