@@ -305,10 +305,10 @@ export default function ProductsPage() {
       <ProductsHero />
       <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
-      <div className="container-full mx-auto bg-white px-4 relative">       
+      <div className="container-full mx-auto bg-slate-100 p-4 relative">       
         
         {/* Quick Filters - Featured & Sale */}
-        <section className="my-6 sticky bg-white py-4 px-4 top-[var(--header-height)] z-10 border-b border-gray-200">
+        {/*<section className="my-6 sticky bg-white py-4 px-4 top-[var(--header-height)] z-10 border-b border-gray-200">
           <div className="flex flex-wrap gap-2 justify-center md:justify-start items-center">
             {products.filter(p => isFeaturedProduct(p)).length > 0 && (
               <button
@@ -342,23 +342,16 @@ export default function ProductsPage() {
               </button>
             )}
           </div>
-        </section>
+        </section>*/}
 
         <div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">
 
-<<<<<<< HEAD
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 mb-6 md:mb-0">            
-            {/* Category Filter Section */}
-            
-            <section className="md:sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto">
-              <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
-=======
+
           <div className="sm:col-span-2 md:col-span-3 lg:col-span-2">            
             {/* Category Filter Section */}
             
             <section className="relative">
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
->>>>>>> d97f7865e0a41e3f0ec8957878053d664924be8a
 
                 <h5 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
