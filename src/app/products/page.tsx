@@ -90,7 +90,6 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [productType, setProductType] = useState<ProductType>('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
 
   // Read category from URL on mount
