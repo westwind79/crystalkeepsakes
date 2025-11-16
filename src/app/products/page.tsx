@@ -207,12 +207,6 @@ export default function ProductsPage() {
   const getBreadcrumbPath = () => {
     const path = ['Home', 'Products'];
     
-    if (productType === 'crystals') {
-      path.push('Crystals');
-    } else if (productType === 'lightbases') {
-      path.push('Light Bases');
-    }
-    
     if (selectedCategory !== 'all') {
       const categoryLabel = PRODUCT_CATEGORIES.find(cat => cat.value === selectedCategory)?.label;
       if (categoryLabel) {
