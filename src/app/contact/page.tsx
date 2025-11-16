@@ -139,7 +139,7 @@ export default function ContactPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Your full name"
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -152,7 +152,7 @@ export default function ContactPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="your.email@example.com"
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -165,7 +165,7 @@ export default function ContactPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -176,7 +176,7 @@ export default function ContactPage() {
                   name="topic"
                   value={formData.topic}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.topic ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all ${errors.topic ? 'border-red-500' : 'border-gray-300'}`}
                 >
                   {CONTACT_TOPICS.map(topic => (
                     <option key={topic.value} value={topic.value}>{topic.label}</option>
@@ -186,14 +186,14 @@ export default function ContactPage() {
               </div>
               
               {formData.topic === 'order_problem' && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="bg-green-50 border-2 border-[#8DC63F]/30 rounded-lg p-4 shadow-sm">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Order Number *</label>
                   <input
                     type="text"
                     name="orderNumber"
                     value={formData.orderNumber}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${errors.orderNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all bg-white ${errors.orderNumber ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., ORD-12345"
                   />
                   {errors.orderNumber && <p className="mt-1 text-sm text-red-600">{errors.orderNumber}</p>}
@@ -208,7 +208,7 @@ export default function ContactPage() {
                   rows={5}
                   value={formData.comment}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none ${errors.comment ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all resize-none ${errors.comment ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Tell us more about your inquiry..."
                 />
                 {errors.comment && <p className="mt-1 text-sm text-red-600">{errors.comment}</p>}
@@ -217,7 +217,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-sm"
+                className="w-full bg-[#8DC63F] hover:bg-[#7AB82F] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
