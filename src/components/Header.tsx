@@ -76,10 +76,10 @@ export default function Header() {
                 </svg>
               </div>
               <div className="">
-                <div className="text-white hover:text-none text-xl lg:text-2xl font-bold tracking-wider">
+                <div className="text-white hover:text-none text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
                   CRYSTALKEEPSAKES
                 </div>
-                <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px]">
+                <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px] text-shadow-xs">
                   LIGHT. LASER. LOVE.
                 </div>
               </div>

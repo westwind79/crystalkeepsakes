@@ -224,7 +224,7 @@ export default function ProductsPage() {
     return (
       <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
         <ProductsHero />
-        <ProductsBreadcrumbs />
+        <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
         {/* Loading Spinner */}
         <section className="bg-white py-8">
@@ -254,7 +254,7 @@ export default function ProductsPage() {
     return (
       <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
         <ProductsHero />
-        <ProductsBreadcrumbs />
+        <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
         {/* Error Alert */}
         <section className="bg-white py-8">
@@ -344,10 +344,12 @@ export default function ProductsPage() {
           </div>
         </section>*/}
 
-        <div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">
+        <div className="flex flex-row gap-2 sm:gap-4">
+        {/*<div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">*/}
 
 
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-2">            
+          <div className="md:basis-1/3 lg:basis-1/4">            
+          {/*<div className="sm:col-span-2 md:col-span-3 lg:col-span-2">            */}
             {/* Category Filter Section */}
             
             <section className="relative">
@@ -427,7 +429,8 @@ export default function ProductsPage() {
             </section>
           </div>
 
-          <div className="sm:col-span-3 md:col-span-4 lg:col-span-5">
+          <div className="md:basis-2/3 lg:basis-3/4">
+          {/*<div className="sm:col-span-3 md:col-span-4 lg:col-span-5">*/}
             {/* Products Grid Section */}
             <section className="product-grid">
               
