@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-10 bg-black/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
@@ -167,7 +167,7 @@ export default function Header() {
       {/* MOBILE MENU OVERLAY - Backdrop */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-998 lg:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -177,7 +177,7 @@ export default function Header() {
       <div 
         className={`
           fixed top-0 right-0 bottom-0 w-[300px] 
-          bg-gray-900 z-50 lg:hidden
+          bg-gray-900 z-999 lg:hidden
           transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
           shadow-[-5px_0_15px_rgba(0,0,0,0.5)]
@@ -237,8 +237,8 @@ export default function Header() {
                       transition-all duration-300 no-underline
                       border-l-4
                       ${isActive(item.href) 
-                        ? 'text-brand-300 bg-brand-500/10 border-l-brand-400' 
-                        : 'text-gray-300 border-l-transparent hover:text-white hover:bg-gray-800/50 hover:translate-x-2'
+                        ? 'text-[var(--brand-300)] bg-[var(--brand-350)]/10 border-l-[var(--brand-400)] hover:border-l-[var(--brand-350)]' 
+                        : 'text-gray-300 border-l-transparent hover:text-white hover:bg-[var(--brand-400)]/50 hover:translate-x-2  hover:border-l-[var(--brand-300)]'
                       }
                     `}
                   >
