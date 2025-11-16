@@ -3,8 +3,169 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { isLightbaseProduct, isFeaturedProduct, isOnSale } from '@/utils/categoriesConfig'
 
+import { isLightbaseProduct, isFeaturedProduct, isOnSale } from '@/utils/categoriesConfig'
+const handleAddToCart = async () => {
+    console.log('🛒 [ADD TO CART] Starting add to cart process')
+    console.log('🛒 [ADD TO CART] Product:', {
+      id: product?.id,
+      name: product?.name,
+      sku: product?.sku,
+      cockpit3d_id: product?.cockpit3d_id,
+      basePrice: product?.basePrice,
+      requiresImage: product?.requiresImage,
+      maskImageUrl: product?.maskImageUrl
+    })
+    
+    if (!validateForm()) {
+      console.error('❌ [ADD TO CART] Validation failed:', errors)
+      logger.warn('Form validation failed', errors)
+      return
+    }
+
+    setAddingToCart(true)
+    setError('')
+    setSuccessMessage('')
+
+    try {
+      if (!product) {
+        throw new Error('Product not loaded')
+      }
+
+      let customImage: CustomImage | undefined
+
+      if (finalMaskedImage) {
+        const img = new window.Image()
+        img.src = finalMaskedImage
+        
+        if (uploadedImage) {
+          storeFullResImage(product.id.toString(), uploadedImage)
+        }
+        
+        await new Promise(resolve => { img.onload = resolve })
+        
+        customImage = {
+          dataUrl: finalMaskedImage,
+          originalDataUrl: uploadedImage,
+          filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
+          mimeType: 'image/png',
+          fileSize: finalMaskedImage.length,
+          width: img.width,
+          height: img.height,
+          processedAt: new Date().toISOString(),
+          maskId: product.maskImageUrl,
+          maskName: 'Product Mask'
+        }
+      }
+      
+      const sizeDetails: SizeDetails = {
+        sizeId: selectedSize?.id || 'default',
+        sizeName: selectedSize?.name || 'Default Size',
+        basePrice: selectedSize?.price || product.basePrice
+      }
+      
+      console.log('📐 [ADD TO CART] Size Details:', sizeDetails)
+      
+      const productOptions = buildProductOptions()
+      console.log('⚙️ [ADD TO CART] Product Options:', JSON.stringify(productOptions, null, 2))
+      
+      const customTextString = customText.line1 || customText.line2
+        ? `${customText.line1}${customText.line2 ? '\n' + customText.line2 : ''}`
+        : undefined
+      
+      if (customTextString) {
+        console.log('✍️ [ADD TO CART] Custom Text:', customTextString)
+      }
+      
+      const optionsPrice = calculateOptionsPrice()
+      const totalPrice = calculateTotal()
+      
+      console.log('💰 [ADD TO CART] Pricing:', {
+        basePrice: selectedSize?.price || product.basePrice,
+        optionsPrice,
+        totalPrice,
+        quantity
+      })
+      
+      const lineItem: OrderLineItem = {
+        lineItemId: `line_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        productId: String(product.id),
+        cockpit3d_id: product.cockpit3d_id || String(product.id),
+        name: product.name,
+        sku: product.sku,
+        basePrice: selectedSize?.price || product.basePrice,
+        optionsPrice: optionsPrice,
+        totalPrice: totalPrice,
+        quantity: quantity,
+        size: sizeDetails,
+        options: productOptions,
+        productImage: mainImage?.src || null,
+        customImage: customImage,
+        customText: customTextString ? { text: customTextString } : undefined,
+        dateAdded: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+      }
+      
+      console.log('📦 [ADD TO CART] Complete Line Item:', JSON.stringify({
+        ...lineItem,
+        customImage: lineItem.customImage ? {
+          filename: lineItem.customImage.filename,
+          mimeType: lineItem.customImage.mimeType,
+          fileSize: lineItem.customImage.fileSize,
+          width: lineItem.customImage.width,
+          height: lineItem.customImage.height,
+          maskId: lineItem.customImage.maskId,
+          dataUrlLength: lineItem.customImage.dataUrl?.length
+        } : undefined
+      }, null, 2))
+      
+      logger.order('Adding item to cart', {
+        productId: lineItem.productId,
+        name: lineItem.name,
+        quantity: lineItem.quantity,
+        totalPrice: lineItem.totalPrice,
+        hasCustomImage: !!lineItem.customImage,
+        hasCustomText: !!lineItem.customText,
+        imageSize: lineItem.customImage ? lineItem.customImage.fileSize : 0
+      })
+      
+      try {
+        await addToCart(lineItem)
+        logger.success('Item successfully added to cart')
+      } catch (cartError: any) {
+        logger.error('Cart add failed', cartError)
+        throw new Error(`Failed to add to cart: ${cartError.message}`)
+      }
+      
+      setSuccessMessage(`Added ${quantity} ${product.name} to cart!`)
+      
+      const optionsList: string[] = []
+      if (selectedSize) optionsList.push(`Size: ${selectedSize.name}`)
+      if (selectedBackground) optionsList.push(`Background: ${selectedBackground.name}`)
+      if (selectedLightBase && selectedLightBase.id !== 'none') {
+        optionsList.push(`Light Base: ${selectedLightBase.name}`)
+      }
+      if (customText.line1 || customText.line2) {
+        optionsList.push('Custom Text: Yes')
+      }
+      
+      setAddedItemDetails({
+        name: product.name,
+        image: finalMaskedImage || mainImage?.src || '/placeholder.png',
+        price: totalPrice,
+        quantity: quantity,
+        options: optionsList
+      })
+      
+      setShowAddedModal(true)
+      
+    } catch (error: any) {
+      logger.error('Failed to add to cart', error)
+      setError(error.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(false)
+    }
+  }
 export default function ProductCard({ product }) {
   // Find the main image or fallback to first image
   const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
@@ -74,8 +235,8 @@ export default function ProductCard({ product }) {
       </div>
       
       {/* Content */}
-      <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#72B01D] transition-colors">
+      <div className="p-4">
+        <h3 className="text-sm lg:text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#72B01D] transition-colors line-clamp-1">
           {product.name}
         </h3>
         <p className="text-sm text-gray-600 mb-4 line-clamp-2">
@@ -99,9 +260,22 @@ export default function ProductCard({ product }) {
               </span>
             )}
           </div>
-          <span className="text-sm font-medium text-[#72B01D] group-hover:text-[#5A8E17] transition-colors">
-            View Details →
-          </span>
+
+          {!isLightbase && (             
+            <span className="text-sm font-medium text-[#72B01D] group-hover:text-[#5A8E17] transition-colors">
+              Customize →
+            </span>
+          )}
+          {isLightbase && (             
+            <button
+                type="button"
+               // onClick={handleAddToCart}
+                // disabled={addingToCart}
+                className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {/*{addingToCart ? 'Adding to cart...' : `Add to cart - $${calculateTotal().toFixed(2)}`}*/}
+              </button>
+          )}
         </div>
       </div>
     </Link>
