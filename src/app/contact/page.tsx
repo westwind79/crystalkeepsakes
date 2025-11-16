@@ -33,13 +33,13 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen contact">
       <section  
-        className="hero relative overflow-hidden bg-[#0a0a0a] pb-8 pt-16"
+        className="hero relative overflow-hidden pb-8 pt-16"
         style={{
           background: `linear-gradient(
             45deg, 
             rgba(17, 17, 17, 0.9) 30%,
             rgba(28, 200, 28, 0.2) 125%
-          ), url('/img/flag-background-2.png') center/cover no-repeat`
+          ), url('/img/laser-background-lg.jpg') center/cover no-repeat`
         }}
       >
         <div className="container mx-auto px-4 xl:max-w-7xl">
