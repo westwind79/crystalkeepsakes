@@ -8,26 +8,88 @@ interface FormData {
   name: string
   phone: string
   email: string
+  topic: string
+  orderNumber: string
   comment: string
 }
 
+const CONTACT_TOPICS = [
+  { value: '', label: 'Select a topic...' },
+  { value: 'order_problem', label: 'Problem with Order' },
+  { value: 'website_issue', label: 'Website Issue' },
+  { value: 'product_question', label: 'Product Question' },
+  { value: 'custom_request', label: 'Custom Design Request' },
+  { value: 'other', label: 'Other' }
+]
+
 export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
-    name: '', phone: '', email: '', comment: ''
+    name: '', 
+    phone: '', 
+    email: '', 
+    topic: '',
+    orderNumber: '',
+    comment: ''
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<any>(null)
+  const [submitStatus, setSubmitStatus] = useState<{ success: boolean; message: string } | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
-    if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: '' }))
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
+  }
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {}
+    
+    if (!formData.name.trim()) newErrors.name = 'Name is required'
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email'
+    }
+    if (!formData.topic) newErrors.topic = 'Please select a topic'
+    if (formData.topic === 'order_problem' && !formData.orderNumber.trim()) {
+      newErrors.orderNumber = 'Order number is required for order problems'
+    }
+    if (!formData.comment.trim()) newErrors.comment = 'Message is required'
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    // Form submit logic here
+    
+    if (!validate()) return
+    
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setSubmitStatus({ success: true, message: 'Thank you! Your message has been sent successfully.' })
+        setFormData({ name: '', phone: '', email: '', topic: '', orderNumber: '', comment: '' })
+        setHasSubmitted(true)
+      } else {
+        setSubmitStatus({ success: false, message: data.error || 'Failed to send message. Please try again.' })
+      }
+    } catch (error) {
+      setSubmitStatus({ success: false, message: 'Network error. Please check your connection and try again.' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
