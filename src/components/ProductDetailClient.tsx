@@ -13,7 +13,7 @@ import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/t
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
-import { isFeaturedProduct, isLightbaseProduct } from '@/utils/categoriesConfig'
+import { isFeaturedProduct, isLightbaseProduct, isOnSale } from '@/utils/categoriesConfig'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'

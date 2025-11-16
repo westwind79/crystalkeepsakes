@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '@/data/cockpit3d-products';
 import ProductGallery2 from '@/components/ProductGallery2';
 import ImageUpload from '@/components/admin/ImageUpload';
-import { getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig';
+import { getProductCategories, getCategoryLabel, isOnSale } from '@/utils/categoriesConfig';
 
 // Types
 interface ProductImage {
@@ -405,6 +405,18 @@ export default finalProductList;
                             placeholder="Detailed product description..."
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                           />
+                        </div>
+
+                        <div>
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={selectedProductData.sale || false}
+                              onChange={(e) => updateProduct(selectedProduct.id, { sale: e.target.checked })}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-medium text-gray-700">On Sale</span>
+                          </label>
                         </div>
 
                         <div>
