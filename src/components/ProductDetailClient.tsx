@@ -582,11 +582,11 @@ export default function ProductDetailClient() {
       <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           
-          <div className="sticky top-[85px]">
+          <div className="xs:relative sm:sticky top-[85px]">
             {/* Image gallery */}
             <div className="flex flex-col-reverse">
 
-              <div className="w-full overflow-hidden rounded-lg">
+              <div className="w-full overflow-hidden rounded-lg relative">
                 {finalMaskedImage ? (
                   <div className="space-y-4">
                     <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
@@ -616,7 +616,7 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
-                  <>
+                  <> 
                     <ProductGallery images={product.images} />
                      {/* Featured Badge */}
                     {isFeaturedProduct(product) && (
@@ -651,8 +651,7 @@ export default function ProductDetailClient() {
                         </svg>
                         Light Base
                       </span>
-                    )}
-                     
+                    )} 
                   </>
                 ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">

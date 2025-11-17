@@ -159,13 +159,13 @@ export default function CheckoutPage() {
               value={customerEmail}
               onChange={(e) => setCustomerEmail(e.target.value)}
               placeholder="your@email.com"
-              className="w-full px-4 py-3 bg-dark-bg border border-gray-600 rounded-lg text-text-primary focus:border-brand-400 focus:outline-none"
+              className="w-full px-4 py-3 bg-dark-bg border border-gray-600 rounded-lg text-text-primary focus:border-[var(--brand-400)] focus:outline-none"
             />
           </div>
         </div>
 
         {/* Checkout Info */}
-        <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6 mb-6">
+        <div className="bg-[var(--brand-400)]/20 border border-[var(--brand-500)]/30 rounded-lg p-6 mb-6">
           <h3 className="text-blue-400 font-semibold mb-2">🔒 Secure Checkout</h3>
           <p className="text-text-secondary text-sm mb-3">
             You will be redirected to Stripe's secure checkout page where you can:
@@ -189,7 +189,7 @@ export default function CheckoutPage() {
         <button
           onClick={handleCheckout}
           disabled={processingCheckout || cart.length === 0}
-          className="w-full py-4 px-6 bg-brand-500 hover:bg-brand-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-brand-500/50"
+          className="w-full py-4 px-6 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold text-lg rounded-lg transition-colors shadow-lg hover:shadow-[var(--brand-500)]/50"
         >
           {processingCheckout ? (
             <span className="flex items-center justify-center gap-2">
@@ -208,7 +208,7 @@ export default function CheckoutPage() {
         <div className="text-center mt-6">
           <Link
             href="/cart"
-            className="text-brand-400 hover:text-brand-300 text-sm transition-colors"
+            className="text-[var(--brand-400)] hover:text-[var(--brand-350)] text-sm transition-colors"
           >
             ← Back to Cart
           </Link>
