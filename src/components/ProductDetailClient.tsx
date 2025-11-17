@@ -1119,7 +1119,7 @@ const ProductGallery = ({ images }: { images: ProductImage[] }) => {
                 }`}
               >
                 <Image
-                  src={img.src}
+                  src={assetPath(img.src)}
                   alt={`Thumbnail ${idx + 1}`}
                   width={200}
                   height={200}
