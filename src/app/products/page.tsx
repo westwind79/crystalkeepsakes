@@ -73,19 +73,18 @@ const ProductsHero = () => (
 )
 
 /**
- * Breadcrumbs Component - Single source of truth
+ * Breadcrumbs Component - Formats breadcrumb items
+ * NOTE: Breadcrumbs component automatically adds "Home" first
  */
 const ProductsBreadcrumbs = ({ breadcrumbs }: { breadcrumbs?: string[] }) => {
   const items = breadcrumbs 
     ? breadcrumbs.map((label, index) => {
-        // First item (Home) links to /
-        if (index === 0) return { label, href: '/' }
-        // Second item (Products) links to /products
-        if (index === 1) return { label, href: '/products' }
+        // First item should be "Products" (links to /products)
+        if (index === 0) return { label, href: '/products' }
         // Other items (categories) are not clickable
         return { label }
       })
-    : [{ label: 'Home', href: '/' }, { label: 'Products' }];
+    : [{ label: 'Products' }];
   
   return <Breadcrumbs items={items} />;
 }
