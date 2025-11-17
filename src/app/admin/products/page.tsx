@@ -212,24 +212,34 @@ export default finalProductList;
 
   // Helper: Validate products before save
   const validateProducts = () => {
+    // Check if products marked as "On Sale" have either salePrice OR salePercent
     const invalidProducts = Object.entries(editedProducts)
-      .filter(([id, data]) => data.sale === true && (!data.salePrice || data.salePrice <= 0))
+      .filter(([id, data]) => {
+        if (data.sale !== true) return false;
+        const product = sourceProducts.find(p => p.id === id);
+        const hasSalePrice = (data.salePrice ?? product?.salePrice) > 0;
+        const hasSalePercent = (data.salePercent ?? product?.salePercent) > 0;
+        return !hasSalePrice && !hasSalePercent;
+      })
       .map(([id]) => {
         const product = sourceProducts.find(p => p.id === id);
         return product?.name || id;
       });
 
     if (invalidProducts.length > 0) {
-      alert(`❌ Cannot Save: Missing Sale Prices\n\n${invalidProducts.join('\n')}\n\nPlease set a sale price for each product marked as "On Sale".`);
+      alert(`❌ Cannot Save: Missing Sale Information\n\n${invalidProducts.join('\n')}\n\nPlease set EITHER a sale price OR a sale percentage for each product marked as "On Sale".`);
       return false;
     }
 
+    // Check if fixed sale price is less than base price
     const invalidPriceProducts = Object.entries(editedProducts)
       .filter(([id, data]) => {
-        if (!data.sale || !data.salePrice) return false;
+        if (!data.sale) return false;
         const product = sourceProducts.find(p => p.id === id);
+        const salePrice = data.salePrice ?? product?.salePrice;
+        if (!salePrice || salePrice <= 0) return false; // Skip if using percentage
         const basePrice = data.basePrice ?? product?.basePrice ?? 0;
-        return data.salePrice >= basePrice;
+        return salePrice >= basePrice;
       })
       .map(([id]) => {
         const product = sourceProducts.find(p => p.id === id);
@@ -237,7 +247,7 @@ export default finalProductList;
       });
 
     if (invalidPriceProducts.length > 0) {
-      alert(`❌ Cannot Save: Invalid Sale Prices\n\n${invalidPriceProducts.join('\n')}\n\nSale price must be lower than the original price.`);
+      alert(`❌ Cannot Save: Invalid Sale Prices\n\n${invalidPriceProducts.join('\n')}\n\nFixed sale price must be lower than the base price.`);
       return false;
     }
 
