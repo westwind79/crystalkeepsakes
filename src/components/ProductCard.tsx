@@ -139,14 +139,31 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="relative">
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
           {isFeatured && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 shadow-lg">
+            <>
+            <div className="absolute left-4 top-4 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+                <svg 
+                  className="w-4 h-4" 
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span>Featured</span>
+            </div>
+            {/*<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 shadow-lg">
               ⭐ FEATURED
-            </span>
+            </span>*/}
+            </>
           )}
           {onSale && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
+            <>
+            <div className="absolute top-0 right-2 z-2">
+              <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
+            </div>
+            {/*<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
               🔥 SALE
-            </span>
+            </span>*/}
+            </>
           )}
         </div>
 
