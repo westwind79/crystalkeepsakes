@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { finalProductList } from '@/data/final-product-list'
+import { getProducts } from '@/lib/products'
 import ProductCard from './ProductCard'
 
 interface FeaturedProductsProps {
@@ -11,11 +12,23 @@ interface FeaturedProductsProps {
 }
 
 export default function FeaturedProducts({ limit = 6, title = "Featured Designs" }: FeaturedProductsProps) {
-  const featured = finalProductList
+  const [products, setProducts] = useState(finalProductList)
+  
+  useEffect(() => {
+    // Load products using the environment-aware helper
+    getProducts().then(loadedProducts => {
+      setProducts(loadedProducts)
+    }).catch(err => {
+      console.error('Failed to load products:', err)
+      // Fallback to static import
+    })
+  }, [])
+  
+  const featured = products
     .filter(p => p.featured === true)
     .slice(0, limit)
   
-  const products = featured.length > 0 ? featured : finalProductList.slice(0, limit)
+  const displayProducts = featured.length > 0 ? featured : products.slice(0, limit)
 
   return (
     <section className="bg-white py-16 md:py-20">
