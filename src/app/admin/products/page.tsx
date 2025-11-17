@@ -725,7 +725,7 @@ export default finalProductList;
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Cost (What you pay Cockpit3D)
+                                Cost (What you pay to fulfill)
                               </label>
                               <div className="relative">
                                 <span className="absolute left-3 top-2 text-gray-500">$</span>
@@ -743,7 +743,9 @@ export default finalProductList;
                             
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Base Price (Customer sees)
+                                Base Price {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
+                                  <span className="text-xs text-blue-600">(= smallest size)</span>
+                                )}
                               </label>
                               <div className="relative">
                                 <span className="absolute left-3 top-2 text-gray-500">$</span>
@@ -754,9 +756,15 @@ export default finalProductList;
                                   onChange={(e) =>
                                     updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
                                   }
-                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                  disabled={selectedProductData.sizes && selectedProductData.sizes.length > 0}
+                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                                 />
                               </div>
+                              {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
+                                <p className="text-xs text-gray-600 mt-1">
+                                  Auto-set from size prices
+                                </p>
+                              )}
                             </div>
                           </div>
                           
@@ -764,7 +772,7 @@ export default finalProductList;
                           {selectedProductData.cost && selectedProductData.basePrice && (
                             <div className="pt-3 border-t border-blue-300">
                               <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-700">Profit Margin:</span>
+                                <span className="text-sm text-gray-700">Profit Margin (on base):</span>
                                 <span className="text-lg font-bold text-green-600">
                                   ${(selectedProductData.basePrice - selectedProductData.cost).toFixed(2)}
                                   <span className="text-sm ml-2">
