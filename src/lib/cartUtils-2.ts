@@ -7,6 +7,7 @@
 // Previous: 150x150 thumbnails with basic compression
 
 import { logger } from '@/utils/logger'
+import { assetPath } from './assetPath'
 
 export interface CartItem {
   productId: string
@@ -120,7 +121,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       const maskedUrl = item.customImage.dataUrl
 
       try {
-        const originalRes = await fetch('/api/upload-image.php', {
+        const originalRes = await fetch(assetPath('/api/upload-image.php'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -130,7 +131,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
             imageType: 'original'
           })
         })
-        const maskedRes = await fetch('/api/upload-image.php', {
+        const maskedRes = await fetch(assetPath('/api/upload-image.php'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

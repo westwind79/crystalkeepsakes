@@ -1,36 +1,136 @@
-/* navigation.css - Bootstrap 5 Offcanvas Navigation */
-/* Version: 1.4.0 | Date: 2025-11-02 */
-/* MERGED: Your original styles with proper Bootstrap structure */
-/* navigation.css - Minimal Custom Styles for Header */
-/* Version: 3.0.0 | Date: 2025-11-05 */
-/* NOTE: Bootstrap removed - using pure TailwindCSS */
+/* Offcanvas specific styles only */
+.offcanvas {
+  background-color: var(--brand-900);
+/*  will-change: ;*/
+  width: 200px !important;  /* or whatever width you prefer */
 
-/* ===== CUSTOM BRAND TEXT (if not using Tailwind for everything) ===== */
-.brand-text {
-  line-height: 1.2;
+    transform: translateX(0);
+}
+.navbar-brand img {
+  max-width: 200px;
 }
 
-/* ===== SMOOTH SCROLL (Optional) ===== */
-html {
-  scroll-behavior: smooth;
+@media (min-width: 992px) {
+  .offcanvas {
+    display: none;
+  }
+  .navbar-brand img {
+    max-width: 300px;
+  }
+
+}
+.navbar {
+  background: var(--bg-surface);
+  height: 75px;
+  box-shadow: 0 10px 30px -15px rgba(0,0,0,0.75);
+  padding: 1rem 2rem;
+  transition: background var(--transition-base);
+  overflow: hidden;
 }
 
-/* ===== PREVENT LAYOUT SHIFT ===== */
-body {
-  overflow-x: hidden;
+.navbar-brand {
+  color: var(--text-bright) !important;
+  font-size: var(--text-lg);
+  transition: color var(--transition-fast);
 }
 
-/* ===== OPTIONAL: Custom focus styles for accessibility ===== */
-*:focus-visible {
-  outline: 2px solid var(--brand-400, #72b01d);
-  outline-offset: 2px;
+.navbar-brand:hover {
+  color: var(--interactive-hover) !important;
+}
+.nav-item + .nav-item {
+  margin-left: 0;
+  margin-top: 1em;
 }
 
-/* ===== REMOVE DEFAULT LINK UNDERLINE ===== */
-.no-underline {
-  text-decoration: none !important;
+.nav-link {
+  color: var(--surface-200) !important;
+  position: relative;
+  transition: color var(--transition-fast);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color var(--transition-base) cubic-bezier(.86, 0, .07, 1);
 }
 
-a:hover {
-  text-decoration: none !important;
+.nav-link:hover {
+/*  color: var(--interactive-primary) !important;*/
+  color: var(--brand-400) !important;
+  transition: color var(--transition-base) cubic-bezier(.86, 0, .07, 1);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0%;
+  width: 0;
+  height: 2px;
+  background: var(--interactive-primary);
+  transition: all var(--transition-fast);
+  transform: translateX(0%);
+  box-shadow: 0px 0px 0px 0px transparent;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  box-shadow: 0px 0px 0px 0px transparent;
+}
+
+.nav-link.active {
+  color: var(--primary) !important;
+}
+
+.nav-link.active::after {
+  width: 100%;
+  background: var(--primary);
+  transition: all var(--transition-base);
+/*  box-shadow: 1px 0 44px 20px var(--brand-500);*/
+  box-shadow: 0px 0px 0px 0px transparent;
+}
+
+@media screen and (min-width:996px) {
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--interactive-primary);
+    transition: all var(--transition-fast);
+    transform: translateX(-50%);
+    box-shadow: 0px 0px 0px 0px transparent;
+  }
+  .nav-link.active::after {
+    width: 100%;
+    background: var(--primary);
+    transition: all var(--transition-base);
+  /*  box-shadow: 1px 0 44px 20px var(--brand-500);*/
+    box-shadow: 0px 15px 44px 8px #acf213;
+  }
+  .nav-link:hover::after {
+    width: 100%;
+    box-shadow: 0px 15px 44px 8px #acf213;
+  }
+  .nav-item + .nav-item {
+    margin-left: 1em;
+    margin-top: 0;
+  }
+
+}
+
+.navbar-toggler {
+/*  color: var(--brand-500);*/
+  background-color: var(--brand-400);
+  border: none transparent;
+}
+.navbar-toggler {
+  border: none transparent;
+}
+.btn-close {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+  opacity: 1;
+}
+.offcanvas-title {
+  color: var(--surface-100);
 }

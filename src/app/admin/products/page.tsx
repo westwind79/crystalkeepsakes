@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '@/data/cockpit3d-products';
 import ProductGallery2 from '@/components/ProductGallery2';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { getProductCategories, getCategoryLabel, isOnSale, OCCASION_CATEGORIES } from '@/utils/categoriesConfig';
 
 // Types
 interface ProductImage {
@@ -59,7 +60,8 @@ interface Product {
   name: string;
   slug: string;
   sku: string;
-  basePrice: number;
+  cost?: number;  // What you pay to fulfill
+  basePrice: number;  // What customer pays (after markup)
   description: string;
   longDescription?: string;
   images?: ProductImage[];
@@ -69,7 +71,12 @@ interface Product {
   textOptions?: TextOption[];
   requiresImage?: boolean;
   featured?: boolean;
+  sale?: boolean;
+  salePrice?: number;  // LEGACY: Fixed sale price
+  salePercent?: number;  // Percentage discount
   maskImageUrl?: string | null;
+  occasions?: string[];
+  fulfillment?: 'cockpit3d' | 'custom';  // NEW: Who fulfills this product
 }
 
 interface ProductCustomizations {
@@ -115,7 +122,15 @@ export default function EnhancedProductAdminPage() {
     const product = getProductData(productId);
     const sizes = [...(product.sizes || [])];
     sizes[sizeIndex] = { ...sizes[sizeIndex], ...updates };
-    updateProduct(productId, { sizes });
+    
+    // Auto-update basePrice to smallest enabled size price
+    const enabledSizes = sizes.filter(s => s.enabled !== false);
+    if (enabledSizes.length > 0) {
+      const minPrice = Math.min(...enabledSizes.map(s => s.price || 0));
+      updateProduct(productId, { sizes, basePrice: minPrice });
+    } else {
+      updateProduct(productId, { sizes });
+    }
   };
 
   // Handle lightbase updates
@@ -195,23 +210,204 @@ export default finalProductList;
     return content;
   };
 
-  // Save and download final product list
-  const saveFinalProducts = () => {
-    const content = generateFinalProducts();
-    const blob = new Blob([content], { type: 'application/javascript' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'final-product-list.js';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // Helper: Validate products before save
+  const validateProducts = () => {
+    // Check if products marked as "On Sale" have either salePrice OR salePercent
+    const invalidProducts = Object.entries(editedProducts)
+      .filter(([id, data]) => {
+        if (data.sale !== true) return false;
+        const product = sourceProducts.find(p => p.id === id);
+        const hasSalePrice = (data.salePrice ?? product?.salePrice) > 0;
+        const hasSalePercent = (data.salePercent ?? product?.salePercent) > 0;
+        return !hasSalePrice && !hasSalePercent;
+      })
+      .map(([id]) => {
+        const product = sourceProducts.find(p => p.id === id);
+        return product?.name || id;
+      });
 
-    // Also save to localStorage
+    if (invalidProducts.length > 0) {
+      alert(`❌ Cannot Save: Missing Sale Information\n\n${invalidProducts.join('\n')}\n\nPlease set EITHER a sale price OR a sale percentage for each product marked as "On Sale".`);
+      return false;
+    }
+
+    // Check if fixed sale price is less than base price
+    const invalidPriceProducts = Object.entries(editedProducts)
+      .filter(([id, data]) => {
+        if (!data.sale) return false;
+        const product = sourceProducts.find(p => p.id === id);
+        const salePrice = data.salePrice ?? product?.salePrice;
+        if (!salePrice || salePrice <= 0) return false; // Skip if using percentage
+        const basePrice = data.basePrice ?? product?.basePrice ?? 0;
+        return salePrice >= basePrice;
+      })
+      .map(([id]) => {
+        const product = sourceProducts.find(p => p.id === id);
+        return product?.name || id;
+      });
+
+    if (invalidPriceProducts.length > 0) {
+      alert(`❌ Cannot Save: Invalid Sale Prices\n\n${invalidPriceProducts.join('\n')}\n\nFixed sale price must be lower than the base price.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  // Helper: Generate final products array
+  const getFinalProductsArray = () => {
+    return sourceProducts.map((product) => {
+      const customizations = editedProducts[product.id] || {};
+      const merged = { ...product, ...customizations };
+      
+      if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
+      if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
+      if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
+      if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
+      
+      return merged;
+    });
+  };
+
+  // Save Products (no timestamp)
+  const saveFinalProducts = async () => {
+    if (!validateProducts()) return;
+    
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
+    const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
+    const jsonContent = JSON.stringify(finalProducts, null, 2);
+    
+    // Try to save to server (works in dev mode)
+    try {
+      const response = await fetch('/api/admin/save-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          jsonContent, 
+          jsContent,
+          isBackup: false 
+        })
+      });
 
-    alert(`✅ final-product-list.js generated with ${Object.keys(editedProducts).length} customized products!\n\nReplace the file in your src/data/ folder.`);
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Products saved to server!\n\n📁 Files updated:\n• /public/data/final-products.json\n• /src/data/final-product-list.js\n\nChanges are live!`);
+        return;
+      }
+    } catch (error) {
+      console.log('Server save failed, downloading files instead');
+    }
+    
+    // Fallback: Download files (for production/static export)
+    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = 'final-products.json';
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
+    
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = 'final-products.js';
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Products saved!\n\n📥 Downloaded:\n• final-products.json (upload to /public/data/)\n• final-products.js (replace in /src/data/)`);
+  };
+
+  // Backup Products (with timestamp)
+  const backupProducts = async () => {
+    if (!validateProducts()) return;
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
+    const jsonContent = JSON.stringify(finalProducts, null, 2);
+    
+    // Try to save to server (works in dev mode)
+    try {
+      const response = await fetch('/api/admin/save-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          jsonContent, 
+          jsContent,
+          isBackup: true,
+          timestamp
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Backup saved to server!\n\n📁 Files created:\n• /public/data/final-products-${timestamp}.json\n• /src/data/final-products-${timestamp}.js`);
+        return;
+      }
+    } catch (error) {
+      console.log('Server backup failed, downloading files instead');
+    }
+    
+    // Fallback: Download files
+    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = `final-products-${timestamp}.json`;
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
+    
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = `final-products-${timestamp}.js`;
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Backup created!\n\n📥 Downloaded:\n• final-products-${timestamp}.json\n• final-products-${timestamp}.js`);
+  };
+
+  // Upload JSON to production
+  const uploadToProduction = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e: any) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      try {
+        const text = await file.text();
+        const products = JSON.parse(text);
+        
+        // Write to /public/data/final-products.json
+        const blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'final-products.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        alert('✅ File ready! Upload final-products.json to /public/data/ on your server via FTP.');
+      } catch (err) {
+        alert('❌ Invalid JSON file');
+      }
+    };
+    input.click();
   };
 
   const hasCustomizations = (productId: string) => {
@@ -223,11 +419,11 @@ export default finalProductList;
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
+        <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Enhanced Product Admin</h1>
+              <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
               <p className="text-sm text-gray-600 mt-1">
                 Complete control over products, prices, and options
               </p>
@@ -248,7 +444,14 @@ export default finalProductList;
                 className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
               >
                 <span>💾</span>
-                <span>Generate final-product-list.js</span>
+                <span>Save Products</span>
+              </button>
+              <button
+                onClick={backupProducts}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
+                <span>📦</span>
+                <span>Backup</span>
               </button>
             </div>
           </div>
@@ -256,15 +459,51 @@ export default finalProductList;
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        {/* Stats */}
+        <div className="my-6 grid grid-cols-5 lg:grid-cols-5 gap-2">
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-blue-600">Source</div>
+            <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
+          </div>
+          <div className="bg-green-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">On Sale</div>
+            <div className="text-2xl font-bold text-green-900">
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.sale === true;
+              }).length}
+            </div>
+          </div>
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">Featured</div>
+            <div className="text-2xl font-bold text-green-900">
+              {sourceProducts.filter(p => {
+                const productData = editedProducts[p.id] || p;
+                return productData.featured === true;
+              }).length}
+            </div>
+          </div>
+          <div className="bg-yellow-200 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-green-600">Customized</div>
+            <div className="text-2xl font-bold text-green-900">
+              {Object.keys(editedProducts).length}
+            </div>
+          </div>
+          <div className="bg-purple-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-purple-600">Total</div>
+            <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-12 gap-6">
           {/* Product List - Left Column */}
           <div className="col-span-12 lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-4 border-b bg-gray-50">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900">
                   Products ({sourceProducts.length})
-                </h2>
+                </p>
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
                 {sourceProducts.map((product) => (
@@ -277,7 +516,7 @@ export default finalProductList;
                   >
                     <div className="flex items-start gap-2">
                       {/* Product Thumbnail */}
-                      <div className="w-12 h-12 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
+                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
@@ -313,9 +552,9 @@ export default finalProductList;
           <div className="col-span-12 lg:col-span-5">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-4 border-b bg-gray-50">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900">
                   {selectedProduct ? `Edit: ${selectedProduct.name}` : 'Select a Product'}
-                </h2>
+                </p>
               </div>
 
               {selectedProduct && selectedProductData ? (
@@ -398,6 +637,51 @@ export default finalProductList;
                           </label>
                         </div>
 
+                        {/* Product Visibility */}
+                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+                          <label className="flex items-center space-x-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedProductData.visible !== false}
+                              onChange={(e) => updateProduct(selectedProduct.id, { visible: e.target.checked })}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-medium text-gray-700">👁️ Product Visible</span>
+                          </label>
+                          <p className="text-xs text-gray-600 mt-2 ml-7">Uncheck to hide this product from customers</p>
+                        </div>
+
+                        {/* Fulfillment Method */}
+                        <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+                          <label className="block text-sm font-bold text-gray-800 mb-3">\ud83d\ude9a Fulfillment</label>
+                          <div className="space-y-2">
+                            <label className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                checked={selectedProductData.fulfillment !== 'custom'}
+                                onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'cockpit3d' })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                              />
+                              <div className="flex-1">
+                                <span className="text-sm font-semibold text-gray-900">Cockpit3D</span>
+                                <p className="text-xs text-gray-600">Sent to Cockpit3D for fulfillment</p>
+                              </div>
+                            </label>
+                            <label className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                checked={selectedProductData.fulfillment === 'custom'}
+                                onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'custom' })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                              />
+                              <div className="flex-1">
+                                <span className="text-sm font-semibold text-gray-900">Custom (You fulfill)</span>
+                                <p className="text-xs text-gray-600">Wood coasters, custom items, etc.</p>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+
                         <div>
                           <label className="flex items-center space-x-2">
                             <input
@@ -408,6 +692,119 @@ export default finalProductList;
                             />
                             <span className="text-sm font-medium text-gray-700">Requires custom image</span>
                           </label>
+                        </div>
+
+                        {/* Categories Section */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            🏷️ Product Categories (Auto-detected)
+                          </label>
+                          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-xs text-blue-600 mb-3">
+                              Categories are automatically detected based on product name and type. The system will categorize this product as:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {(() => {
+                                const categories = getProductCategories(selectedProductData);
+                                
+                                if (categories.length === 0) {
+                                  return <span className="text-xs text-gray-500">No categories detected</span>;
+                                }
+                                
+                                return categories.map((cat: string) => (
+                                  <span 
+                                    key={cat}
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
+                                    {getCategoryLabel(cat)}
+                                  </span>
+                                ));
+                              })()}
+                            </div>
+                            <div className="mt-3 text-xs text-gray-600">
+                              <strong>Detection Rules:</strong>
+                              <ul className="list-disc list-inside mt-1 space-y-1">
+                                <li>Sale: ✓ if "On Sale" is checked above</li>
+                                <li>Featured: ✓ if "Featured product" is checked above</li>
+                                <li>Light Bases: Product IDs 105-108, 119, 160, 252, 276 (excludes ID 279)</li>
+                                <li>3D Crystals: Name contains "3D", "ball", "dome", "monument"</li>
+                                <li>2D Crystals: Name contains "2D" or "plaque"</li>
+                                <li>Keychains & Necklaces: Name contains "keychain" or "necklace"</li>
+                                <li>Ornaments: Name contains "ornament" or ID is 279</li>
+                                <li>Heart Shapes: Name contains "heart"</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Occasions Section - Manual Assignment */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            🎉 Occasions & Themes (Manual Selection)
+                          </label>
+                          <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg space-y-3">
+                            <p className="text-xs text-purple-600 mb-3">
+                              Select one or more occasions that this product is suitable for. These will be used for filtering on the products page.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2">
+                              {OCCASION_CATEGORIES.map((occasion) => {
+                                const isSelected = selectedProductData.occasions?.includes(occasion.value) || false;
+                                
+                                return (
+                                  <label 
+                                    key={occasion.value}
+                                    className={`flex items-center space-x-2 p-2 rounded-lg border-2 cursor-pointer transition-all ${
+                                      isSelected 
+                                        ? 'bg-purple-100 border-purple-500' 
+                                        : 'bg-white border-gray-200 hover:border-purple-300'
+                                    }`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={isSelected}
+                                      onChange={(e) => {
+                                        const currentOccasions = selectedProductData.occasions || [];
+                                        let updatedOccasions;
+                                        
+                                        if (e.target.checked) {
+                                          // Add occasion
+                                          updatedOccasions = [...currentOccasions, occasion.value];
+                                        } else {
+                                          // Remove occasion
+                                          updatedOccasions = currentOccasions.filter((o: string) => o !== occasion.value);
+                                        }
+                                        
+                                        updateProduct(selectedProduct.id, { occasions: updatedOccasions });
+                                      }}
+                                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">{occasion.label}</span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                            
+                            {selectedProductData.occasions && selectedProductData.occasions.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-purple-200">
+                                <p className="text-xs font-semibold text-purple-700 mb-2">
+                                  Selected Occasions ({selectedProductData.occasions.length}):
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {selectedProductData.occasions.map((occ: string) => {
+                                    const occasionData = OCCASION_CATEGORIES.find(o => o.value === occ);
+                                    return (
+                                      <span 
+                                        key={occ}
+                                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                                      >
+                                        {occasionData?.label || occ}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* Mask Image Selector */}
@@ -470,29 +867,203 @@ export default finalProductList;
                     {/* Pricing Tab */}
                     {activeTab === 'pricing' && (
                       <div className="space-y-6">
-                        {/* Base Price */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Base Price
-                          </label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-2 text-gray-500">$</span>
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={selectedProductData.basePrice}
-                              onChange={(e) =>
-                                updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
-                              }
-                              className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            />
+                        {/* Cost & Base Price */}
+                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg space-y-4">
+                          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                            <span>💰</span> Cost & Pricing
+                          </h4>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Cost (What you pay to fulfill)
+                              </label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={selectedProductData.cost || ''}
+                                  onChange={(e) => updateProduct(selectedProduct.id, { cost: parseFloat(e.target.value) || undefined })}
+                                  placeholder="0.00"
+                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Base Price {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
+                                  <span className="text-xs text-blue-600">(= smallest size)</span>
+                                )}
+                              </label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={selectedProductData.basePrice}
+                                  onChange={(e) =>
+                                    updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
+                                  }
+                                  disabled={selectedProductData.sizes && selectedProductData.sizes.length > 0}
+                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                />
+                              </div>
+                              {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
+                                <p className="text-xs text-gray-600 mt-1">
+                                  Auto-set from size prices
+                                </p>
+                              )}
+                            </div>
                           </div>
+                          
+                          {/* Profit Display */}
+                          {selectedProductData.cost && selectedProductData.basePrice && (
+                            <div className="pt-3 border-t border-blue-300">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-700">Profit Margin (on base):</span>
+                                <span className="text-lg font-bold text-green-600">
+                                  ${(selectedProductData.basePrice - selectedProductData.cost).toFixed(2)}
+                                  <span className="text-sm ml-2">
+                                    ({Math.round(((selectedProductData.basePrice - selectedProductData.cost) / selectedProductData.cost) * 100)}%)
+                                  </span>
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Sale Section */}
+                        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                              <span>🔥</span> Sale Discount
+                            </h4>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={selectedProductData.sale || false}
+                                onChange={(e) => {
+                                  updateProduct(selectedProduct.id, { sale: e.target.checked });
+                                  if (!e.target.checked) {
+                                    updateProduct(selectedProduct.id, { salePrice: undefined, salePercent: undefined });
+                                  }
+                                }}
+                                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                              />
+                              <span className="text-sm font-medium text-gray-700">On Sale</span>
+                            </label>
+                          </div>
+
+                          {selectedProductData.sale && (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                {/* Percentage Discount */}
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Discount % <span className="text-xs text-gray-500">(Recommended)</span>
+                                  </label>
+                                  <div className="relative">
+                                    <input
+                                      type="number"
+                                      step="1"
+                                      min="0"
+                                      max="100"
+                                      value={selectedProductData.salePercent || ''}
+                                      onChange={(e) => {
+                                        const percent = parseFloat(e.target.value) || undefined
+                                        updateProduct(selectedProduct.id, { salePercent: percent })
+                                        if (percent) {
+                                          updateProduct(selectedProduct.id, { salePrice: undefined })
+                                        }
+                                      }}
+                                      placeholder="e.g., 15"
+                                      className="w-full pr-8 pl-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
+                                    />
+                                    <span className="absolute right-3 top-2 text-gray-500">%</span>
+                                  </div>
+                                </div>
+
+                                {/* OR Divider */}
+                                <div className="flex items-center justify-center text-gray-500 text-sm font-medium">
+                                  OR
+                                </div>
+                              </div>
+
+                              {/* Fixed Sale Price */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Fixed Sale Price <span className="text-xs text-gray-500">(Alternative)</span>
+                                </label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={selectedProductData.salePrice || ''}
+                                    onChange={(e) => {
+                                      const price = parseFloat(e.target.value) || undefined
+                                      updateProduct(selectedProduct.id, { salePrice: price })
+                                      if (price) {
+                                        updateProduct(selectedProduct.id, { salePercent: undefined })
+                                      }
+                                    }}
+                                    placeholder="e.g., 39.99"
+                                    className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Preview */}
+                              <div className="pt-3 border-t border-red-300 bg-white p-3 rounded">
+                                <p className="text-xs font-semibold text-gray-700 mb-2">Preview:</p>
+                                <div className="space-y-1 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Original:</span>
+                                    <span className="line-through">${selectedProductData.basePrice?.toFixed(2)}</span>
+                                  </div>
+                                  {selectedProductData.salePercent && (
+                                    <>
+                                      <div className="flex justify-between text-green-700 font-bold">
+                                        <span>Sale ({selectedProductData.salePercent}% off):</span>
+                                        <span>${(selectedProductData.basePrice * (1 - selectedProductData.salePercent / 100)).toFixed(2)}</span>
+                                      </div>
+                                      <div className="flex justify-between text-gray-600 text-xs">
+                                        <span>Savings:</span>
+                                        <span>${(selectedProductData.basePrice * (selectedProductData.salePercent / 100)).toFixed(2)}</span>
+                                      </div>
+                                    </>
+                                  )}
+                                  {selectedProductData.salePrice && !selectedProductData.salePercent && (
+                                    <>
+                                      <div className="flex justify-between text-green-700 font-bold">
+                                        <span>Sale Price:</span>
+                                        <span>${selectedProductData.salePrice.toFixed(2)}</span>
+                                      </div>
+                                      {selectedProductData.salePrice < selectedProductData.basePrice && (
+                                        <div className="flex justify-between text-gray-600 text-xs">
+                                          <span>Savings ({Math.round(((selectedProductData.basePrice - selectedProductData.salePrice) / selectedProductData.basePrice) * 100)}%):</span>
+                                          <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Size Prices */}
                         {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
                           <div>
                             <h3 className="text-sm font-semibold text-gray-900 mb-3">Size Prices</h3>
+                            <p className="text-xs text-blue-600 mb-2">
+                              💡 Base Price will auto-update to the smallest enabled size price
+                            </p>
                             <div className="space-y-2">
                               {selectedProductData.sizes.map((size, index) => (
                                 <div key={size.id} className="flex items-center gap-3">
@@ -520,6 +1091,21 @@ export default finalProductList;
                                 </div>
                               ))}
                             </div>
+                            
+                            {/* Show calculated base price */}
+                            {(() => {
+                              const enabledSizes = selectedProductData.sizes.filter((s: any) => s.enabled !== false);
+                              if (enabledSizes.length > 0) {
+                                const minPrice = Math.min(...enabledSizes.map((s: any) => s.price || 0));
+                                return (
+                                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs">
+                                    <span className="text-gray-700">Auto-calculated Base Price: </span>
+                                    <span className="font-bold text-blue-700">${minPrice.toFixed(2)}</span>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         )}
 
@@ -769,7 +1355,7 @@ export default finalProductList;
             <div className="col-span-12 lg:col-span-4">
               <div className="bg-white rounded-lg shadow-sm border">
                 <div className="p-4 border-b bg-gray-50">
-                  <h2 className="text-lg font-semibold text-gray-900">Preview</h2>
+                  <p className="text-lg font-semibold text-gray-900">Preview</p>
                 </div>
                 <div className="p-6 overflow-y-auto" style={{ maxHeight: '75vh' }}>
                   {selectedProduct && selectedProductData ? (
@@ -827,25 +1413,7 @@ export default finalProductList;
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Stats */}
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <div className="bg-blue-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-blue-600">Source</div>
-                  <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
-                </div>
-                <div className="bg-green-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-green-600">Customized</div>
-                  <div className="text-2xl font-bold text-green-900">
-                    {Object.keys(editedProducts).length}
-                  </div>
-                </div>
-                <div className="bg-purple-50 rounded-lg p-4 text-center">
-                  <div className="text-sm font-medium text-purple-600">Total</div>
-                  <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
-                </div>
-              </div>
+              </div>             
             </div>
           )}
         </div>

@@ -1,0 +1,125 @@
+<analysis>
+The trajectory details the iterative development of a Next.js e-commerce application for crystalkeepsakes.com. The work involved a significant number of feature implementations, bug fixes, and architectural adjustments, primarily driven by the user's hands-on feedback.
+
+A recurring challenge was managing the project's complex setup. The AI engineer initially struggled with a misconfigured environment where a template Create-React-App was running instead of the main Next.js project. This was resolved by manually starting the correct dev server. A major architectural pivot occurred late in the project when the user's GoDaddy hosting environment required a static site export (), which breaks Next.js API routes. This necessitated converting the contact form's backend to a separate PHP script and revealed a fundamental issue with updating product data, as the data was compiled at build time.
+
+Key features implemented include: a multi-faceted pricing model (cost, base price, percentage/fixed sales), manual occasion category management in the admin panel, a revamped contact page with topic-based email routing, and a redesigned cart UI. Numerous bugs were addressed, including fixing broken mobile animations, incorrect breadcrumb paths, and critical add to cart validation errors.
+
+The most recent work focuses on solving the product update dilemma for the static site. The user wants to update products by FTP'ing a single data file, which is incompatible with the compile-time data import. The AI began refactoring the data loading mechanism to use a dynamically fetched JSON file in production, but this introduced a conflict with the local development workflow. The final user request is to resolve this conflict.
+
+The user's primary language is English. Future responses should be in English.
+</analysis>
+
+<product_requirements>
+The project is to build and enhance the crystalkeepsakes.com e-commerce storefront using Next.js. The application must feature a product catalog, a shopping cart, and an admin panel for product management, with the end goal of producing an order payload compatible with the Cockpit3D fulfillment API and processing payments via Stripe.
+
+**Implemented Features:**
+-   **Product Management:** An admin panel at  allows editing product details.
+-   **Advanced Pricing:** Products support , , and sale pricing (either a fixed  or a percentage-based ). For products with sizes, the  is automatically set to the price of the smallest size.
+-   **Category System:** A hybrid system combines automatic category detection (e.g., 3D Crystals) with manually assigned Occasions (e.g., Wedding, Memorial).
+-   **Fulfillment Flag:** A toggle in the admin panel () marks whether a product is fulfilled by Cockpit3D or by the user.
+-   **Contact Page:** A revamped contact form with a topic dropdown that routes emails to different addresses (, , etc.) via a PHP backend script to support static hosting.
+-   **Static Site Deployment:** The application is configured for static export () to run on a standard PHP web host (GoDaddy), with build scripts to handle asset paths for subdirectory testing ().
+</product_requirements>
+
+<key_technical_concepts>
+- **Framework:** Next.js (React) configured for static site generation ().
+- **Styling:** Tailwind CSS, augmented with custom CSS files (, component-specific styles).
+- **State Management:** React Hooks (, , , ) and URL query parameters for filtering.
+- **Data Handling:** Product data was initially imported from a static JS file (). The current effort is to transition this to a dynamically fetched  file for production to allow updates without a full site rebuild.
+- **Build Process:** yarn install v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+Done in 58.00s./npm <command>
+
+Usage:
+
+npm install        install all the dependencies in your project
+npm install <foo>  add the <foo> dependency to your project
+npm test           run this project's tests
+npm run <foo>      run the script named <foo>
+npm <command> -h   quick help on <command>
+npm -l             display usage info for all commands
+npm help <term>    search for help on <term>
+npm help npm       more involved overview
+
+All commands:
+
+    access, adduser, audit, bugs, cache, ci, completion,
+    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
+    edit, exec, explain, explore, find-dupes, fund, get, help,
+    help-search, hook, init, install, install-ci-test,
+    install-test, link, ll, login, logout, ls, org, outdated,
+    owner, pack, ping, pkg, prefix, profile, prune, publish,
+    query, rebuild, repo, restart, root, run-script, sbom,
+    search, set, shrinkwrap, star, stars, start, stop, team,
+    test, token, uninstall, unpublish, unstar, update, version,
+    view, whoami
+
+Specify configs in the ini-formatted file:
+    /root/.npmrc
+or on the command line via: npm <command> --key=value
+
+More configuration info: npm help config
+Configuration fields: npm help 7 config
+
+npm@10.8.2 /usr/lib/node_modules/npm scripts using  to manage environment variables for different build targets (local, test, production) and  configuration.
+- **Backend (Static Context):** A PHP script () handles the contact form submission since Next.js API routes are disabled.
+</key_technical_concepts>
+
+<code_architecture>
+The application is a monolithic Next.js project located in the  directory. It is configured for static export, meaning the final build consists of HTML, CSS, JS, and any files in the  directory.
+
+**Directory Structure:**
+
+
+**Key File Summaries:**
+
+-   ****
+    -   **Importance:** The core of the admin UI. Allows editing all product attributes, including the new pricing model (cost, basePrice, salePercent) and category/fulfillment flags.
+    -   **Changes:** Heavily modified to add new input fields, reorganize the layout into tabs (Basic, Pricing), and change the save functionality from a file download to an attempted dynamic save. Logic was added to auto-calculate  from the smallest size.
+
+-   ** and **
+    -   **Importance:** These two components are responsible for rendering products on the list and detail pages, respectively. They contain the bulk of the client-side pricing and display logic.
+    -   **Changes:** Both were significantly updated to correctly calculate and display prices based on the complex rules (sizes, sales percentages, fixed sale prices). They were also modified to use the  helper for all image URLs and to render dynamic breadcrumbs.
+
+-   ** and **
+    -   **Importance:** These files define the entire build and deployment strategy.
+    -   **Changes:**  was configured with  and a dynamic  and .  was updated with  and  scripts using  to manage the different environments.  was added as a new dependency.
+
+-   ****
+    -   **Importance:** A new PHP script created to provide a backend for the contact form, since Next.js API routes are disabled by the static export.
+    -   **Changes:** Created from scratch to receive JSON POST data, route emails to different inboxes based on a topic field, and send a confirmation to the user.
+
+-   ****
+    -   **Importance:** This new file is central to solving the current data-update problem. It's intended to abstract away the data source.
+    -   **Changes:** Created to house a  function. It is currently in a half-implemented state, intended to load from the static JS file during development and fetch the  file in production.
+</code_architecture>
+
+<pending_tasks>
+- **Stripe Integration:** The checkout process needs to be built, likely requiring a new PHP script to handle payment intent creation, similar to the  implementation.
+- **Cockpit3D Order Submission:** The final order payload must be structured according to the Cockpit3D API specification and sent to their endpoint. This will also likely require a PHP script.
+- **Admin Panel Authentication:** The admin panel has no security. If it's to be deployed online, it needs password protection (e.g., via ).
+</pending_tasks>
+
+<current_work>
+The AI engineer was in the middle of a critical refactor to solve a fundamental conflict between the development workflow and the production deployment requirements for product data.
+
+**The Problem:** The user wants to update products on the live site by FTP'ing a single data file. However, the application was built to import product data from  at *build time*, meaning any data updates require a complete site rebuild and redeployment.
+
+**The In-Progress Solution:**
+The engineer's approach was to switch to loading product data at *runtime* in production.
+1.  **Create a JSON data file:** A  file was created in . This file can be updated via FTP.
+2.  **Abstract Data Loading:** A new helper file, , was created to contain a  function.
+3.  **Modify Pages:** Pages like  were being modified to call  instead of directly importing from .
+4.  **Modify Admin Panel:** The Save function in the admin panel was being changed to update the new  file directly, rather than initiating a download.
+
+This work was incomplete and had introduced a new problem: how to handle data loading differently in development (which benefits from static imports for hot-reloading) versus production (which needs the dynamic fetch). The user's last message, fix up where we are now, is a direct request to stabilize this partially implemented and broken data loading mechanism.
+</current_work>
+
+<optional_next_step>
+Finalize the dual data-loading strategy. Use an environment variable inside  to conditionally load from the static  file in development and  the  file in production.
+</optional_next_step>

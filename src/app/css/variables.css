@@ -1,10 +1,11 @@
 :root {
-  --header-height: 80px;  /* ADDED: was missing */
-
+  --header-height: 80px;
  /* Primary Colors - Laser Green */
-  --brand-100: #ecf5e4;  /* Lightest */
-  --brand-200: #d1e7bc;
+ 
+  --brand-100: #ecf5e4;  /* Lightest */  
+  --brand-200: #d1e7bc;  
   --brand-300: #a3d77a;  /* Light accent */
+  --brand-350: #acf213;
   --brand-400: #8ac644;
   --brand-500: #72B01D;  /* Primary */
   --brand-600: #5c8d17;
@@ -31,12 +32,12 @@
   --error-dark: #cb3455;
 
   /* === Theme Tokens === */
-  
+
   /* Primary Brand */
   --primary: var(--brand-500);
   --primary-light: var(--brand-300);
   --primary-dark: var(--brand-700);
-  
+
   /* Background Colors */
   --bg-body: var(--surface-900);
   --bg-surface: var(--surface-800);
@@ -47,17 +48,21 @@
   --interactive-primary: var(--brand-500);
   --interactive-hover: var(--brand-400);
   --interactive-active: var(--brand-600);
-  
+
   /* Context Colors */
   /* Dark Theme (Default) */
   --dark-bg: var(--surface-900);
   --dark-text: var(--surface-50);
   --dark-text-secondary: var(--surface-200);
-  
+
   /* Light Theme Components */
   --light-bg: var(--surface-50);
   --light-text: var(--surface-900);
   --light-text-secondary: var(--surface-700);
+
+  /* Text Colors */
+  --text-bright: var(--surface-50);
+  --text-lg: 1.125rem;
 
   /* Component Context */
   --component-dark-bg: var(--dark-bg);
@@ -70,11 +75,11 @@
   --border-strong: var(--brand-700);
 
   --glow-color: var(--brand-500);
-  
+
   /* Effect Colors */
   --glow-subtle: rgba(114, 176, 29, 0.2);  /* Based on brand-500 */
   --glow-strong: rgba(114, 176, 29, 0.4);  /* Based on brand-500 */
-  
+
   /* Shadow Effects */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -82,20 +87,20 @@
 /* Glow Effect Combinations */
   /* Light glow for subtle interactions */
   --glow-soft: 0 0 15px var(--glow-subtle);
-  
+
   /* Medium glow for standard interactions */
-  --glow-effect: 
+  --glow-effect:
     0 0 10px var(--glow-subtle),
     0 0 20px var(--glow-strong);
-  
+
   /* Strong glow for primary interactions */
-  --glow-intense: 
+  --glow-intense:
     0 0 10px var(--glow-subtle),
     0 0 20px var(--glow-strong),
     0 0 30px var(--glow-strong);
-  
+
   /* Interactive glow that can be used with hover states */
-  --glow-interactive: 
+  --glow-interactive:
     0 2px 4px var(--glow-subtle),
     0 4px 8px var(--glow-strong);
 
@@ -131,7 +136,7 @@
   --font-size-15: 0.9375rem;
   --font-size-14: 0.875rem;
   --font-size-13: 0.8125rem;
-  
+
   --font-scale-13-14: clamp(var(--font-size-13),calc(0.12vw + 0.7688rem),var(--font-size-14));
   --font-scale-15-16: clamp(var(--font-size-15),calc(0.12vw + 0.8938rem),var(--font-size-16));
   --font-scale-15-18: clamp(var(--font-size-15),calc(0.36vw + 0.8064rem),var(--font-size-18));
@@ -148,5 +153,5 @@
   --font-scale-36-52: clamp(var(--font-size-36),calc(1.94vw + 1.5510rem),var(--font-size-52));
   --font-scale-38-55: clamp(var(--font-size-38),calc(2.06vw + 1.6323rem),var(--font-size-55));
   --font-scale-41-58: clamp(var(--font-size-41),calc(2.06vw + 1.8198rem),var(--font-size-58));
-  --font-scale-43-62: clamp(var(--font-size-43),calc(2.32vw + 1.8574rem),var(--font-size-62));           
+  --font-scale-43-62: clamp(var(--font-size-43),calc(2.32vw + 1.8574rem),var(--font-size-62));
 }
