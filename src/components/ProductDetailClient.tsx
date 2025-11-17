@@ -682,7 +682,7 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              {product.sale && product.salePrice ? (
+              {product.sale && product.salePrice && !selectedSize ? (
                 <div className="flex items-center gap-3">
                   <p className="text-3xl font-bold tracking-tight text-green-600">
                     ${calculateTotal().toFixed(2)}
