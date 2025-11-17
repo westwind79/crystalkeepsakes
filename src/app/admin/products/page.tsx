@@ -902,6 +902,9 @@ export default finalProductList;
                         {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
                           <div>
                             <h3 className="text-sm font-semibold text-gray-900 mb-3">Size Prices</h3>
+                            <p className="text-xs text-blue-600 mb-2">
+                              💡 Base Price will auto-update to the smallest enabled size price
+                            </p>
                             <div className="space-y-2">
                               {selectedProductData.sizes.map((size, index) => (
                                 <div key={size.id} className="flex items-center gap-3">
@@ -929,6 +932,21 @@ export default finalProductList;
                                 </div>
                               ))}
                             </div>
+                            
+                            {/* Show calculated base price */}
+                            {(() => {
+                              const enabledSizes = selectedProductData.sizes.filter((s: any) => s.enabled !== false);
+                              if (enabledSizes.length > 0) {
+                                const minPrice = Math.min(...enabledSizes.map((s: any) => s.price || 0));
+                                return (
+                                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs">
+                                    <span className="text-gray-700">Auto-calculated Base Price: </span>
+                                    <span className="font-bold text-blue-700">${minPrice.toFixed(2)}</span>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         )}
 
