@@ -302,7 +302,7 @@ export default function ProductsPage() {
                   Categories
                 </h5>
 
-                <div className="space-y-2">{selectedCategory !== 'all' && selectedCategory !== 'featured' && selectedCategory !== 'sale' && (
+                <div className="space-y-2">{selectedCategory !== 'all' && (
                     <button
                       onClick={() => handleCategoryChange('all')}
                       className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
