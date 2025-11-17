@@ -160,8 +160,7 @@ export default function ProductsPage() {
       if (shouldLog) {
         console.log('📦 Products loaded:', {
           count: cockpit3dProducts.length,
-          generatedAt,
-          sourceInfo
+          environment: process.env.NODE_ENV
         })
       }
 
