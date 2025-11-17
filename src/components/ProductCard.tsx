@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { addToCart as addToCartUtil } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
 import { assetPath } from '@/lib/assetPath'
+import { isOnSale, isFeaturedProduct, isLightbaseProduct } from '@/utils/categoriesConfig'
 
 interface ProductCardProps {
   product: any
@@ -16,11 +17,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter()
   const [addingToCart, setAddingToCart] = useState(false)
   
-  const onSale = product.sale === true
-  const isFeatured = product.featured === true
-  const isLightbase = product.sku?.toLowerCase().includes('lightbase') || 
-                      product.name?.toLowerCase().includes('lightbase') ||
-                      product.name?.toLowerCase().includes('light base')
+  // Use shared utility functions from categoriesConfig
+  const onSale = isOnSale(product)
+  const isFeatured = isFeaturedProduct(product)
+  const isLightbase = isLightbaseProduct(product)
 
   // Get display price - prioritize size prices if available
   const getDisplayPrice = () => {
