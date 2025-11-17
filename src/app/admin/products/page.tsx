@@ -676,23 +676,186 @@ export default finalProductList;
                     {/* Pricing Tab */}
                     {activeTab === 'pricing' && (
                       <div className="space-y-6">
-                        {/* Base Price */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Base Price
-                          </label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-2 text-gray-500">$</span>
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={selectedProductData.basePrice}
-                              onChange={(e) =>
-                                updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
-                              }
-                              className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            />
+                        {/* Cost & Base Price */}
+                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg space-y-4">
+                          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                            <span>💰</span> Cost & Pricing
+                          </h4>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Cost (What you pay Cockpit3D)
+                              </label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={selectedProductData.cost || ''}
+                                  onChange={(e) => updateProduct(selectedProduct.id, { cost: parseFloat(e.target.value) || undefined })}
+                                  placeholder="0.00"
+                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Base Price (Customer sees)
+                              </label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={selectedProductData.basePrice}
+                                  onChange={(e) =>
+                                    updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
+                                  }
+                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+                            </div>
                           </div>
+                          
+                          {/* Profit Display */}
+                          {selectedProductData.cost && selectedProductData.basePrice && (
+                            <div className="pt-3 border-t border-blue-300">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-700">Profit Margin:</span>
+                                <span className="text-lg font-bold text-green-600">
+                                  ${(selectedProductData.basePrice - selectedProductData.cost).toFixed(2)}
+                                  <span className="text-sm ml-2">
+                                    ({Math.round(((selectedProductData.basePrice - selectedProductData.cost) / selectedProductData.cost) * 100)}%)
+                                  </span>
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Sale Section */}
+                        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                              <span>🔥</span> Sale Discount
+                            </h4>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={selectedProductData.sale || false}
+                                onChange={(e) => {
+                                  updateProduct(selectedProduct.id, { sale: e.target.checked });
+                                  if (!e.target.checked) {
+                                    updateProduct(selectedProduct.id, { salePrice: undefined, salePercent: undefined });
+                                  }
+                                }}
+                                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                              />
+                              <span className="text-sm font-medium text-gray-700">On Sale</span>
+                            </label>
+                          </div>
+
+                          {selectedProductData.sale && (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                {/* Percentage Discount */}
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Discount % <span className="text-xs text-gray-500">(Recommended)</span>
+                                  </label>
+                                  <div className="relative">
+                                    <input
+                                      type="number"
+                                      step="1"
+                                      min="0"
+                                      max="100"
+                                      value={selectedProductData.salePercent || ''}
+                                      onChange={(e) => {
+                                        const percent = parseFloat(e.target.value) || undefined
+                                        updateProduct(selectedProduct.id, { salePercent: percent })
+                                        if (percent) {
+                                          updateProduct(selectedProduct.id, { salePrice: undefined })
+                                        }
+                                      }}
+                                      placeholder="e.g., 15"
+                                      className="w-full pr-8 pl-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
+                                    />
+                                    <span className="absolute right-3 top-2 text-gray-500">%</span>
+                                  </div>
+                                </div>
+
+                                {/* OR Divider */}
+                                <div className="flex items-center justify-center text-gray-500 text-sm font-medium">
+                                  OR
+                                </div>
+                              </div>
+
+                              {/* Fixed Sale Price */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Fixed Sale Price <span className="text-xs text-gray-500">(Alternative)</span>
+                                </label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={selectedProductData.salePrice || ''}
+                                    onChange={(e) => {
+                                      const price = parseFloat(e.target.value) || undefined
+                                      updateProduct(selectedProduct.id, { salePrice: price })
+                                      if (price) {
+                                        updateProduct(selectedProduct.id, { salePercent: undefined })
+                                      }
+                                    }}
+                                    placeholder="e.g., 39.99"
+                                    className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Preview */}
+                              <div className="pt-3 border-t border-red-300 bg-white p-3 rounded">
+                                <p className="text-xs font-semibold text-gray-700 mb-2">Preview:</p>
+                                <div className="space-y-1 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Original:</span>
+                                    <span className="line-through">${selectedProductData.basePrice?.toFixed(2)}</span>
+                                  </div>
+                                  {selectedProductData.salePercent && (
+                                    <>
+                                      <div className="flex justify-between text-green-700 font-bold">
+                                        <span>Sale ({selectedProductData.salePercent}% off):</span>
+                                        <span>${(selectedProductData.basePrice * (1 - selectedProductData.salePercent / 100)).toFixed(2)}</span>
+                                      </div>
+                                      <div className="flex justify-between text-gray-600 text-xs">
+                                        <span>Savings:</span>
+                                        <span>${(selectedProductData.basePrice * (selectedProductData.salePercent / 100)).toFixed(2)}</span>
+                                      </div>
+                                    </>
+                                  )}
+                                  {selectedProductData.salePrice && !selectedProductData.salePercent && (
+                                    <>
+                                      <div className="flex justify-between text-green-700 font-bold">
+                                        <span>Sale Price:</span>
+                                        <span>${selectedProductData.salePrice.toFixed(2)}</span>
+                                      </div>
+                                      {selectedProductData.salePrice < selectedProductData.basePrice && (
+                                        <div className="flex justify-between text-gray-600 text-xs">
+                                          <span>Savings ({Math.round(((selectedProductData.basePrice - selectedProductData.salePrice) / selectedProductData.basePrice) * 100)}%):</span>
+                                          <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Size Prices */}
