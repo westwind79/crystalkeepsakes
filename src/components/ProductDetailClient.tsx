@@ -687,7 +687,7 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              {product.sale && product.salePrice && !selectedSize ? (
+              {product.sale && (product.salePercent || product.salePrice) && !selectedSize ? (
                 <div className="flex items-center gap-3">
                   <p className="text-3xl font-bold tracking-tight text-green-600">
                     ${calculateTotal().toFixed(2)}
@@ -696,7 +696,7 @@ export default function ProductDetailClient() {
                     ${product.basePrice?.toFixed(2)}
                   </p>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    Save {Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
+                    Save {product.salePercent ? `${product.salePercent}%` : `${Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%`}
                   </span>
                 </div>
               ) : (
