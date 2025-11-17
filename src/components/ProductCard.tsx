@@ -138,7 +138,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Image */}
         <div className="aspect-square overflow-hidden bg-gray-50">
           <img
-            src={product.images?.find((img: any) => img.isMain)?.src || product.images?.[0]?.src || 'https://placehold.co/400x400?text=No+Image'}
+            src={assetPath(product.images?.find((img: any) => img.isMain)?.src || product.images?.[0]?.src || 'https://placehold.co/400x400?text=No+Image')}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
