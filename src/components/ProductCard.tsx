@@ -35,14 +35,27 @@ export default function ProductCard({ product }: ProductCardProps) {
       const minPrice = Math.min(...prices)
       const maxPrice = Math.max(...prices)
       
-      // Apply sale discount if applicable
-      if (onSale && product.salePercent) {
-        return {
-          min: minPrice * (1 - product.salePercent / 100),
-          max: maxPrice * (1 - product.salePercent / 100),
-          originalMin: minPrice,
-          originalMax: maxPrice,
-          hasRange: minPrice !== maxPrice
+      // Apply sale discount if applicable - CHECK FIXED PRICE FIRST
+      if (onSale) {
+        // Priority 1: Fixed sale price
+        if (product.salePrice && product.salePrice > 0) {
+          return {
+            min: product.salePrice,
+            max: product.salePrice,
+            originalMin: minPrice,
+            originalMax: maxPrice,
+            hasRange: false
+          }
+        }
+        // Priority 2: Percentage discount
+        if (product.salePercent && product.salePercent > 0) {
+          return {
+            min: minPrice * (1 - product.salePercent / 100),
+            max: maxPrice * (1 - product.salePercent / 100),
+            originalMin: minPrice,
+            originalMax: maxPrice,
+            hasRange: minPrice !== maxPrice
+          }
         }
       }
       
@@ -52,11 +65,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     // Single price product
     const base = product.basePrice || 0
     if (onSale) {
-      if (product.salePercent) {
-        return { min: base * (1 - product.salePercent / 100), max: base * (1 - product.salePercent / 100), originalMin: base, originalMax: base, hasRange: false }
-      }
-      if (product.salePrice) {
+      // Priority 1: Fixed sale price
+      if (product.salePrice && product.salePrice > 0) {
         return { min: product.salePrice, max: product.salePrice, originalMin: base, originalMax: base, hasRange: false }
+      }
+      // Priority 2: Percentage discount
+      if (product.salePercent && product.salePercent > 0) {
+        return { min: base * (1 - product.salePercent / 100), max: base * (1 - product.salePercent / 100), originalMin: base, originalMax: base, hasRange: false }
       }
     }
     
