@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { addToCart as addToCartUtil } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
+import { assetPath } from '@/lib/assetPath'
 
 interface ProductCardProps {
   product: any
