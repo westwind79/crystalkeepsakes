@@ -210,9 +210,8 @@ export default finalProductList;
     return content;
   };
 
-  // Save and download final product list
-  const saveFinalProducts = async () => {
-    // Validate: Check if any product has sale=true but no salePrice
+  // Helper: Validate products before save
+  const validateProducts = () => {
     const invalidProducts = Object.entries(editedProducts)
       .filter(([id, data]) => data.sale === true && (!data.salePrice || data.salePrice <= 0))
       .map(([id]) => {
@@ -221,11 +220,10 @@ export default finalProductList;
       });
 
     if (invalidProducts.length > 0) {
-      alert(`❌ Cannot Save: Missing Sale Prices\n\nThe following products are marked "On Sale" but have no sale price set:\n\n${invalidProducts.join('\n')}\n\nPlease set a sale price for each product marked as "On Sale".`);
-      return;
+      alert(`❌ Cannot Save: Missing Sale Prices\n\n${invalidProducts.join('\n')}\n\nPlease set a sale price for each product marked as "On Sale".`);
+      return false;
     }
 
-    // Validate: Check if sale price is less than base price
     const invalidPriceProducts = Object.entries(editedProducts)
       .filter(([id, data]) => {
         if (!data.sale || !data.salePrice) return false;
@@ -239,61 +237,122 @@ export default finalProductList;
       });
 
     if (invalidPriceProducts.length > 0) {
-      alert(`❌ Cannot Save: Invalid Sale Prices\n\nThe following products have a sale price that is NOT less than the original price:\n\n${invalidPriceProducts.join('\n')}\n\nSale price must be lower than the original price.`);
-      return;
+      alert(`❌ Cannot Save: Invalid Sale Prices\n\n${invalidPriceProducts.join('\n')}\n\nSale price must be lower than the original price.`);
+      return false;
     }
 
-    const jsContent = generateFinalProducts();
-    
-    // Save to localStorage
-    localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
+    return true;
+  };
 
-    // Generate the products array for JSON
-    const finalProducts = sourceProducts.map((product) => {
+  // Helper: Generate final products array
+  const getFinalProductsArray = () => {
+    return sourceProducts.map((product) => {
       const customizations = editedProducts[product.id] || {};
       const merged = { ...product, ...customizations };
       
-      // Filter out disabled options
-      if (merged.sizes) {
-        merged.sizes = merged.sizes.filter(s => s.enabled !== false);
-      }
-      if (merged.lightBases) {
-        merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
-      }
-      if (merged.backgroundOptions) {
-        merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
-      }
-      if (merged.textOptions) {
-        merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
-      }
+      if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
+      if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
+      if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
+      if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
       
       return merged;
     });
+  };
+
+  // Save Products (no timestamp)
+  const saveFinalProducts = () => {
+    if (!validateProducts()) return;
     
-    // Download products.json (for FTP upload to /public/data/)
-    const jsonContent = JSON.stringify(finalProducts, null, 2);
-    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
+    localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
+    const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
+    
+    // Download final-products.json
+    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
     const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement('a');
     jsonLink.href = jsonUrl;
-    jsonLink.download = 'products.json';
+    jsonLink.download = 'final-products.json';
     document.body.appendChild(jsonLink);
     jsonLink.click();
     document.body.removeChild(jsonLink);
     URL.revokeObjectURL(jsonUrl);
     
-    // Also download the JS file (for development/backup)
+    // Download final-products.js
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
     jsLink.href = jsUrl;
-    jsLink.download = 'final-product-list.js';
+    jsLink.download = 'final-products.js';
     document.body.appendChild(jsLink);
     jsLink.click();
     document.body.removeChild(jsLink);
     URL.revokeObjectURL(jsUrl);
     
-    alert(`✅ Products saved successfully!\n\n${Object.keys(editedProducts).length} products customized\n\n📥 Downloaded 2 files:\n\n1. products.json - Upload this to /public/data/ via FTP\n2. final-product-list.js - Backup for development\n\nAfter uploading products.json, refresh your site to see changes!`);
+    alert(`✅ Products saved!\n\n📥 Downloaded:\n• final-products.json (upload to /public/data/)\n• final-products.js (replace in /src/data/)`);
+  };
+
+  // Backup Products (with timestamp)
+  const backupProducts = () => {
+    if (!validateProducts()) return;
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
+    
+    // Download timestamped JSON
+    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = `final-products-${timestamp}.json`;
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
+    
+    // Download timestamped JS
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = `final-products-${timestamp}.js`;
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Backup created!\n\n📥 Downloaded:\n• final-products-${timestamp}.json\n• final-products-${timestamp}.js`);
+  };
+
+  // Upload JSON to production
+  const uploadToProduction = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e: any) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      try {
+        const text = await file.text();
+        const products = JSON.parse(text);
+        
+        // Write to /public/data/final-products.json
+        const blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'final-products.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        alert('✅ File ready! Upload final-products.json to /public/data/ on your server via FTP.');
+      } catch (err) {
+        alert('❌ Invalid JSON file');
+      }
+    };
+    input.click();
   };
 
   const hasCustomizations = (productId: string) => {
