@@ -131,7 +131,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
             imageType: 'original'
           })
         })
-        const maskedRes = await fetch('/api/upload-image.php', {
+        const maskedRes = await fetch(assetPath('/api/upload-image.php'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
