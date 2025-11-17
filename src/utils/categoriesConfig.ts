@@ -1,6 +1,40 @@
 // src/utils/categoriesConfig.ts
 // Categories configuration for Crystal Keepsakes products
 
+/**
+ * Category icons mapping
+ * Maps category values to their emoji icons
+ */
+export const CATEGORY_ICONS: Record<string, string> = {
+  'anniversary': '🥳',
+  'baby': '👨‍❤️‍💋‍👨',
+  'birthday': '🎂',
+  'featured': '⭐',
+  '3d-crystals': '🔮',
+  '2d-crystals': '💎',
+  'keychains-necklaces': '🔑',
+  'ornaments': '🎄',
+  'heart-shapes': '❤️',
+  'memorial': '🕊️',
+  'pet': '🐾',
+  'custom': '⚙️',
+  'sale': '💰',
+  'wedding': '💍',
+  'holiday': '🎀',
+  'retirement': '💼',
+  'graduation': '🎉',
+  'lightbases': '🌟'
+}
+
+/**
+ * Get icon for a category
+ * @param categoryValue - The category value
+ * @returns The emoji icon or default icon
+ */
+export const getCategoryIcon = (categoryValue: string): string => {
+  return CATEGORY_ICONS[categoryValue] || '🛍️'
+}
+
 export const PRODUCT_CATEGORIES = [
   {
     value: 'all',
