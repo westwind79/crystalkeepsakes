@@ -237,10 +237,15 @@ export default function ProductDetailClient() {
     // Get the base price from selected size or product basePrice
     let basePrice = selectedSize?.price || product?.basePrice || 0
     
-    // Apply sale price ONLY if product doesn't have sizes
-    // If product has sizes, the size price is already the correct price
-    if (product?.sale && product?.salePrice && !selectedSize) {
-      basePrice = product.salePrice
+    // Apply sale discount ONLY if product doesn't have sizes
+    if (product?.sale && !selectedSize) {
+      if (product?.salePercent) {
+        // NEW: Percentage-based discount
+        basePrice = basePrice * (1 - product.salePercent / 100)
+      } else if (product?.salePrice) {
+        // LEGACY: Fixed sale price (backwards compatible)
+        basePrice = product.salePrice
+      }
     }
     
     let total = basePrice
