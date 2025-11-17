@@ -637,6 +637,20 @@ export default finalProductList;
                           </label>
                         </div>
 
+                        {/* Product Visibility */}
+                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+                          <label className="flex items-center space-x-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedProductData.visible !== false}
+                              onChange={(e) => updateProduct(selectedProduct.id, { visible: e.target.checked })}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-medium text-gray-700">👁️ Product Visible</span>
+                          </label>
+                          <p className="text-xs text-gray-600 mt-2 ml-7">Uncheck to hide this product from customers</p>
+                        </div>
+
                         {/* Fulfillment Method */}
                         <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
                           <label className="block text-sm font-bold text-gray-800 mb-3">\ud83d\ude9a Fulfillment</label>
