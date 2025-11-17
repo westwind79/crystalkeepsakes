@@ -7,6 +7,7 @@
 // Previous: 150x150 thumbnails with basic compression
 
 import { logger } from '@/utils/logger'
+import { assetPath } from './assetPath'
 
 export interface CartItem {
   productId: string
