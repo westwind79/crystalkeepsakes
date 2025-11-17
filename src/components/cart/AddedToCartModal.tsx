@@ -43,17 +43,17 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
-          className="bg-dark-surface border-2 border-brand-500/30 rounded-2xl shadow-2xl shadow-brand-500/20 max-w-lg w-full animate-slideUp"
+          className="bg-slate-800 text-white border-2 border-[var(--brand-350)] border-brand-500/30 rounded-2xl shadow-2xl shadow-brand-500/20 max-w-lg w-full animate-slideUp"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-700">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-brand-500/20 rounded-full flex items-center justify-center">
-                <ShoppingCart className="text-brand-400" size={24} />
+              <div className="w-12 h-12 bg-[var(--brand-800)]/90 rounded-full flex items-center justify-center">
+                <ShoppingCart className="text-[var(--brand-350)]" size={24} />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-text-primary">Added to Cart!</h3>
+                <h3 className="text-2xl font-bold text-[var(--brand-500)]">Added to Cart!</h3>
                 <p className="text-sm text-text-secondary">Item successfully added</p>
               </div>
             </div>
@@ -70,7 +70,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             <div className="p-6 border-b border-gray-700">
               <div className="flex gap-4">
                 {/* Product Image */}
-                <div className="relative w-24 h-24 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0">
+                <div className="relative w-48 h-48 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0">
                   <Image
                     src={itemDetails.image}
                     alt={itemDetails.name}
@@ -116,7 +116,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             {/* View Cart Button */}
             <button
               onClick={handleViewCart}
-              className="cursor-pointer w-full px-6 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-brand-500/50 group"
+              className="cursor-pointer w-full px-6 py-4 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-[var(--brand-500)]/50 group"
             >
               <span>View Cart & Checkout</span>
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -125,7 +125,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             {/* Continue Shopping Button */}
             <button
               onClick={handleContinueShopping}
-              className="cursor-pointer w-full px-6 py-4 bg-transparent border-2 border-gray-600 hover:border-brand-400 text-text-primary hover:text-brand-400 rounded-lg font-semibold transition-all duration-300"
+              className="cursor-pointer w-full px-6 py-4 bg-transparent border-2 border-gray-600 hover:border-[var(--brand-400)] text-text-primary hover:text-[var(--brand-400)] rounded-lg font-semibold transition-all duration-300"
             >
               Continue Shopping
             </button>

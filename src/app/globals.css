@@ -1,78 +1,27 @@
-/* =====================================================
-   GLOBAL STYLES - TAILWIND VERSION
-   Version: 3.0
-   Date: 2025-11-02
-   ===================================================== */
-
-/* Tailwind CSS */
-@import "tailwindcss";
-
-/* Import Custom Styles */
+/* Import Bootstrap CSS */
 @import './css/variables.css';
+
+@import "tailwindcss";
 @import './css/buttons.css';
-@import './css/animations.css'; 
 @import './css/hero.css';
+@import './css/breadcrumbs.css';
+@import './css/modal.css';
+@import './css/product-options.css';
+@import './css/swiper.css'; 
+@import './css/contact-form.css';
+
+/* =====================================================
+   CSS VARIABLES & BASE SETUP
+   ===================================================== */
 
 
 /* =====================================================
-   CUSTOM THEME CONFIGURATION
-   ===================================================== */
-@theme {
-  /* Brand Colors */
-  --color-brand-300: #A8D65E;
-  --color-brand-400: #8DC63F;
-  --color-brand-500: #72B01D;
-  --color-brand-600: #5A8E17;
-  
-  /* Dark Background Colors */
-  --color-dark-bg: #0a0a0a;
-  --color-dark-bg-secondary: #1a1a1a;
-  --color-dark-surface: #1a1a1a;
-  
-  /* Text Colors */
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #d4d4d4;
-  --color-text-tertiary: #a3a3a3;
-  --color-text-inverse: #1a1a1a;
-  
-  /* Component Colors */
-  --color-component-light-bg: #f5f5f5;
-  --color-component-light-text: #1a1a1a;
-  --color-component-dark-bg: #1a1a1a;
-  --color-component-dark-text: #f5f5f5;
-  
-  /* Border Colors */
-  --color-border-subtle: rgba(114, 176, 29, 0.2);
-  
-  /* Spacing */
-  --spacing-header: 80px;
-  
-  /* Font Sizes - Responsive */
-  --font-size-scale-15-16: clamp(0.9375rem, 0.9rem + 0.1875vw, 1rem);
-  --font-size-scale-15-18: clamp(0.9375rem, 0.825rem + 0.5625vw, 1.125rem);
-  --font-size-scale-17-20: clamp(1.0625rem, 0.95rem + 0.5625vw, 1.25rem);
-  --font-size-scale-20-26: clamp(1.25rem, 1.025rem + 1.125vw, 1.625rem);
-  --font-size-scale-23-29: clamp(1.4375rem, 1.1rem + 1.6875vw, 1.8125rem);
-  --font-size-scale-27-36: clamp(1.6875rem, 1.2375rem + 2.25vw, 2.25rem);
-  --font-size-scale-33-46: clamp(2.0625rem, 1.4375rem + 3.125vw, 2.875rem);
-  
-  /* Transitions */
-  --transition-duration-fast: 150ms;
-  --transition-duration-base: 300ms;
-  --transition-duration-slow: 500ms;
-  
-  /* Box Shadows */
-  --shadow-brand: 0 8px 16px rgba(114, 176, 29, 0.3);
-}
-
-/* =====================================================
-   BASE STYLES
+   BASE STYLES & RESET
    ===================================================== */
 
-/* Respect user motion preferences */
-@media screen and (prefers-reduced-motion: reduce) {
+@media screen and (prefers-reduced-motion:reduce) {
   * {
-    transition: 0.01s !important;
+    transition: .01s!important
   }
 }
 
@@ -80,263 +29,119 @@ html {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
 }
 
-body {
-  /*background: var(--color-dark-bg);*/
-  /*color: var(--color-text-primary);*/
-  font-size: var(--font-size-scale-15-18);
+#root {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+body { 
+  font-size: var(--font-scale-15-18);
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  .dev-mode {
+    background: red;
+    color: red;
+  }
 }
 
-main {
-  /*padding-top: var(--spacing-header);*/
-  flex: 1;
+/* Background Utility Classes */
+.bg-light {
+  background-color: var(--component-light-bg) !important;
+  color: var(--component-light-text) !important;
+}
+
+.bg-dark {
+  background-color: var(--component-dark-bg) !important;
+  color: var(--component-dark-text) !important;
+}
+
+.bg-green {
+  background-color: var(--brand-600) !important;
+  color: var(--component-dark-text) !important;
+}
+.bg-green-gradient {
+  background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-500) 100%) !important;
+  color: var(--component-dark-text) !important;
+}
+
+/* Ensure headings inherit text color in bg utilities */
+.bg-light h1, .bg-light h2, .bg-light h3, 
+.bg-light h4, .bg-light h5, .bg-light h6 {
+  color: var(--component-light-text);
+}
+
+.bg-dark h1, .bg-dark h2, .bg-dark h3, 
+.bg-dark h4, .bg-dark h5, .bg-dark h6 {
+  color: var(--component-dark-text);
+}
+
+/* Text color utilities */
+.text-light {
+  color: var(--component-dark-text) !important;
+}
+
+.text-dark {
+  color: var(--component-light-text) !important;
+}
+
+/* Links in light/dark backgrounds */
+.bg-light a:not(.btn) {
+  color: var(--brand-600);
+}
+
+.bg-light a:not(.btn):hover {
+  color: var(--brand-500);
+}
+
+.bg-dark a:not(.btn) {
+  color: var(--brand-400);
+}
+
+.bg-dark a:not(.btn):hover {
+  color: var(--brand-300);
+}
+
+.spacer-gradient {
+    height: 1px; /* Adjust height as needed */
+    background: linear-gradient(90deg, var(--brand-300), var(--brand-500));
 }
 
 /* Typography */
-h1, .h1 {
-  font-size: var(--font-size-scale-33-46);
-  /*color: inherit;*/
-}
+h1, .h1 { font-size: inherit }
+h2, .h2 { font-size: inherit }
+h3, .h3 { font-size: inherit }
+h4, .h4 { font-size: inherit }
+h5, .h5 { font-size: inherit }
+h6, .h6 { font-size: inherit }
 
-h2, .h2 {
-  font-size: var(--font-size-scale-27-36);
-  /*color: inherit;*/
-}
-
-h3, .h3 {
-  font-size: var(--font-size-scale-23-29);
-  /*color: inherit;*/
-}
-
-h4, .h4 {
-  font-size: var(--font-size-scale-20-26);
-  /*color: inherit;*/
-}
-
-h5, .h5 {
-  font-size: var(--font-size-scale-17-20);
-  /*color: inherit;*/
-}
-
-h6, .h6 {
-  font-size: var(--font-size-scale-15-16);
-  /*color: inherit;*/
-}
-
-a {
-  color: var(--color-brand-500);
-  text-decoration: none;
-  transition: color var(--transition-duration-fast), background-color var(--transition-duration-fast);
-}
-
-a:hover {
-  color: var(--color-brand-400);
-}
+ 
 
 
-/* =====================================================
-   CART BADGE STYLES - FIXED
-   ===================================================== */
-.cart-badge {
-  position: absolute;
-  top: 25px;
-  right: -25px;
-  background: #A8D65E !important;
-  color: #000000 !important;
-  border-radius: 12px;
-  padding: 2px 6px;
-  font-size: 11px;
-  font-weight: bold;
-  min-width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  border: 2px solid #0a0a0a;
-  z-index: 10;
-}
-
-.cart-icon-link:hover .cart-badge {
-  background: #8DC63F !important;
-  transform: scale(1.1);
-  transition: all 0.2s ease;
-}
-
-
-/* =====================================================
-   COMPONENT STYLES
-   ===================================================== */
-
-/* Card Styles */
-.card {
-  background: var(--color-dark-bg-secondary);
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: all var(--transition-duration-base);
-  border: 0;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-}
-
-.card:hover {
-  transform: translateY(-0.25rem);
-  box-shadow: var(--shadow-brand);
-}
-
-.card-img-top {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.card-body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-title {
-  font-size: 1.25rem;
+.btn-light {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--brand-700);
   font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.card-text {
-  color: var(--color-text-secondary);
-}
-
-/* Process Steps */
-.process-section {
-  background-color: var(--color-component-light-bg);
-  color: var(--color-component-light-text);
-  padding: 3rem 0;
-}
-
-.process-step {
-  text-align: center;
-  padding: 2rem;
-}
-
-.process-icon {
-  font-size: 3.75rem;
-  margin-bottom: 1rem;
-}
-
-.process-step h5 {
-  color: var(--color-component-light-text);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.process-step p {
-  color: #374151;
-}
-
-/* Background Utilities */
-.bg-green {
-  background-color: var(--color-brand-600);
-  color: var(--color-text-primary);
-}
-
-.bg-green-gradient {
-  background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%);
-  color: var(--color-text-primary);
-}
-
-/* Category Filter */
-.category-filter {
-  margin-bottom: 1.5rem;
-}
-
-/* Product Grid */
-.product-grid {
-  padding-bottom: 3rem;
-}
-
-/* Footer */
-footer {
-  background: var(--color-dark-surface);
-  color: var(--color-text-secondary);
-  padding: 3rem 0;
-  border-top: 1px solid var(--color-border-subtle);
-}
-
-footer h5,
-footer h6 {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-footer a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color var(--transition-duration-fast);
-  font-size: 0.875rem;
-}
-
-footer a:hover {
-  color: var(--color-brand-400);
-}
-
-footer .list-unstyled li {
-  margin-bottom: 0.5rem;
-}
-
-footer hr {
-  border-color: var(--color-border-subtle);
-  margin: 2rem 0;
+  transition: all var(--transition-base);
+  &:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+  }
 }
 
 /* =====================================================
-   UTILITY CLASSES
+   DEVELOPMENT & DEBUG STYLES
    ===================================================== */
 
-/* Loading & Animations */
-.loading-container {
-  animation: fadeIn 0.3s ease-in;
-}
-
-.page-transition {
-  animation: fadeIn 0.5s ease-in;
-}
-
-/* Text Utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.3);
-  transition: all var(--transition-duration-base);
-}
-
-.spinner-border {
-  color: var(--color-brand-500);
-  margin: auto;
-}
-
-/* Development & Debug Styles */
 .dev-mode-alert {
   position: fixed;
   top: 0;
   right: 0;
-  background: #dc2626;
+  background: #ef4444;
   color: white;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -345,7 +150,7 @@ footer hr {
 }
 
 .debug-info {
-  color: #dc2626;
+  color: red;
   background: #f3f4f6;
   border: 1px solid #d1d5db;
   padding: 1rem;
@@ -355,55 +160,376 @@ footer hr {
   font-size: 0.875rem;
 }
 
-/* Spacer */
-.spacer-gradient {
-  height: 1px;
-  background: linear-gradient(90deg, var(--color-brand-300), var(--color-brand-500));
+.loading-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.page-transition {
+  animation: fadeIn 0.5s ease-in;
 }
 
 /* =====================================================
-   SWIPER CUSTOMIZATION
+   HEADER.CSS STYLES
    ===================================================== */
-.mySwiper {
-  width: 100%;
-  max-width: 28rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 20px 0 50px;
+  
+/*header {
+  position: sticky;
+  top: 0;
+  height: var(--header-height); 
+  background: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 10px -5px rgba(0,0,0,0.75);
+  z-index: 1030;
+}*/
+
+header .navbar {
+  padding: 15px 0;
+
 }
 
-.mySwiper .swiper-slide {
-  border-radius: 0.75rem;
+header .navbar-expand-lg {
+  justify-content: space-between;
+}
+
+header .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all var(--transition-base);
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+header .nav-link:hover {
+  color: var(--brand-400) !important;
+  background: rgba(114, 176, 29, 0.1);
+}
+
+.mobile-nav-link:hover {
+  background: rgba(114, 176, 29, 0.05) !important;
+  border-left-color: var(--brand-600) !important;
+}
+
+.mobile-nav-link.active:hover {
+  background: rgba(114, 176, 29, 0.1) !important;
+  border-left-color: var(--brand-400) !important;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 0;
+  }
+}
+
+header .brand-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+header .brand-tagline {
+  font-size: 0.8rem;
+  color: var(--brand-400);
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+/* =====================================================
+   HERO.CSS STYLES
+   ===================================================== */
+/*.home.hero { 
+  align-items: center;
+  justify-content: center;
+  min-height: 75vh;
+  background: linear-gradient(
+      45deg, 
+      rgba(0, 0, 0, 0.9) 30%,
+      rgba(28, 200, 28, 0.2) 125%
+  ), url('/img/flag-background-2.png') center/cover no-repeat;
+  color: var(--neutral-white);
+  text-align: center;
+}
+
+.hero {
+  background: linear-gradient(135deg, 
+    rgba(10, 10, 10, 0.95) 0%, 
+    rgba(26, 26, 26, 0.9) 25%, 
+    rgba(42, 74, 42, 0.85) 50%, 
+    rgba(26, 26, 26, 0.9) 75%, 
+    rgba(10, 10, 10, 0.95) 100%
+  );
+  color: white;
+  position: relative; 
+  display: flex;
+  align-items: center;
+  margin-top: 5.5rem;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(114, 176, 29, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(114, 176, 29, 0.1) 0%, transparent 50%);
+  z-index: 1;
+}*/
+
+/*@media (max-width: 768px) {
+  
+  .hero-cta .btn {
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .process-step {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  header .nav-link {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}*/
+
+/* =====================================================
+   CARDS.CSS STYLES
+   ===================================================== */
+
+.card {
+  transition: all var(--transition-base);
+  border-radius: 12px;
   overflow: hidden;
-  background: var(--color-dark-bg-secondary);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Featured Products Cards */
+/*.featured-products {
+  background: var(--surface-900);
+  color: var(--surface-50);
+}*/
+
+.featured-products .card {
+  background: var(--surface-800);
+  border: 1px solid var(--surface-700);
+  color: white;
+}
+
+.featured-products .card:hover {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(114, 176, 29, 0.1);
+  border-color: var(--brand-600);
+}
+
+.featured-products .card-img-top {
+  transition: transform var(--transition-base);
+}
+
+.featured-products .card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.featured-products .card-body {
+  padding: 1.5rem;
+}
+
+.featured-products .card-title {
+  color: var(--surface-50);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.featured-products .card-text {
+  color: var(--surface-300);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.featured-products .btn-primary {
+  background: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-600) 100%);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: all var(--transition-base);
+}
+
+.featured-products .btn-primary:hover {
+  background: linear-gradient(135deg, var(--brand-400) 0%, var(--brand-500) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(114, 176, 29, 0.3);
+}
+
+/* Process Cards */
+.process-step {
+  text-align: center;
+  padding: 2rem 1rem;
+  transition: transform var(--transition-base);
+}
+
+.process-step:hover {
+  transform: translateY(-5px);
+}
+
+.process-icon { 
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--brand-400) 0%, var(--brand-600) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  line-height: 2;
+  color: white;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(114, 176, 29, 0.2);
+  transition: all var(--transition-base);
+}
+
+.process-step:hover .process-icon {
+  transform: scale(1.1);
+  box-shadow: 
+    0 5px 10px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(114, 176, 29, 0.4);
 }
 
 /* =====================================================
-   KEYFRAME ANIMATIONS
+   FOOTER.CSS STYLES
    ===================================================== */
+
+footer {
+  background: var(--surface-800);
+  color: var(--surface-200);
+  padding: 3rem 0 2rem;
+  border-top: 1px solid var(--surface-700);
+}
+
+footer h5, footer h6 {
+  color: var(--surface-50);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+footer a {
+  color: var(--surface-300);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  font-size: 0.9rem;
+}
+
+footer a:hover {
+  color: var(--brand-400);
+}
+
+footer .list-unstyled li {
+  margin-bottom: 0.5rem;
+}
+
+footer hr {
+  border-color: var(--surface-700);
+  margin: 2rem 0 1rem;
+}
+
+footer .text-muted {
+  color: var(--surface-400) !important;
+  font-size: 0.875rem;
+}
+
+/* =====================================================
+   GSAP ANIMATION CLASSES
+   ===================================================== */
+
+.animate-word {
+  opacity: 0;
+  display: inline-block;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.animate-word.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
   }
-  to {
-    opacity: 1;
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
   }
 }
 
-/* =====================================================
-   HELPER CLASSES (Tailwind-like utilities)
-   ===================================================== */
-.container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+/* Contact Form Styling */
+ 
+
+.contact-form .form-control {
+  background: var(--surface-50);
+  border: 1px solid var(--brand-600);
+  color: var(--surface-900);
+  transition: all var(--transition-base);
 }
 
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
+.contact-form .form-control:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 0.2rem var(--glow-subtle);
+}
+
+.contact-form .form-control:disabled {
+  background: var(--surface-100);
+  cursor: not-allowed;
+}
+
+.contact-form .form-label { 
+  font-weight: 500;
+}
+
+/* Error state styling */
+.contact-form .form-control.is-invalid {
+  border-color: var(--error-light);
+  background-image: none;
+}
+
+.contact-form .form-control.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(249, 65, 68, 0.25);
+}
+.contact-form .text-muted {
+  color: inherit !important;
+}
+
+.labelSale {
+  position: absolute; 
+  padding: 14px 6px 13px; 
+  width: 28px;
+  text-transform: uppercase;
+  writing-mode: vertical-lr; 
+    &:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    border-top: 0;
+    border-left: 14px solid #ce0000;
+    border-right: 14px solid #ce0000;
+    border-bottom: 8px solid transparent; 
   }
 }
+
