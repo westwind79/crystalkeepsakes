@@ -1039,15 +1039,30 @@ export default finalProductList;
                                   )}
                                   {selectedProductData.salePrice && !selectedProductData.salePercent && (
                                     <>
-                                      <div className="flex justify-between text-green-700 font-bold">
-                                        <span>Sale Price:</span>
-                                        <span>${selectedProductData.salePrice.toFixed(2)}</span>
-                                      </div>
-                                      {selectedProductData.salePrice < selectedProductData.basePrice && (
-                                        <div className="flex justify-between text-gray-600 text-xs">
-                                          <span>Savings ({Math.round(((selectedProductData.basePrice - selectedProductData.salePrice) / selectedProductData.basePrice) * 100)}%):</span>
-                                          <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
-                                        </div>
+                                      {selectedProductData.sizes && selectedProductData.sizes.length > 0 ? (
+                                        <>
+                                          <div className="flex justify-between text-green-700 font-bold">
+                                            <span>Discount Amount:</span>
+                                            <span>-${selectedProductData.salePrice.toFixed(2)}</span>
+                                          </div>
+                                          <div className="flex justify-between text-gray-600 text-xs">
+                                            <span>Applied to each size</span>
+                                            <span>${Math.max(0, selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="flex justify-between text-green-700 font-bold">
+                                            <span>Sale Price:</span>
+                                            <span>${selectedProductData.salePrice.toFixed(2)}</span>
+                                          </div>
+                                          {selectedProductData.salePrice < selectedProductData.basePrice && (
+                                            <div className="flex justify-between text-gray-600 text-xs">
+                                              <span>Savings:</span>
+                                              <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                            </div>
+                                          )}
+                                        </>
                                       )}
                                     </>
                                   )}
