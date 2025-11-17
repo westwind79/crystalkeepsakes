@@ -17,7 +17,9 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
   useEffect(() => {
     // Load products using the environment-aware helper
     getProducts().then(loadedProducts => {
-      setProducts(loadedProducts)
+      // Filter out hidden products
+      const visibleProducts = loadedProducts.filter((p: any) => p.visible !== false)
+      setProducts(visibleProducts)
     }).catch(err => {
       console.error('Failed to load products:', err)
       // Fallback to static import
@@ -25,7 +27,7 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
   }, [])
   
   const featured = products
-    .filter(p => p.featured === true)
+    .filter(p => p.featured === true && p.visible !== false)
     .slice(0, limit)
   
   const displayProducts = featured.length > 0 ? featured : products.slice(0, limit)
