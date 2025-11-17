@@ -234,12 +234,16 @@ export default function ProductDetailClient() {
   }
 
   const calculateTotal = (): number => {
-    // Use sale price if product is on sale, otherwise use regular price
-    const basePrice = (product?.sale && product?.salePrice) 
-      ? product.salePrice 
-      : (selectedSize?.price || product?.basePrice || 0);
+    // Get the base price from selected size or product basePrice
+    let basePrice = selectedSize?.price || product?.basePrice || 0
     
-    let total = basePrice;
+    // Apply sale price ONLY if product doesn't have sizes
+    // If product has sizes, the size price is already the correct price
+    if (product?.sale && product?.salePrice && !selectedSize) {
+      basePrice = product.salePrice
+    }
+    
+    let total = basePrice
     if (selectedLightBase?.price) total += selectedLightBase.price
     if (selectedBackground?.price) total += selectedBackground.price
     
@@ -247,11 +251,6 @@ export default function ProductDetailClient() {
     if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
       const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
       total += textOption?.price || 0
-    }
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions?.[1]?.price) {
-      total += product.textOptions[1].price
     }
     
     return total * quantity
