@@ -245,10 +245,12 @@ export default function ProductCard({ product }) {
 
         <div className="flex justify-between items-center pt-4 border-t border-gray-200">
           <div className="flex flex-col">
-            {onSale && product.salePrice ? (
+            {onSale && (product.salePercent || product.salePrice) ? (
               <>
                 <span className="text-2xl font-medium text-[var(--brand-400)]">
-                  ${product.salePrice.toFixed(2)}
+                  ${product.salePercent 
+                    ? (product.basePrice * (1 - product.salePercent / 100)).toFixed(2)
+                    : product.salePrice.toFixed(2)}
                 </span>
                 <span className="text-sm text-gray-500 line-through">
                   ${product.basePrice?.toFixed(2) || '0.00'}
