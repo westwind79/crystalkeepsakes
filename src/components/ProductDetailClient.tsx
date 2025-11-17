@@ -257,14 +257,15 @@ export default function ProductDetailClient() {
     let basePrice = selectedSize?.price || product?.basePrice || 0
     const originalPrice = basePrice
     
-    // Apply sale discount if product is on sale
+    // Apply sale discount if product is on sale - CHECK FIXED PRICE FIRST
     if (product?.sale) {
-      if (product?.salePercent) {
-        // Percentage-based discount
-        basePrice = basePrice * (1 - product.salePercent / 100)
-      } else if (product?.salePrice && !selectedSize) {
-        // Fixed sale price ONLY for products without sizes
+      // Priority 1: Fixed sale price (only for products without sizes)
+      if (product?.salePrice && product.salePrice > 0 && !selectedSize) {
         basePrice = product.salePrice
+      } 
+      // Priority 2: Percentage discount
+      else if (product?.salePercent && product.salePercent > 0) {
+        basePrice = basePrice * (1 - product.salePercent / 100)
       }
     }
     
