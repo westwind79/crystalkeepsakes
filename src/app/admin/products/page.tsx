@@ -260,15 +260,38 @@ export default finalProductList;
   };
 
   // Save Products (no timestamp)
-  const saveFinalProducts = () => {
+  const saveFinalProducts = async () => {
     if (!validateProducts()) return;
     
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
     const finalProducts = getFinalProductsArray();
     const jsContent = generateFinalProducts();
+    const jsonContent = JSON.stringify(finalProducts, null, 2);
     
-    // Download final-products.json
-    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
+    // Try to save to server (works in dev mode)
+    try {
+      const response = await fetch('/api/admin/save-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          jsonContent, 
+          jsContent,
+          isBackup: false 
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Products saved to server!\n\n📁 Files updated:\n• /public/data/final-products.json\n• /src/data/final-product-list.js\n\nChanges are live!`);
+        return;
+      }
+    } catch (error) {
+      console.log('Server save failed, downloading files instead');
+    }
+    
+    // Fallback: Download files (for production/static export)
+    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
     const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement('a');
     jsonLink.href = jsonUrl;
@@ -278,7 +301,6 @@ export default finalProductList;
     document.body.removeChild(jsonLink);
     URL.revokeObjectURL(jsonUrl);
     
-    // Download final-products.js
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
