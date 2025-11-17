@@ -145,7 +145,7 @@
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
     "sku": "Cut_Corner_Diamond",
-    "basePrice": 45,
+    "basePrice": 69,
     "description": "Cut Corner Diamond",
     "longDescription": "Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner ",
     "images": [
@@ -170,19 +170,19 @@
       {
         "id": "202",
         "name": "Cut Corner Diamond (5x5cm)",
-        "price": 45,
+        "price": 35,
         "cockpit3d_id": "202"
       },
       {
         "id": "549",
         "name": "Cut Corner Diamond (6x6cm)",
-        "price": 55,
+        "price": 45,
         "cockpit3d_id": "549"
       },
       {
         "id": "550",
         "name": "Cut Corner Diamond (8x8cm)",
-        "price": 85,
+        "price": 55,
         "cockpit3d_id": "550"
       }
     ],
@@ -260,8 +260,7 @@
     ],
     "cost": 24.75,
     "featured": true,
-    "visible": true,
-    "salePrice": 15
+    "salePrice": 5
   },
   {
     "id": "105",
