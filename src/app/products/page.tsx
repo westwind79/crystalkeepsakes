@@ -319,28 +319,6 @@ export default function ProductsPage() {
                       const count = filterProductsByCategory(products, category.value).length
                       const isActive = selectedCategory === category.value
                       
-                      // Category icons
-                      const categoryIcons = {
-                        'anniversary': '🥳',
-                        'baby': '👨‍❤️‍💋‍👨',
-                        'birthday': '🎂',
-                        'featured': '⭐',
-                        '3d-crystals': '🔮',
-                        '2d-crystals': '💎',
-                        'keychains-necklaces': '🔑',
-                        'ornaments': '🎄',
-                        'heart-shapes': '❤️',
-                        'memorial': '🕊️',
-                        'pet': '🐾',
-                        'custom': '⚙️',
-                        'sale': '💰',
-                        'wedding': '💍',
-                        'holiday': '🎀',
-                        'retirement': '💼',
-                        'graduation': '🎉',
-                        'lightbases': '🌟'
-                      };
-                      
                       return (
                         <button
                           key={category.value}
@@ -355,7 +333,7 @@ export default function ProductsPage() {
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-lg">{categoryIcons[category.value] || '🛍️'}</span>
+                            <span className="text-lg">{getCategoryIcon(category.value)}</span>
                             <span className="font-medium">{category.label}</span>
                           </span>
                           <span className={`text-sm px-2 py-1 rounded-full ${
