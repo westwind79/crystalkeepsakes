@@ -13,7 +13,7 @@ export async function getProducts() {
   }
   
   // In production, fetch from JSON file
-  const res = await fetch(assetPath('/data/products.json'))
+  const res = await fetch(assetPath('/data/final-products.json'))
   if (!res.ok) {
     throw new Error(`Failed to fetch products: ${res.statusText}`)
   }
