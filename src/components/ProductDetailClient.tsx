@@ -1082,7 +1082,7 @@ const ProductGallery = ({ images }: { images: ProductImage[] }) => {
     <div className="relative">
       <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
         <Image
-          src={images[currentImageIndex].src}
+          src={assetPath(images[currentImageIndex].src)}
           alt={`Gallery ${currentImageIndex + 1}`}
           width={1024}
           height={1024}
