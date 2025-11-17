@@ -35,16 +35,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       const minPrice = Math.min(...prices)
       const maxPrice = Math.max(...prices)
       
-      // Apply sale discount if applicable - CHECK FIXED PRICE FIRST
+      // Apply sale discount if applicable
       if (onSale) {
-        // Priority 1: Fixed sale price
+        // Priority 1: Fixed dollar discount (subtract from each size)
         if (product.salePrice && product.salePrice > 0) {
           return {
-            min: product.salePrice,
-            max: product.salePrice,
+            min: Math.max(0, minPrice - product.salePrice),
+            max: Math.max(0, maxPrice - product.salePrice),
             originalMin: minPrice,
             originalMax: maxPrice,
-            hasRange: false
+            hasRange: minPrice !== maxPrice
           }
         }
         // Priority 2: Percentage discount
@@ -62,10 +62,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       return { min: minPrice, max: maxPrice, originalMin: minPrice, originalMax: maxPrice, hasRange: minPrice !== maxPrice }
     }
     
-    // Single price product
+    // Single price product (no sizes) - salePrice is FINAL price
     const base = product.basePrice || 0
     if (onSale) {
-      // Priority 1: Fixed sale price
+      // Priority 1: Fixed sale price (final price for no-size products)
       if (product.salePrice && product.salePrice > 0) {
         return { min: product.salePrice, max: product.salePrice, originalMin: base, originalMax: base, hasRange: false }
       }
