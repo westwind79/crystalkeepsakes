@@ -492,6 +492,37 @@ export default finalProductList;
                           </label>
                         </div>
 
+                        {/* Fulfillment Method */}
+                        <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+                          <label className="block text-sm font-bold text-gray-800 mb-3">\ud83d\ude9a Fulfillment</label>
+                          <div className="space-y-2">
+                            <label className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                checked={selectedProductData.fulfillment !== 'custom'}
+                                onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'cockpit3d' })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                              />
+                              <div className="flex-1">
+                                <span className="text-sm font-semibold text-gray-900">Cockpit3D</span>
+                                <p className="text-xs text-gray-600">Sent to Cockpit3D for fulfillment</p>
+                              </div>
+                            </label>
+                            <label className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                checked={selectedProductData.fulfillment === 'custom'}
+                                onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'custom' })}
+                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                              />
+                              <div className="flex-1">
+                                <span className="text-sm font-semibold text-gray-900">Custom (You fulfill)</span>
+                                <p className="text-xs text-gray-600">Wood coasters, custom items, etc.</p>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+
                         <div>
                           <label className="flex items-center space-x-2">
                             <input
