@@ -153,10 +153,14 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="home">
+    <>
+      {/* Inline styles for mobile fallback */}
+      <style dangerouslySetInnerHTML={{ __html: ensureVisibilityStyles }} />
       
-      {/* ORIGINAL Dark Hero */}
-      <section 
+      <div className="home">
+        
+        {/* ORIGINAL Dark Hero */}
+        <section 
         ref={heroRef} 
         className="hero relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
         style={{
