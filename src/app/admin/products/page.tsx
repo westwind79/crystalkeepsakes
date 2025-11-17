@@ -315,15 +315,39 @@ export default finalProductList;
   };
 
   // Backup Products (with timestamp)
-  const backupProducts = () => {
+  const backupProducts = async () => {
     if (!validateProducts()) return;
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const finalProducts = getFinalProductsArray();
     const jsContent = generateFinalProducts();
+    const jsonContent = JSON.stringify(finalProducts, null, 2);
     
-    // Download timestamped JSON
-    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
+    // Try to save to server (works in dev mode)
+    try {
+      const response = await fetch('/api/admin/save-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          jsonContent, 
+          jsContent,
+          isBackup: true,
+          timestamp
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Backup saved to server!\n\n📁 Files created:\n• /public/data/final-products-${timestamp}.json\n• /src/data/final-products-${timestamp}.js`);
+        return;
+      }
+    } catch (error) {
+      console.log('Server backup failed, downloading files instead');
+    }
+    
+    // Fallback: Download files
+    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
     const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement('a');
     jsonLink.href = jsonUrl;
@@ -333,7 +357,6 @@ export default finalProductList;
     document.body.removeChild(jsonLink);
     URL.revokeObjectURL(jsonUrl);
     
-    // Download timestamped JS
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
