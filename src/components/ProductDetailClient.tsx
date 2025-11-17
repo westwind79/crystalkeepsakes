@@ -688,20 +688,22 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              {product.sale && (product.salePercent || (product.salePrice && !selectedSize)) ? (
-                <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold tracking-tight text-green-600">
+              {product.sale && (product.salePercent || product.salePrice) ? (
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
                     ${calculateTotal().toFixed(2)}
                   </p>
                   <p className="text-2xl tracking-tight text-gray-500 line-through">
                     ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
                   </p>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    {product.salePercent ? `Save ${product.salePercent}%` : `Save ${Math.round((((selectedSize?.price || product.basePrice) - calculateTotal() / quantity) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
+                    {product.salePercent 
+                      ? `${product.salePercent}% OFF` 
+                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (calculateTotal() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
                   </span>
                 </div>
               ) : (
-                <p className="text-3xl tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+                <p className="text-4xl font-bold tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
               )}
             </div>
 
