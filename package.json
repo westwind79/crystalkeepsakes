@@ -34,6 +34,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",
     "copyfiles": "^2.4.1",
+    "env-cmd": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "fs-extra": "^11.3.2",
