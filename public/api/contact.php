@@ -27,8 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Get POST data
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+try {
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Invalid JSON: ' . json_last_error_msg());
+    }
+} catch (Exception $e) {
+    ob_clean();
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid request data']);
+    exit();
+}
 
 $name = $data['name'] ?? '';
 $email = $data['email'] ?? '';
@@ -39,6 +50,7 @@ $comment = $data['comment'] ?? '';
 
 // Validate
 if (empty($name) || empty($email) || empty($topic) || empty($comment)) {
+    ob_clean();
     http_response_code(400);
     echo json_encode(['error' => 'Missing required fields']);
     exit();
