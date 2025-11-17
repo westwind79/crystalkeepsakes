@@ -243,42 +243,57 @@ export default finalProductList;
       return;
     }
 
-    const content = generateFinalProducts();
+    const jsContent = generateFinalProducts();
     
     // Save to localStorage
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
 
-    // Save to server
-    try {
-      const response = await fetch('/api/admin/save-products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert(`✅ Products saved successfully!\n\n${Object.keys(editedProducts).length} products customized\n\nFile updated: ${result.path}\n\nRefresh your product pages to see changes.`);
-      } else {
-        throw new Error(result.error || 'Save failed');
-      }
-    } catch (error: any) {
-      console.error('Save error:', error);
-      alert(`❌ Error saving to server: ${error.message}\n\nDownloading file instead...`);
+    // Generate the products array for JSON
+    const finalProducts = sourceProducts.map((product) => {
+      const customizations = editedProducts[product.id] || {};
+      const merged = { ...product, ...customizations };
       
-      // Save as products.json for FTP upload
-      const jsonContent = JSON.stringify(products, null, 2);
-      const blob = new Blob([jsonContent], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'products.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+      // Filter out disabled options
+      if (merged.sizes) {
+        merged.sizes = merged.sizes.filter(s => s.enabled !== false);
+      }
+      if (merged.lightBases) {
+        merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
+      }
+      if (merged.backgroundOptions) {
+        merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
+      }
+      if (merged.textOptions) {
+        merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
+      }
+      
+      return merged;
+    });
+    
+    // Download products.json (for FTP upload to /public/data/)
+    const jsonContent = JSON.stringify(finalProducts, null, 2);
+    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = 'products.json';
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
+    
+    // Also download the JS file (for development/backup)
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = 'final-product-list.js';
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Products saved successfully!\n\n${Object.keys(editedProducts).length} products customized\n\n📥 Downloaded 2 files:\n\n1. products.json - Upload this to /public/data/ via FTP\n2. final-product-list.js - Backup for development\n\nAfter uploading products.json, refresh your site to see changes!`);
   };
 
   const hasCustomizations = (productId: string) => {
