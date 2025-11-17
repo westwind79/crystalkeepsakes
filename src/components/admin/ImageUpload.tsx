@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ProductImage } from '@/types/productTypes';
+import { assetPath } from '@/lib/assetPath';
 
 interface ImageUploadProps {
   productId: string;
