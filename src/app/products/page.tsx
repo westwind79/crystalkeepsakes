@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import ProductCard from '@/components/ProductCard'
 import Breadcrumbs from '@/components/BreadCrumbs'
+import { assetPath } from '@/lib/assetPath'
 
 import { 
   isLightbaseProduct, 
