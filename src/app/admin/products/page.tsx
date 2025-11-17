@@ -60,6 +60,7 @@ interface Product {
   name: string;
   slug: string;
   sku: string;
+  cost?: number;  // NEW: Cockpit3D cost
   basePrice: number;
   description: string;
   longDescription?: string;
@@ -71,7 +72,8 @@ interface Product {
   requiresImage?: boolean;
   featured?: boolean;
   sale?: boolean;
-  salePrice?: number;
+  salePrice?: number;  // LEGACY: Fixed sale price
+  salePercent?: number;  // NEW: Percentage discount
   maskImageUrl?: string | null;
   occasions?: string[];
 }
