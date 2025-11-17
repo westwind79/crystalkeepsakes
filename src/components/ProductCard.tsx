@@ -150,9 +150,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#72B01D] transition-colors">
           {product.name}
         </h3>
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
           {product.shortDescription || product.description}
         </p>
+        
+        {/* Show size count if product has sizes */}
+        {product.sizes && product.sizes.length > 0 && (
+          <p className="text-xs text-gray-500 mb-3">
+            📏 {product.sizes.filter((s: any) => s.enabled !== false).length} sizes available
+          </p>
+        )}
 
         <div className="flex justify-between items-center pt-4 border-t border-gray-200">
           <div className="flex flex-col">
