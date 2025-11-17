@@ -36,8 +36,8 @@
     ],
     "featured": true,
     "sale": true,
-    "salePrice": 10,
-    "cost": 35
+    "cost": 35,
+    "salePrice": 4
   },
   {
     "id": "002",
@@ -136,7 +136,9 @@
         "price": 9.5
       }
     ],
-    "featured": false
+    "featured": false,
+    "sale": true,
+    "salePrice": 5
   },
   {
     "id": "104",
@@ -250,14 +252,15 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
-    "sale": false,
+    "sale": true,
     "occasions": [
       "anniversary",
       "baby",
       "wedding"
     ],
     "cost": 24.75,
-    "featured": true
+    "featured": true,
+    "salePrice": 5
   },
   {
     "id": "105",
