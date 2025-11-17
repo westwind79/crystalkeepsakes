@@ -517,6 +517,24 @@ export default function ProductDetailClient() {
 
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
 
+  // Get product categories for breadcrumb
+  const productCategories = React.useMemo(() => {
+    if (!product) return []
+    return getProductCategories(product)
+  }, [product])
+
+  // Get primary category for breadcrumb (first non-featured, non-sale category)
+  const primaryCategory = React.useMemo(() => {
+    const categories = productCategories.filter(cat => cat !== 'featured' && cat !== 'sale')
+    if (categories.length === 0) return null
+    
+    // Prefer product type categories over occasions
+    const productTypes = ['lightbases', '3d-crystals', '2d-crystals', 'keychains-necklaces', 'ornaments', 'heart-shapes']
+    const typeCategory = categories.find(cat => productTypes.includes(cat))
+    
+    return typeCategory || categories[0]
+  }, [productCategories])
+
   return (    
     <div className="bg-white text-slate-900">
       {/* Breadcrumb */}
@@ -528,6 +546,22 @@ export default function ProductDetailClient() {
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
             <Link href="/products" className="font-medium text-gray-500 hover:text-gray-900">Products</Link>
+            
+            {/* Show category if available */}
+            {primaryCategory && (
+              <>
+                <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                </svg>
+                <Link 
+                  href={`/products?category=${primaryCategory}`} 
+                  className="font-medium text-gray-500 hover:text-gray-900"
+                >
+                  {getCategoryLabel(primaryCategory)}
+                </Link>
+              </>
+            )}
+            
             <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
