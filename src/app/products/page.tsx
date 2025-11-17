@@ -506,7 +506,7 @@ export default function ProductsPage() {
                   </h3>
                   <button 
                     onClick={() => setSelectedCategory('all')}
-                    className="px-6 py-3 bg-[var(--brand-500)] hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
+                    className="px-6 py-3 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white rounded-lg transition-colors font-medium shadow-glow-soft"
                   >
                     View All Products
                   </button>

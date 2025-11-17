@@ -175,6 +175,22 @@ export default function CartPage() {
     return options
   }
 
+  /**
+   * Hero Component - Single source of truth
+   */
+  const ContinueShoppingBtn = () => (
+    <div className="text-center mt-10">
+      {/* Continue Shopping */}
+      <Link 
+        href="/products" 
+        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
+      >
+        <span>←</span>
+        <span>Continue Shopping</span>
+      </Link>
+    </div>
+  )
+
   const getCustomTextDetails = (item: CartItem) => {
     if (item.customText) {
       const line1 = item.customText.line1 || ''
@@ -262,6 +278,7 @@ export default function CartPage() {
             Clear Cart
           </button>
         </div>
+
 
         {/* Storage Stats Banner (Dev Mode) */}
         {process.env.NODE_ENV === 'development' && storageStats && (
@@ -531,15 +548,7 @@ export default function CartPage() {
         </div>
 
         {/* Continue Shopping */}
-        <div className="text-center mt-10">
-          <Link 
-            href="/products" 
-            className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
-          >
-            <span>←</span>
-            <span>Continue Shopping</span>
-          </Link>
-        </div>
+        <ContinueShoppingBtn />
 
         {/* Organized Debug Section (Collapsible) */}
         {process.env.NODE_ENV === 'development' && (

@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-10 bg-[var(--brand-900)]/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-20 bg-[var(--brand-900)]/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
@@ -93,7 +93,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       className={`overflow-hidden
-                        group relative block px-6 py-2 
+                        group relative block px-6 pt-2 pb-3 
                         uppercase text-sm font-medium tracking-wide 
                         transition-colors duration-200 no-underline
                         ${isActive(item.href) 
@@ -194,7 +194,7 @@ export default function Header() {
           >
             Menu
           </p>
-          {/*<button 
+          <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="
               w-10 h-10 flex items-center justify-center 
@@ -218,7 +218,7 @@ export default function Header() {
                 d="M6 18L18 6M6 6l12 12" 
               />
             </svg>
-          </button>*/}
+          </button>
         </div>
 
         {/* Mobile Menu Body */}
