@@ -60,8 +60,8 @@ interface Product {
   name: string;
   slug: string;
   sku: string;
-  cost?: number;  // NEW: Cockpit3D cost
-  basePrice: number;
+  cost?: number;  // What you pay to fulfill
+  basePrice: number;  // What customer pays (after markup)
   description: string;
   longDescription?: string;
   images?: ProductImage[];
@@ -73,9 +73,10 @@ interface Product {
   featured?: boolean;
   sale?: boolean;
   salePrice?: number;  // LEGACY: Fixed sale price
-  salePercent?: number;  // NEW: Percentage discount
+  salePercent?: number;  // Percentage discount
   maskImageUrl?: string | null;
   occasions?: string[];
+  fulfillment?: 'cockpit3d' | 'custom';  // NEW: Who fulfills this product
 }
 
 interface ProductCustomizations {
