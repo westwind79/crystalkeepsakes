@@ -315,7 +315,7 @@ export default finalProductList;
       {/* Main Content */}
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="my-6 grid lg:grid-cols-5 gap-2">
+        <div className="my-6 grid grid-cols-5 lg:grid-cols-5 gap-2">
           <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-blue-600">Source</div>
             <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
@@ -370,7 +370,7 @@ export default finalProductList;
                   >
                     <div className="flex items-start gap-2">
                       {/* Product Thumbnail */}
-                      <div className="w-12 h-12 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
+                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
