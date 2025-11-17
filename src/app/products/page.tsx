@@ -13,7 +13,8 @@ import {
   isFeaturedProduct,
   isOnSale,
   PRODUCT_CATEGORIES,
-  filterProductsByCategory 
+  filterProductsByCategory,
+  getCategoryIcon
 } from '@/utils/categoriesConfig'
 
 // Environment logging
