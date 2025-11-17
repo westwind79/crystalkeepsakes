@@ -220,7 +220,7 @@ export default function HomePage() {
                 {heroSwiperSlides.map(slide => (
                   <SwiperSlide key={slide.id} className="rounded-2xl">
                     <Image 
-                      src={slide.image}
+                      src={assetPath(slide.image)}
                       alt={slide.name}  
                       fill
                       width={0}
