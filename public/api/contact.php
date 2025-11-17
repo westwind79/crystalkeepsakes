@@ -110,13 +110,23 @@ if ($sent) {
     mail($email, $confirmSubject, $confirmBody, $confirmHeaders);
 }
 
+// Clean any buffered output before sending response
+ob_clean();
+
 if ($sent) {
+    http_response_code(200);
     echo json_encode([
         'success' => true,
         'message' => 'Message sent successfully'
     ]);
 } else {
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to send message']);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Failed to send message. Please try again or email us directly.'
+    ]);
 }
+
+// End output buffering
+ob_end_flush();
 ?>
