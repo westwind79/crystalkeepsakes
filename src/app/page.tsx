@@ -303,7 +303,7 @@ export default function HomePage() {
             <div className="lg:col-span-5">
               <div className="relative w-full max-w-md h-96 mx-auto lg:ml-auto lg:mr-0 rounded-2xl overflow-hidden shadow-lg">
                 <Image 
-                  src="/img/noahs-keepsake-1.png"
+                  src={assetPath("/img/noahs-keepsake-1.png")}
                   alt="CrystalKeepsakes Example"
                   fill
                   className="object-cover"
