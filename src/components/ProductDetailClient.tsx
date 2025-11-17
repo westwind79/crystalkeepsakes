@@ -518,13 +518,13 @@ export default function ProductDetailClient() {
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
 
   // Get product categories for breadcrumb
-  const productCategories = React.useMemo(() => {
+  const productCategories = useMemo(() => {
     if (!product) return []
     return getProductCategories(product)
   }, [product])
 
   // Get primary category for breadcrumb (first non-featured, non-sale category)
-  const primaryCategory = React.useMemo(() => {
+  const primaryCategory = useMemo(() => {
     const categories = productCategories.filter(cat => cat !== 'featured' && cat !== 'sale')
     if (categories.length === 0) return null
     
