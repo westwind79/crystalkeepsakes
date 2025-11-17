@@ -168,7 +168,10 @@ export default function ProductsPage() {
         })
       }
 
-      setProducts(cockpit3dProducts || [])
+      // Filter out hidden products (visible !== false)
+      const visibleProducts = cockpit3dProducts.filter((p: any) => p.visible !== false)
+
+      setProducts(visibleProducts || [])
       
       if (shouldLog) {
         console.log(`✅ Loaded ${cockpit3dProducts?.length || 0} products`)
