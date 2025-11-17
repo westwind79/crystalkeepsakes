@@ -122,7 +122,15 @@ export default function EnhancedProductAdminPage() {
     const product = getProductData(productId);
     const sizes = [...(product.sizes || [])];
     sizes[sizeIndex] = { ...sizes[sizeIndex], ...updates };
-    updateProduct(productId, { sizes });
+    
+    // Auto-update basePrice to smallest enabled size price
+    const enabledSizes = sizes.filter(s => s.enabled !== false);
+    if (enabledSizes.length > 0) {
+      const minPrice = Math.min(...enabledSizes.map(s => s.price || 0));
+      updateProduct(productId, { sizes, basePrice: minPrice });
+    } else {
+      updateProduct(productId, { sizes });
+    }
   };
 
   // Handle lightbase updates
