@@ -77,11 +77,15 @@ const ProductsHero = () => (
  */
 const ProductsBreadcrumbs = ({ breadcrumbs }: { breadcrumbs?: string[] }) => {
   const items = breadcrumbs 
-    ? breadcrumbs.map((label, index) => ({
-        label,
-        href: index === 0 ? '/' : index === 1 ? '/products' : undefined
-      }))
-    : [{ label: 'Products' }];
+    ? breadcrumbs.map((label, index) => {
+        // First item (Home) links to /
+        if (index === 0) return { label, href: '/' }
+        // Second item (Products) links to /products
+        if (index === 1) return { label, href: '/products' }
+        // Other items (categories) are not clickable
+        return { label }
+      })
+    : [{ label: 'Home', href: '/' }, { label: 'Products' }];
   
   return <Breadcrumbs items={items} />;
 }
