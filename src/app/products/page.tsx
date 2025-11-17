@@ -207,9 +207,10 @@ export default function ProductsPage() {
 
   /**
    * Get breadcrumb path based on current filters
+   * NOTE: Don't include "Home" - the Breadcrumbs component adds it automatically
    */
   const getBreadcrumbPath = () => {
-    const path = ['Home', 'Products'];
+    const path = ['Products'];
     
     if (selectedCategory !== 'all') {
       const categoryLabel = PRODUCT_CATEGORIES.find(cat => cat.value === selectedCategory)?.label;
