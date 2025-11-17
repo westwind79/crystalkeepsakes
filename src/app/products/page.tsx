@@ -154,7 +154,7 @@ export default function ProductsPage() {
         const { finalProductList } = await import('../../data/final-product-list.js')
         cockpit3dProducts = finalProductList
       } else {
-        const res = await fetch(assetPath('/data/products.json'))
+        const res = await fetch(assetPath('/data/final-products.json'))
         if (!res.ok) {
           throw new Error(`Failed to fetch products: ${res.status} ${res.statusText}`)
         }
