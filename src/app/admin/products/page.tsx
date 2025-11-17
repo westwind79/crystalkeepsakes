@@ -267,12 +267,13 @@ export default finalProductList;
       console.error('Save error:', error);
       alert(`❌ Error saving to server: ${error.message}\n\nDownloading file instead...`);
       
-      // Fallback to download
-      const blob = new Blob([content], { type: 'application/javascript' });
+      // Save as products.json for FTP upload
+      const jsonContent = JSON.stringify(products, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'final-product-list.js';
+      a.download = 'products.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
