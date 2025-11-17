@@ -535,24 +535,6 @@ export default function ProductDetailClient() {
 
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
 
-  // Get product categories for breadcrumb
-  const productCategories = useMemo(() => {
-    if (!product) return []
-    return getProductCategories(product)
-  }, [product])
-
-  // Get primary category for breadcrumb (first non-featured, non-sale category)
-  const primaryCategory = useMemo(() => {
-    const categories = productCategories.filter(cat => cat !== 'featured' && cat !== 'sale')
-    if (categories.length === 0) return null
-    
-    // Prefer product type categories over occasions
-    const productTypes = ['lightbases', '3d-crystals', '2d-crystals', 'keychains-necklaces', 'ornaments', 'heart-shapes']
-    const typeCategory = categories.find(cat => productTypes.includes(cat))
-    
-    return typeCategory || categories[0]
-  }, [productCategories])
-
   return (    
     <div className="bg-white text-slate-900">
       {/* Breadcrumb */}
