@@ -14,6 +14,7 @@ import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
+import { assetPath } from '@/lib/assetPath'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
