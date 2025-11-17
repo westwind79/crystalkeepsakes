@@ -19,6 +19,24 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
+// Inline styles to ensure visibility on mobile (fallback if animations fail)
+const ensureVisibilityStyles = `
+  .hero-content,
+  .hero-cta a,
+  .hero-swiper,
+  .process-step {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+`
+
 const heroSwiperSlides = [
   {
     id: 1,
