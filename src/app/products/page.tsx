@@ -380,7 +380,17 @@ export default function ProductsPage() {
                   Categories
                 </h5>
 
-                <div className="space-y-2">
+                <div className="space-y-2">{selectedCategory !== 'all' && selectedCategory !== 'featured' && selectedCategory !== 'sale' && (
+                    <button
+                      onClick={() => handleCategoryChange('all')}
+                      className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                      Clear Filter
+                    </button>
+                  )}
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all') // Filter out only 'all'
                     .map(category => {
@@ -389,6 +399,9 @@ export default function ProductsPage() {
                       
                       // Category icons
                       const categoryIcons = {
+                        'anniversary': '🥳',
+                        'baby': '👨‍❤️‍💋‍👨',
+                        'birthday': '🎂',
                         'featured': '⭐',
                         '3d-crystals': '🔮',
                         '2d-crystals': '💎',
@@ -398,7 +411,12 @@ export default function ProductsPage() {
                         'memorial': '🕊️',
                         'pet': '🐾',
                         'custom': '⚙️',
-                        'sale': '💰'
+                        'sale': '💰',
+                        'wedding': '💍',
+                        'holiday': '🎀',
+                        'retirement': '💼',
+                        'graduation': '🎉',
+                        'lightbases': '🌟'
                       };
                       
                       return (
@@ -415,7 +433,7 @@ export default function ProductsPage() {
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-lg">{categoryIcons[category.value] || '📦'}</span>
+                            <span className="text-lg">{categoryIcons[category.value] || '🛍️'}</span>
                             <span className="font-medium">{category.label}</span>
                           </span>
                           <span className={`text-sm px-2 py-1 rounded-full ${
@@ -431,17 +449,7 @@ export default function ProductsPage() {
                       )
                     })}
                   
-                  {selectedCategory !== 'all' && selectedCategory !== 'featured' && selectedCategory !== 'sale' && (
-                    <button
-                      onClick={() => handleCategoryChange('all')}
-                      className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-                      </svg>
-                      Clear Filter
-                    </button>
-                  )}
+                  
                 </div>
               </div>
             </section>
