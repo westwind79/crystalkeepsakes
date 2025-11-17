@@ -147,7 +147,8 @@ export default function ProductsPage() {
       }
 
       // Import the generated products file - use relative path
-      const { finalProductList: cockpit3dProducts, generatedAt, sourceInfo } = await import('../../data/final-product-list.js')
+      const res = await fetch('/data/products.json')
+      const cockpit3dProducts = await res.json()
       
       if (shouldLog) {
         console.log('📦 Products loaded:', {
