@@ -181,21 +181,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             {onSale && (product.salePercent || product.salePrice) ? (
               <>
                 <span className="text-2xl font-medium text-[#72B01D]">
-                  {priceInfo.hasRange 
-                    ? `$${priceInfo.min.toFixed(2)} - $${priceInfo.max.toFixed(2)}`
-                    : `$${priceInfo.min.toFixed(2)}`}
+                  ${priceInfo.min.toFixed(2)}
                 </span>
                 <span className="text-sm text-gray-500 line-through">
-                  {priceInfo.hasRange
-                    ? `$${priceInfo.originalMin?.toFixed(2)} - $${priceInfo.originalMax?.toFixed(2)}`
-                    : `$${priceInfo.originalMin?.toFixed(2)}`}
+                  ${priceInfo.originalMin?.toFixed(2)}
                 </span>
               </>
             ) : (
               <span className="text-2xl font-medium text-[#72B01D]">
-                {priceInfo.hasRange
-                  ? `$${priceInfo.min.toFixed(2)} - $${priceInfo.max.toFixed(2)}`
-                  : `$${priceInfo.min.toFixed(2)}`}
+                ${priceInfo.min.toFixed(2)}
               </span>
             )}
           </div>
