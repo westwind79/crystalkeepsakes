@@ -66,10 +66,26 @@ Message:
 ${comment}
     `
 
+    // Route to appropriate email based on topic
+    const getRecipientEmail = (topic: string): string => {
+      switch(topic) {
+        case 'order_problem':
+          return process.env.ORDERS_EMAIL || process.env.CONTACT_EMAIL || 'orders@crystalkeepsakes.com'
+        case 'website_issue':
+          return process.env.SUPPORT_EMAIL || process.env.CONTACT_EMAIL || 'support@crystalkeepsakes.com'
+        case 'custom_request':
+          return process.env.ADMIN_EMAIL || process.env.CONTACT_EMAIL || 'admin@crystalkeepsakes.com'
+        default:
+          return process.env.CONTACT_EMAIL || 'info@crystalkeepsakes.com'
+      }
+    }
+
+    const recipientEmail = getRecipientEmail(topic)
+
     // Send email
     await transporter.sendMail({
       from: process.env.SMTP_FROM || '"CrystalKeepsakes Contact" <noreply@crystalkeepsakes.com>',
-      to: process.env.CONTACT_EMAIL || 'info@crystalkeepsakes.com',
+      to: recipientEmail,
       replyTo: email,
       subject: `Contact Form: ${topicLabels[topic] || topic} - ${name}`,
       text: emailText,
