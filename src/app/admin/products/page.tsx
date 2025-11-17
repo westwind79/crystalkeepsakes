@@ -995,8 +995,18 @@ export default finalProductList;
                               {/* Fixed Sale Price */}
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Fixed Sale Price <span className="text-xs text-gray-500">(Alternative)</span>
+                                  {selectedProductData.sizes && selectedProductData.sizes.length > 0 
+                                    ? 'Dollar Discount (per item)'
+                                    : 'Fixed Sale Price'
+                                  }
+                                  <span className="text-xs text-gray-500 ml-1">(Alternative)</span>
                                 </label>
+                                <p className="text-xs text-blue-600 mb-2">
+                                  {selectedProductData.sizes && selectedProductData.sizes.length > 0 
+                                    ? '💡 This amount will be subtracted from each size price'
+                                    : '💡 This is the final sale price (not a discount)'
+                                  }
+                                </p>
                                 <div className="relative">
                                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                                   <input
@@ -1011,7 +1021,7 @@ export default finalProductList;
                                         updateProduct(selectedProduct.id, { salePercent: undefined })
                                       }
                                     }}
-                                    placeholder="e.g., 39.99"
+                                    placeholder={selectedProductData.sizes && selectedProductData.sizes.length > 0 ? "e.g., 10 ($10 off each)" : "e.g., 39.99"}
                                     className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
                                   />
                                 </div>
