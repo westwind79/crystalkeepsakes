@@ -4,7 +4,7 @@
 // ✅ Clean spacing, modern typography, professional polish
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/t
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
-import { isFeaturedProduct, isLightbaseProduct, isOnSale } from '@/utils/categoriesConfig'
+import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
