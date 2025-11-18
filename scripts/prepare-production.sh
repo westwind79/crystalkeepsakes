@@ -46,6 +46,27 @@ fi
 find out -name "*.test.*" -type f -delete 2>/dev/null
 find out -name "test-*.html" -type f -delete 2>/dev/null
 
+# Remove Next.js build artifacts (shouldn't be in static export)
+if [ -d "out/server" ]; then
+  rm -rf out/server
+  echo "✅ Removed /server folder (Next.js artifact)"
+fi
+
+if [ -d "out/cache" ]; then
+  rm -rf out/cache
+  echo "✅ Removed /cache folder"
+fi
+
+# Remove package.json from output (not needed for static site)
+if [ -f "out/package.json" ]; then
+  rm out/package.json
+  echo "✅ Removed package.json"
+fi
+
+# Remove trace files
+find out -name "*.trace" -type f -delete 2>/dev/null && echo "✅ Removed trace files"
+find out -name "*.nft.json" -type f -delete 2>/dev/null && echo "✅ Removed .nft.json files"
+
 # Verify critical production files exist
 echo ""
 echo "🔍 Verifying production build..."
