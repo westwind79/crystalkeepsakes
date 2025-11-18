@@ -15,7 +15,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '@/data/cockpit3d-products';
-import ProductGallery2 from '@/components/ProductGallery2';
+import ProductGallery from '@/components/ProductGallery';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { getProductCategories, getCategoryLabel, isOnSale, OCCASION_CATEGORIES } from '@/utils/categoriesConfig';
 
