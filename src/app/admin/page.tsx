@@ -426,6 +426,11 @@ export default finalProductList;
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Development-Only Warning Banner */}
+      <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
+        🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
+      </div>
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
