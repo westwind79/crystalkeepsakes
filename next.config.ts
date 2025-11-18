@@ -28,16 +28,6 @@ const nextConfig: NextConfig = {
         ? { exclude: ["error"] }
         : false,
   },
-  // Exclude admin routes from production builds
-  async redirects() {
-    return process.env.NODE_ENV === 'production' ? [
-      {
-        source: '/admin/:path*',
-        destination: '/404',
-        permanent: false,
-      },
-    ] : []
-  },
 };
 
 export default nextConfig;
