@@ -260,16 +260,21 @@ async function submitToCockpit3D(order: any): Promise<any> {
 
 /**
  * Send order notification email
- * Calls the PHP endpoint for email sending
+ * Development: Uses Next.js API → Mailhog
+ * Production: Uses PHP endpoint → PHP mail()
  */
 async function sendOrderEmail(orderData: any): Promise<{ success: boolean; error?: string }> {
   try {
-    // Call PHP email endpoint
-    const phpEmailUrl = process.env.NEXT_PUBLIC_BASE_URL 
-      ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/send-order-notification.php`
-      : '/api/send-order-notification.php'
+    const isDevelopment = process.env.NODE_ENV === 'development'
+    
+    // Choose endpoint based on environment
+    const emailUrl = isDevelopment 
+      ? '/api/order-email'  // Next.js API for Mailhog
+      : '/api/send-order-notification.php'  // PHP for production
 
-    const response = await fetch(phpEmailUrl, {
+    console.log(`📧 Sending order email via ${isDevelopment ? 'Mailhog (dev)' : 'PHP (production)'}`)
+
+    const response = await fetch(emailUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
