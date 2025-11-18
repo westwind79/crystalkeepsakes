@@ -23,63 +23,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isFeatured = isFeaturedProduct(product)
   const isLightbase = isLightbaseProduct(product)
 
-  // Get display price - prioritize size prices if available
-  const getDisplayPrice = () => {
-    // If product has sizes, show the price range
-    if (product.sizes && product.sizes.length > 0) {
-      const prices = product.sizes
-        .filter((s: any) => s.enabled !== false)
-        .map((s: any) => s.price)
-      
-      if (prices.length === 0) return { min: product.basePrice, max: product.basePrice, hasRange: false }
-      
-      const minPrice = Math.min(...prices)
-      const maxPrice = Math.max(...prices)
-      
-      // Apply sale discount if applicable
-      if (onSale) {
-        // Priority 1: Fixed dollar discount (subtract from each size)
-        if (product.salePrice && product.salePrice > 0) {
-          return {
-            min: Math.max(0, minPrice - product.salePrice),
-            max: Math.max(0, maxPrice - product.salePrice),
-            originalMin: minPrice,
-            originalMax: maxPrice,
-            hasRange: minPrice !== maxPrice
-          }
-        }
-        // Priority 2: Percentage discount
-        if (product.salePercent && product.salePercent > 0) {
-          return {
-            min: minPrice * (1 - product.salePercent / 100),
-            max: maxPrice * (1 - product.salePercent / 100),
-            originalMin: minPrice,
-            originalMax: maxPrice,
-            hasRange: minPrice !== maxPrice
-          }
-        }
-      }
-      
-      return { min: minPrice, max: maxPrice, originalMin: minPrice, originalMax: maxPrice, hasRange: minPrice !== maxPrice }
-    }
-    
-    // Single price product (no sizes) - salePrice is FINAL price
-    const base = product.basePrice || 0
-    if (onSale) {
-      // Priority 1: Fixed sale price (final price for no-size products)
-      if (product.salePrice && product.salePrice > 0) {
-        return { min: product.salePrice, max: product.salePrice, originalMin: base, originalMax: base, hasRange: false }
-      }
-      // Priority 2: Percentage discount
-      if (product.salePercent && product.salePercent > 0) {
-        return { min: base * (1 - product.salePercent / 100), max: base * (1 - product.salePercent / 100), originalMin: base, originalMax: base, hasRange: false }
-      }
-    }
-    
-    return { min: base, max: base, originalMin: base, originalMax: base, hasRange: false }
-  }
-
-  const priceInfo = getDisplayPrice()
+  // Get display price using centralized pricing utility
+  const priceInfo = getDisplayPrice(product)
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
