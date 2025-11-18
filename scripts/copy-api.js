@@ -25,6 +25,17 @@ async function copyApi() {
     });
     
     console.log('✅ API folder copied to /out/api');
+    
+    // Copy correct .htaccess based on environment
+    const isProduction = process.env.NEXT_PUBLIC_BASE_PATH === '';
+    const htaccessSource = isProduction 
+      ? path.join(__dirname, '..', '.htaccess.production')
+      : path.join(__dirname, '..', 'public', '.htaccess');
+    const htaccessDest = path.join(outDir, '.htaccess');
+    
+    await fs.copy(htaccessSource, htaccessDest, { overwrite: true });
+    console.log(`✅ Copied ${isProduction ? '.htaccess.production' : '.htaccess'} to /out/.htaccess`);
+    
   } catch (error) {
     console.error('❌ Error copying API folder:', error);
     process.exit(1);
