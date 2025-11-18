@@ -69,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         router.push('/cart')
       }, 500)
     } catch (error) {
-      console.error('❌ [ADD TO CART] Validation failed:', {})
+      console.error('❌ [ADD TO CART] Error:', error)
       logger.error('Failed to add to cart', error)
       setAddingToCart(false)
       alert('Failed to add item to cart. Please try again.')
