@@ -35,9 +35,8 @@
       }
     ],
     "featured": true,
-    "sale": true,
-    "cost": 35,
-    "salePrice": 4
+    "sale": false,
+    "cost": 35
   },
   {
     "id": "002",
@@ -137,8 +136,7 @@
       }
     ],
     "featured": false,
-    "sale": true,
-    "salePrice": 5
+    "sale": false
   },
   {
     "id": "104",

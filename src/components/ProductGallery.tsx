@@ -1,87 +1,105 @@
-// components/ProductGallery.tsx
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Image from 'next/image'
+import React, { useState } from 'react';
+import { ProductImage } from '@/types/productTypes';
 
-export default function ProductGallery({ images = [] }) {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
+interface ProductGallery2Props {
+  images: ProductImage[];
+  productName?: string;
+}
 
-  if (isDev) {
-    console.log('🖼️ Gallery images:', images?.length || 0)
-  }
+export default function ProductGallery2({ images, productName = 'Product' }: ProductGallery2Props) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Find main image or use first image
+  const mainImageIndex = images.findIndex(img => img.isMain);
+  const [currentIndex, setCurrentIndex] = useState(mainImageIndex >= 0 ? mainImageIndex : 0);
 
   if (!images || images.length === 0) {
     return (
-      <div className="product-gallery">
-        <div 
-          className="placeholder-image d-flex align-items-center justify-content-center" 
-          style={{ height: '400px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6' }}
-        >
-          <span className="text-muted">No image available</span>
-        </div>
+      <div className="w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+        <p className="text-gray-400">No images available</p>
       </div>
-    )
+    );
   }
 
-  const currentImage = images[activeIndex]
-  const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
+  // Single image display
+  if (images.length === 1) {
+    return (
+      <div className="w-full">
+        <img
+          src={images[0].src}
+          alt={images[0].alt || productName}
+          className="w-full h-auto rounded-lg shadow-lg"
+        />
+      </div>
+    );
+  }
 
+  // Multiple images gallery
   return (
-    <div className="product-gallery">
-      {/* Main Image */}
-      <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
-        <Image
-          src={imageSrc || 'https://placehold.co/800x800?text=No+Image'}
-          alt={`Product image ${activeIndex + 1}`}
-          fill
-          style={{ objectFit: 'cover' }}
-          onError={(e) => {
-            if (isDev) console.log('❌ Image error:', imageSrc)
-            e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-          }}
+    <div className="w-full space-y-4">
+      {/* Main Image Display */}
+      <div className="w-full aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <img
+          src={images[currentIndex].src}
+          alt={images[currentIndex].alt || `${productName} - Image ${currentIndex + 1}`}
+          className="w-full h-full object-contain"
         />
       </div>
 
-      {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="thumbnails">
-          <div className="row g-2">
-            
-            {images.map((img, idx) => {
-              const thumbSrc = typeof img === 'string' ? img : img?.src
-              return (
-                
-                <div key={idx} className="col-3">
-                  <div 
-                    className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
-                    style={{ 
-                      position: 'relative',
-                      height: '80px',
-                      cursor: 'pointer',
-                      border: idx === activeIndex ? '2px solid var(--brand-500)' : '1px solid #dee2e6',
-                      overflow: 'hidden'
-                    }}
-                    onClick={() => setActiveIndex(idx)}
-                  > 
-                    <Image
-                      src={thumbSrc || 'https://placehold.co/800x800?text=No+Image'}
-                      alt={`Thumbnail ${idx + 1}`}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-                      }}
-                    />
-                  </div>
+      {/* Thumbnail Navigation */}
+      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+        {images.map((image, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`
+              aspect-square rounded-lg overflow-hidden border-2 transition-all
+              ${currentIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-400'}
+            `}
+          >
+            <img
+              src={image.src}
+              alt={image.alt || `${productName} thumbnail ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+            {image.isMain && (
+              <div className="absolute top-1 right-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded">
+                Main
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
 
-                </div>
-              )
-            })}
-          </div>
+      {/* Image Caption */}
+      {images[currentIndex].caption && (
+        <p className="text-sm text-gray-600 text-center italic">
+          {images[currentIndex].caption}
+        </p>
+      )}
+
+      {/* Navigation Arrows */}
+      {images.length > 1 && (
+        <div className="flex justify-between items-center">
+          <button
+            onClick={() => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+          >
+            ← Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            {currentIndex + 1} / {images.length}
+          </span>
+          <button
+            onClick={() => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+          >
+            Next →
+          </button>
         </div>
       )}
     </div>
-  )
+  );
 }
