@@ -89,7 +89,7 @@ export default function RootLayout({
         <link rel="canonical" href="https://crystalkeepsakes.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={inter.className}>
+      <body className={`${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
         <Header />
         <main>{children}</main>
         <Footer />
