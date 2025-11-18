@@ -442,6 +442,12 @@ export default function ProductDetailClient() {
         productImage: mainImage?.src || null,
         customImage: customImage,
         customText: customTextString ? { text: customTextString } : undefined,
+        // Sale information for cart display
+        onSale: product.sale === true,
+        salePrice: product.salePrice,
+        salePercent: product.salePercent,
+        originalPrice: selectedSize?.price || product.basePrice,
+        discountAmount: (selectedSize?.price || product.basePrice) - totalPrice,
         dateAdded: new Date().toISOString(),
         lastModified: new Date().toISOString()
       }
