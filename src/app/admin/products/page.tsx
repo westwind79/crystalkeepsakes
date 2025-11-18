@@ -8,6 +8,9 @@
  * - Option configuration (enable/disable per product)
  * - Size, lightbase, background, text option management
  * - Generates final-product-list.js with all customizations
+ * 
+ * NOTE: This page is for DEVELOPMENT ONLY
+ * Do NOT upload the /admin directory to production server
  */
 
 import React, { useState, useEffect } from 'react';
@@ -15,6 +18,11 @@ import { cockpit3dProducts } from '@/data/cockpit3d-products';
 import ProductGallery2 from '@/components/ProductGallery2';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { getProductCategories, getCategoryLabel, isOnSale, OCCASION_CATEGORIES } from '@/utils/categoriesConfig';
+
+// Production safeguard
+if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
+  window.location.href = '/';
+}
 
 // Types
 interface ProductImage {
