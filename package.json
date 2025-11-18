@@ -7,7 +7,7 @@
     "prebuild": "node scripts/fetch-cockpit3d-products.js",
     "build": "next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production",
     "build:test": "env-cmd -f .env.production.test next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.test",
-    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.root",
+    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.root && bash scripts/prepare-production.sh",
     "start": "next start",
     "lint": "next lint"
   },
