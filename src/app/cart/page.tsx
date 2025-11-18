@@ -222,7 +222,8 @@ export default function CartPage() {
     
     try {
       // Redirect to Stripe Hosted Checkout
-      window.location.href = '/checkout-hosted'
+      // OLD window.location.href = '/checkout-hosted'
+      window.location.href = '/checkout'
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
