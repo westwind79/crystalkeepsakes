@@ -31,14 +31,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Note: In Next.js App Router, only root layout should define <html> and <body>
+  // Child layouts just wrap content without Header/Footer
   return (
-    <html lang="en">
-      <body className={`${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
-        <div className="min-h-screen bg-gray-50">
-          {/* No Header or Footer - clean admin interface */}
-          {children}
-        </div>
-      </body>
-    </html>
+    <div className={`min-h-screen bg-gray-50 ${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
+      {/* No Header or Footer - clean admin interface */}
+      {children}
+    </div>
   )
 }
