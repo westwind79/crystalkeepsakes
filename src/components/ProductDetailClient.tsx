@@ -396,14 +396,19 @@ export default function ProductDetailClient() {
         console.log('✍️ [ADD TO CART] Custom Text:', customTextString)
       }
       
-      const optionsPrice = calculateOptionsPrice()
-      const totalPrice = calculateTotal()
+      const optionsPrice = getOptionsPrice()
+      const totalPrice = getTotalPrice()
+      const originalPrice = selectedSize?.price || product.basePrice
+      
+      // Get sale information using centralized utility
+      const saleInfo = getSaleInfo(product, totalPrice / quantity, originalPrice)
       
       console.log('💰 [ADD TO CART] Pricing:', {
-        basePrice: selectedSize?.price || product.basePrice,
+        basePrice: originalPrice,
         optionsPrice,
         totalPrice,
-        quantity
+        quantity,
+        saleInfo
       })
       
       const lineItem: OrderLineItem = {
@@ -412,7 +417,7 @@ export default function ProductDetailClient() {
         cockpit3d_id: product.cockpit3d_id || String(product.id),
         name: product.name,
         sku: product.sku,
-        basePrice: selectedSize?.price || product.basePrice,
+        basePrice: originalPrice,
         optionsPrice: optionsPrice,
         totalPrice: totalPrice,
         quantity: quantity,
@@ -421,12 +426,12 @@ export default function ProductDetailClient() {
         productImage: mainImage?.src || null,
         customImage: customImage,
         customText: customTextString ? { text: customTextString } : undefined,
-        // Sale information for cart display
-        onSale: product.sale === true,
+        // Sale information for cart display - use centralized isOnSale utility
+        onSale: isOnSale(product),
         salePrice: product.salePrice,
         salePercent: product.salePercent,
-        originalPrice: selectedSize?.price || product.basePrice,
-        discountAmount: (selectedSize?.price || product.basePrice) - totalPrice,
+        originalPrice: originalPrice,
+        discountAmount: saleInfo.discountAmount * quantity,
         dateAdded: new Date().toISOString(),
         lastModified: new Date().toISOString()
       }
