@@ -15,9 +15,13 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* No Header or Footer - clean admin interface */}
-      {children}
-    </div>
+    <html lang="en">
+      <body>
+        <div className="min-h-screen bg-gray-50">
+          {/* No Header or Footer - clean admin interface */}
+          {children}
+        </div>
+      </body>
+    </html>
   )
 }
