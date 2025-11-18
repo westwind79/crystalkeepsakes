@@ -1401,9 +1401,8 @@ export default finalProductList;
                       {/* Gallery Preview */}
                       <div>
                         <h3 className="text-sm font-semibold text-gray-700 mb-2">Image Gallery</h3>
-                        <ProductGallery2
+                        <ProductGallery
                           images={selectedProductData.images || []}
-                          productName={selectedProductData.name}
                         />
                       </div>
 
