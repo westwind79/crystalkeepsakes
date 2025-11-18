@@ -34,11 +34,7 @@ export default function AdminLayout({
   // Note: In Next.js App Router, only root layout should define <html> and <body>
   // Child layouts just wrap content without Header/Footer
   return (
-<<<<<<< HEAD
-    <div className={`min-h-screen bg-gray-50 ${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
-=======
     <div className="min-h-screen bg-gray-50">
->>>>>>> v6
       {/* No Header or Footer - clean admin interface */}
       {children}
     </div>
