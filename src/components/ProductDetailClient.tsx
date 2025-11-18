@@ -585,10 +585,10 @@ export default function ProductDetailClient() {
       </nav>
 
       {/* Product */}
-      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           
-          <div className="xs:relative sm:sticky top-[85px]">
+          <div className="relative lg:sticky lg:top-[85px]">
             {/* Image gallery */}
             <div className="flex flex-col-reverse">
 

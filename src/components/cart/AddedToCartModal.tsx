@@ -67,10 +67,10 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
 
           {/* Item Details */}
           {itemDetails && (
-            <div className="p-6 border-b border-gray-700">
-              <div className="flex gap-4">
+            <div className="p-6 flex flex-col items-center sm:items-start border-b border-gray-700">
+              <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-4 text-center sm:text-left">
                 {/* Product Image */}
-                <div className="relative w-48 h-48 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0">
+                <div className="relative mx-auto md:mx-intial w-65 h-65 sm:w-48 sm:h-48 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0">
                   <Image
                     src={itemDetails.image}
                     alt={itemDetails.name}
@@ -81,7 +81,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
                 </div>
 
                 {/* Product Info */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 sm:min-w-0">
                   <h4 className="text-lg font-semibold text-text-primary mb-2 truncate">
                     {itemDetails.name}
                   </h4>
@@ -98,7 +98,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
                   )}
 
                   {/* Price & Quantity */}
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex flex-row justify-center md:justify-start items-center gap-3 text-sm">
                     <span className="text-brand-400 font-bold text-xl">
                       ${itemDetails.price.toFixed(2)}
                     </span>

@@ -222,7 +222,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Body */}
-        <div className="p-6">
+        <div className="p-3 sm:p-4">
           <nav>
             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
               {navItems.map((item) => (
@@ -249,7 +249,7 @@ export default function Header() {
           </nav>
 
           {/* Cart Section in Mobile Menu */}
-          <div className="mt-8 pt-6 border-t border-gray-700">
+          <div className="mt-2 pt-3 border-t border-gray-700">
             <div className="px-4">
               <CartIcon />
             </div>
