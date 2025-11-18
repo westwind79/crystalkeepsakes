@@ -37,7 +37,7 @@ html {
   flex-direction: column;
 }
 body {  
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -45,6 +45,13 @@ body {
     background: red;
     color: red;
   }
+}
+
+/* Typography - Apply heading font to all headers */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 600;
 }
 
 /* Background Utility Classes */
