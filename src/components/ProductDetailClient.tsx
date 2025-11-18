@@ -729,10 +729,10 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              {product.sale && (product.salePercent || product.salePrice) ? (
+              {isOnSale(product) && (product.salePercent || product.salePrice) ? (
                 <div className="flex items-center gap-3 flex-wrap">
                   <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
-                    ${calculateTotal().toFixed(2)}
+                    ${getTotalPrice().toFixed(2)}
                   </p>
                   <p className="text-2xl tracking-tight text-gray-500 line-through">
                     ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
@@ -740,11 +740,11 @@ export default function ProductDetailClient() {
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
                     {product.salePercent 
                       ? `${product.salePercent}% OFF` 
-                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (calculateTotal() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (getTotalPrice() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
                   </span>
                 </div>
               ) : (
-                <p className="text-4xl font-bold tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+                <p className="text-4xl font-bold tracking-tight text-gray-900">${getTotalPrice().toFixed(2)}</p>
               )}
             </div>
 
