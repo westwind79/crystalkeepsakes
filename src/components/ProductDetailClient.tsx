@@ -482,7 +482,7 @@ export default function ProductDetailClient() {
       setAddedItemDetails({
         name: product.name,
         image: finalMaskedImage || mainImage?.src || '/placeholder.png',
-        price: totalPrice,
+        price: totalPrice / quantity, // Price per item for display
         quantity: quantity,
         options: optionsList
       })
