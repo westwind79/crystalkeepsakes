@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Cinzel, Open_Sans } from 'next/font/google'
 import './globals.css'
 import './css/variables.css'
 import './css/navigation.css'
@@ -7,7 +7,20 @@ import './css/modal.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+// Font Theme: Option 3 - Refined Luxury
+const cinzel = Cinzel({ 
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-heading',
+  display: 'swap',
+})
+
+const openSans = Open_Sans({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://crystalkeepsakes.com'),
