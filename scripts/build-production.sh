@@ -20,7 +20,11 @@ fi
 # Step 2: Build the site
 echo ""
 echo "🔨 Step 2: Building Next.js site..."
-npm run build
+if [ -f ".env.production.root" ]; then
+  env-cmd -f .env.production.root next build
+else
+  next build
+fi
 echo "✅ Build complete"
 
 # Step 3: Restore admin folder
