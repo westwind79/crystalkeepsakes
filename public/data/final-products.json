@@ -4,22 +4,17 @@
     "name": "Laser Engraving",
     "slug": "static-product",
     "sku": "static-product",
-    "basePrice": 59,
-    "description": "Short Static Product DescriptionShort Static Product DescriptionShort Static Product DescriptionShort Static Product Description",
-    "longDescription": "Long Description that comes from Static Product 1Long Description that comes from Static Product 1Long Description that comes from Static Product 1Long Description that comes from Static Product 1Long Description that comes from Static Product 1Long Description that comes from Static Product 1Long Description that comes from Static Product 1",
+    "basePrice": 169,
+    "description": "Aliquam mollis eros volutpat, ultricies dolor ut, finibus ante.",
+    "longDescription": "Nam ultrices erat lacus, non convallis sapien tincidunt eu. Integer ultricies arcu luctus, mattis libero in, consectetur ante. Phasellus interdum pharetra bibendum. Aliquam erat volutpat. Phasellus ut faucibus metus, vel accumsan urna. Aliquam mollis eros volutpat, ultricies dolor ut, finibus ante.",
     "images": [
       {
         "src": "/img/products/cockpit3d/448/cockpit3d_448_2D_Medium_Plaque_Vertical.jpg",
         "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/001/product_001_1763174889104.jpg",
-        "isMain": false,
-        "alt": "Scan 1.jpg"
       }
     ],
     "options": [],
-    "requiresImage": false,
+    "requiresImage": true,
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [
@@ -34,19 +29,17 @@
         "price": 9.5
       }
     ],
-    "featured": true,
-    "sale": true,
-    "cost": 35,
-    "salePrice": 4
+    "visible": false,
+    "fulfillment": "custom"
   },
   {
     "id": "002",
-    "name": "ugkkhgjkghjk",
+    "name": "Consulting",
     "slug": "static2",
     "sku": "static2",
     "basePrice": 169,
-    "description": "Short Description that comes from Static Product 2",
-    "longDescription": "Long Description that comes from Static Product 2",
+    "description": "Donec eu neque vel sem facilisis consequat vel et nibh.",
+    "longDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum maximus nibh imperdiet neque pharetra lacinia. In eget laoreet nibh, ut commodo lorem. Vestibulum tempus ligula eget ipsum vehicula tincidunt. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras est libero, tincidunt vitae risus non, ullamcorper feugiat nulla. Nam porttitor nunc in mattis faucibus. Proin lobortis maximus felis. Cras turpis diam, ullamcorper eget diam et, pharetra porttitor sem. Suspendisse potenti.",
     "images": [
       {
         "src": "/img/products/cockpit3d/449/cockpit3d_449_2D_Medium_Plaque_Horizontal.jpg",
@@ -54,7 +47,7 @@
       }
     ],
     "options": [],
-    "requiresImage": false,
+    "requiresImage": true,
     "lightBases": [
       {
         "id": "none",
@@ -136,32 +129,21 @@
         "price": 9.5
       }
     ],
-    "featured": false,
-    "sale": true,
-    "salePrice": 5
+    "visible": false,
+    "fulfillment": "custom"
   },
   {
     "id": "104",
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
     "sku": "Cut_Corner_Diamond",
-    "basePrice": 45,
+    "basePrice": 70,
     "description": "Cut Corner Diamond",
-    "longDescription": "Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner Description for cut corner ",
+    "longDescription": "",
     "images": [
       {
         "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
-        "isMain": false
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1763335856274.png",
-        "isMain": true,
-        "alt": "noahs-keepsake-1.png"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1763335876473.jpg",
-        "isMain": false,
-        "alt": "3dc_cutcornerdiamond.jpg"
+        "isMain": true
       }
     ],
     "options": [],
@@ -170,19 +152,19 @@
       {
         "id": "202",
         "name": "Cut Corner Diamond (5x5cm)",
-        "price": 45,
+        "price": 70,
         "cockpit3d_id": "202"
       },
       {
         "id": "549",
         "name": "Cut Corner Diamond (6x6cm)",
-        "price": 55,
+        "price": 70,
         "cockpit3d_id": "549"
       },
       {
         "id": "550",
         "name": "Cut Corner Diamond (8x8cm)",
-        "price": 85,
+        "price": 70,
         "cockpit3d_id": "550"
       }
     ],
@@ -253,15 +235,7 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
     "sale": true,
-    "occasions": [
-      "anniversary",
-      "baby",
-      "wedding"
-    ],
-    "cost": 24.75,
-    "featured": true,
-    "visible": true,
-    "salePrice": 15
+    "salePercent": 5
   },
   {
     "id": "105",
@@ -282,8 +256,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "featured": false
+    "maskImageUrl": null
   },
   {
     "id": "106",
@@ -304,8 +277,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "featured": false
+    "maskImageUrl": null
   },
   {
     "id": "107",
@@ -504,8 +476,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
   },
   {
     "id": "118",
@@ -626,8 +597,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/prestige-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/prestige-mask.png"
   },
   {
     "id": "119",
@@ -701,8 +671,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-vertical-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "148",
@@ -859,8 +828,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png"
   },
   {
     "id": "151",
@@ -913,14 +881,14 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "156",
     "name": "Heart Keychain",
     "slug": "heart-keychain",
     "sku": "Heart_Keychain",
-    "basePrice": 25,
+    "basePrice": 55,
     "description": "Heart Keychain",
     "longDescription": "",
     "images": [
@@ -957,8 +925,7 @@
         "id": "none",
         "name": "No Text",
         "price": 0,
-        "cockpit3d_option_id": null,
-        "enabled": true
+        "cockpit3d_option_id": null
       },
       {
         "id": "customText",
@@ -967,8 +934,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-keychain-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/heart-keychain-mask.png"
   },
   {
     "id": "158",
@@ -1042,8 +1008,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "featured": false
+    "maskImageUrl": null
   },
   {
     "id": "166",
@@ -1206,8 +1171,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/heart-mask.png"
   },
   {
     "id": "173",
@@ -1260,8 +1224,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png"
   },
   {
     "id": "248",
@@ -1344,8 +1307,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-urn-small-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "251",
@@ -1404,8 +1366,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/crystal-urn-large-mask.png"
   },
   {
     "id": "252",
@@ -1535,8 +1496,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/notched-vertical-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/notched-vertical-mask.png"
   },
   {
     "id": "266",
@@ -1639,7 +1599,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/notched-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/notched-vertical-mask.png"
   },
   {
     "id": "276",
@@ -1677,7 +1637,7 @@
       }
     ],
     "options": [],
-    "requiresImage": false,
+    "requiresImage": true,
     "sizes": [
       {
         "id": "793",
@@ -1757,8 +1717,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/globe-mask.png",
-    "featured": false
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "279",
@@ -1780,9 +1739,7 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "featured": true,
-    "sale": true,
-    "salePercent": 5
+    "featured": true
   },
   {
     "id": "286",
@@ -2253,7 +2210,7 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": false
+    "featured": true
   },
   {
     "id": "445",
@@ -2418,8 +2375,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-mask.png",
-    "featured": true
+    "maskImageUrl": "/img/masks/heart-mask.png"
   },
   {
     "id": "448",
@@ -3074,8 +3030,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
-    "featured": true
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "469",
@@ -3196,7 +3151,7 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/globe-mask.png"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
   },
   {
     "id": "472",
