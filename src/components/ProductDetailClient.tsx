@@ -253,54 +253,32 @@ export default function ProductDetailClient() {
     return isValid
   }
 
-  const calculateTotal = (): number => {
-    // Get the base price from selected size or product basePrice
-    let basePrice = selectedSize?.price || product?.basePrice || 0
-    const originalPrice = basePrice
+  // Use centralized pricing utilities
+  const getTotalPrice = (): number => {
+    const optionsPrice = calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
     
-    // Apply sale discount if product is on sale
-    if (product?.sale) {
-      // Priority 1: Fixed dollar discount
-      if (product?.salePrice && product.salePrice > 0) {
-        // For products WITH sizes: salePrice is discount amount (subtract)
-        // For products WITHOUT sizes: salePrice is final price
-        if (product.sizes && product.sizes.length > 0) {
-          basePrice = Math.max(0, basePrice - product.salePrice)
-        } else {
-          basePrice = product.salePrice
-        }
-      } 
-      // Priority 2: Percentage discount
-      else if (product?.salePercent && product.salePercent > 0) {
-        basePrice = basePrice * (1 - product.salePercent / 100)
-      }
-    }
-    
-    let total = basePrice
-    if (selectedLightBase?.price) total += selectedLightBase.price
-    if (selectedBackground?.price) total += selectedBackground.price
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
-      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
-      total += textOption?.price || 0
-    }
-    
-    return total * quantity
+    return calculateTotal(
+      product,
+      selectedSize,
+      optionsPrice,
+      quantity
+    )
   }
   
-  const calculateOptionsPrice = (): number => {
-    let optionsPrice = 0
-    if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
-    if (selectedBackground?.price) optionsPrice += selectedBackground.price
-    if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions?.[1]?.price) {
-      optionsPrice += product.textOptions[1].price
-    }
-    
-    return optionsPrice
+  const getOptionsPrice = (): number => {
+    return calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
   }
 
   const buildProductOptions = (): ProductOption[] => {
