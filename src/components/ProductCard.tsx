@@ -8,6 +8,7 @@ import { addToCart as addToCartUtil } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
 import { assetPath } from '@/lib/assetPath'
 import { isOnSale, isFeaturedProduct, isLightbaseProduct } from '@/utils/categoriesConfig'
+import { getDisplayPrice } from '@/utils/pricingUtils'
 
 interface ProductCardProps {
   product: any
