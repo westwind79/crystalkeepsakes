@@ -29,7 +29,7 @@ async function copyApi() {
     // Copy correct .htaccess based on environment
     const isProduction = process.env.NEXT_PUBLIC_BASE_PATH === '';
     const htaccessSource = isProduction 
-      ? path.join(__dirname, '..', 'public', '.htaccess.production')
+      ? path.join(__dirname, '..', '.htaccess.production')
       : path.join(__dirname, '..', 'public', '.htaccess');
     const htaccessDest = path.join(outDir, '.htaccess');
     
