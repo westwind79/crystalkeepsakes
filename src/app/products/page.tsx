@@ -81,9 +81,13 @@ const ProductsHero = () => (
 const ProductsBreadcrumbs = ({ breadcrumbs }: { breadcrumbs?: string[] }) => {
   const items = breadcrumbs 
     ? breadcrumbs.map((label, index) => {
-        // First item should be "Products" (links to /products)
-        if (index === 0) return { label, href: '/products' }
-        // Other items (categories) are not clickable
+        // First item is "Products"
+        if (index === 0) {
+          // If there's only one item (just "Products"), make it non-clickable (current page)
+          // If there are more items (Products > Category), make "Products" clickable
+          return breadcrumbs.length > 1 ? { label, href: '/products' } : { label }
+        }
+        // Other items (categories) are not clickable (current page)
         return { label }
       })
     : [{ label: 'Products' }];
