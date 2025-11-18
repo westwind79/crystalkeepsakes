@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCards, Autoplay } from 'swiper/modules'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import Testimonials from '@/components/Testimonials'
+import PageLayout from '@/components/PageLayout'
 import { assetPath } from '@/lib/assetPath'
 
 import 'swiper/css'
@@ -155,7 +156,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <>
+    <PageLayout>
       {/* Inline styles for mobile fallback */}
       <style dangerouslySetInnerHTML={{ __html: ensureVisibilityStyles }} />
       
@@ -334,6 +335,6 @@ export default function HomePage() {
       </section>
       
     </div>
-    </>
+    </PageLayout>
   )
 }
