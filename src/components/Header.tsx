@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-20 bg-[var(--brand-900)]/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-20 bg-[var(--brand-900)]/99 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
@@ -76,7 +76,7 @@ export default function Header() {
                 </svg>
               </div>
               <div className="">
-                <div className="text-white hover:text-none text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
+                <div className="text-white hover:text-none text-xl md:text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
                   CRYSTALKEEPSAKES
                 </div>
                 <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px] text-shadow-xs">
@@ -96,9 +96,7 @@ export default function Header() {
                         group relative block px-6 pt-2 pb-3 
                         uppercase text-sm font-medium tracking-wide 
                         transition-colors duration-200 no-underline
-                        ${isActive(item.href) 
-                          ? 'text-[var(--surface-300)]' 
-                          : 'text-[var(--brand-400)] hover:text-[var(--brand-100)]'
+                        ${isActive(item.href) ? 'text-[var(--surface-50)] cursor-default disable' : 'text-[var(--brand-350)] hover:text-[var(--brand-100)]'
                         }
                       `}
                     >

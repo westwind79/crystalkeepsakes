@@ -36,8 +36,7 @@ html {
   min-height: 100vh;
   flex-direction: column;
 }
-body { 
-  font-size: var(--font-scale-15-18);
+body {  
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -111,14 +110,14 @@ body {
 }
 
 /* Typography */
-h1, .h1 { font-size: inherit }
+/*h1, .h1 { font-size: inherit }
 h2, .h2 { font-size: inherit }
 h3, .h3 { font-size: inherit }
 h4, .h4 { font-size: inherit }
 h5, .h5 { font-size: inherit }
 h6, .h6 { font-size: inherit }
 
- 
+ */
 
 
 .btn-light {
