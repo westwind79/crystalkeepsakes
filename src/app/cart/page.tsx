@@ -426,6 +426,29 @@ export default function CartPage() {
                           )}
                         </div>
                         
+                        {/* Sale/Discount Information */}
+                        {item.onSale && (item.discountAmount ?? 0) > 0 && (
+                          <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-red-700 font-semibold">
+                                {item.salePercent 
+                                  ? `💰 Sale (${item.salePercent}% OFF)` 
+                                  : item.salePrice 
+                                    ? `💰 Sale ($${item.salePrice.toFixed(2)} discount)` 
+                                    : '💰 On Sale'}
+                              </span>
+                              <span className="text-red-700 font-bold">
+                                -${item.discountAmount.toFixed(2)}
+                              </span>
+                            </div>
+                            {item.originalPrice && (
+                              <div className="text-xs text-red-600 mt-1">
+                                Original: <span className="line-through">${item.originalPrice.toFixed(2)}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Total Item Price */}
                         <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
                           <span className="text-base font-bold text-gray-900">Item Total:</span>
