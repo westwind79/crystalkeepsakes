@@ -53,6 +53,12 @@ interface CartItem {
   }
   productImage?: string
   cockpit3d_id?: string
+  // Sale information
+  onSale?: boolean
+  salePrice?: number
+  salePercent?: number
+  originalPrice?: number
+  discountAmount?: number
   dateAdded: string
 }
 
