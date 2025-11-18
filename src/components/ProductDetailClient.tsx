@@ -1056,7 +1056,7 @@ export default function ProductDetailClient() {
                 disabled={addingToCart}
                 className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {addingToCart ? 'Adding to cart...' : `Add to cart - $${calculateTotal().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
           </div>
