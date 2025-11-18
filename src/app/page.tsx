@@ -10,7 +10,6 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCards, Autoplay } from 'swiper/modules'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import Testimonials from '@/components/Testimonials'
-import PageLayout from '@/components/PageLayout'
 import { assetPath } from '@/lib/assetPath'
 
 import 'swiper/css'
