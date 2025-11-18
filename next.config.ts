@@ -28,25 +28,6 @@ const nextConfig: NextConfig = {
         ? { exclude: ["error"] }
         : false,
   },
-  // Exclude admin panel from production builds
-  async rewrites() {
-    return {
-      beforeFiles: [],
-      afterFiles: [],
-      fallback: [],
-    }
-  },
-  // Custom webpack config to exclude admin in production
-  webpack: (config, { isServer }) => {
-    if (!isDev && isServer) {
-      // Exclude admin routes from production build
-      config.externals = config.externals || [];
-      config.externals.push({
-        './src/app/admin': 'commonjs ./src/app/admin',
-      });
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
