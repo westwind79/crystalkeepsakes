@@ -40,12 +40,17 @@ echo ""
 echo "🧹 Step 4: Running cleanup script..."
 bash scripts/prepare-production.sh
 
-# Step 5: Copy API files
+# Step 5: Copy API files and environment
 echo ""
 echo "📋 Step 5: Copying API files..."
 if [ -f "scripts/copy-api.js" ]; then
   node scripts/copy-api.js
   echo "✅ API files copied"
+fi
+
+if [ -f "scripts/copy-env.js" ] && [ -f ".env.production.root" ]; then
+  node scripts/copy-env.js .env.production.root
+  echo "✅ Environment files copied"
 fi
 
 echo ""
