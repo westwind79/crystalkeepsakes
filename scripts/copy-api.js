@@ -27,14 +27,14 @@ async function copyApi() {
     console.log('✅ API folder copied to /out/api');
     
     // Copy correct .htaccess based on environment
-    const isProduction = process.env.NEXT_PUBLIC_BASE_PATH === '';
-    const htaccessSource = isProduction 
-      ? path.join(__dirname, '..', '.htaccess.production')
-      : path.join(__dirname, '..', 'public', '.htaccess');
+    const isTest = process.env.NEXT_PUBLIC_BASE_PATH === '/test';
+    const htaccessSource = isTest
+      ? path.join(__dirname, '..', 'public', '.htaccess')
+      : path.join(__dirname, '..', '.htaccess.production');
     const htaccessDest = path.join(outDir, '.htaccess');
     
     await fs.copy(htaccessSource, htaccessDest, { overwrite: true });
-    console.log(`✅ Copied ${isProduction ? '.htaccess.production' : '.htaccess'} to /out/.htaccess`);
+    console.log(`✅ Copied ${isTest ? 'public/.htaccess (test)' : '.htaccess.production'} to /out/.htaccess`);
     
   } catch (error) {
     console.error('❌ Error copying API folder:', error);
