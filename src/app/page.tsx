@@ -156,7 +156,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <>
+    <PageLayout>
       {/* Inline styles for mobile fallback */}
       <style dangerouslySetInnerHTML={{ __html: ensureVisibilityStyles }} />
       
