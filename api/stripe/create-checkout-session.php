@@ -159,10 +159,14 @@ try {
         $orderNumber = 'TEST_' . $orderNumber;
     }
     
-    // Determine URLs
-    $baseUrl = ($mode === 'production') 
-        ? 'https://crystalkeepsakes.com'
-        : 'http://localhost:3000';
+    // Determine URLs with proper folder path
+    if ($mode === 'production') {
+        $baseUrl = 'https://crystalkeepsakes.com';
+    } elseif ($mode === 'test') {
+        $baseUrl = 'https://crystalkeepsakes.com/test';
+    } else {
+        $baseUrl = 'http://localhost:3000';
+    }
     
     $successUrl = $baseUrl . '/order-confirmation?session_id={CHECKOUT_SESSION_ID}';
     $cancelUrl = $baseUrl . '/cart';
