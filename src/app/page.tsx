@@ -334,6 +334,6 @@ export default function HomePage() {
       </section>
       
     </div>
-    </PageLayout>
+    </>
   )
 }
