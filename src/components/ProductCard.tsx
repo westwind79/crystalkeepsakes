@@ -136,11 +136,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       className="group block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-[#72B01D] cursor-pointer"
     >
       {/* Badges */}
-      <div className="relative">
-        <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+      <div className="relative"> 
           {isFeatured && (
             <>
-            <div className="absolute left-4 top-4 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+            <div className="absolute right-2 bottom-2 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
                 <svg 
                   className="w-4 h-4" 
                   fill="currentColor" 
@@ -157,15 +156,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           {onSale && (
             <>
-            <div className="absolute top-0 right-2 z-2">
+            <div className="absolute top-0 right-10 z-2">
               <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
             </div>
             {/*<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
               🔥 SALE
             </span>*/}
             </>
-          )}
-        </div>
+          )} 
 
         {/* Image */}
         <div className="aspect-square overflow-hidden bg-gray-50">
