@@ -31,22 +31,22 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Note: In Next.js App Router, only root layout should define <html> and <body>
-  // Child layouts just wrap content without Header/Footer
   return (
-    <>
-      <style jsx global>{`
-        /* Hide header and footer only on admin pages */
-        header, footer {
-          display: none !important;
-        }
-        main {
-          padding: 0 !important;
-        }
-      `}</style>
-      <div className="min-h-screen bg-gray-50">
-        {children}
-      </div>
-    </>
+    <div className="admin-page min-h-screen bg-gray-50">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .admin-page ~ * header,
+          .admin-page ~ * footer,
+          body:has(.admin-page) header,
+          body:has(.admin-page) footer {
+            display: none !important;
+          }
+          body:has(.admin-page) main {
+            padding: 0 !important;
+          }
+        `
+      }} />
+      {children}
+    </div>
   )
 }
