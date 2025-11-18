@@ -65,9 +65,8 @@ const config: Config = {
         'header': 'var(--header-height)',
       },
       fontFamily: {
-        heading: ['var(--font-heading)', 'serif'],
-        body: ['var(--font-body)', 'sans-serif'],
-        sans: ['var(--font-body)', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Georgia', 'serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // 6. Extended Fluid Typography from all CSS variables
