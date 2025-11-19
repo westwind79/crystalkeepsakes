@@ -527,14 +527,14 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     <>
       {/* Modal Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/70 z-[1040] transition-opacity"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 animate-backdrop-fade"
         onClick={!isProcessing ? onHide : undefined}
       />
 
       {/* Modal Dialog */}
-      <div className="fixed inset-0 z-[1050] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div 
-          className="image-editor-modal relative w-full max-w-[90vw] mx-auto my-8"
+          className="image-editor-modal relative w-full max-w-[90vw] mx-auto my-8 animate-modal-slide"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Modal Content - uses your custom .image-editor-modal CSS */}
@@ -685,6 +685,33 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Inline Animation Styles */}
+      <style jsx global>{`
+        @keyframes backdropFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes modalSlide {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        .animate-backdrop-fade {
+          animation: backdropFade 0.2s ease-out;
+        }
+        
+        .animate-modal-slide {
+          animation: modalSlide 0.3s ease-out;
+        }
+      `}</style>
     </>
   )
 }

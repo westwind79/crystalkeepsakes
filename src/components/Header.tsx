@@ -61,20 +61,25 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-20 bg-[var(--brand-900)]/99 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
             {/* LOGO / BRAND */}
             <Link 
               href="/" 
-              className="hover:text-brand-400 transition-colors no-underline flex-shrink-0"
+              className="flex justify-center gap-3 transition-colors no-underline flex-shrink-0"
             >
-              <div className="brand-text">
-                <div className="text-white text-xl lg:text-2xl font-bold tracking-wider">
+              <div className="brand-img"> 
+                <svg id="Layer_1" className="xs:w-12 sm:w-12 md:w-12 lg:w-15" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92.93 84.163">
+                  <polygon points="24.753 84.163 0 71.889 28.032 81.483 7.453 58.266 32.67 77.845 18.076 47.813 39.35 75.565 30.941 39.241 44.686 75.868 47.965 0 51.245 75.868 64.99 39.241 55.58 75.565 77.854 46.813 63.26 77.845 87.477 59.266 67.898 81.483 92.93 71.889 71.178 84.163 24.753 84.163" fill="#72b01d"/>
+                </svg>
+              </div>
+              <div className="">
+                <div className="text-white hover:text-none text-xl md:text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
                   CRYSTALKEEPSAKES
                 </div>
-                <div className="text-xs lg:text-sm text-brand-400 font-light tracking-[2px] mt-0.5">
+                <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px] text-shadow-xs">
                   LIGHT. LASER. LOVE.
                 </div>
               </div>
@@ -82,18 +87,16 @@ export default function Header() {
 
             {/* DESKTOP NAVIGATION */}
             <div className="hidden lg:flex items-center gap-1">
-              <ul className="flex items-center gap-2 m-0 p-0 list-none">
+              <ul className="flex items-center gap-1 m-0 p-0 list-none px-4">
                 {navItems.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       className={`overflow-hidden
-                        group relative block px-4 py-2 
+                        group relative block px-6 pt-2 pb-3 
                         uppercase text-sm font-medium tracking-wide 
-                        transition-colors duration-300 no-underline
-                        ${isActive(item.href) 
-                          ? 'text-brand-500' 
-                          : 'text-gray-300 hover:text-brand-400'
+                        transition-colors duration-200 no-underline
+                        ${isActive(item.href) ? 'text-[var(--surface-50)] cursor-default disable' : 'text-[var(--brand-350)] hover:text-[var(--brand-100)]'
                         }
                       `}
                     >
@@ -102,11 +105,11 @@ export default function Header() {
                       <span 
                         className={`
                           absolute left-1/2 -bottom-0 h-[1px] 
-                          bg-brand-500 transition-all duration-300
+                          bg-[var(--brand-400)] transition-all duration-200
                           -translate-x-1/2
                           ${isActive(item.href) 
-                            ? 'w-full shadow-[0_10px_25px_8px_#acf213]' 
-                            : 'w-0 group-hover:w-full group-hover:shadow-[0_12px_25px_8px_#acf213]'
+                            ? 'w-full shadow-[0_10px_25px_8px_var(--brand-350)]' 
+                            : 'w-0 group-hover:w-full group-hover:shadow-[0_12px_25px_8px_var(--brand-350)]'
                           }
                         `}
                       />
@@ -123,12 +126,12 @@ export default function Header() {
             <div className="flex lg:hidden items-center gap-3">            
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="
+                className="cursor-pointer
                   w-10 h-10 flex flex-col justify-center items-center gap-1
-                  bg-brand-400 rounded border-0 
-                  hover:bg-brand-500 transition-colors
-                  focus:outline-none focus:ring-2 focus:ring-brand-400 
-                  focus:ring-offset-2 focus:ring-offset-black
+                  bg-[var(--brand-800)] rounded border-0 
+                  hover:bg-[var(--brand-350)] transition-colors
+                  focus:outline-none focus:ring-1 focus:ring-[var(--brand-350)] 
+                  focus:ring-offset-1 focus:ring-offset-[var(--brand-350)]
                 "
                 type="button"
                 aria-label="Toggle navigation"
@@ -150,7 +153,7 @@ export default function Header() {
                 <span 
                   className={`
                     block w-6 h-0.5 bg-white transition-all duration-300
-                    ${isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''}
+                    ${isMobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''}
                   `}
                 />
               </button>
@@ -162,17 +165,16 @@ export default function Header() {
       {/* MOBILE MENU OVERLAY - Backdrop */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-998 lg:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden="true"
         />
       )}
-
-      {/* MOBILE MENU PANEL - Slide from right */}
+{/* MOBILE MENU PANEL - Slide from right */}
       <div 
         className={`
           fixed top-0 right-0 bottom-0 w-[300px] 
-          bg-gray-900 z-50 lg:hidden
+          bg-gray-900 z-999 lg:hidden
           transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
           shadow-[-5px_0_15px_rgba(0,0,0,0.5)]
@@ -183,13 +185,13 @@ export default function Header() {
         aria-labelledby="mobile-menu-title"
       >
         {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gray-800">
-          <h2 
+        <div className="flex items-center justify-between px-6 py-2 border-b border-gray-700 bg-gray-800">
+          <p 
             id="mobile-menu-title"
             className="text-xl font-semibold text-white m-0 uppercase tracking-wider"
           >
             Menu
-          </h2>
+          </p>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="
@@ -218,7 +220,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Body */}
-        <div className="p-6">
+        <div className="p-3 sm:p-4">
           <nav>
             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
               {navItems.map((item) => (
@@ -232,8 +234,8 @@ export default function Header() {
                       transition-all duration-300 no-underline
                       border-l-4
                       ${isActive(item.href) 
-                        ? 'text-brand-300 bg-brand-500/10 border-l-brand-400' 
-                        : 'text-gray-300 border-l-transparent hover:text-white hover:bg-gray-800/50 hover:translate-x-2'
+                        ? 'text-[var(--brand-300)] bg-[var(--brand-350)]/10 border-l-[var(--brand-400)] hover:border-l-[var(--brand-350)]' 
+                        : 'text-gray-300 border-l-transparent hover:text-white hover:bg-[var(--brand-400)]/50 hover:translate-x-2  hover:border-l-[var(--brand-300)]'
                       }
                     `}
                   >
@@ -245,13 +247,14 @@ export default function Header() {
           </nav>
 
           {/* Cart Section in Mobile Menu */}
-          <div className="mt-8 pt-6 border-t border-gray-700">
+          <div className="mt-2 pt-3 border-t border-gray-700">
             <div className="px-4">
               <CartIcon />
             </div>
           </div>
         </div>
       </div>
+      
     </>
   )
 }

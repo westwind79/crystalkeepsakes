@@ -29,45 +29,89 @@ function OrderConfirmationContent() {
     try {
       setLoading(true)
       
-      logger.info('Verifying payment', { sessionId })
+      logger.info('Verifying payment and processing order', { sessionId })
+      console.log('🔍 [ORDER CONFIRMATION] Starting verification for session:', sessionId)
 
-      // Poll for payment status
-      const maxAttempts = 5
-      const pollInterval = 2000
-      
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        try {
-          // In a real implementation, you'd call your backend to verify with Stripe
-          // For now, we'll assume success if we have a session ID
-          
-          // Wait between attempts
-          if (attempt > 0) {
-            await new Promise(resolve => setTimeout(resolve, pollInterval))
-          }
-          
-          // Simulate verification (replace with actual API call)
-          setOrderDetails({
-            orderNumber: `CK-${Date.now()}`,
-            sessionId: sessionId,
-            status: 'complete',
-            message: 'Your order has been confirmed!'
+      // Get pending order data from sessionStorage
+      let pendingOrder: any = null
+      try {
+        const storedOrder = sessionStorage.getItem('pendingOrder')
+        if (storedOrder) {
+          pendingOrder = JSON.parse(storedOrder)
+          console.log('📥 [ORDER CONFIRMATION] Retrieved Pending Order:', {
+            orderNumber: pendingOrder.orderNumber,
+            itemCount: pendingOrder.cartItems?.length,
+            customer: pendingOrder.customer,
+            hasShippingInfo: !!pendingOrder.shippingInfo
           })
-          
-          // Clear the cart after successful order
-          await clearCart()
-          logger.success('Order confirmed, cart cleared')
-          
-          setLoading(false)
-          return
-          
-        } catch (err) {
-          if (attempt === maxAttempts - 1) {
-            throw err
+          logger.info('Retrieved pending order', { orderNumber: pendingOrder.orderNumber })
+        }
+      } catch (e) {
+        console.warn('⚠️ [ORDER CONFIRMATION] No pending order found in sessionStorage')
+        logger.warn('No pending order found in sessionStorage')
+      }
+
+      // Generate order number
+      const orderNumber = pendingOrder?.orderNumber || `CK-${Date.now()}`
+      console.log('🔢 [ORDER CONFIRMATION] Order Number:', orderNumber)
+      
+      // Process the order (Cockpit3D + Email)
+      if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
+        try {
+          const orderPayload = {
+            orderNumber,
+            cartItems: pendingOrder.cartItems,
+            customer: pendingOrder.customer,
+            shippingInfo: pendingOrder.shippingInfo,
+            paymentIntentId: sessionId,
+            stripeSessionId: sessionId,
+            receipt_email: pendingOrder.receipt_email
           }
+          
+          console.log('📤 [ORDER CONFIRMATION] Sending to /api/process-order')
+          console.log('📤 [ORDER CONFIRMATION] Payload:', JSON.stringify(orderPayload, null, 2))
+          logger.info('Processing order with Cockpit3D and email notification')
+          
+          const processResponse = await fetch('/api/process-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderPayload)
+          })
+
+          const processResult = await processResponse.json()
+          console.log('📨 [ORDER CONFIRMATION] API Response:', JSON.stringify(processResult, null, 2))
+          logger.info('Order processing result', processResult)
+
+          if (!processResult.success) {
+            logger.warn('Order processing had issues', processResult)
+          } else {
+            logger.success('Order processed successfully', {
+              orderNumber,
+              cockpit3d: processResult.cockpit3d?.submitted,
+              email: processResult.email?.sent
+            })
+          }
+
+        } catch (processError: any) {
+          logger.error('Order processing failed', processError)
+          // Continue anyway - order was paid
         }
       }
+
+      // Set order details for display
+      setOrderDetails({
+        orderNumber,
+        sessionId: sessionId,
+        status: 'complete',
+        message: 'Your order has been confirmed!'
+      })
       
-      throw new Error('Payment verification timed out')
+      // Clear the cart and sessionStorage after successful order
+      await clearCart()
+      sessionStorage.removeItem('pendingOrder')
+      logger.success('Order confirmed, cart cleared')
+      
+      setLoading(false)
       
     } catch (err: any) {
       logger.error('Payment verification error', err)
@@ -142,15 +186,14 @@ function OrderConfirmationContent() {
           {/* Order Details */}
           {orderDetails && (
             <div className="border-t border-gray-200 pt-6 mb-6">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500 mb-1">Order Number</p>
-                  <p className="font-semibold text-gray-900">{orderDetails.orderNumber}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500 mb-1">Session ID</p>
-                  <p className="font-mono text-xs text-gray-600">{orderDetails.sessionId}</p>
-                </div>
+                  <p className="text-gray-500 text-lg mb-1">Order Number</p>
+                  <p className="font-semibold tex-12 text-lg text-gray-900">{orderDetails.orderNumber}</p>
+                  <hr className="my-3 text-[var(--brand-200)]/65"/>
+                  <p className="text-gray-500 text-lg mb-1">Session ID</p>
+                  <p className="font-mono text-xs text-gray-600 truncate">{orderDetails.sessionId}</p>
+                </div> 
               </div>
             </div>
           )}
@@ -177,6 +220,12 @@ function OrderConfirmationContent() {
                 </svg>
                 <span>We'll send shipping updates to your email</span>
               </li>
+              <li className="flex items-start">
+                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Any problems or need help with your order contact: orders@crystalkeepsakes.com</span>
+              </li>
             </ul>
           </div>
 
@@ -184,7 +233,7 @@ function OrderConfirmationContent() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/products"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
+              className="px-8 py-3 bg-[var(--brand-500)] text-white rounded-lg hover:bg-[var(--brand-400)] transition-colors text-center font-medium"
             >
               Continue Shopping
             </Link>

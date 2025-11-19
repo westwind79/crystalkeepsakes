@@ -1,99 +1,178 @@
-// components/ProductCard.tsx
+// ProductCard component with corrected pricing logic
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { addToCart as addToCartUtil } from '@/lib/cartUtils'
+import { logger } from '@/utils/logger'
+import { assetPath } from '@/lib/assetPath'
+import { isOnSale, isFeaturedProduct, isLightbaseProduct } from '@/utils/categoriesConfig'
+import { getDisplayPrice } from '@/utils/pricingUtils'
 
-export default function ProductCard({ product }) {
-  const [imageSrc, setImageSrc] = useState(
-    product.images?.[0]?.src || 'https://placehold.co/800x800?text=No+Image'
-  )
-  const [hasTriedFallback, setHasTriedFallback] = useState(false)
+interface ProductCardProps {
+  product: any
+}
 
-  const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
+export default function ProductCard({ product }: ProductCardProps) {
+  const router = useRouter()
+  const [addingToCart, setAddingToCart] = useState(false)
+  
+  // Use shared utility functions from categoriesConfig
+  const onSale = isOnSale(product)
+  const isFeatured = isFeaturedProduct(product)
+  const isLightbase = isLightbaseProduct(product)
 
-  // Try different image extensions if one fails
-  const tryNextExtension = async () => {
-    if (hasTriedFallback || !product.images?.[0]) return
+  // Get display price using centralized pricing utility
+  const priceInfo = getDisplayPrice(product)
 
-    const extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']
-    const baseInfo = product.images[0]
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     
-    // Extract path without extension
-    const matches = baseInfo.src.match(/\/cockpit3d\/(\d+)\/cockpit3d_(\d+)_(.+)\.([^.]+)$/)
-    if (!matches) return
+    if (product.sizes && product.sizes.length > 0) {
+      router.push(`/products/${product.slug}`)
+      return
+    }
     
-    const [, productId, , baseName] = matches
-    const basePath = `/img/products/cockpit3d/${productId}/cockpit3d_${productId}_${baseName}`
+    if (product.requiresImage) {
+      router.push(`/products/${product.slug}`)
+      return
+    }
     
-    // Try all extensions
-    for (const ext of extensions) {
-      const testPath = `${basePath}.${ext}`
-      try {
-        await new Promise((resolve, reject) => {
-          const img = new window.Image()
-          img.onload = () => {
-            setImageSrc(testPath)
-            setHasTriedFallback(true)
-            resolve()
-          }
-          img.onerror = reject
-          img.src = testPath
-        })
-        return
-      } catch (error) {
-        if (isDev) {
-          console.log(`❌ Failed to load ${testPath}`)
-        }
+    setAddingToCart(true)
+    
+    try {
+      const lineItem = {
+        lineItemId: `line_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        productId: String(product.id),
+        cockpit3d_id: product.cockpit3d_id || String(product.id),
+        name: product.name,
+        sku: product.sku,
+        basePrice: priceInfo.min,
+        optionsPrice: 0,
+        totalPrice: priceInfo.min,
+        quantity: 1,
+        options: [],
+        productImage: product.images?.[0]?.src || null,
+        dateAdded: new Date().toISOString(),
+        lastModified: new Date().toISOString()
       }
+      
+      await addToCartUtil(lineItem)
+      logger.success('Added to cart from product card')
+      
+      window.dispatchEvent(new Event('cartUpdated'))
+      
+      setTimeout(() => {
+        setAddingToCart(false)
+        router.push('/cart')
+      }, 500)
+    } catch (error) {
+      console.error('❌ [ADD TO CART] Error:', error)
+      logger.error('Failed to add to cart', error)
+      setAddingToCart(false)
+      alert('Failed to add item to cart. Please try again.')
     }
-  }
-
-  const handleImageError = () => {
-    if (isDev) {
-      console.log(`❌ Image failed: ${imageSrc}`)
-    }
-    tryNextExtension()
   }
 
   return (
-    <div className="crystal-product">
-      <Link 
-        href={`/products/${product.slug}`}
-        className="crystal-product-image"
-      >
-        <div style={{ position: 'relative', width: '100%', height: '300px' }}>
-          <Image
-            src={imageSrc}
+    <Link
+      href={`/products/${product.slug}`}
+      className="group block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-[#72B01D] cursor-pointer"
+    >
+      {/* Badges */}
+      <div className="relative"> 
+          {isFeatured && (
+            <>
+            <div className="absolute right-2 bottom-2 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+                <svg 
+                  className="w-4 h-4" 
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span>Featured</span>
+            </div>
+            {/*<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 shadow-lg">
+              ⭐ FEATURED
+            </span>*/}
+            </>
+          )}
+          {onSale && (
+            <>
+            <div className="absolute top-0 right-10 z-2">
+              <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
+            </div>
+            {/*<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
+              🔥 SALE
+            </span>*/}
+            </>
+          )} 
+
+        {/* Image */}
+        <div className="aspect-square overflow-hidden bg-gray-50">
+          <img
+            src={assetPath(product.images?.find((img: any) => img.isMain)?.src || product.images?.[0]?.src || 'https://placehold.co/400x400?text=No+Image')}
             alt={product.name}
-            fill
-            style={{ objectFit: 'cover' }}
-            onError={handleImageError}
-            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-      </Link>
-      
-      <div className="crystal-product-info">
-        <h3>
-          <Link href={`/products/${product.slug}`}>
-            {product.name}
-          </Link>
-        </h3>
-        <p>{product.shortDescription || product.description}</p>
-
-        <div className="crystal-product-price">
-          From ${product.basePrice?.toFixed(2) || '0.00'}
-        </div>
-
-        <Link 
-          href={`/products/${product.slug}`}
-          className="btn btn-primary"
-        >
-          Customize Item
-        </Link>
       </div>
-    </div>
+
+      {/* Content */}
+      <div className="p-5">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#72B01D] transition-colors">
+          {product.name}
+        </h3>
+        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+          {product.shortDescription || product.description}
+        </p>
+        
+        {/* Show size count if product has sizes */}
+        {product.sizes && product.sizes.length > 0 && (
+          <p className="text-xs text-gray-500 mb-3">
+            📏 {product.sizes.filter((s: any) => s.enabled !== false).length} sizes available
+          </p>
+        )}
+
+        <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+          <div className="flex flex-col">
+            {onSale && (product.salePercent || product.salePrice) ? (
+              <>
+                <span className="text-2xl font-medium text-[#72B01D]">
+                  ${priceInfo.min.toFixed(2)}
+                </span>
+                <span className="text-sm text-gray-500 line-through">
+                  ${priceInfo.originalMin?.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <span className="text-2xl font-medium text-[#72B01D]">
+                ${priceInfo.min.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          {!isLightbase && (             
+            <span className="text-sm font-medium text-[#72B01D] group-hover:text-[#5A8E17] transition-colors">
+              Customize →
+            </span>
+          )}
+          {isLightbase && (             
+            <span
+                type="button"
+               // onClick={handleAddToCart}
+                // disabled={addingToCart}
+                className="cursor-pointer px-4 py-2 bg-[#72B01D] hover:bg-[#5A8E17] text-white text-sm font-semibold rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {/* {addingToCart ? 'Adding...' : 'Add to Cart'} */}
+                Add to Cart
+              </span>
+          )}
+        </div>
+      </div>
+    </Link>
   )
 }

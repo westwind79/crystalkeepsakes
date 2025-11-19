@@ -85,15 +85,13 @@ export default function CartIcon() {
     return (
       <Link 
         href="/cart" 
-        className="relative d-inline-flex align-items-center"
+        className="text-[var(--brand-400)] relative d-inline-flex align-items-center"
         style={{
-          color: '#ffffff',
-          textDecoration: 'none',
           padding: '8px 12px',
           transition: 'all 0.2s ease'
         }}
       >
-        <ShoppingCart size={24} className="text-white" />
+        <ShoppingCart size={24} className="text-[var(--brand-400)]" />
       </Link>
     )
   }
@@ -103,9 +101,8 @@ export default function CartIcon() {
   return (
     <Link 
       href="/cart" 
-      className="relative d-inline-flex align-items-center"
-      style={{
-        color: '#ffffff',
+      className="text-[var(--brand-400)] relative d-inline-flex align-items-center"
+      style={{ 
         textDecoration: 'none',
         padding: '8px 12px',
         transition: 'all 0.2s ease'
