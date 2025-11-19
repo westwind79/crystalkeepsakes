@@ -627,7 +627,6 @@ export default function ProductDetailClient() {
                         <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
                       </div>
                     )}
-
                   </div>
                 ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
