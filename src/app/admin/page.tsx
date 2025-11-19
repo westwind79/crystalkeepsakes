@@ -534,9 +534,33 @@ export default finalProductList;
                 <p className="text-lg font-semibold text-gray-900">
                   Products ({sourceProducts.length})
                 </p>
+                {/* Stats */}
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-green-100 px-2 py-1 rounded">
+                    <span className="font-bold text-green-700">👁️ Visible:</span> {getStats().visible}
+                  </div>
+                  <div className="bg-gray-100 px-2 py-1 rounded">
+                    <span className="font-bold text-gray-700">🚫 Hidden:</span> {getStats().hidden}
+                  </div>
+                  <div className="bg-yellow-100 px-2 py-1 rounded">
+                    <span className="font-bold text-yellow-700">⭐ Featured:</span> {getStats().featured}
+                  </div>
+                  <div className="bg-red-100 px-2 py-1 rounded">
+                    <span className="font-bold text-red-700">💰 On Sale:</span> {getStats().onSale}
+                  </div>
+                  <div className="bg-blue-100 px-2 py-1 rounded col-span-2">
+                    <span className="font-bold text-blue-700">📸 Requires Image:</span> {getStats().requiresImage}
+                  </div>
+                </div>
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
-                {sourceProducts.map((product) => (
+                {sourceProducts.map((product) => {
+                  const productData = { ...product, ...(editedProducts[product.id] || {}) };
+                  const isVisible = productData.visible !== false;
+                  const isFeatured = productData.featured === true;
+                  const isOnSale = productData.sale === true || productData.salePrice || productData.salePercent;
+                  
+                  return (
                   <button
                     key={product.id}
                     onClick={() => setSelectedProduct(product)}
