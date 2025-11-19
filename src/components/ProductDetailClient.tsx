@@ -607,11 +607,11 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
-                  <> 
+                  <div className="relative">
                     <ProductGallery images={product.images} />
-                     {/* Featured Badge */}
+                    {/* Badges - Same as ProductCard */}
                     {isFeaturedProduct(product) && (
-                      <div className="absolute left-4 top-4 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+                      <div className="absolute right-2 bottom-2 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
                         <svg 
                           className="w-4 h-4" 
                           fill="currentColor" 
@@ -622,12 +622,10 @@ export default function ProductDetailClient() {
                         <span>Featured</span>
                       </div>
                     )}
-
-                    {/* On Sale Badge */}
                     {isOnSale(product) && (
-                    <div className="absolute top-0 right-12 z-10">
-                      <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase z-10">Sale</span>
-                    </div>
+                      <div className="absolute top-0 right-10 z-2">
+                        <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
+                      </div>
                     )}
 
                     {/* Lightbase Badge */}
