@@ -1,169 +1,279 @@
-# Deployment Guide: crystalkeepsakes.com/test
+# CrystalKeepsakes Deployment Guide
 
-## Server Directory Structure
+## Overview
 
-```
-/public_html/crystalkeepsakes/
-├── .env                          # PHP environment variables (create manually)
-└── test/                         # Upload entire 'out' folder here
-    ├── .htaccess
-    ├── index.html
-    ├── _next/
-    ├── api/                      # PHP backend (included in build)
-    │   └── stripe/
-    │       ├── create-checkout-session.php
-    │       └── (other PHP files)
-    ├── products/
-    ├── cart/
-    └── (all built files)
-```
+This guide covers deploying to:
+1. **Test Environment** - https://crystalkeepsakes.com/test/ (password-protected)
+2. **Production** - https://crystalkeepsakes.com/ (live site)
 
-## Deployment Steps
+---
 
-### 1. Build the Site Locally
+## 🧪 Test Environment Deployment
 
-```bash
-cd /app
-./deploy-to-test.sh
-```
+### Purpose
+Password-protected staging site for testing before going live.
 
-This creates the `out` folder with all static files.
+### Configuration
 
-### 2. Upload Files via FTP/SFTP
-
-**Upload Everything from 'out' folder:**
-```
-Local: ./out/*
-Server: /public_html/crystalkeepsakes/test/
-```
-
-The build automatically includes:
-- All Next.js static files
-- PHP backend in `out/api/`
-- .htaccess file
-
-So you only upload ONE folder!
-
-### 3. Create Server .env File
-
-Create `/public_html/crystalkeepsakes/.env` with:
+**File**: `.env.production.test`
 
 ```env
-STRIPE_SECRET_KEY=sk_test_51RRRxxxxxx
-STRIPE_DEVELOPMENT_SECRET_KEY=sk_test_51RRRxxxxxx
-COCKPIT3D_RETAILER_ID=256568874
-NEXT_PUBLIC_ENV_MODE=production
+NODE_ENV=production
+NEXT_PUBLIC_BASE_PATH=/test
+NEXT_PUBLIC_BASE_URL=https://crystalkeepsakes.com/test
+
+# Test Environment Password
+NEXT_PUBLIC_TEST_PASSWORD=TestAccess2025
+
+# Use TEST Stripe keys
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+
+# Use TEST Cockpit3D credentials
+COCKPIT3D_USERNAME=test_username
+COCKPIT3D_PASSWORD=test_password
 ```
 
-### 4. Set File Permissions
+### Build Command
 
 ```bash
-# PHP files need execute permissions
-chmod 755 /public_html/crystalkeepsakes/api/stripe/*.php
-
-# .env should be protected
-chmod 600 /public_html/crystalkeepsakes/.env
+npm run build:test
 ```
 
-### 5. Verify PHP Backend
+This will:
+- Build Next.js with `/test` base path
+- Enable password protection
+- Use TEST API keys
+- Copy PHP files to `/out/test/`
+- Generate static export in `/out/` directory
 
-Test the PHP endpoint:
+### Upload to Server
+
+Upload the contents of `/out/` to your server:
+
 ```bash
-curl https://crystalkeepsakes.com/api/stripe/create-checkout-session.php \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"test":true}'
+# Via FTP/SFTP: Upload /out/ contents to public_html/
+# Result: Files will be at public_html/test/
+
+# Or via rsync:
+rsync -avz --delete out/ user@crystalkeepsakes.com:~/public_html/
 ```
 
-Should return JSON (not HTML 404).
+### Server Structure (After Upload)
 
-### 6. Test the Site
+```
+public_html/
+├── test/                          # Test environment
+│   ├── _next/                     # Next.js assets
+│   ├── api/                       # PHP files
+│   │   ├── contact.php
+│   │   └── send-order-notification.php
+│   ├── index.html
+│   └── [other pages]
+└── [production files]
+```
 
-Visit: https://crystalkeepsakes.com/test
+### Access Test Site
 
-**Test checklist:**
-- [ ] Homepage loads
-- [ ] Products page loads
-- [ ] Product detail page loads
-- [ ] Can add to cart
-- [ ] Cart displays correctly
-- [ ] Custom text works
-- [ ] Images upload and display
-- [ ] Checkout button works
-- [ ] Redirects to Stripe
-- [ ] Can complete test payment
+1. **URL**: https://crystalkeepsakes.com/test/
+2. **Password**: `TestAccess2025` (or whatever you set in `.env.production.test`)
+3. **Login Page**: Automatically shown on first visit
+4. **Session**: Cookie lasts 24 hours
 
-## Troubleshooting
+### Email Behavior (Test)
+- Uses **PHP mail()** (production-like)
+- Sends to real email addresses
+- No Mailhog
 
-### Issue: 404 Errors on Subfolder Routes
+---
 
-**Solution:** Check .htaccess RewriteBase is set to `/test/`
+## 🚀 Production Deployment
 
-### Issue: PHP Backend Returns 404
+### Purpose
+Live site for customers.
 
-**Causes:**
-1. PHP files not uploaded to correct location
-2. .htaccess blocking .php files
-3. PHP not enabled on server
+### Configuration
 
-**Check:**
+**File**: `.env.production.root`
+
+```env
+NODE_ENV=production
+NEXT_PUBLIC_BASE_PATH=
+NEXT_PUBLIC_BASE_URL=https://crystalkeepsakes.com
+
+# Use LIVE Stripe keys
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_SECRET_KEY=sk_live_...
+
+# Use PRODUCTION Cockpit3D credentials
+COCKPIT3D_USERNAME=production_username
+COCKPIT3D_PASSWORD=production_password
+```
+
+### Build Command
+
 ```bash
-# Test PHP is working
-curl https://crystalkeepsakes.com/api/stripe/create-checkout-session.php
+npm run build:prod
 ```
 
-### Issue: Assets (CSS/JS) Not Loading
+This will:
+- Build Next.js with NO base path (root)
+- NO password protection
+- Use LIVE API keys
+- Copy PHP files to `/out/`
+- Generate static export in `/out/` directory
 
-**Causes:**
-1. NEXT_PUBLIC_BASE_PATH not set during build
-2. Files uploaded to wrong directory
+### Upload to Server
 
-**Fix:** Rebuild with correct .env.production.test file
+```bash
+# IMPORTANT: Back up existing site first!
+# Then upload /out/ contents to public_html/
 
-### Issue: Stripe Checkout Fails
+# Via FTP/SFTP: Upload /out/ contents to public_html/
+# Result: Files will be at public_html/ (root)
 
-**Causes:**
-1. STRIPE_SECRET_KEY not set in server .env
-2. PHP backend URL incorrect in frontend
+# Or via rsync:
+rsync -avz --delete out/ user@crystalkeepsakes.com:~/public_html/
+```
 
-**Check:**
-- Frontend calls: `https://crystalkeepsakes.com/api/stripe/create-checkout-session.php`
-- PHP .env has valid Stripe key
+### Server Structure (After Upload)
 
-### Issue: Images Don't Display
+```
+public_html/
+├── _next/                         # Next.js assets
+├── api/                           # PHP files
+│   ├── contact.php
+│   └── send-order-notification.php
+├── products/
+├── cart/
+├── checkout/
+├── index.html
+└── [other pages and directories]
+```
 
-**Check:**
-1. Image paths in database/static files
-2. Server has images in `/public_html/crystalkeepsakes/test/img/`
+### Email Behavior (Production)
+- Uses **PHP mail()** function
+- Sends to real email addresses
+- Routes based on topic:
+  - Orders → orders@crystalkeepsakes.com
+  - Support → support@crystalkeepsakes.com
+  - General → info@crystalkeepsakes.com
 
-## URLs Reference
+---
 
-**Frontend (Static Site):**
-- Homepage: `https://crystalkeepsakes.com/test/`
-- Products: `https://crystalkeepsakes.com/test/products/`
-- Cart: `https://crystalkeepsakes.com/test/cart/`
-- Checkout: `https://crystalkeepsakes.com/test/checkout-hosted/`
+## 📋 Pre-Deployment Checklist
 
-**Backend (PHP):**
-- Stripe Checkout: `https://crystalkeepsakes.com/api/stripe/create-checkout-session.php`
-- Cockpit3D Data: `https://crystalkeepsakes.com/api/cockpit3d-data-fetcher.php`
+### Before Building (Test or Production)
 
-## Production Deployment (When Ready)
+- [ ] Update `.env.production.test` or `.env.production.root` with real credentials
+- [ ] Verify Stripe keys (test vs live)
+- [ ] Verify Cockpit3D credentials
+- [ ] Verify email addresses
+- [ ] Test locally if possible
+- [ ] Review admin panel settings (if using `/admin`)
 
-To deploy to `https://crystalkeepsakes.com/`:
+### After Upload
 
-1. Update `.env.production`:
-   ```env
-   NEXT_PUBLIC_BASE_PATH=
-   NEXT_PUBLIC_PHP_BACKEND_URL=https://crystalkeepsakes.com
-   ```
+- [ ] Test contact form
+- [ ] Test product browsing
+- [ ] Test add to cart
+- [ ] Test checkout flow (use test card: 4242 4242 4242 4242)
+- [ ] Verify order emails arrive
+- [ ] Check all pages load correctly
+- [ ] Test on mobile devices
+- [ ] Check browser console for errors
 
-2. Build:
-   ```bash
-   cp .env.production .env.production.local
-   yarn build
-   ```
+---
 
-3. Upload `out/*` to `/public_html/crystalkeepsakes/`
+## 🔑 API Keys & Credentials
 
-4. Update Stripe keys to live keys in server .env
+### Stripe
+
+**Test Keys** (for /test/ environment):
+- Get from: https://dashboard.stripe.com/test/apikeys
+- Publishable Key: `pk_test_...`
+- Secret Key: `sk_test_...`
+- Test Card: 4242 4242 4242 4242
+
+**Live Keys** (for production):
+- Get from: https://dashboard.stripe.com/apikeys
+- Publishable Key: `pk_live_...`
+- Secret Key: `sk_live_...`
+
+### Cockpit3D
+
+Contact your Cockpit3D account manager for:
+- API Base URL: https://api.cockpit3d.com
+- Test Username/Password
+- Production Username/Password
+
+---
+
+## 🐛 Troubleshooting
+
+### Test Password Not Working
+- Check `.env.production.test` has `NEXT_PUBLIC_TEST_PASSWORD` set
+- Rebuild: `npm run build:test`
+- Clear browser cookies and try again
+
+### Email Not Sending
+- Verify PHP `mail()` function is enabled on server
+- Check email addresses in `.env.production.test` or `.env.production.root`
+- Check server email logs (ask hosting provider)
+
+### Pages Return 404
+- Ensure you uploaded to correct directory
+- Check `.htaccess` file exists in root
+- Verify basePath in build matches URL structure
+
+### Stripe Not Working
+- Verify you're using correct keys (test vs live)
+- Check Stripe Dashboard for errors
+- Ensure webhook URL is configured
+
+---
+
+## 📁 Important Files
+
+### Environment Files
+- `.env.local` - Development (Mailhog)
+- `.env.production.test` - Test environment
+- `.env.production.root` - Production
+
+### Build Outputs
+- `/out/` - Static export directory
+- `/out/test/` - Test build (if using build:test)
+
+### PHP Files (Copied during build)
+- `/public/api/contact.php`
+- `/api/cockpit3d/send-order-notification.php`
+
+### Scripts
+- `scripts/copy-api.js` - Copies PHP files
+- `scripts/copy-env.js` - Copies environment files
+- `scripts/prepare-production.sh` - Production prep
+
+---
+
+## 🔄 Updating After Initial Deployment
+
+### Quick Updates (Content/Styles)
+1. Make changes
+2. Run build command
+3. Upload changed files only
+
+### Full Redeploy
+1. Run full build: `npm run build:test` or `npm run build:prod`
+2. Upload entire `/out/` directory
+3. Test site
+
+---
+
+## 📞 Support
+
+If you encounter issues:
+1. Check browser console for errors
+2. Check server error logs
+3. Verify all environment variables are set
+4. Test in incognito/private mode
+5. Contact hosting provider for server issues

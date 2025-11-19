@@ -1,18 +1,83 @@
 import type { Metadata } from 'next'
+import { Cinzel, Open_Sans } from 'next/font/google'
 import './globals.css'
+import './css/variables.css'
+import './css/navigation.css'
+import './css/modal.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import DebugOverlay from '@/components/DebugOverlay'
+import { assetPath } from '@/lib/assetPath'
+
+// Font Theme: Option 3 - Refined Luxury
+const cinzel = Cinzel({ 
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-heading',
+  display: 'swap',
+})
+
+const openSans = Open_Sans({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NODE_ENV === 'production' 
-      ? 'https://crystalkeepsakes.com' 
-      : 'http://localhost:3000'
-  ),
-  title: 'CrystalKeepsakes - Custom 3D Crystal Engravings',
-  description: 'Premium custom engraving services. Transform your memories into beautiful crystal keepsakes with precision laser engraving.',
-  keywords: 'crystal engraving, custom crystals, laser engraving, personalized gifts, keepsakes',
-  robots: 'index follow',
+  metadataBase: new URL('https://crystalkeepsakes.com'),
+  title: {
+    default: 'CrystalKeepsakes - Premium 3D Crystal Photo Gifts & Personalized Keepsakes',
+    template: '%s | CrystalKeepsakes'
+  },
+  description: 'Transform your cherished memories into stunning 3D laser-engraved crystal keepsakes. Premium personalized gifts for weddings, memorials, pets, and special occasions. Custom photo crystals with FREE design preview.',
+  keywords: ['3D crystal photo', 'personalized crystal gifts', 'laser engraved crystals', '3D photo crystals', 'custom crystal keepsakes', 'memorial crystals', 'wedding gifts', 'pet memorial crystals', 'personalized gifts'],
+  authors: [{ name: 'CrystalKeepsakes' }],
+  creator: 'CrystalKeepsakes',
+  publisher: 'CrystalKeepsakes',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://crystalkeepsakes.com',
+    siteName: 'CrystalKeepsakes',
+    title: 'CrystalKeepsakes - Premium 3D Crystal Photo Gifts',
+    description: 'Transform your cherished memories into stunning 3D laser-engraved crystal keepsakes. Custom personalized gifts for every occasion.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'CrystalKeepsakes - 3D Crystal Photo Gifts',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CrystalKeepsakes - Premium 3D Crystal Photo Gifts',
+    description: 'Transform your cherished memories into stunning 3D laser-engraved crystal keepsakes.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // Add your verification codes when ready
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
+  },
 }
 
 export default function RootLayout({
@@ -20,52 +85,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-
-  // Get environment mode for development indicator
-  const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development';
-  const isDevelopment = envMode === 'development';
-  const isTesting = envMode === 'testing';
-  
-  // Console log for development tracking
-  if (typeof window !== 'undefined' && (isDevelopment || isTesting)) {
-    console.log('🏠 Layout loaded:', {
-      environment: envMode,
-      timestamp: new Date().toISOString(),
-      page: 'layout'
-    });
-  }
-
   return (
     <html lang="en">
-      <body className={isDevelopment || isTesting ? "dev-mode" : ""}>
-
-        {/* Development/Testing mode indicator */}
-        {(isDevelopment || isTesting) && (
-          <div className="dev-mode-alert">
-            {envMode.toUpperCase()} MODE
-          </div>
-        )}
-        
-        {/* Global Header - appears on all pages */}
+      <head>
+        <link rel="canonical" href="https://crystalkeepsakes.com" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className={`${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
         <Header />
-        
-        {/* Main content - this is where page content goes */}
-        <main id="main-content">
-          {children}
-        </main>
-        
-        {/* Global Footer - appears on all pages */}
+        <main>{children}</main>
         <Footer />
-        
-        {/* Development debug info */}
-        {/*{isDevelopment && (
-          <div className="fixed bottom-[10%] left-2.5 bg-black/80 text-brand-500 p-2.5 rounded text-xs max-w-[250px]">
-            <strong className="text-red-600">Debug Info:</strong><br />
-            Environment: {envMode}<br />
-            Timestamp: {new Date().toISOString()}<br />
-            Layout rendered successfully
-          </div>
-        )}*/}
+        <DebugOverlay />
       </body>
     </html>
   )

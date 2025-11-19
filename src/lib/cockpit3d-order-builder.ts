@@ -82,6 +82,14 @@ export function buildCockpit3DOrder(
   customer?: CustomerInfo,
   retailerId?: string
 ): Cockpit3DOrder {
+  console.log('🏗️ [COCKPIT3D BUILDER] Starting order build')
+  console.log('🏗️ [COCKPIT3D BUILDER] Input:', {
+    orderNumber,
+    itemCount: cartItems.length,
+    hasCustomer: !!customer,
+    retailerId
+  })
+  
   logger.info('Building Cockpit3D order', {
     orderNumber,
     itemCount: cartItems.length,
@@ -89,8 +97,16 @@ export function buildCockpit3DOrder(
   })
 
   // Build items array
+  console.log('🏗️ [COCKPIT3D BUILDER] Processing cart items...')
   const items: Cockpit3DOrderItem[] = cartItems.map((item, index) => {
+    console.log(`🏗️ [COCKPIT3D BUILDER] Processing item ${index + 1}/${cartItems.length}:`, {
+      name: item.name,
+      sku: item.sku,
+      cockpit3d_id: item.cockpit3d_id,
+      quantity: item.quantity
+    })
     const orderItem = buildCockpit3DOrderItem(item, index)
+    console.log(`🏗️ [COCKPIT3D BUILDER] Built order item ${index + 1}:`, JSON.stringify(orderItem, null, 2))
     return orderItem
   })
 
@@ -163,8 +179,24 @@ export function buildCockpit3DOrder(
 function buildCockpit3DOrderItem(item: any, index: number): Cockpit3DOrderItem {
   const clientItemId = `${item.productId || item.cockpit3d_id}-${index + 1}`
   
+  console.log(`🔧 [COCKPIT3D ITEM BUILDER] Building item ${index + 1}`)
+  console.log(`🔧 [COCKPIT3D ITEM BUILDER] Item data:`, {
+    productId: item.productId,
+    cockpit3d_id: item.cockpit3d_id,
+    sku: item.sku,
+    quantity: item.quantity,
+    price: item.price,
+    totalPrice: item.totalPrice,
+    basePrice: item.basePrice,
+    hasOptions: !!item.options,
+    hasSize: !!item.size || !!item.sizeDetails,
+    hasCustomImage: !!item.customImageId,
+    hasCustomText: !!item.customText
+  })
+  
   // Build options array in Cockpit3D format
   const options = buildCockpit3DOptions(item)
+  console.log(`🔧 [COCKPIT3D ITEM BUILDER] Built ${options.length} options:`, JSON.stringify(options, null, 2))
 
   const orderItem: Cockpit3DOrderItem = {
     sku: item.sku,

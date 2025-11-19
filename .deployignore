@@ -1,0 +1,64 @@
+# Deployment Ignore File
+# Files and folders to NEVER deploy to production
+
+# Admin Panel - DEVELOPMENT ONLY
+src/app/admin/
+out/admin/
+
+# Admin API Routes
+src/app/api/admin/
+out/api/admin/
+
+# Test Files
+test-stuff/
+tests/
+*.test.ts
+*.test.tsx
+*.test.js
+
+# Development Documentation
+project-docs/
+*.md
+!README.md
+
+# Archive folder
+_archive/
+
+# Development Scripts
+scripts/
+
+# Environment files (deploy specific ones manually)
+.env
+.env.local
+.env.development
+.env.test
+
+# Build artifacts
+.next/
+node_modules/
+
+# Version control
+.git/
+.gitignore
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*-backup.*
+*-old.*
+*-orig.*
+*.bak
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db

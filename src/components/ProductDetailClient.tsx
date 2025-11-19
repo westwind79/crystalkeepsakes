@@ -5,7 +5,7 @@
 // ✅ Fixed: File input resets after upload to allow same file selection
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,6 +14,10 @@ import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/t
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
+import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
+import { assetPath } from '@/lib/assetPath'
+import { calculateTotal, calculateOptionsPrice, getSaleInfo } from '@/utils/pricingUtils'
+import ProductGallery from '@/components/ProductGallery'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
@@ -120,9 +124,10 @@ export default function ProductDetailClient() {
   const fetchProduct = async (slug: string) => {
     try {
       logger.info('Fetching product', { slug, envMode: ENV_MODE })
-      const { cockpit3dProducts } = await import('@/data/cockpit3d-products.js')
-      logger.info(`Loaded ${cockpit3dProducts.length} products from cache`)
-      const foundProduct = cockpit3dProducts.find((p: Product) => p.slug === slug)
+      // Use final-product-list.js which includes admin customizations
+      const { finalProductList } = await import('@/data/final-product-list.js')
+      logger.info(`Loaded ${finalProductList.length} products from final-product-list`)
+      const foundProduct = finalProductList.find((p: Product) => p.slug === slug)
       
       if (!foundProduct) {
         throw new Error('Product not found')
@@ -203,14 +208,18 @@ export default function ProductDetailClient() {
     })
   }
 
-  const validateForm = (): boolean => {
+  const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const newErrors: Record<string, string> = {}
     
-    if (product?.sizes && product.sizes.length > 0 && !selectedSize) {
+    // Only validate size if product has sizes AND none is selected
+    // Skip validation if product doesn't have sizes array or it's empty
+    const hasSizes = product?.sizes && Array.isArray(product.sizes) && product.sizes.length > 0
+    if (hasSizes && !selectedSize) {
       newErrors.size = 'Please select a size'
     }
     
-    if (product?.requiresImage) {
+    // Only validate image if product explicitly requires it
+    if (product?.requiresImage === true) {
       if (!uploadedImage) {
         newErrors.image = 'Please upload an image'
       } else if (!finalMaskedImage) {
@@ -219,40 +228,49 @@ export default function ProductDetailClient() {
     }
     
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    const isValid = Object.keys(newErrors).length === 0
+    
+    // Detailed logging for debugging
+    console.log('🔍 [VALIDATION] Checking form...', {
+      hasSizes,
+      sizesCount: product?.sizes?.length || 0,
+      selectedSize: selectedSize?.name || null,
+      requiresImage: product?.requiresImage,
+      hasUploadedImage: !!uploadedImage,
+      hasMaskedImage: !!finalMaskedImage,
+      errors: newErrors,
+      isValid
+    })
+    
+    return { isValid, errors: newErrors }
   }
 
-  const calculateTotal = (): number => {
-    let total = selectedSize?.price || product?.basePrice || 0
-    if (selectedLightBase?.price) total += selectedLightBase.price
-    if (selectedBackground?.price) total += selectedBackground.price
+  // Use centralized pricing utilities
+  const getTotalPrice = (): number => {
+    const optionsPrice = calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
     
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
-      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
-      total += textOption?.price || 0
-    }
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions?.[1]?.price) {
-      total += product.textOptions[1].price
-    }
-    
-    return total * quantity
+    return calculateTotal(
+      product,
+      selectedSize,
+      optionsPrice,
+      quantity
+    )
   }
   
-  const calculateOptionsPrice = (): number => {
-    let optionsPrice = 0
-    if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
-    if (selectedBackground?.price) optionsPrice += selectedBackground.price
-    if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions?.[1]?.price) {
-      optionsPrice += product.textOptions[1].price
-    }
-    
-    return optionsPrice
+  const getOptionsPrice = (): number => {
+    return calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
   }
 
   const buildProductOptions = (): ProductOption[] => {
@@ -299,8 +317,33 @@ export default function ProductDetailClient() {
   }
 
   const handleAddToCart = async () => {
-    if (!validateForm()) {
-      logger.warn('Form validation failed', errors)
+    console.log('🛒 [ADD TO CART] Starting add to cart process')
+    console.log('🛒 [ADD TO CART] Product:', {
+      id: product?.id,
+      name: product?.name,
+      sku: product?.sku,
+      cockpit3d_id: product?.cockpit3d_id,
+      basePrice: product?.basePrice,
+      requiresImage: product?.requiresImage,
+      maskImageUrl: product?.maskImageUrl
+    })
+    
+    const validation = validateForm()
+    if (!validation.isValid) {
+      // Scroll to top to show error messages
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      
+      // Show alert for image requirement
+      if (product?.requiresImage && !uploadedImage) {
+        alert('Please upload your image before adding to cart.')
+      } else if (product?.requiresImage && !finalMaskedImage) {
+        alert('Please save your edited image before adding to cart.')
+      } else if (product?.sizes?.length > 0 && !selectedSize) {
+        alert('Please select a size before adding to cart.')
+      }
+      
+      console.error('❌ [ADD TO CART] Validation failed:', validation.errors)
+      logger.warn('Form validation failed', validation.errors)
       return
     }
 
@@ -345,14 +388,33 @@ export default function ProductDetailClient() {
         basePrice: selectedSize?.price || product.basePrice
       }
       
+      console.log('📐 [ADD TO CART] Size Details:', sizeDetails)
+      
       const productOptions = buildProductOptions()
+      console.log('⚙️ [ADD TO CART] Product Options:', JSON.stringify(productOptions, null, 2))
       
       const customTextString = customText.line1 || customText.line2
         ? `${customText.line1}${customText.line2 ? '\n' + customText.line2 : ''}`
         : undefined
       
-      const optionsPrice = calculateOptionsPrice()
-      const totalPrice = calculateTotal()
+      if (customTextString) {
+        console.log('✍️ [ADD TO CART] Custom Text:', customTextString)
+      }
+      
+      const optionsPrice = getOptionsPrice()
+      const totalPrice = getTotalPrice()
+      const originalPrice = selectedSize?.price || product.basePrice
+      
+      // Get sale information using centralized utility
+      const saleInfo = getSaleInfo(product, totalPrice / quantity, originalPrice)
+      
+      console.log('💰 [ADD TO CART] Pricing:', {
+        basePrice: originalPrice,
+        optionsPrice,
+        totalPrice,
+        quantity,
+        saleInfo
+      })
       
       const lineItem: OrderLineItem = {
         lineItemId: `line_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -360,18 +422,37 @@ export default function ProductDetailClient() {
         cockpit3d_id: product.cockpit3d_id || String(product.id),
         name: product.name,
         sku: product.sku,
-        basePrice: selectedSize?.price || product.basePrice,
+        basePrice: originalPrice,
         optionsPrice: optionsPrice,
         totalPrice: totalPrice,
         quantity: quantity,
         size: sizeDetails,
         options: productOptions,
-        productImage: product.images?.[0]?.src || null,
+        productImage: mainImage?.src || null,
         customImage: customImage,
         customText: customTextString ? { text: customTextString } : undefined,
+        // Sale information for cart display - use centralized isOnSale utility
+        onSale: isOnSale(product),
+        salePrice: product.salePrice,
+        salePercent: product.salePercent,
+        originalPrice: originalPrice,
+        discountAmount: saleInfo.discountAmount * quantity,
         dateAdded: new Date().toISOString(),
         lastModified: new Date().toISOString()
       }
+      
+      console.log('📦 [ADD TO CART] Complete Line Item:', JSON.stringify({
+        ...lineItem,
+        customImage: lineItem.customImage ? {
+          filename: lineItem.customImage.filename,
+          mimeType: lineItem.customImage.mimeType,
+          fileSize: lineItem.customImage.fileSize,
+          width: lineItem.customImage.width,
+          height: lineItem.customImage.height,
+          maskId: lineItem.customImage.maskId,
+          dataUrlLength: lineItem.customImage.dataUrl?.length
+        } : undefined
+      }, null, 2))
       
       logger.order('Adding item to cart', {
         productId: lineItem.productId,
@@ -405,8 +486,8 @@ export default function ProductDetailClient() {
       
       setAddedItemDetails({
         name: product.name,
-        image: finalMaskedImage || product.images?.[0]?.src || '/placeholder.png',
-        price: totalPrice,
+        image: finalMaskedImage || mainImage?.src || '/placeholder.png',
+        price: totalPrice / quantity, // Price per item for display
         quantity: quantity,
         options: optionsList
       })
@@ -468,6 +549,22 @@ export default function ProductDetailClient() {
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
             <Link href="/products" className="font-medium text-gray-500 hover:text-gray-900">Products</Link>
+            
+            {/* Show category if available */}
+            {primaryCategory && (
+              <>
+                <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                </svg>
+                <Link 
+                  href={`/products?category=${primaryCategory}`} 
+                  className="font-medium text-gray-500 hover:text-gray-900"
+                >
+                  {getCategoryLabel(primaryCategory)}
+                </Link>
+              </>
+            )}
+            
             <svg className="h-5 w-5 flex-shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
@@ -477,13 +574,21 @@ export default function ProductDetailClient() {
       </nav>
 
       {/* Product */}
-      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           
-          <div className="sticky top-[85px]">
+          <div className="relative lg:sticky lg:top-[85px]">
             {/* Image gallery */}
             <div className="flex flex-col-reverse">
-              <div className="w-full overflow-hidden rounded-lg">
+              
+              <div className="mt-6">
+                <h3 className="sr-only">afasdfasdfsadf</h3>
+                <div className="space-y-6 text-base text-gray-700">
+                  <p>{product.longDescription}</p>
+                </div>
+              </div>
+
+              <div className="w-full overflow-hidden rounded-lg relative">
                 {finalMaskedImage ? (
                   <div className="space-y-4">
                     <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
@@ -513,9 +618,29 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
-                  <ProductGallery images={product.images} />
+                  <div className="relative">
+                    <ProductGallery images={product.images} />
+                    {/* Badges - Same as ProductCard */}
+                    {isFeaturedProduct(product) && (
+                      <div className="absolute right-2 bottom-2 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <span>Featured</span>
+                      </div>
+                    )}
+                    {isOnSale(product) && (
+                      <div className="absolute top-0 right-10 z-2">
+                        <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
                     <Image
                       src={mainImage.src}
                       alt={product.name}
@@ -523,6 +648,36 @@ export default function ProductDetailClient() {
                       height={1024}
                       className="h-full w-full object-cover object-center"
                     />
+                    {/* Badges - Same as ProductCard */}
+                    {isFeaturedProduct(product) && (
+                      <div className="absolute right-2 bottom-2 bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide z-2">
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <span>Featured</span>
+                      </div>
+                    )}
+                    {isOnSale(product) && (
+                      <div className="absolute top-0 right-10 z-2">
+                        <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide text-white bg-[#ce0000] uppercase">Sale</span>
+                      </div>
+                    )}
+                    {isLightbaseProduct(product) && (
+                      <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full shadow-sm text-sm font-semibold">
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                        </svg>
+                        Light Base
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
@@ -531,11 +686,29 @@ export default function ProductDetailClient() {
 
           {/* Product info */}
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.name}</h1>
+            <div className="flex items-start gap-3 flex-wrap">
+              <h1 className="text-8xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
+            </div>
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+              {isOnSale(product) && (product.salePercent || product.salePrice) ? (
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
+                    ${getTotalPrice().toFixed(2)}
+                  </p>
+                  <p className="text-2xl tracking-tight text-gray-500 line-through">
+                    ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
+                  </p>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
+                    {product.salePercent 
+                      ? `${product.salePercent}% OFF` 
+                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (getTotalPrice() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-4xl font-bold tracking-tight text-gray-900">${getTotalPrice().toFixed(2)}</p>
+              )}
             </div>
 
             <div className="mt-6">
@@ -615,7 +788,7 @@ export default function ProductDetailClient() {
                   </div>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
                       {product.sizes.map((size) => (
                         <label
                           key={size.id}
@@ -635,7 +808,7 @@ export default function ProductDetailClient() {
                           />
                           <span className="block text-center">{size.name}</span>
                           {size.price > 0 && (
-                            <span className="block text-center text-xs mt-1">+${size.price}</span>
+                            <span className="block text-center text-xs mt-1">${size.price}</span>
                           )}
                         </label>
                       ))}
@@ -756,7 +929,7 @@ export default function ProductDetailClient() {
                   </div>
                   
                   {showCustomText && (
-                    <div className="ml-7 space-y-3">
+                    <div className="space-y-2">
                       <div>
                         <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
                           Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
@@ -767,7 +940,23 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Anniversary 2024"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="block w-full 
+                          rounded-md 
+                          border-0 
+                          py-2.5 
+                          pl-4 
+                          text-gray-900 
+                          shadow-sm 
+                          ring-1 
+                          ring-inset 
+                          ring-gray-300 
+                          placeholder:text-gray-400 
+                          focus:ring-2 
+                          focus:ring-inset 
+                          focus:ring-[var(--brand-400)]
+                          active:ring-[var(--brand-400)]
+                          sm:text-sm 
+                          sm:leading-6"
                           maxLength={30}
                         />
                       </div>
@@ -781,7 +970,7 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Forever & Always"
                           value={customText.line2}
                           onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 py-2.5 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
                           maxLength={30}
                         />
                       </div>
@@ -829,9 +1018,9 @@ export default function ProductDetailClient() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {addingToCart ? 'Adding to cart...' : `Add to cart - $${calculateTotal().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
           </div>
@@ -861,62 +1050,3 @@ export default function ProductDetailClient() {
   )
 }
 
-// Product Gallery Component
-const ProductGallery = ({ images }: { images: ProductImage[] }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  return (
-    <div className="relative">
-      <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-        <Image
-          src={images[currentImageIndex].src}
-          alt={`Gallery ${currentImageIndex + 1}`}
-          width={1024}
-          height={1024}
-          className="h-full w-full object-cover object-center"
-        />
-      </div>
-      
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={() => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-lg hover:bg-white"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-lg hover:bg-white"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          
-          <div className="mt-4 grid grid-cols-4 gap-4">
-            {images.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentImageIndex(idx)}
-                className={`aspect-square overflow-hidden rounded-lg ${
-                  idx === currentImageIndex ? 'ring-2 ring-[#72B01D]' : 'ring-1 ring-gray-200'
-                }`}
-              >
-                <Image
-                  src={img.src}
-                  alt={`Thumbnail ${idx + 1}`}
-                  width={200}
-                  height={200}
-                  className="h-full w-full object-cover object-center"
-                />
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
