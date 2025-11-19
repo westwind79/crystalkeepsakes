@@ -128,7 +128,7 @@ export default function ProductDetailClient() {
       const { finalProductList } = await import('@/data/final-product-list.js')
       logger.info(`Loaded ${finalProductList.length} products from final-product-list`)
       const foundProduct = finalProductList.find((p: Product) => p.slug === slug)
-      
+
       if (!foundProduct) {
         throw new Error('Product not found')
       }
