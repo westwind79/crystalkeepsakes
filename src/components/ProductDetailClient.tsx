@@ -589,6 +589,13 @@ export default function ProductDetailClient() {
           <div className="relative lg:sticky lg:top-[85px]">
             {/* Image gallery */}
             <div className="flex flex-col-reverse">
+              
+              <div className="mt-6">
+                <h3 className="sr-only">afasdfasdfsadf</h3>
+                <div className="space-y-6 text-base text-gray-700">
+                  <p>{product.longDescription}</p>
+                </div>
+              </div>
 
               <div className="w-full overflow-hidden rounded-lg relative">
                 {finalMaskedImage ? (
