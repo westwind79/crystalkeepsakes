@@ -16,6 +16,7 @@ import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 import { assetPath } from '@/lib/assetPath'
 import { calculateTotal, calculateOptionsPrice, getSaleInfo } from '@/utils/pricingUtils'
+import ProductGallery from '@/components/ProductGallery'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
