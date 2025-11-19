@@ -245,17 +245,9 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       cart[existingIndex].quantity += cartItem.quantity
       cart[existingIndex].totalPrice = cart[existingIndex].price * cart[existingIndex].quantity
       cart[existingIndex].lastModified = new Date().toISOString()
-      logger.log('cart', 'Updated existing cart item', { 
-        productId: cartItem.productId,
-        newQuantity: cart[existingIndex].quantity
-      })
     } else {
       // Add as new item
       cart.push(cartItem)
-      logger.log('cart', 'Added new cart item', { 
-        productId: cartItem.productId,
-        quantity: cartItem.quantity
-      })
     }
     
     saveCart(cart)
