@@ -56,15 +56,16 @@ export interface CartItem {
 }
 
 /**
- * Compress image to TINY thumbnail for cart display
- * Reduces base64 size by ~97% (e.g., 2MB -> 60KB)
+ * Compress image to thumbnail for cart display
+ * ✅ FIX: Better quality for cart preview (200px @ 0.7 quality)
+ * Reduces base64 size while maintaining visual quality
  */
 async function compressImageToThumbnail(dataUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
-      const MAX_SIZE = 100 // Small thumbnail size
+      const MAX_SIZE = 200 // Better thumbnail size for cart preview
       let width = img.width
       let height = img.height
       
@@ -86,8 +87,8 @@ async function compressImageToThumbnail(dataUrl: string): Promise<string> {
       const ctx = canvas.getContext('2d')!
       ctx.drawImage(img, 0, 0, width, height)
       
-      // Lower quality JPEG for minimal size
-      resolve(canvas.toDataURL('image/jpeg', 0.5))
+      // Better quality for cart preview (0.7 instead of 0.5)
+      resolve(canvas.toDataURL('image/jpeg', 0.7))
     }
     img.onerror = () => reject(new Error('Image compression failed'))
     img.src = dataUrl

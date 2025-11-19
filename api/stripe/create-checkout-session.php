@@ -159,17 +159,51 @@ try {
         $orderNumber = 'TEST_' . $orderNumber;
     }
     
-    // Determine URLs with proper folder path
-    if ($mode === 'production') {
-        $baseUrl = 'https://crystalkeepsakes.com';
-    } elseif ($mode === 'test') {
-        $baseUrl = 'https://crystalkeepsakes.com/test';
-    } else {
-        $baseUrl = 'http://localhost:3000';
+    // ✅ FIX: Dynamic URL detection based on request origin
+    // Supports localhost, /test subdirectory, and production
+    $baseUrl = '';
+    
+    // Check for origin header first (most reliable)
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        $baseUrl = $_SERVER['HTTP_ORIGIN'];
+        error_log("Using HTTP_ORIGIN: $baseUrl");
+    } 
+    // Fallback to HTTP_REFERER
+    elseif (isset($_SERVER['HTTP_REFERER'])) {
+        $referer = $_SERVER['HTTP_REFERER'];
+        $parsedUrl = parse_url($referer);
+        $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+        
+        // Handle subdirectory paths (e.g., /test, /crystalkeepsakes)
+        if (isset($parsedUrl['path'])) {
+            $pathParts = explode('/', trim($parsedUrl['path'], '/'));
+            // If path starts with known subdirectory, include it
+            if (!empty($pathParts[0]) && in_array($pathParts[0], ['test', 'crystalkeepsakes', 'staging'])) {
+                $baseUrl .= '/' . $pathParts[0];
+            }
+        }
+        error_log("Using HTTP_REFERER: $baseUrl");
+    }
+    // Fallback to environment-based detection
+    else {
+        if ($mode === 'production') {
+            $baseUrl = 'https://crystalkeepsakes.com';
+        } else {
+            // Check if running in MAMP subdirectory
+            $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+            if (strpos($docRoot, 'MAMP') !== false || strpos($docRoot, 'htdocs') !== false) {
+                $baseUrl = 'http://localhost:8888/crystalkeepsakes';
+            } else {
+                $baseUrl = 'http://localhost:3000';
+            }
+        }
+        error_log("Using fallback URL: $baseUrl");
     }
     
     $successUrl = $baseUrl . '/order-confirmation?session_id={CHECKOUT_SESSION_ID}';
     $cancelUrl = $baseUrl . '/cart';
+    
+    error_log("Final URLs - Success: $successUrl | Cancel: $cancelUrl");
     
     // Store cart for webhook (limited to 500 chars per metadata field)
     $cartSummary = [];
