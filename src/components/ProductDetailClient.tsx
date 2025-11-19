@@ -1,10 +1,11 @@
 // components/ProductDetailClient.tsx
-// Version: 3.0.0 - PROFESSIONAL EDITION
+// Version: 3.1.0 - FIX: Reset file input for re-upload same image
 // ✅ Premium e-commerce design inspired by Tailwind UI
 // ✅ Clean spacing, modern typography, professional polish
+// ✅ Fixed: File input resets after upload to allow same file selection
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -106,6 +107,9 @@ export default function ProductDetailClient() {
   const [showAddedModal, setShowAddedModal] = useState(false)
   const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
+  // File input ref for resetting
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   // Fetch product on mount
   useEffect(() => {
     if (params.slug) {
@@ -170,6 +174,11 @@ export default function ProductDetailClient() {
       setRawUploadedImage(dataUrl) // Store original raw image
       setUploadedImage(dataUrl)
       setShowEditor(true)
+      
+      // ✅ FIX: Reset file input so same file can be selected again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
     reader.readAsDataURL(file)
   }
@@ -582,6 +591,7 @@ export default function ProductDetailClient() {
                        
                           <span className="text-green-800">Upload a file</span>
                           <input 
+                            ref={fileInputRef}
                             type="file" 
                             className="sr-only"
                             accept="image/jpeg,image/png,image/gif"
