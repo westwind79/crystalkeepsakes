@@ -1,25 +1,31 @@
 # FTP Product File Update Guide
 
-**Quick update without uploading entire site**
+**Quick update without uploading entire site** ✅ SIMPLE METHOD
 
 ---
 
 ## 📁 File to Upload
 
-**Location on your computer:**
-```
-/app/src/data/final-product-list.js
-```
+**After generating products in Admin Panel:**
 
-**Upload destination on server:**
-```
-/public_html/test/_next/static/chunks/app/data/final-product-list.js
-```
+1. **Run this command locally:**
+   ```bash
+   npm run copy-products
+   ```
+   
+2. **File location on your computer:**
+   ```
+   /app/public/data/final-product-list.js
+   ```
 
-OR (depending on your build):
-```
-/public_html/test/data/final-product-list.js
-```
+3. **Upload destination on server:**
+   ```
+   /public_html/test/data/final-product-list.js
+   ```
+   OR for production:
+   ```
+   /public_html/data/final-product-list.js
+   ```
 
 ---
 
