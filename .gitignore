@@ -33,42 +33,10 @@ public/data/final-products*.json
 .turbo/
 
 # Backup
-*.backup
-<<<<<<< HEAD
+
 *.bak
-=======
 *.bak
 backup/
 
 # Documentation build
 docs/_build/
-
-# Lock files (keep package-lock.json for consistency)
-# Uncomment if you prefer yarn or pnpm:
-# package-lock.json
-# yarn.lock
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
->>>>>>> conflict_191125_1147
