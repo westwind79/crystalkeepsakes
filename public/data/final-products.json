@@ -30,7 +30,13 @@
       }
     ],
     "visible": false,
-    "fulfillment": "custom"
+    "fulfillment": "custom",
+    "occasions": [
+      "memorial",
+      "custom",
+      "birthday"
+    ],
+    "featured": false
   },
   {
     "id": "002",

@@ -492,19 +492,42 @@ export default finalProductList;
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Stats */}
         <div className="my-6 grid grid-cols-5 lg:grid-cols-5 gap-2">
+          
           <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-blue-600">Source</div>
             <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
           </div>
-          <div className="bg-green-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-green-600">On Sale</div>
-            <div className="text-2xl font-bold text-green-900">
-              {sourceProducts.filter(p => {
-                const productData = editedProducts[p.id] || p;
-                return productData.sale === true;
-              }).length}
+
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-blue-600">👁️ Visible:</div>
+            <div className="text-2xl font-bold text-blue-900"> 
+              {getStats().visible}
             </div>
           </div>
+
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-blue-600">🚫 Hidden:</div>
+            <div className="text-2xl font-bold text-blue-900"> 
+              {getStats().hidden}
+            </div>
+          </div>
+
+          <div className="bg-blue-100 rounded-lg p-4 text-center">
+            <div className="text-sm font-medium text-blue-600">⭐ Featured:</div>
+            <div className="text-2xl font-bold text-blue-900"> 
+              {getStats().featured}
+            </div>
+          </div>
+
+
+            
+          <div className="bg-red-100 px-2 py-1 rounded">
+            <span className="font-bold text-red-700">💰 On Sale:</span> {getStats().onSale}
+          </div>
+          <div className="bg-blue-100 px-2 py-1 rounded col-span-2">
+            <span className="font-bold text-blue-700">📸 Requires Image:</span> {getStats().requiresImage}
+          </div>
+           
           <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-green-600">Featured</div>
             <div className="text-2xl font-bold text-green-900">
@@ -533,25 +556,7 @@ export default finalProductList;
               <div className="p-4 border-b bg-gray-50">
                 <p className="text-lg font-semibold text-gray-900">
                   Products ({sourceProducts.length})
-                </p>
-                {/* Stats */}
-                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-green-100 px-2 py-1 rounded">
-                    <span className="font-bold text-green-700">👁️ Visible:</span> {getStats().visible}
-                  </div>
-                  <div className="bg-gray-100 px-2 py-1 rounded">
-                    <span className="font-bold text-gray-700">🚫 Hidden:</span> {getStats().hidden}
-                  </div>
-                  <div className="bg-yellow-100 px-2 py-1 rounded">
-                    <span className="font-bold text-yellow-700">⭐ Featured:</span> {getStats().featured}
-                  </div>
-                  <div className="bg-red-100 px-2 py-1 rounded">
-                    <span className="font-bold text-red-700">💰 On Sale:</span> {getStats().onSale}
-                  </div>
-                  <div className="bg-blue-100 px-2 py-1 rounded col-span-2">
-                    <span className="font-bold text-blue-700">📸 Requires Image:</span> {getStats().requiresImage}
-                  </div>
-                </div>
+                </p>                
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
                 {sourceProducts.map((product) => {
