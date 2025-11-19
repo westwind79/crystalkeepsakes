@@ -132,3 +132,7 @@ docs/_build/
 # Uncomment if you prefer yarn or pnpm:
 # package-lock.json
 # yarn.lock
+-e 
+# Environment files
+*.env
+*.env.*
