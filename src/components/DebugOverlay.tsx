@@ -43,9 +43,8 @@ export default function DebugOverlay() {
     return () => window.removeEventListener('debug-step' as any, handleDebugEvent)
   }, [])
 
-  // Only show in dev or if ?debug=true
-  const showDebug = process.env.NODE_ENV === 'development' || 
-                    (typeof window !== 'undefined' && window.location.search.includes('debug=true'))
+  // Always show debug button
+  const showDebug = typeof window !== 'undefined'
 
   if (!showDebug) return null
 
