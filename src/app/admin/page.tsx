@@ -566,27 +566,48 @@ export default finalProductList;
                     onClick={() => setSelectedProduct(product)}
                     className={`w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${
                       selectedProduct?.id === product.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
-                    }`}
+                    } ${!isVisible ? 'opacity-50 bg-gray-50' : ''}`}
                   >
                     <div className="flex items-start gap-2">
                       {/* Product Thumbnail */}
-                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
+                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden relative">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className={`w-full h-full object-cover ${!isVisible ? 'grayscale' : ''}`}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                             No img
                           </div>
                         )}
+                        
+                        {/* Status Icons - Top Right Corner */}
+                        <div className="absolute top-1 right-1 flex flex-col gap-1">
+                          {!isVisible && (
+                            <span className="bg-gray-800 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Hidden">
+                              🚫
+                            </span>
+                          )}
+                          {isFeatured && (
+                            <span className="bg-yellow-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Featured">
+                              ⭐
+                            </span>
+                          )}
+                          {isOnSale && (
+                            <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="On Sale">
+                              💰
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm text-gray-900 truncate">{product.name}</h3>
+                        <h3 className={`font-semibold text-sm truncate ${!isVisible ? 'text-gray-500' : 'text-gray-900'}`}>
+                          {product.name}
+                        </h3>
                         <p className="text-xs text-gray-600">SKU: {product.sku}</p>
                         <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
                         {hasCustomizations(product.id) && (
@@ -597,7 +618,8 @@ export default finalProductList;
                       </div>
                     </div>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
