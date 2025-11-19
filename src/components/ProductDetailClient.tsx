@@ -337,7 +337,8 @@ export default function ProductDetailClient() {
       maskImageUrl: product?.maskImageUrl
     })
     
-    if (!validateForm()) {
+    const validation = validateForm()
+    if (!validation.isValid) {
       // Scroll to top to show error messages
       window.scrollTo({ top: 0, behavior: 'smooth' })
       
@@ -350,8 +351,8 @@ export default function ProductDetailClient() {
         alert('Please select a size before adding to cart.')
       }
       
-      console.error('❌ [ADD TO CART] Validation failed:', errors)
-      logger.warn('Form validation failed', errors)
+      console.error('❌ [ADD TO CART] Validation failed:', validation.errors)
+      logger.warn('Form validation failed', validation.errors)
       return
     }
 
