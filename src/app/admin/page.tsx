@@ -170,6 +170,23 @@ export default function EnhancedProductAdminPage() {
     updateProduct(productId, { images: updatedImages });
   };
 
+  // Calculate stats
+  const getStats = () => {
+    const finalProducts = sourceProducts.map((product) => {
+      const customizations = editedProducts[product.id] || {};
+      return { ...product, ...customizations };
+    });
+    
+    return {
+      total: finalProducts.length,
+      visible: finalProducts.filter(p => p.visible !== false).length,
+      hidden: finalProducts.filter(p => p.visible === false).length,
+      featured: finalProducts.filter(p => p.featured === true).length,
+      onSale: finalProducts.filter(p => p.sale === true || p.salePrice || p.salePercent).length,
+      requiresImage: finalProducts.filter(p => p.requiresImage === true).length,
+    };
+  };
+
   // Generate final product list
   const generateFinalProducts = () => {
     const finalProducts = sourceProducts.map((product) => {
@@ -517,35 +534,80 @@ export default finalProductList;
                 <p className="text-lg font-semibold text-gray-900">
                   Products ({sourceProducts.length})
                 </p>
+                {/* Stats */}
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-green-100 px-2 py-1 rounded">
+                    <span className="font-bold text-green-700">👁️ Visible:</span> {getStats().visible}
+                  </div>
+                  <div className="bg-gray-100 px-2 py-1 rounded">
+                    <span className="font-bold text-gray-700">🚫 Hidden:</span> {getStats().hidden}
+                  </div>
+                  <div className="bg-yellow-100 px-2 py-1 rounded">
+                    <span className="font-bold text-yellow-700">⭐ Featured:</span> {getStats().featured}
+                  </div>
+                  <div className="bg-red-100 px-2 py-1 rounded">
+                    <span className="font-bold text-red-700">💰 On Sale:</span> {getStats().onSale}
+                  </div>
+                  <div className="bg-blue-100 px-2 py-1 rounded col-span-2">
+                    <span className="font-bold text-blue-700">📸 Requires Image:</span> {getStats().requiresImage}
+                  </div>
+                </div>
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
-                {sourceProducts.map((product) => (
+                {sourceProducts.map((product) => {
+                  const productData = { ...product, ...(editedProducts[product.id] || {}) };
+                  const isVisible = productData.visible !== false;
+                  const isFeatured = productData.featured === true;
+                  const isOnSale = productData.sale === true || productData.salePrice || productData.salePercent;
+                  
+                  return (
                   <button
                     key={product.id}
                     onClick={() => setSelectedProduct(product)}
                     className={`w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${
                       selectedProduct?.id === product.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
-                    }`}
+                    } ${!isVisible ? 'opacity-50 bg-gray-50' : ''}`}
                   >
                     <div className="flex items-start gap-2">
                       {/* Product Thumbnail */}
-                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
+                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden relative">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className={`w-full h-full object-cover ${!isVisible ? 'grayscale' : ''}`}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                             No img
                           </div>
                         )}
+                        
+                        {/* Status Icons - Top Right Corner */}
+                        <div className="absolute top-1 right-1 flex flex-col gap-1">
+                          {!isVisible && (
+                            <span className="bg-gray-800 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Hidden">
+                              🚫
+                            </span>
+                          )}
+                          {isFeatured && (
+                            <span className="bg-yellow-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Featured">
+                              ⭐
+                            </span>
+                          )}
+                          {isOnSale && (
+                            <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="On Sale">
+                              💰
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm text-gray-900 truncate">{product.name}</h3>
+                        <h3 className={`font-semibold text-sm truncate ${!isVisible ? 'text-gray-500' : 'text-gray-900'}`}>
+                          {product.name}
+                        </h3>
                         <p className="text-xs text-gray-600">SKU: {product.sku}</p>
                         <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
                         {hasCustomizations(product.id) && (
@@ -556,7 +618,8 @@ export default finalProductList;
                       </div>
                     </div>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
