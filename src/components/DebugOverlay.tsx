@@ -14,8 +14,11 @@ interface DebugStep {
 export default function DebugOverlay() {
   const [isOpen, setIsOpen] = useState(false)
   const [steps, setSteps] = useState<DebugStep[]>([])
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+    
     // Listen for debug events
     const handleDebugEvent = (e: CustomEvent) => {
       setSteps(prev => {
@@ -43,10 +46,7 @@ export default function DebugOverlay() {
     return () => window.removeEventListener('debug-step' as any, handleDebugEvent)
   }, [])
 
-  // Always show debug button
-  const showDebug = typeof window !== 'undefined'
-
-  if (!showDebug) return null
+  if (!mounted) return null
 
   return (
     <>
