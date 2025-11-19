@@ -316,39 +316,28 @@ export default function CartPage() {
                 <div key={index} className="bg-white shadow-md border border-gray-300 rounded-lg p-6">
                   <div className="flex items-start gap-6">
                     
-                    {/* Images Section - Show BOTH if available */}
-                    <div className="flex-shrink-0">
-                      {item.customImage ? (
-                        <div className="space-y-3">
-                          {/* Original Uploaded Image */}
-                          {item.customImage.rawImageThumbnail && (
-                            <div className="text-center">
-                              <img 
-                                src={item.customImage.rawImageThumbnail}
-                                alt="Your Original"
-                                className="w-32 h-32 object-cover rounded-lg border-2 border-blue-300"
-                              />
-                              <p className="text-xs text-blue-600 font-medium mt-1">Your Original</p>
-                            </div>
-                          )}
-                          
-                          {/* Final Masked Image */}
-                          <div className="text-center">
-                            <img 
-                              src={item.customImage.thumbnail}
-                              alt="Final Engraved Version"
-                              className="w-32 h-32 object-contain rounded-lg border-2 border-green-500"
-                            />
-                            <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
-                          </div>
-                        </div>
-                      ) : (
-                        // Product image fallback
+                    {/* Images Section */}
+                    <div className="flex-shrink-0 space-y-3">
+                      {/* Product Image */}
+                      <div className="text-center">
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
-                          className="w-32 h-32 object-contain rounded-lg"
+                          className="w-32 h-32 object-contain rounded-lg border-2 border-gray-200"
                         />
+                        <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
+                      </div>
+                      
+                      {/* Final Masked Image (if available) */}
+                      {item.customImage?.thumbnail && (
+                        <div className="text-center">
+                          <img 
+                            src={item.customImage.thumbnail}
+                            alt="Final Engraved Version"
+                            className="w-32 h-32 object-contain rounded-lg border-2 border-green-500"
+                          />
+                          <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
+                        </div>
                       )}
                     </div>
 
