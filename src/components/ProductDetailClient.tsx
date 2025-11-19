@@ -217,7 +217,7 @@ export default function ProductDetailClient() {
     })
   }
 
-  const validateForm = (): boolean => {
+  const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const newErrors: Record<string, string> = {}
     
     // Only validate size if product has sizes AND none is selected
@@ -251,7 +251,7 @@ export default function ProductDetailClient() {
       isValid
     })
     
-    return isValid
+    return { isValid, errors: newErrors }
   }
 
   // Use centralized pricing utilities
