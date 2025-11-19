@@ -1,10 +1,11 @@
 // components/ProductDetailClient.tsx
-// Version: 3.0.0 - PROFESSIONAL EDITION
+// Version: 3.1.0 - FIX: Reset file input for re-upload same image
 // ✅ Premium e-commerce design inspired by Tailwind UI
 // ✅ Clean spacing, modern typography, professional polish
+// ✅ Fixed: File input resets after upload to allow same file selection
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -110,23 +111,8 @@ export default function ProductDetailClient() {
   const [showAddedModal, setShowAddedModal] = useState(false)
   const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
-  // Get product categories for breadcrumb (must be before useEffect)
-  const productCategories = useMemo(() => {
-    if (!product) return []
-    return getProductCategories(product)
-  }, [product])
-
-  // Get primary category for breadcrumb (must be before useEffect)
-  const primaryCategory = useMemo(() => {
-    const categories = productCategories.filter(cat => cat !== 'featured' && cat !== 'sale')
-    if (categories.length === 0) return null
-    
-    // Prefer product type categories over occasions
-    const productTypes = ['lightbases', '3d-crystals', '2d-crystals', 'keychains-necklaces', 'ornaments', 'heart-shapes']
-    const typeCategory = categories.find(cat => productTypes.includes(cat))
-    
-    return typeCategory || categories[0]
-  }, [productCategories])
+  // File input ref for resetting
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Fetch product on mount
   useEffect(() => {
@@ -193,6 +179,11 @@ export default function ProductDetailClient() {
       setRawUploadedImage(dataUrl) // Store original raw image
       setUploadedImage(dataUrl)
       setShowEditor(true)
+      
+      // ✅ FIX: Reset file input so same file can be selected again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
     reader.readAsDataURL(file)
   }
@@ -773,6 +764,7 @@ export default function ProductDetailClient() {
                        
                           <span className="text-green-800">Upload a file</span>
                           <input 
+                            ref={fileInputRef}
                             type="file" 
                             className="sr-only"
                             accept="image/jpeg,image/png,image/gif"

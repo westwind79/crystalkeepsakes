@@ -328,39 +328,28 @@ export default function CartPage() {
                 <div key={index} className="bg-white shadow-lg rounded-xl p-6 border border-green-100 hover:shadow-xl transition-shadow">
                   <div className="flex items-start gap-6">
                     
-                    {/* Images Section - LARGER THUMBNAILS */}
-                    <div className="flex-shrink-0">
-                      {item.customImage ? (
-                        <div className="space-y-4">
-                          {/* Original Uploaded Image */}
-                          {item.customImage.rawImageThumbnail && (
-                            <div className="text-center">
-                              <img 
-                                src={item.customImage.rawImageThumbnail}
-                                alt="Your Original"
-                                className="w-48 h-48 object-cover rounded-lg border-4 border-blue-400 shadow-md"
-                              />
-                              <p className="text-xs text-blue-600 font-semibold mt-2 bg-blue-50 py-1 px-2 rounded">📷 Your Original</p>
-                            </div>
-                          )}
-                          
-                          {/* Final Masked Image */}
-                          <div className="text-center">
-                            <img 
-                              src={item.customImage.thumbnail}
-                              alt="Final Engraved Version"
-                              className="w-48 h-48 object-contain rounded-lg border-4 border-[#8DC63F] shadow-md bg-gray-50"
-                            />
-                            <p className="text-xs text-[#8DC63F] font-semibold mt-2 bg-green-50 py-1 px-2 rounded">✨ Final Engraving</p>
-                          </div>
-                        </div>
-                      ) : (
-                        // Product image fallback
+                    {/* Images Section */}
+                    <div className="flex-shrink-0 space-y-3">
+                      {/* Product Image */}
+                      <div className="text-center">
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
-                          className="w-48 h-48 object-contain rounded-lg border-2 border-gray-200"
+                          className="w-32 h-32 object-contain rounded-lg border-2 border-gray-200"
                         />
+                        <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
+                      </div>
+                      
+                      {/* Final Masked Image (if available) */}
+                      {item.customImage?.thumbnail && (
+                        <div className="text-center">
+                          <img 
+                            src={item.customImage.thumbnail}
+                            alt="Final Engraved Version"
+                            className="w-32 h-32 object-contain rounded-lg border-2 border-green-500"
+                          />
+                          <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
+                        </div>
                       )}
                     </div>
 
@@ -461,11 +450,22 @@ export default function CartPage() {
                         </div>
                       </div>
 
-                      {/* Image Metadata Badge */}
+                      {/* Image Metadata - Clickable Link */}
                       {item.customImageMetadata?.hasImage && (
-                        <div className="inline-flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 rounded-full px-4 py-2 mb-3 border border-emerald-200">
-                          <span className="text-lg">✓</span>
-                          <span className="font-medium">Custom Image: {item.customImageMetadata.filename}</span>
+                        <div className="text-sm bg-emerald-50 rounded px-3 py-2 mb-3">
+                          <span className="text-emerald-700 font-medium">Custom Image: </span>
+                          {item.customImage?.rawImageDataUrl ? (
+                            <a 
+                              href={item.customImage.rawImageDataUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                            >
+                              {item.customImageMetadata.filename || 'View Image'}
+                            </a>
+                          ) : (
+                            <span className="text-emerald-600">{item.customImageMetadata.filename}</span>
+                          )}
                         </div>
                       )}
 
