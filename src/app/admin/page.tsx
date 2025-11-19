@@ -170,6 +170,23 @@ export default function EnhancedProductAdminPage() {
     updateProduct(productId, { images: updatedImages });
   };
 
+  // Calculate stats
+  const getStats = () => {
+    const finalProducts = sourceProducts.map((product) => {
+      const customizations = editedProducts[product.id] || {};
+      return { ...product, ...customizations };
+    });
+    
+    return {
+      total: finalProducts.length,
+      visible: finalProducts.filter(p => p.visible !== false).length,
+      hidden: finalProducts.filter(p => p.visible === false).length,
+      featured: finalProducts.filter(p => p.featured === true).length,
+      onSale: finalProducts.filter(p => p.sale === true || p.salePrice || p.salePercent).length,
+      requiresImage: finalProducts.filter(p => p.requiresImage === true).length,
+    };
+  };
+
   // Generate final product list
   const generateFinalProducts = () => {
     const finalProducts = sourceProducts.map((product) => {
