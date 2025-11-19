@@ -95,6 +95,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <DebugOverlay />
       </body>
     </html>
   )
