@@ -36,3 +36,7 @@ public/data/final-products*.json
 *.backup
 *.bak
 .env.production.test
+-e 
+# Environment files
+*.env
+*.env.*
