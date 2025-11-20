@@ -88,12 +88,31 @@ export default function DebugOverlay() {
 
             {/* Environment Info */}
             <div className="mb-4 p-3 bg-gray-800 rounded text-xs space-y-1">
-              <div className="font-bold text-blue-400 mb-2">🔧 Environment Info</div>
+              <div className="flex justify-between items-center mb-2">
+                <div className="font-bold text-blue-400">🔧 Environment Info</div>
+                <button
+                  onClick={() => {
+                    const envInfo = {
+                      mode: process.env.NEXT_PUBLIC_ENV_MODE || 'development',
+                      basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/',
+                      backend: process.env.NEXT_PUBLIC_PHP_BACKEND_URL,
+                      stripeKey: process.env.NEXT_PUBLIC_ENV_MODE === 'production'
+                        ? process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY?.substring(0, 20)
+                        : process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY?.substring(0, 20),
+                      stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST'
+                    }
+                    navigator.clipboard.writeText(JSON.stringify(envInfo, null, 2))
+                  }}
+                  className="text-[10px] bg-blue-600 px-2 py-0.5 rounded hover:bg-blue-700"
+                >
+                  Copy
+                </button>
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Mode:</span>
                 <span className={
                   process.env.NEXT_PUBLIC_ENV_MODE === 'production' 
-                    ? 'text-green-400 font-bold'
+                    ? 'text-red-400 font-bold'
                     : process.env.NEXT_PUBLIC_ENV_MODE === 'testing'
                     ? 'text-yellow-400 font-bold'
                     : 'text-blue-400 font-bold'
@@ -129,6 +148,14 @@ export default function DebugOverlay() {
                   {process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? '🔴 LIVE' : '✓ TEST'}
                 </span>
               </div>
+              
+              {/* Warning if production mode detected */}
+              {process.env.NEXT_PUBLIC_ENV_MODE === 'production' && (
+                <div className="mt-2 p-2 bg-red-900/30 border border-red-500 rounded">
+                  <div className="text-red-400 font-bold text-[10px]">⚠️ PRODUCTION MODE</div>
+                  <div className="text-red-300 text-[10px]">Using LIVE Stripe keys!</div>
+                </div>
+              )}
             </div>
 
             {steps.length === 0 && (
