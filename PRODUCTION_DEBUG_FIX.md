@@ -61,6 +61,28 @@
 
 ## Files Modified
 
+### `/src/components/DebugOverlay.tsx` ⭐ NEW
+**Major Changes:**
+```typescript
+// Added environment detection
+const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
+const isDev = envMode === 'development'
+const isTest = envMode === 'testing'
+
+// Check URL parameter
+const urlParams = new URLSearchParams(window.location.search)
+const hasDebugParam = urlParams.get('debug') === 'true'
+
+// Only show if: dev OR test OR ?debug=true
+const shouldShowDebug = isDev || isTest || hasDebugParam
+
+// Added environment verification panel
+- Shows: Mode, Base Path, Backend URL
+- Shows: Stripe key preview (first 20 chars)
+- Shows: LIVE vs TEST indicator with color coding
+- Warning banner if production mode detected
+```
+
 ### `/src/app/checkout/page.tsx`
 **Changes:**
 ```typescript
