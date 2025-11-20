@@ -86,6 +86,51 @@ export default function DebugOverlay() {
               </button>
             </div>
 
+            {/* Environment Info */}
+            <div className="mb-4 p-3 bg-gray-800 rounded text-xs space-y-1">
+              <div className="font-bold text-blue-400 mb-2">🔧 Environment Info</div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Mode:</span>
+                <span className={
+                  process.env.NEXT_PUBLIC_ENV_MODE === 'production' 
+                    ? 'text-green-400 font-bold'
+                    : process.env.NEXT_PUBLIC_ENV_MODE === 'testing'
+                    ? 'text-yellow-400 font-bold'
+                    : 'text-blue-400 font-bold'
+                }>
+                  {process.env.NEXT_PUBLIC_ENV_MODE || 'development'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Base Path:</span>
+                <span className="text-white">{process.env.NEXT_PUBLIC_BASE_PATH || '/'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Backend:</span>
+                <span className="text-white truncate max-w-[200px]" title={process.env.NEXT_PUBLIC_PHP_BACKEND_URL}>
+                  {process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'Not set'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Stripe Key:</span>
+                <span className="text-white font-mono text-[10px]">
+                  {process.env.NEXT_PUBLIC_ENV_MODE === 'production'
+                    ? (process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'
+                    : (process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Stripe Mode:</span>
+                <span className={
+                  process.env.NEXT_PUBLIC_ENV_MODE === 'production'
+                    ? 'text-red-400 font-bold'
+                    : 'text-green-400 font-bold'
+                }>
+                  {process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? '🔴 LIVE' : '✓ TEST'}
+                </span>
+              </div>
+            </div>
+
             {steps.length === 0 && (
               <p className="text-gray-400 text-sm">No activity yet...</p>
             )}
