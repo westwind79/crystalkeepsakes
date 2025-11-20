@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCart } from '@/lib/cartUtils'
-import { logger } from '@/utils/logger'
+import { logger, isDevelopment } from '@/utils/logger'
 
 export default function CheckoutHostedPage() {
   const router = useRouter()
