@@ -19,12 +19,11 @@ let stripePromise: ReturnType<typeof loadStripe> | null = null
 export const getStripe = () => {
   if (!stripePromise) {
     if (!STRIPE_PUBLISHABLE_KEY) {
-      console.error('❌ Stripe publishable key not found!')
-      console.error('Mode:', process.env.NEXT_PUBLIC_ENV_MODE)
+      logger.error('Stripe publishable key not found', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
       throw new Error('Stripe publishable key not configured')
     }
     stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY)
-    console.log('✅ Stripe initialized:', process.env.NEXT_PUBLIC_ENV_MODE)
+    logger.success('Stripe initialized', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
   }
   return stripePromise
 }
