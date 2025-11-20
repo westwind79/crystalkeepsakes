@@ -397,26 +397,75 @@ logger.error('Error', error)
 
 ---
 
+## Debug Panel Behavior
+
+### Production (crystalkeepsakes.com)
+```
+Default: ❌ NO debug button visible
+With ?debug=true: ✅ Debug button appears
+Console: Clean (no logs)
+Stripe: 🔴 LIVE keys
+```
+
+### Testing (/test subdirectory)
+```
+Default: ✅ Debug button visible
+Console: Has debug logs
+Stripe: ✓ TEST keys
+```
+
+### Development (localhost)
+```
+Default: ✅ Debug button visible
+Console: Has debug logs
+Stripe: ✓ TEST keys
+```
+
+## Environment Verification in Debug Panel
+
+When you open the debug panel (button in bottom right), you'll see:
+
+```
+🔧 Environment Info
+Mode: production | testing | development
+Base Path: / or /test
+Backend: https://crystalkeepsakes.com
+Stripe Key: pk_live_... (first 20 chars shown)
+Stripe Mode: 🔴 LIVE or ✓ TEST
+```
+
+**Color Coding:**
+- 🔴 RED = Production mode (LIVE keys) - BE CAREFUL!
+- 🟡 YELLOW = Testing mode (test keys on prod server)
+- 🔵 BLUE = Development mode (local)
+
 ## Summary
 
 ### What Was Broken ❌
+- Debug panel button visible to ALL users in production
 - Debug logs showing to customers in production
 - Technical error details visible to end users
 - Console cluttered with development info on live site
 - Poor user experience on errors
+- No way to verify which Stripe keys are being used
 
 ### What Was Fixed ✅
+- Debug panel only shows in dev/test OR with `?debug=true` parameter
 - All console.log replaced with logger utility
 - Logger respects NEXT_PUBLIC_ENV_MODE
 - Debug UI hidden in production
 - Clean console in production builds
 - Professional error messages for customers
+- Environment verification panel shows config & Stripe keys
+- Clear visual indicators for LIVE vs TEST modes
 
 ### Impact 🎯
-- **Security:** Technical details no longer exposed
+- **Security:** Technical details no longer exposed to customers
+- **Verification:** Can check environment and Stripe keys anytime
 - **Performance:** Reduced console overhead in production
 - **User Experience:** Clean, professional error messages
-- **Debugging:** Still have full logs in dev/test environments
+- **Debugging:** Can still debug production with `?debug=true`
+- **Confidence:** Know exactly which keys are being used
 - **Maintainability:** Consistent logging across codebase
 
 ---
