@@ -60,29 +60,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 1: Build Cockpit3D order structure
-    console.log('🔵 [PROCESS ORDER API] Building Cockpit3D order structure')
+    logger.info('Building Cockpit3D order structure')
     const cockpit3DOrder = buildCockpit3DOrder(
       orderNumber,
       cartItems,
       customer
     )
-    console.log('🔵 [PROCESS ORDER API] Built Cockpit3D Order:', JSON.stringify(cockpit3DOrder, null, 2))
+    logger.info('Built Cockpit3D Order', JSON.stringify(cockpit3DOrder, null, 2))
 
     // Validate order before submission
     const validation = validateCockpit3DOrder(cockpit3DOrder)
-    console.log('🔵 [PROCESS ORDER API] Validation result:', validation)
+    logger.info('Cockpit3D validation result', validation)
     
     if (!validation.isValid) {
-      console.error('❌ [PROCESS ORDER API] Invalid Cockpit3D order:', validation.errors)
       logger.error('Invalid Cockpit3D order', { errors: validation.errors })
       results.cockpit3d.error = validation.errors.join(', ')
     } else {
       // Step 2: Submit to Cockpit3D API
       try {
-        console.log('🔵 [PROCESS ORDER API] Submitting to Cockpit3D API...')
+        logger.info('Submitting to Cockpit3D API...')
         const cockpit3DResponse = await submitToCockpit3D(cockpit3DOrder)
         
-        console.log('✅ [PROCESS ORDER API] Cockpit3D submission successful:', cockpit3DResponse)
+        logger.success('Cockpit3D submission successful', cockpit3DResponse)
         logger.success('Order submitted to Cockpit3D', {
           orderNumber,
           cockpit3dOrderId: cockpit3DResponse.id
@@ -92,7 +91,7 @@ export async function POST(request: NextRequest) {
         results.cockpit3d.orderId = cockpit3DResponse.id
 
       } catch (cockpit3DError: any) {
-        console.error('❌ [PROCESS ORDER API] Cockpit3D submission failed:', cockpit3DError)
+        logger.error('Cockpit3D submission failed', cockpit3DError)
         logger.error('Cockpit3D API error', cockpit3DError)
         results.cockpit3d.error = cockpit3DError.message
       }
