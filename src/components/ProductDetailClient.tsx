@@ -537,6 +537,7 @@ export default function ProductDetailClient() {
   if (!product) return null
 
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
+  const primaryCategory = product.categories?.[0] || getProductCategories(product)[0] || null
 
   return (    
     <div className="bg-white text-slate-900">
