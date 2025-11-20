@@ -180,8 +180,18 @@ export default function DebugOverlay() {
 // Helper to emit debug events
 export function debugStep(id: string, label: string, status: DebugStep['status'], data?: any, error?: string) {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('debug-step', {
-      detail: { id, label, status, data, error }
-    }))
+    // Check if debug is enabled
+    const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
+    const isDev = envMode === 'development'
+    const isTest = envMode === 'testing'
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasDebugParam = urlParams.get('debug') === 'true'
+    
+    // Only emit events if debug is enabled
+    if (isDev || isTest || hasDebugParam) {
+      window.dispatchEvent(new CustomEvent('debug-step', {
+        detail: { id, label, status, data, error }
+      }))
+    }
   }
 }
