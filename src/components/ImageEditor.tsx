@@ -547,7 +547,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               <button
                 onClick={onHide}
                 disabled={isProcessing}
-                className="text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X size={24} />
               </button>
@@ -569,7 +569,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                     onClick={() => handleZoom(scale * 1.1)}
                     title="Zoom In"
                     disabled={isProcessing}
-                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ZoomIn size={18} />
                   </button>
@@ -582,7 +582,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                     onClick={() => handleZoom(scale * 0.9)}
                     title="Zoom Out"
                     disabled={isProcessing}
-                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ZoomOut size={18} />
                   </button>
@@ -643,7 +643,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               {/* Left side - Utility actions */}
               <div className="modal-footer-group flex gap-3">
                 <button 
-                  className="btn-reset flex items-center gap-2 text-[var(--surface-400)] hover:text-[var(--surface-200)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer btn-reset flex items-center gap-2 text-[var(--surface-400)] hover:text-[var(--surface-200)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleReset}
                   title="Reset Image Position"
                   disabled={isProcessing}
@@ -656,14 +656,14 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               {/* Right side - Primary actions */}
               <div className="modal-footer-group flex gap-3">
                 <button 
-                  className="btn btn-secondary px-6 py-2 rounded-lg disabled:cursor-not-allowed"
+                  className="cursor-pointer btn btn-secondary px-6 py-2 rounded-lg disabled:cursor-not-allowed"
                   onClick={onHide}
                   disabled={isProcessing}
                 >
                   Cancel
                 </button>
                 <button 
-                  className="btn btn-primary px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer btn btn-primary px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleSave}
                   disabled={isProcessing}
                 >
