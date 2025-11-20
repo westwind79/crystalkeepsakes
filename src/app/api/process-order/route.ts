@@ -271,7 +271,7 @@ async function sendOrderEmail(orderData: any): Promise<{ success: boolean; error
       ? '/api/order-email'  // Next.js API for Mailhog
       : '/api/send-order-notification.php'  // PHP for production
 
-    console.log(`📧 Sending order email via ${isDevelopment ? 'Mailhog (dev)' : 'PHP (production)'}`)
+    logger.info(`Sending order email via ${isDevelopment ? 'Mailhog (dev)' : 'PHP (production)'}`)
 
     const response = await fetch(emailUrl, {
       method: 'POST',
