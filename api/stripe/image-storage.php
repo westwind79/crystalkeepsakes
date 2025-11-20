@@ -17,22 +17,28 @@ class ImageStorage {
             $uploadDir = getenv('CUSTOMER_IMAGE_PATH');
             
             if (!$uploadDir) {
-                // Auto-detect: Look for persistent storage directory
-                // Works for both GoDaddy shared hosting and VPS
+                // Auto-detect: Look for persistent storage directory IN public_html
+                // For GoDaddy: /home/user/public_html/crystal-data/order-images/
                 
-                // Current file is in: /public_html/crystalkeepsakes.com/api/stripe/
+                // Current file is in: /exposethegrove.com/crystalkeepsakes.com/api/stripe/
                 // Target should be: /public_html/crystal-data/order-images/
                 
                 $currentDir = __DIR__;  // /api/stripe/
                 $apiDir = dirname($currentDir);  // /api/
-                $projectRoot = dirname($apiDir);  // /crystalkeepsakes.com/ or project root
-                $publicHtml = dirname($projectRoot);  // /public_html/ or parent
+                $projectRoot = dirname($apiDir);  // /crystalkeepsakes.com/
+                $parentDomain = dirname($projectRoot);  // /exposethegrove.com/
+                $publicHtml = dirname($parentDomain);  // /public_html/
                 
-                // Try persistent directory sibling to project
+                // MUST be inside public_html for web access!
                 $uploadDir = $publicHtml . '/crystal-data/order-images';
                 
                 error_log("Auto-detected upload directory: {$uploadDir}");
                 error_log("Current directory: {$currentDir}");
+                
+                // Verify we're actually in public_html
+                if (strpos($uploadDir, 'public_html') === false) {
+                    error_log("WARNING: Upload path not in public_html! Path: {$uploadDir}");
+                }
             }
         }
         
