@@ -11,12 +11,39 @@ class ImageStorage {
     private $maxFileSize;
     
     public function __construct($uploadDir = null, $maxFileSizeMB = 5) {
-        $this->uploadDir = $uploadDir ?? dirname(__DIR__) . '/uploads/order-images';
+        // CRITICAL FIX: Store images OUTSIDE project directory to prevent data loss on builds
+        if ($uploadDir === null) {
+            // Try environment variable first (recommended)
+            $uploadDir = getenv('CUSTOMER_IMAGE_PATH');
+            
+            if (!$uploadDir) {
+                // Fallback: Store outside project in persistent directory
+                // Assumes project is in /var/www/crystalkeepsakes or similar
+                // Goes up to web root, then into crystal-data directory
+                $projectRoot = dirname(dirname(dirname(__DIR__)));
+                $uploadDir = dirname($projectRoot) . '/crystal-data/order-images';
+                
+                // Log the path being used
+                error_log("Using persistent upload directory: {$uploadDir}");
+            }
+        }
+        
+        $this->uploadDir = $uploadDir;
         $this->maxFileSize = $maxFileSizeMB * 1024 * 1024; // Convert to bytes
         
         // Create directory if it doesn't exist
         if (!file_exists($this->uploadDir)) {
-            mkdir($this->uploadDir, 0755, true);
+            if (!mkdir($this->uploadDir, 0775, true)) {
+                error_log("CRITICAL: Failed to create upload directory: {$this->uploadDir}");
+                throw new Exception('Upload directory not accessible. Check permissions.');
+            }
+            error_log("Created upload directory: {$this->uploadDir}");
+        }
+        
+        // Verify directory is writable
+        if (!is_writable($this->uploadDir)) {
+            error_log("CRITICAL: Upload directory not writable: {$this->uploadDir}");
+            throw new Exception('Upload directory not writable. Check permissions.');
         }
     }
     
