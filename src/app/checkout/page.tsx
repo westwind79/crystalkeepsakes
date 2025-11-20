@@ -56,7 +56,7 @@ export default function CheckoutHostedPage() {
         orderNumber: `CK-${Date.now()}`
       }
 
-      logger.info('🔍 Making API call', { 
+      logger.info('Making API call', { 
         url: apiUrl,
         phpBackendUrl,
         itemCount: cartForCheckout.length,
@@ -71,7 +71,7 @@ export default function CheckoutHostedPage() {
         body: JSON.stringify(payload)
       })
 
-      logger.info('📡 Response received', {
+      logger.info('Response received', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok
@@ -80,36 +80,42 @@ export default function CheckoutHostedPage() {
       let data
       try {
         const responseText = await response.text()
-        logger.info('📄 Raw response:', responseText.substring(0, 500))
+        logger.info('Raw response', responseText.substring(0, 500))
         data = JSON.parse(responseText)
       } catch (parseError: any) {
         logger.error('Failed to parse response', parseError)
-        setDebugInfo({
-          url: apiUrl,
-          status: response.status,
-          statusText: response.statusText,
-          responsePreview: await response.text()
-        })
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            status: response.status,
+            statusText: response.statusText,
+            responsePreview: await response.text()
+          })
+        }
         throw new Error(`Server returned invalid JSON. Status: ${response.status}`)
       }
 
       if (!response.ok) {
-        setDebugInfo({
-          url: apiUrl,
-          status: response.status,
-          statusText: response.statusText,
-          errorData: data,
-          payload: payload
-        })
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            status: response.status,
+            statusText: response.statusText,
+            errorData: data,
+            payload: payload
+          })
+        }
         throw new Error(data.error || `Server error: ${response.status}`)
       }
 
       if (!data.success) {
-        setDebugInfo({
-          url: apiUrl,
-          responseData: data,
-          payload: payload
-        })
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            responseData: data,
+            payload: payload
+          })
+        }
         throw new Error(data.error || 'Checkout session creation failed')
       }
 
