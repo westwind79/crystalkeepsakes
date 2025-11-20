@@ -163,7 +163,7 @@ export default function CheckoutHostedPage() {
               </h2>
               <p className="text-gray-600 mb-4">{error}</p>
               
-              {debugInfo && (
+              {isDevelopment && debugInfo && (
                 <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-xs max-h-60 overflow-auto">
                   <h3 className="font-bold mb-2 text-gray-900">🔍 Debug Information:</h3>
                   <pre className="whitespace-pre-wrap text-gray-700">
