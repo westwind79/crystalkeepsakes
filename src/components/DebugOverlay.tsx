@@ -15,9 +15,22 @@ export default function DebugOverlay() {
   const [isOpen, setIsOpen] = useState(false)
   const [steps, setSteps] = useState<DebugStep[]>([])
   const [mounted, setMounted] = useState(false)
+  const [shouldShowDebug, setShouldShowDebug] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    
+    // Check if debug should be enabled
+    const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
+    const isDev = envMode === 'development'
+    const isTest = envMode === 'testing'
+    
+    // Check URL parameter
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasDebugParam = urlParams.get('debug') === 'true'
+    
+    // Show debug if: (dev OR test) OR has ?debug=true parameter
+    setShouldShowDebug(isDev || isTest || hasDebugParam)
     
     // Listen for debug events
     const handleDebugEvent = (e: CustomEvent) => {
@@ -46,7 +59,8 @@ export default function DebugOverlay() {
     return () => window.removeEventListener('debug-step' as any, handleDebugEvent)
   }, [])
 
-  if (!mounted) return null
+  // Don't render at all if debug is not enabled
+  if (!mounted || !shouldShowDebug) return null
 
   return (
     <>
