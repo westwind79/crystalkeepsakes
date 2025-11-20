@@ -17,14 +17,22 @@ class ImageStorage {
             $uploadDir = getenv('CUSTOMER_IMAGE_PATH');
             
             if (!$uploadDir) {
-                // Fallback: Store outside project in persistent directory
-                // Assumes project is in /var/www/crystalkeepsakes or similar
-                // Goes up to web root, then into crystal-data directory
-                $projectRoot = dirname(dirname(dirname(__DIR__)));
-                $uploadDir = dirname($projectRoot) . '/crystal-data/order-images';
+                // Auto-detect: Look for persistent storage directory
+                // Works for both GoDaddy shared hosting and VPS
                 
-                // Log the path being used
-                error_log("Using persistent upload directory: {$uploadDir}");
+                // Current file is in: /public_html/crystalkeepsakes.com/api/stripe/
+                // Target should be: /public_html/crystal-data/order-images/
+                
+                $currentDir = __DIR__;  // /api/stripe/
+                $apiDir = dirname($currentDir);  // /api/
+                $projectRoot = dirname($apiDir);  // /crystalkeepsakes.com/ or project root
+                $publicHtml = dirname($projectRoot);  // /public_html/ or parent
+                
+                // Try persistent directory sibling to project
+                $uploadDir = $publicHtml . '/crystal-data/order-images';
+                
+                error_log("Auto-detected upload directory: {$uploadDir}");
+                error_log("Current directory: {$currentDir}");
             }
         }
         
@@ -33,8 +41,9 @@ class ImageStorage {
         
         // Create directory if it doesn't exist
         if (!file_exists($this->uploadDir)) {
-            if (!mkdir($this->uploadDir, 0775, true)) {
+            if (!mkdir($this->uploadDir, 0755, true)) {
                 error_log("CRITICAL: Failed to create upload directory: {$this->uploadDir}");
+                error_log("Check: Does parent directory exist? Do you have write permissions?");
                 throw new Exception('Upload directory not accessible. Check permissions.');
             }
             error_log("Created upload directory: {$this->uploadDir}");
@@ -43,8 +52,11 @@ class ImageStorage {
         // Verify directory is writable
         if (!is_writable($this->uploadDir)) {
             error_log("CRITICAL: Upload directory not writable: {$this->uploadDir}");
+            error_log("Run: chmod 755 on the directory");
             throw new Exception('Upload directory not writable. Check permissions.');
         }
+        
+        error_log("Using upload directory: {$this->uploadDir}");
     }
     
     /**
