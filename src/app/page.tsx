@@ -242,9 +242,7 @@ export default function HomePage() {
       <section ref={featuredRef}>
         <FeaturedProducts limit={6} title="Featured Designs" />
       </section>
-
-      {/* Testimonials - Alternating Background */}
-      <Testimonials />
+     
 
       {/* Process Section - Alternating Background */}
       <section ref={processRef} className="bg-gray-100 py-16 sm:py-20 lg:py-24">
@@ -279,8 +277,11 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> 
 
+      {/* Testimonials - Alternating Background */}
+      <Testimonials />
+      
       {/* About Preview - Light Background */}
       <section className="bg-[var(--surface-200)] py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 xl:max-w-7xl">
