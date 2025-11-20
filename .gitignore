@@ -33,17 +33,6 @@ public/data/final-products*.json
 .turbo/
 
 # Backup
-
+*.backup
 *.bak
-*.bak
-backup/
-
-# Documentation build
-docs/_build/-e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+.env.production.test
