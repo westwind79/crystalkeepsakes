@@ -10,7 +10,7 @@ echo ----------------------------------------
 echo Please start MAMP manually:
 echo 1. Open MAMP application
 echo 2. Click START button
-echo 3. Wait for Apache and MySQL to turn green
+echo 3. Wait for Apache and MySQL to turn green http://localhost:8888
 echo.
 pause
 echo.

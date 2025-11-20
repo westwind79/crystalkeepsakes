@@ -59,7 +59,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
             </div>
             <button
               onClick={onClose}
-              className="text-text-tertiary hover:text-text-primary transition-colors p-2 hover:bg-gray-700 rounded-lg"
+              className="cursor-pointer text-text-tertiary hover:text-text-primary transition-colors p-2 hover:bg-gray-700 rounded-lg"
             >
               <X size={24} />
             </button>
