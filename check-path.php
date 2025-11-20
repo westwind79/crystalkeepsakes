@@ -41,30 +41,50 @@ echo "  Parent 4:              $level4\n";
 echo "\n";
 echo "Recommended Paths:\n";
 
-// Check if we're in a nested structure (crystalkeepsakes inside another domain)
-$projectFolder = basename($level2);
-$parentFolder = basename($level3);
+// Find public_html directory
+$publicHtmlLevel = null;
+$checkLevel = $level2;
+for ($i = 0; $i < 6; $i++) {
+    if (basename($checkLevel) === 'public_html') {
+        $publicHtmlLevel = $checkLevel;
+        break;
+    }
+    $checkLevel = dirname($checkLevel);
+}
 
-if (strpos($parentFolder, '.com') !== false || strpos($parentFolder, 'public_html') !== false) {
-    // We're likely in: /exposethegrove.com/crystalkeepsakes.com/ structure
-    echo "  Detected: Addon domain structure\n";
-    echo "  Project folder: $projectFolder\n";
-    echo "  Parent folder: $parentFolder\n\n";
-    
-    echo "  RECOMMENDED crystal-data location:\n";
-    echo "    $level3/crystal-data/order-images/\n\n";
+if ($publicHtmlLevel) {
+    echo "  ✓ Found public_html: $publicHtmlLevel\n\n";
+    echo "  RECOMMENDED crystal-data location (MUST be in public_html!):\n";
+    echo "    $publicHtmlLevel/crystal-data/order-images/\n\n";
     
     echo "  For .env.production use:\n";
-    echo "    CUSTOMER_IMAGE_PATH=$level3/crystal-data/order-images\n\n";
+    echo "    CUSTOMER_IMAGE_PATH=$publicHtmlLevel/crystal-data/order-images\n\n";
     
+    echo "  ⚠️  IMPORTANT: Must be INSIDE public_html for web access!\n";
+    echo "  ❌ NOT: " . dirname($publicHtmlLevel) . "/crystal-data/ (outside public_html)\n\n";
 } else {
-    // Standard structure
-    echo "  Detected: Standard structure\n";
-    echo "  RECOMMENDED crystal-data location:\n";
-    echo "    $level2/crystal-data/order-images/\n\n";
-    
-    echo "  For .env.production use:\n";
-    echo "    CUSTOMER_IMAGE_PATH=$level2/crystal-data/order-images\n\n";
+    // Fallback if public_html not found
+    $projectFolder = basename($level2);
+    $parentFolder = basename($level3);
+
+    if (strpos($parentFolder, '.com') !== false) {
+        echo "  Detected: Addon domain structure\n";
+        echo "  Project folder: $projectFolder\n";
+        echo "  Parent folder: $parentFolder\n\n";
+        
+        echo "  RECOMMENDED crystal-data location:\n";
+        echo "    $level3/crystal-data/order-images/\n\n";
+        
+        echo "  For .env.production use:\n";
+        echo "    CUSTOMER_IMAGE_PATH=$level3/crystal-data/order-images\n\n";
+    } else {
+        echo "  Detected: Standard structure\n";
+        echo "  RECOMMENDED crystal-data location:\n";
+        echo "    $level2/crystal-data/order-images/\n\n";
+        
+        echo "  For .env.production use:\n";
+        echo "    CUSTOMER_IMAGE_PATH=$level2/crystal-data/order-images\n\n";
+    }
 }
 
 echo "\n";
