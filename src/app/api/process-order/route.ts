@@ -120,15 +120,15 @@ export async function POST(request: NextRequest) {
         cockpit3dStatus: results.cockpit3d.submitted ? 'Submitted' : 'Manual Review Required'
       }
 
-      console.log('📧 [PROCESS ORDER API] Preparing email notification')
-      console.log('📧 [PROCESS ORDER API] Email payload:', JSON.stringify(emailPayload, null, 2))
+      logger.info('Preparing email notification')
+      logger.info('Email payload', JSON.stringify(emailPayload, null, 2))
 
       const emailResponse = await sendOrderEmail(emailPayload)
       
-      console.log('📧 [PROCESS ORDER API] Email response:', emailResponse)
+      logger.info('Email response', emailResponse)
       
       if (emailResponse.success) {
-        console.log('✅ [PROCESS ORDER API] Email sent successfully')
+        logger.success('Email sent successfully')
         logger.success('Order notification email sent', { orderNumber })
         results.email.sent = true
       } else {
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       }
 
     } catch (emailError: any) {
-      console.error('❌ [PROCESS ORDER API] Email sending failed:', emailError)
+      logger.error('Email sending failed', emailError)
       logger.error('Email notification error', emailError)
       results.email.error = emailError.message
     }
