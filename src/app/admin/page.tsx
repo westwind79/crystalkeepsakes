@@ -97,6 +97,7 @@ export default function EnhancedProductAdminPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'options' | 'images'>('basic');
+  const [availableMasks, setAvailableMasks] = useState<Array<{filename: string, path: string, displayName: string}>>([]);
 
   // Load existing customizations from localStorage
   useEffect(() => {
@@ -108,6 +109,18 @@ export default function EnhancedProductAdminPage() {
     } catch (e) {
       console.warn('No existing customizations found');
     }
+  }, []);
+
+  // Load available mask images
+  useEffect(() => {
+    fetch('/api/admin/masks')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setAvailableMasks(data.masks);
+        }
+      })
+      .catch(err => console.error('Failed to load masks:', err));
   }, []);
 
   // Get merged product data (source + customizations)
