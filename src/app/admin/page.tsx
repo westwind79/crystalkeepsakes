@@ -305,12 +305,13 @@ export default finalProductList;
     });
   };
 
-  // Save Products (no timestamp) - JSON ONLY
+  // Save Products (no timestamp)
   const saveFinalProducts = async () => {
     if (!validateProducts()) return;
     
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
     const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
     const jsonContent = JSON.stringify(finalProducts, null, 2);
     
     // Try to save to server (works in dev mode)
@@ -319,7 +320,8 @@ export default finalProductList;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          jsonContent,
+          jsonContent, 
+          jsContent,
           isBackup: false 
         })
       });
@@ -327,14 +329,14 @@ export default finalProductList;
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Products saved to server!\n\n📁 File updated:\n${result.jsonPath}\n\nReady for FTP upload!`);
+        alert(`✅ Products saved to server!\n\n📁 Files updated:\n• /public/data/final-products.json\n• /src/data/final-product-list.js\n\nChanges are live!`);
         return;
       }
     } catch (error) {
-      console.log('Server save failed, downloading file instead');
+      console.log('Server save failed, downloading files instead');
     }
     
-    // Fallback: Download file (for production/static export)
+    // Fallback: Download files (for production/static export)
     const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
     const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement('a');
@@ -345,7 +347,17 @@ export default finalProductList;
     document.body.removeChild(jsonLink);
     URL.revokeObjectURL(jsonUrl);
     
-    alert(`✅ Products saved!\n\n📥 Downloaded: final-products.json\n\nUpload this file to /public/data/ via FTP`);
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = 'final-products.js';
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Products saved!\n\n📥 Downloaded:\n• final-products.json (upload to /public/data/)\n• final-products.js (replace in /src/data/)`);
   };
 
   // Backup Products (with timestamp) - JSON ONLY
