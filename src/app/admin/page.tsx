@@ -535,7 +535,9 @@ export default finalProductList;
                 </p>                
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
-                {sourceProducts.map((product) => {
+                {[...sourceProducts]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((product) => {
                   const productData = { ...product, ...(editedProducts[product.id] || {}) };
                   const isVisible = productData.visible !== false;
                   const isFeatured = productData.featured === true;
