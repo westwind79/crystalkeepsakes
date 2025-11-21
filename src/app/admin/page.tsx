@@ -146,6 +146,19 @@ export default function EnhancedProductAdminPage() {
     }
   }, []);
 
+  // Keyboard shortcut: Ctrl+S / Cmd+S to save
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveFinalProducts();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [editedProducts]); // Include editedProducts so it has latest state
+
   // Get merged product data (source + customizations)
   const getProductData = (productId: string): Product => {
     const sourceProduct = sourceProducts.find((p) => p.id === productId);
