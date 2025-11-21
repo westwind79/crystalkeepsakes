@@ -336,22 +336,19 @@ export default finalProductList;
     alert(`✅ Products saved!\n\n📥 Downloaded: final-product-list.js\n\n📤 FTP to:\n/public_html/crystalkeepsakes.com/src/data/final-product-list.js`);
   };
 
-  // Backup Products (with timestamp)
+  // Backup Products (with timestamp) - ONE FILE ONLY
   const backupProducts = async () => {
     if (!validateProducts()) return;
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const finalProducts = getFinalProductsArray();
     const jsContent = generateFinalProducts();
-    const jsonContent = JSON.stringify(finalProducts, null, 2);
     
     // Try to save to server (works in dev mode)
     try {
-      const response = await fetch('/api/admin/save-products', {
+      const response = await fetch('/api/admin/save-products/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          jsonContent, 
           jsContent,
           isBackup: true,
           timestamp
@@ -361,35 +358,25 @@ export default finalProductList;
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Backup saved to server!\n\n📁 Files created:\n• /public/data/final-products-${timestamp}.json\n• /src/data/final-products-${timestamp}.js`);
+        alert(`✅ Backup created!\n\n📁 File: ${result.jsPath}\n\nKeep this as a restore point.`);
         return;
       }
     } catch (error) {
-      console.log('Server backup failed, downloading files instead');
+      console.log('Server backup failed, downloading file instead');
     }
     
-    // Fallback: Download files
-    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
-    const jsonUrl = URL.createObjectURL(jsonBlob);
-    const jsonLink = document.createElement('a');
-    jsonLink.href = jsonUrl;
-    jsonLink.download = `final-products-${timestamp}.json`;
-    document.body.appendChild(jsonLink);
-    jsonLink.click();
-    document.body.removeChild(jsonLink);
-    URL.revokeObjectURL(jsonUrl);
-    
+    // Fallback: Download file
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
     jsLink.href = jsUrl;
-    jsLink.download = `final-products-${timestamp}.js`;
+    jsLink.download = `final-product-list-${timestamp}.js`;
     document.body.appendChild(jsLink);
     jsLink.click();
     document.body.removeChild(jsLink);
     URL.revokeObjectURL(jsUrl);
     
-    alert(`✅ Backup created!\n\n📥 Downloaded:\n• final-products-${timestamp}.json\n• final-products-${timestamp}.js`);
+    alert(`✅ Backup created!\n\n📥 Downloaded: final-product-list-${timestamp}.js\n\nKeep this as a restore point.`);
   };
 
   // Upload JSON to production
