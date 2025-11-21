@@ -333,16 +333,18 @@ export default function ProductDetailClient() {
       // Scroll to top to show error messages
       window.scrollTo({ top: 0, behavior: 'smooth' })
       
-      // Show alert for image requirement
-      if (product?.requiresImage && !uploadedImage) {
-        alert('Please upload your image before adding to cart.')
-      } else if (product?.requiresImage && !finalMaskedImage) {
-        alert('Please save your edited image before adding to cart.')
-      } else if (product?.sizes?.length > 0 && !selectedSize) {
-        alert('Please select a size before adding to cart.')
+      // Show user-friendly alert based on validation errors
+      if (validation.errors.image) {
+        alert('⚠️ Please upload your image before adding to cart.')
+      } else if (validation.errors.finalImage) {
+        alert('⚠️ Please save your edited image before adding to cart.')
+      } else if (validation.errors.size) {
+        alert('⚠️ Please select a size before adding to cart.')
+      } else if (Object.keys(validation.errors).length > 0) {
+        alert('⚠️ Please complete all required fields before adding to cart.')
       }
       
-      console.error('❌ [ADD TO CART] Validation failed:', validation.errors)
+      console.log('⚠️ [ADD TO CART] Validation failed:', validation.errors)
       logger.warn('Form validation failed', validation.errors)
       return
     }
