@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const masksDir = join(process.cwd(), 'public', 'img', 'masks')
