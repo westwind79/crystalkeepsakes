@@ -36,45 +36,54 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (!sectionRef.current) return
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (!sectionRef.current) return
 
-    const ctx = gsap.context(() => {
-      // Set initial visibility to ensure elements are visible by default
-      gsap.set('.testimonial-card', { opacity: 1, y: 0 })
-      gsap.set('.star-icon', { opacity: 1, scale: 1 })
+      const ctx = gsap.context(() => {
+        // Set initial visibility to ensure elements are visible by default
+        gsap.set('.testimonial-card', { opacity: 1, y: 0 })
+        gsap.set('.star-icon', { opacity: 1, scale: 1 })
 
-      // Animate testimonial cards sliding in from bottom
-      gsap.from('.testimonial-card', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none none',
-          markers: false // Set to true for debugging
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out'
-      })
+        // Animate testimonial cards sliding in from bottom
+        const cards = gsap.utils.toArray('.testimonial-card')
+        if (cards.length > 0) {
+          gsap.from(cards, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play none none none'
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out'
+          })
+        }
 
-      // Animate stars fading in one by one
-      gsap.from('.star-icon', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none none',
-          markers: false // Set to true for debugging
-        },
-        scale: 0,
-        opacity: 0,
-        duration: 0.4,
-        stagger: 0.1,
-        ease: 'back.out(2)'
-      })
-    }, sectionRef)
+        // Animate stars fading in one by one
+        const stars = gsap.utils.toArray('.star-icon')
+        if (stars.length > 0) {
+          gsap.from(stars, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play none none none'
+            },
+            scale: 0,
+            opacity: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'back.out(2)'
+          })
+        }
+      }, sectionRef)
 
-    return () => ctx.revert()
+      return () => ctx.revert()
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [])
 
   return (
