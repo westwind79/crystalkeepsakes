@@ -583,9 +583,11 @@ export default function ProductDetailClient() {
             <div className="flex flex-col-reverse">
               
               <div className="mt-6">
-                <h3 className="sr-only">afasdfasdfsadf</h3>
+                <h3 className="sr-only">Product Description</h3>
                 <div className="space-y-6 text-base text-gray-700">
-                  <p>{product.longDescription}</p>
+                  {product.longDescription && (
+                    <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
+                  )}
                 </div>
               </div>
 
