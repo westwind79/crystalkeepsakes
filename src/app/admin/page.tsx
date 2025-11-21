@@ -442,6 +442,10 @@ export default finalProductList;
   const selectedProductData = selectedProduct ? getProductData(selectedProduct.id) : null;
 
   return (
+    <>
+    <style jsx global>{`
+       header, footer {display: none !important;}
+      `}</style>
     <div className="min-h-screen bg-gray-50">
       {/* Development-Only Warning Banner */}
       <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
@@ -449,8 +453,8 @@ export default finalProductList;
       </div>
       
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
-        <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <div className="bg-white shadow-sm border-b z-10">
+        <div className="max-w-full mx-auto px-2 py-2 sm:px-2 lg:px-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
@@ -485,13 +489,9 @@ export default finalProductList;
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {/* Stats */}
-        <div className="my-6 grid grid-cols-5 lg:grid-cols-5 gap-2">
+          {/* Stats */}
+          <div className="my-2 grid grid-cols-5 lg:grid-cols-5 gap-2">
           
           <div className="bg-blue-100 rounded-lg p-4 text-center">
             <div className="text-sm font-medium text-blue-600">Source</div>
@@ -548,6 +548,11 @@ export default finalProductList;
             <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
           </div>
         </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">       
 
         <div className="grid grid-cols-12 gap-6">
           {/* Product List - Left Column */}
@@ -1524,5 +1529,6 @@ export default finalProductList;
         </div>
       </div>
     </div>
+    </>
   );
 }
