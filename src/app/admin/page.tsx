@@ -294,22 +294,19 @@ export default finalProductList;
     });
   };
 
-  // Save Products (no timestamp)
+  // Save Products (no timestamp) - ONE FILE ONLY
   const saveFinalProducts = async () => {
     if (!validateProducts()) return;
     
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
-    const finalProducts = getFinalProductsArray();
     const jsContent = generateFinalProducts();
-    const jsonContent = JSON.stringify(finalProducts, null, 2);
     
     // Try to save to server (works in dev mode)
     try {
-      const response = await fetch('/api/admin/save-products', {
+      const response = await fetch('/api/admin/save-products/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          jsonContent, 
           jsContent,
           isBackup: false 
         })
@@ -318,35 +315,25 @@ export default finalProductList;
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Products saved to server!\n\n📁 Files updated:\n• /public/data/final-products.json\n• /src/data/final-product-list.js\n\nChanges are live!`);
+        alert(`✅ Products saved!\n\n📁 File: ${result.jsPath}\n\n📤 FTP this file to:\n/public_html/crystalkeepsakes.com/src/data/final-product-list.js`);
         return;
       }
     } catch (error) {
-      console.log('Server save failed, downloading files instead');
+      console.log('Server save failed, downloading file instead');
     }
     
-    // Fallback: Download files (for production/static export)
-    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
-    const jsonUrl = URL.createObjectURL(jsonBlob);
-    const jsonLink = document.createElement('a');
-    jsonLink.href = jsonUrl;
-    jsonLink.download = 'final-products.json';
-    document.body.appendChild(jsonLink);
-    jsonLink.click();
-    document.body.removeChild(jsonLink);
-    URL.revokeObjectURL(jsonUrl);
-    
+    // Fallback: Download file (for production/static export)
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
     jsLink.href = jsUrl;
-    jsLink.download = 'final-products.js';
+    jsLink.download = 'final-product-list.js';
     document.body.appendChild(jsLink);
     jsLink.click();
     document.body.removeChild(jsLink);
     URL.revokeObjectURL(jsUrl);
     
-    alert(`✅ Products saved!\n\n📥 Downloaded:\n• final-products.json (upload to /public/data/)\n• final-products.js (replace in /src/data/)`);
+    alert(`✅ Products saved!\n\n📥 Downloaded: final-product-list.js\n\n📤 FTP to:\n/public_html/crystalkeepsakes.com/src/data/final-product-list.js`);
   };
 
   // Backup Products (with timestamp)
