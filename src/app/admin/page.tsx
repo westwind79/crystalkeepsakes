@@ -360,12 +360,13 @@ export default finalProductList;
     alert(`✅ Products saved!\n\n📥 Downloaded:\n• final-products.json (upload to /public/data/)\n• final-products.js (replace in /src/data/)`);
   };
 
-  // Backup Products (with timestamp) - JSON ONLY
+  // Backup Products (with timestamp)
   const backupProducts = async () => {
     if (!validateProducts()) return;
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const finalProducts = getFinalProductsArray();
+    const jsContent = generateFinalProducts();
     const jsonContent = JSON.stringify(finalProducts, null, 2);
     
     // Try to save to server (works in dev mode)
@@ -374,7 +375,8 @@ export default finalProductList;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          jsonContent,
+          jsonContent, 
+          jsContent,
           isBackup: true,
           timestamp
         })
@@ -383,14 +385,14 @@ export default finalProductList;
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Backup saved to server!\n\n📁 File created:\n${result.jsonPath}`);
+        alert(`✅ Backup saved to server!\n\n📁 Files created:\n• /public/data/final-products-${timestamp}.json\n• /src/data/final-products-${timestamp}.js`);
         return;
       }
     } catch (error) {
-      console.log('Server backup failed, downloading file instead');
+      console.log('Server backup failed, downloading files instead');
     }
     
-    // Fallback: Download file
+    // Fallback: Download files
     const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
     const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement('a');
@@ -401,7 +403,17 @@ export default finalProductList;
     document.body.removeChild(jsonLink);
     URL.revokeObjectURL(jsonUrl);
     
-    alert(`✅ Backup created!\n\n📥 Downloaded: final-products-${timestamp}.json`);
+    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
+    const jsUrl = URL.createObjectURL(jsBlob);
+    const jsLink = document.createElement('a');
+    jsLink.href = jsUrl;
+    jsLink.download = `final-products-${timestamp}.js`;
+    document.body.appendChild(jsLink);
+    jsLink.click();
+    document.body.removeChild(jsLink);
+    URL.revokeObjectURL(jsUrl);
+    
+    alert(`✅ Backup created!\n\n📥 Downloaded:\n• final-products-${timestamp}.json\n• final-products-${timestamp}.js`);
   };
 
   // Upload JSON to production
