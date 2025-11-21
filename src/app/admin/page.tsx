@@ -647,17 +647,21 @@ export default finalProductList;
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Long Description
+                            Long Description (HTML allowed)
                           </label>
                           <textarea
-                            rows={4}
+                            rows={6}
                             value={selectedProductData.longDescription || ''}
                             onChange={(e) =>
                               updateProduct(selectedProduct.id, { longDescription: e.target.value })
                             }
-                            placeholder="Detailed product description..."
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="Detailed product description... You can use HTML tags like <p>, <br>, <strong>, <ul>, <li>, etc."
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-y"
+                            style={{ minHeight: '120px' }}
                           />
+                          <p className="text-xs text-gray-500 mt-1">
+                            💡 Tip: Use HTML tags for formatting (e.g., &lt;p&gt;, &lt;br&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;)
+                          </p>
                         </div>
 
                         <div>
