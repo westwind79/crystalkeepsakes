@@ -36,13 +36,20 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
+    if (!sectionRef.current) return
+
     const ctx = gsap.context(() => {
+      // Set initial visibility to ensure elements are visible by default
+      gsap.set('.testimonial-card', { opacity: 1, y: 0 })
+      gsap.set('.star-icon', { opacity: 1, scale: 1 })
+
       // Animate testimonial cards sliding in from bottom
       gsap.from('.testimonial-card', {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
-          toggleActions: 'play none none none'
+          toggleActions: 'play none none none',
+          markers: false // Set to true for debugging
         },
         y: 60,
         opacity: 0,
@@ -56,7 +63,8 @@ export default function Testimonials() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
-          toggleActions: 'play none none none'
+          toggleActions: 'play none none none',
+          markers: false // Set to true for debugging
         },
         scale: 0,
         opacity: 0,
