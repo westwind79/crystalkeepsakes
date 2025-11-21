@@ -1,11 +1,11 @@
 // components/ImageEditor.tsx
-// Version: 2.2.0 - 2025-11-05 - HIGH-RES PNG FOR LASER ENGRAVING
+// Version: 2.3.0 - Fixed: Image centering on load, cursor pointer on buttons
 // ✅ Fixed: Changed to PNG format for transparency support
 // ✅ Fixed: Increased resolution to 2400px for laser engraving quality
 // ✅ Fixed: Increased file size limit to 2MB for high-res images
 // ✅ Fixed: Increased quality to 0.95 for best engraving results
-// - Kept: Disabled image movement during save/processing
-// - Kept: Converts uploaded images to black & white (grayscale) on save
+// ✅ Fixed: Image centering improved
+// ✅ Fixed: All buttons have cursor-pointer
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
@@ -83,22 +83,22 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
   /**
    * Center the uploaded image within the mask
-   * Called after both images are loaded
+   * FIX: Improved centering calculation
    */
   const centerImage = () => {
-    if (!imageRef.current || !containerRef.current || isImageCentered) return
+    if (!imageRef.current || !containerRef.current) return
     
     const imgRect = imageRef.current.getBoundingClientRect()
     const containerRect = containerRef.current.getBoundingClientRect()
     
-    // Calculate center position
-    const centerX = (containerRect.width - imgRect.width) / 2
-    const centerY = (containerRect.height - imgRect.height) / 2
+    // Calculate center position more accurately
+    const centerX = (containerRect.width - (imgRect.width * scale)) / 2
+    const centerY = (containerRect.height - (imgRect.height * scale)) / 2
     
     setPosition({ x: centerX, y: centerY })
     setIsImageCentered(true)
     
-    log('Image centered at:', { x: centerX, y: centerY })
+    log('Image centered at:', { x: centerX, y: centerY, scale })
   }
 
   /**
@@ -226,15 +226,24 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
   /**
    * Center image when modal opens or image changes
+   * FIX: Improved timing and reliability
    */
   useEffect(() => {
     if (show && uploadedImage) {
       // Reset centering flag when new image or modal opens
       setIsImageCentered(false)
-      // Small delay to ensure images are rendered
-      setTimeout(() => {
-        centerImage()
-      }, 100)
+      setScale(1) // Reset scale
+      setPosition({ x: 0, y: 0 }) // Reset position
+      
+      // Multiple attempts to ensure centering
+      const timeouts = [100, 200, 500]
+      timeouts.forEach(delay => {
+        setTimeout(() => {
+          if (!isImageCentered) {
+            centerImage()
+          }
+        }, delay)
+      })
     }
   }, [show, uploadedImage])
 
@@ -547,7 +556,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               <button
                 onClick={onHide}
                 disabled={isProcessing}
-                className="text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <X size={24} />
               </button>
@@ -569,7 +578,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                     onClick={() => handleZoom(scale * 1.1)}
                     title="Zoom In"
                     disabled={isProcessing}
-                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ZoomIn size={18} />
                   </button>
@@ -582,7 +591,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                     onClick={() => handleZoom(scale * 0.9)}
                     title="Zoom Out"
                     disabled={isProcessing}
-                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-10 h-10 flex items-center justify-center bg-[var(--surface-700)] border border-[var(--surface-600)] text-[var(--surface-50)] rounded hover:bg-[var(--surface-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ZoomOut size={18} />
                   </button>
@@ -594,7 +603,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                   src={uploadedImage || ''}
                   alt="Upload"
                   className="uploaded-image"
-                  onLoad={centerImage}
+                  onLoad={() => {
+                    // Delay centering slightly to ensure dimensions are ready
+                    setTimeout(centerImage, 50)
+                  }}
                   style={{
                     transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
                     transformOrigin: '0 0',
@@ -643,7 +655,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               {/* Left side - Utility actions */}
               <div className="modal-footer-group flex gap-3">
                 <button 
-                  className="btn-reset flex items-center gap-2 text-[var(--surface-400)] hover:text-[var(--surface-200)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-reset flex items-center gap-2 text-[var(--surface-400)] hover:text-[var(--surface-200)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   onClick={handleReset}
                   title="Reset Image Position"
                   disabled={isProcessing}
@@ -656,21 +668,21 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               {/* Right side - Primary actions */}
               <div className="modal-footer-group flex gap-3">
                 <button 
-                  className="btn btn-secondary px-6 py-2 rounded-lg disabled:cursor-not-allowed"
+                  className="btn btn-secondary px-6 py-2 rounded-lg disabled:cursor-not-allowed cursor-pointer"
                   onClick={onHide}
                   disabled={isProcessing}
                 >
                   Cancel
                 </button>
                 <button 
-                  className="btn btn-primary px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-primary px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   onClick={handleSave}
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
                     <span className="flex items-center gap-2">
                       <span 
-                        className="cursor-pointer inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+                        className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
                         role="status" 
                         aria-hidden="true"
                       />
