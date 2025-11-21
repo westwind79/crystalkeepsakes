@@ -56,3 +56,4 @@ public/data/final-products*.json
 # Environment files
 *.env
 *.env.*
+project-docs/.~lock.product-descriptions.odt#
