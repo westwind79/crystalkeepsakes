@@ -3256,8 +3256,4 @@ export const generatedAt = "2025-11-16T22:00:56-08:00";
 
 export const isRealTimeData = true;
 
-export const sourceInfo = {
-  static_products: 2,
-  cockpit3d_products: 45,
-  total: 47
-};
+export default finalProductList;
