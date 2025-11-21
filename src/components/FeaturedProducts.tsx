@@ -1,10 +1,16 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { finalProductList } from '@/data/final-product-list'
 import { getProducts } from '@/lib/products'
 import ProductCard from './ProductCard'
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface FeaturedProductsProps {
   limit?: number
@@ -13,6 +19,8 @@ interface FeaturedProductsProps {
 
 export default function FeaturedProducts({ limit = 6, title = "Featured Designs" }: FeaturedProductsProps) {
   const [products, setProducts] = useState(finalProductList)
+  const sectionRef = useRef<HTMLElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
   
   useEffect(() => {
     // Load products using the environment-aware helper
@@ -25,6 +33,42 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
       // Fallback to static import
     })
   }, [])
+
+  // GSAP Animations - runs after products are loaded
+  useEffect(() => {
+    if (!sectionRef.current) return
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.from(titleRef.current, {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+
+      // Animate product cards - slide in from bottom with stagger
+      gsap.from('.featured-product-card', {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          toggleActions: 'play none none none'
+        },
+        y: 80,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'back.out(1.2)'
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [products]) // Re-run when products load
   
   const featured = products
     .filter(p => p.featured === true && p.visible !== false)
