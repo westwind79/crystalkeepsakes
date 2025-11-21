@@ -111,14 +111,12 @@ export default function EnhancedProductAdminPage() {
     }
   }, []);
 
-  // Load available mask images
+  // Load available mask images from static JSON
   useEffect(() => {
-    fetch('/api/admin/masks')
+    fetch('/data/available-masks.json')
       .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setAvailableMasks(data.masks);
-        }
+      .then(masks => {
+        setAvailableMasks(masks);
       })
       .catch(err => console.error('Failed to load masks:', err));
   }, []);
