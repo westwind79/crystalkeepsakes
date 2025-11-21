@@ -77,15 +77,17 @@ export default function FeaturedProducts({ limit = 6, title = "Featured Designs"
   const displayProducts = featured.length > 0 ? featured : products.slice(0, limit)
 
   return (
-    <section className="bg-white py-16 md:py-20">
+    <section ref={sectionRef} className="bg-white py-16 md:py-20">
       <div className="w-full max-w-7xl mx-auto px-4">
-        <h2 className="text-center mb-12 text-3xl md:text-4xl font-light tracking-wide text-gray-900">
+        <h2 ref={titleRef} className="text-center mb-12 text-3xl md:text-4xl font-light tracking-wide text-gray-900">
           {title}
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {displayProducts.map((product, index) => (
+            <div key={product.id} className="featured-product-card">
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
         
