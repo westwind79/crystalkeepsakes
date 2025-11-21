@@ -5,39 +5,43 @@ import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
-    const { jsonContent, isBackup, timestamp } = await request.json()
+    const { jsonContent, jsContent, isBackup, timestamp } = await request.json()
 
-    if (!jsonContent) {
+    if (!jsonContent || !jsContent) {
       return NextResponse.json({ error: 'Missing content' }, { status: 400 })
     }
 
     const appRoot = process.cwd()
     
     if (isBackup) {
-      // Save timestamped backup (JSON only)
+      // Save timestamped backups
       const jsonPath = join(appRoot, 'public', 'data', `final-products-${timestamp}.json`)
+      const jsPath = join(appRoot, 'src', 'data', `final-products-${timestamp}.js`)
       
       writeFileSync(jsonPath, jsonContent, 'utf-8')
+      writeFileSync(jsPath, jsContent, 'utf-8')
       
-      console.log('✅ Backup created:', { jsonPath })
+      console.log('✅ Backup created:', { jsonPath, jsPath })
       
       return NextResponse.json({ 
         success: true, 
         message: `Backup created with timestamp ${timestamp}`,
-        jsonPath
+        files: { json: jsonPath, js: jsPath }
       })
     } else {
-      // Save current working file (JSON only)
+      // Save current working files
       const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
+      const jsPath = join(appRoot, 'src', 'data', 'final-product-list.js')
       
       writeFileSync(jsonPath, jsonContent, 'utf-8')
+      writeFileSync(jsPath, jsContent, 'utf-8')
       
-      console.log('✅ Products saved:', { jsonPath })
+      console.log('✅ Products saved:', { jsonPath, jsPath })
       
       return NextResponse.json({ 
         success: true, 
         message: 'Products saved to server',
-        jsonPath
+        files: { json: jsonPath, js: jsPath }
       })
     }
 
