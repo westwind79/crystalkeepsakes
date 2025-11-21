@@ -860,59 +860,82 @@ export default finalProductList;
                           </div>
                         </div>
 
-                        {/* Mask Image Selector */}
+                        {/* Mask Image Selector - Visual Grid */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
                             🎭 Mask Image (for image editor overlay)
                           </label>
-                          <select
-                            value={selectedProductData.maskImageUrl || ''}
-                            onChange={(e) => updateProduct(selectedProduct.id, { maskImageUrl: e.target.value || null })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="">No mask (free crop)</option>
-                            <option value="/img/masks/2d-ornament-mask.png">2D Ornament</option>
-                            <option value="/img/masks/3CRS-portrait-mask.png">3D Crystal Portrait</option>
-                            <option value="/img/masks/3D-crystal-prestige-iceberg-mask.png">3D Crystal Prestige Iceberg</option>
-                            <option value="/img/masks/3d-crystal-block-wide.png">3D Crystal Block Wide</option>
-                            <option value="/img/masks/3d-crystal-cut-corner-diamond_o.png">3D Crystal Cut Corner Diamond</option>
-                            <option value="/img/masks/3d-crystal-diamond-cut-corner-2.png">3D Crystal Diamond Cut Corner 2</option>
-                            <option value="/img/masks/3d-crystal-monument_o.png">3D Crystal Monument</option>
-                            <option value="/img/masks/3d-crystal-oval_mask.png">3D Crystal Oval</option>
-                            <option value="/img/masks/3d-crystal-rectangle-wide-mask.png">3D Crystal Rectangle Wide</option>
-                            <option value="/img/masks/3d-crystal-urn-small-mask.png">3D Crystal Urn Small</option>
-                            <option value="/img/masks/3d-rectangle-tall-mask.png">3D Rectangle Tall</option>
-                            <option value="/img/masks/cat-shape-large-mask.png">Cat Shape Large</option>
-                            <option value="/img/masks/crystal-heart-mask.png">Crystal Heart</option>
-                            <option value="/img/masks/crystal-urn-large-mask.png">Crystal Urn Large</option>
-                            <option value="/img/masks/desk-lamp-mask.png">Desk Lamp</option>
-                            <option value="/img/masks/diamond-mask.png">Diamond</option>
-                            <option value="/img/masks/dogbone-horizontal-mask.png">Dogbone Horizontal</option>
-                            <option value="/img/masks/dogbone-vertical-mask.png">Dogbone Vertical</option>
-                            <option value="/img/masks/globe-mask.png">Globe</option>
-                            <option value="/img/masks/heart-keychain-mask.png">Heart Keychain</option>
-                            <option value="/img/masks/heart-mask.png">Heart</option>
-                            <option value="/img/masks/heart-necklace-mask.png">Heart Necklace</option>
-                            <option value="/img/masks/notched-horizontal-mask.png">Notched Horizontal</option>
-                            <option value="/img/masks/notched-vertical-mask.png">Notched Vertical</option>
-                            <option value="/img/masks/ornament-mask.png">Ornament</option>
-                            <option value="/img/masks/photo-crystal-ornament-with-a-hole.png">Photo Crystal Ornament with Hole</option>
-                            <option value="/img/masks/prestige-mask.png">Prestige</option>
-                            <option value="/img/masks/rectangle-horizontal-mask.png">Rectangle Horizontal</option>
-                            <option value="/img/masks/rectangle-keychain-horizontal-mask.png">Rectangle Keychain Horizontal</option>
-                            <option value="/img/masks/rectangle-keychain-vertical-mask.png">Rectangle Keychain Vertical</option>
-                            <option value="/img/masks/rectangle-necklace-mask.png">Rectangle Necklace</option>
-                            <option value="/img/masks/rectangle-vertical-mask.png">Rectangle Vertical</option>
-                          </select>
+                          
+                          {/* Selected Mask Display */}
                           {selectedProductData.maskImageUrl && (
-                            <div className="mt-2 p-2 bg-gray-100 rounded">
-                              <img 
-                                src={selectedProductData.maskImageUrl} 
-                                alt="Mask preview" 
-                                className="max-h-40 mx-auto"
-                              />
+                            <div className="mb-4 p-3 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                              <p className="text-xs font-semibold text-blue-700 mb-2">Currently Selected:</p>
+                              <div className="flex items-center gap-3">
+                                <img 
+                                  src={selectedProductData.maskImageUrl} 
+                                  alt="Selected mask" 
+                                  className="h-20 w-20 object-contain bg-white rounded border"
+                                />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {availableMasks.find(m => m.path === selectedProductData.maskImageUrl)?.displayName || 'Custom mask'}
+                                  </p>
+                                  <button
+                                    onClick={() => updateProduct(selectedProduct.id, { maskImageUrl: null })}
+                                    className="text-xs text-red-600 hover:text-red-800 mt-1"
+                                  >
+                                    ❌ Remove mask
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           )}
+
+                          {/* Mask Grid */}
+                          <div className="grid grid-cols-4 gap-3 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg border">
+                            {/* No Mask Option */}
+                            <button
+                              onClick={() => updateProduct(selectedProduct.id, { maskImageUrl: null })}
+                              className={`p-3 rounded-lg border-2 transition-all hover:shadow-md ${
+                                !selectedProductData.maskImageUrl
+                                  ? 'border-blue-500 bg-blue-50'
+                                  : 'border-gray-200 bg-white hover:border-blue-300'
+                              }`}
+                            >
+                              <div className="aspect-square flex items-center justify-center bg-gray-100 rounded mb-2">
+                                <span className="text-3xl">🚫</span>
+                              </div>
+                              <p className="text-xs text-center font-medium">No Mask</p>
+                              <p className="text-xs text-center text-gray-500">Free crop</p>
+                            </button>
+
+                            {/* Available Masks */}
+                            {availableMasks.map((mask) => (
+                              <button
+                                key={mask.filename}
+                                onClick={() => updateProduct(selectedProduct.id, { maskImageUrl: mask.path })}
+                                className={`p-2 rounded-lg border-2 transition-all hover:shadow-md ${
+                                  selectedProductData.maskImageUrl === mask.path
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 bg-white hover:border-blue-300'
+                                }`}
+                                title={mask.displayName}
+                              >
+                                <div className="aspect-square flex items-center justify-center bg-white rounded mb-2 overflow-hidden">
+                                  <img 
+                                    src={mask.path} 
+                                    alt={mask.displayName}
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <p className="text-xs text-center font-medium truncate">{mask.displayName}</p>
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <p className="text-xs text-gray-500 mt-2">
+                            💡 Add new masks by uploading PNG files to <code className="bg-gray-200 px-1 rounded">/public/img/masks/</code>
+                          </p>
                         </div>
                       </div>
                     )}
