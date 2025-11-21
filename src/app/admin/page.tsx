@@ -500,63 +500,39 @@ export default finalProductList;
 
       {/* Main Content */}
       <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {/* Stats */}
-        <div className="my-6 grid grid-cols-5 lg:grid-cols-5 gap-2">
+        {/* Stats - Clean & Compact */}
+        <div className="my-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           
-          <div className="bg-blue-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-blue-600">Source</div>
-            <div className="text-2xl font-bold text-blue-900">{sourceProducts.length}</div>
+          <div className="bg-purple-50 rounded-lg p-4 text-center border border-purple-200">
+            <div className="text-xs font-medium text-purple-600 uppercase">Total</div>
+            <div className="text-3xl font-bold text-purple-900 mt-1">{sourceProducts.length}</div>
           </div>
 
-          <div className="bg-blue-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-blue-600">👁️ Visible:</div>
-            <div className="text-2xl font-bold text-blue-900"> 
-              {getStats().visible}
-            </div>
+          <div className="bg-green-50 rounded-lg p-4 text-center border border-green-200">
+            <div className="text-xs font-medium text-green-600 uppercase">👁️ Visible</div>
+            <div className="text-3xl font-bold text-green-900 mt-1">{getStats().visible}</div>
           </div>
 
-          <div className="bg-blue-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-blue-600">🚫 Hidden:</div>
-            <div className="text-2xl font-bold text-blue-900"> 
-              {getStats().hidden}
-            </div>
+          <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
+            <div className="text-xs font-medium text-gray-600 uppercase">🚫 Hidden</div>
+            <div className="text-3xl font-bold text-gray-900 mt-1">{getStats().hidden}</div>
           </div>
 
-          <div className="bg-blue-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-blue-600">⭐ Featured:</div>
-            <div className="text-2xl font-bold text-blue-900"> 
-              {getStats().featured}
-            </div>
+          <div className="bg-yellow-50 rounded-lg p-4 text-center border border-yellow-200">
+            <div className="text-xs font-medium text-yellow-600 uppercase">⭐ Featured</div>
+            <div className="text-3xl font-bold text-yellow-900 mt-1">{getStats().featured}</div>
           </div>
 
+          <div className="bg-red-50 rounded-lg p-4 text-center border border-red-200">
+            <div className="text-xs font-medium text-red-600 uppercase">💰 On Sale</div>
+            <div className="text-3xl font-bold text-red-900 mt-1">{getStats().onSale}</div>
+          </div>
 
-            
-          <div className="bg-red-100 px-2 py-1 rounded">
-            <span className="font-bold text-red-700">💰 On Sale:</span> {getStats().onSale}
+          <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+            <div className="text-xs font-medium text-blue-600 uppercase">✏️ Edited</div>
+            <div className="text-3xl font-bold text-blue-900 mt-1">{Object.keys(editedProducts).length}</div>
           </div>
-          <div className="bg-blue-100 px-2 py-1 rounded col-span-2">
-            <span className="font-bold text-blue-700">📸 Requires Image:</span> {getStats().requiresImage}
-          </div>
-           
-          <div className="bg-blue-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-green-600">Featured</div>
-            <div className="text-2xl font-bold text-green-900">
-              {sourceProducts.filter(p => {
-                const productData = editedProducts[p.id] || p;
-                return productData.featured === true;
-              }).length}
-            </div>
-          </div>
-          <div className="bg-yellow-200 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-green-600">Customized</div>
-            <div className="text-2xl font-bold text-green-900">
-              {Object.keys(editedProducts).length}
-            </div>
-          </div>
-          <div className="bg-purple-100 rounded-lg p-4 text-center">
-            <div className="text-sm font-medium text-purple-600">Total</div>
-            <div className="text-2xl font-bold text-purple-900">{sourceProducts.length}</div>
-          </div>
+
         </div>
 
         <div className="grid grid-cols-12 gap-6">
