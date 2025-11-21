@@ -1,0 +1,90 @@
+# Crystal Keepsakes - Root .htaccess
+# Place this in: /public_html/crystalkeepsakes.com/.htaccess
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ============================================
+  # IMAGE URL MAPPING - CRITICAL!
+  # ============================================
+  # Map /uploads/order-images/ to /crystal-data/order-images/
+  # This allows: https://crystalkeepsakes.com/uploads/order-images/ORDER-123/image.jpg
+  # To serve from: /public_html/crystal-data/order-images/ORDER-123/image.jpg
+  
+  RewriteRule ^uploads/order-images/(.*)$ ../crystal-data/order-images/$1 [L]
+  
+  # ============================================
+  # HTTPS REDIRECT
+  # ============================================
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ============================================
+  # NEXT.JS ROUTING
+  # ============================================
+  # Handle Next.js trailing slashes
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !(.*)/$
+  RewriteRule ^(.*)$ /$1/ [L,R=301]
+
+  # Serve index.html for directories
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^(.*)$ $1index.html [L]
+
+  # Handle client-side routing (fallback to index.html)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# ============================================
+# IMAGE DIRECTORY ACCESS CONTROL
+# ============================================
+# Protect crystal-data directory
+<IfModule mod_alias.c>
+  # Create alias for image access
+  # Note: This may require server configuration
+  # Alias /uploads/order-images /home/uydbo2r007mb/public_html/crystal-data/order-images
+</IfModule>
+
+# Allow access to image files only
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
+
+# ============================================
+# COMPRESSION
+# ============================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# ============================================
+# CACHING
+# ============================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+</IfModule>
+
+# ============================================
+# SECURITY
+# ============================================
+# Prevent directory browsing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "\.(env|sql|md|log|json|lock)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
