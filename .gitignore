@@ -12,11 +12,13 @@ out/
 .env.production
 .env.development
 .env.test
+.env.production.test
 
 # Product data (edited in admin - don't commit)
 src/data/final-product-list.js
 public/data/products.json
 public/data/final-products*.json
+
 
 # Logs
 *.log
@@ -35,25 +37,3 @@ public/data/final-products*.json
 # Backup
 *.backup
 *.bak
-.env.production.test
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
-project-docs/.~lock.product-descriptions.odt#
