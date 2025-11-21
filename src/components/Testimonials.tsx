@@ -45,7 +45,7 @@ export default function Testimonials() {
         gsap.set('.testimonial-card', { opacity: 1, y: 0 })
         gsap.set('.star-icon', { opacity: 1, scale: 1 })
 
-        // Animate testimonial cards sliding in from bottom
+        // Animate testimonial cards sliding in - FASTER
         const cards = gsap.utils.toArray('.testimonial-card')
         if (cards.length > 0) {
           gsap.from(cards, {
@@ -54,15 +54,15 @@ export default function Testimonials() {
               start: 'top 75%',
               toggleActions: 'play none none none'
             },
-            y: 60,
+            y: 40,
             opacity: 0,
-            duration: 0.8,
-            stagger: 0.2,
-            ease: 'power3.out'
+            duration: 0.5,
+            stagger: 0.1,
+            ease: 'power2.out'
           })
         }
 
-        // Animate stars fading in one by one
+        // Animate stars fading in - MUCH FASTER
         const stars = gsap.utils.toArray('.star-icon')
         if (stars.length > 0) {
           gsap.from(stars, {
@@ -73,9 +73,9 @@ export default function Testimonials() {
             },
             scale: 0,
             opacity: 0,
-            duration: 0.4,
-            stagger: 0.1,
-            ease: 'back.out(2)'
+            duration: 0.25,
+            stagger: 0.05,
+            ease: 'back.out(1.7)'
           })
         }
       }, sectionRef)
@@ -100,7 +100,7 @@ export default function Testimonials() {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div 
               key={testimonial.id}
               className="testimonial-card bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
@@ -113,7 +113,6 @@ export default function Testimonials() {
                     className="star-icon w-6 h-6 text-yellow-400 drop-shadow-md" 
                     fill="currentColor" 
                     viewBox="0 0 20 20"
-                    style={{ transitionDelay: `${index * 200 + i * 100}ms` }}
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>

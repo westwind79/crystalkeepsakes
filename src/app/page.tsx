@@ -56,13 +56,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero animations
+      // Hero animations - NO DELAYS
       gsap.from('.hero-content', {
         opacity: 0,
         y: 50,
         duration: 1,
-        ease: 'power3.out',
-        delay: 0.2
+        ease: 'power3.out'
       })
 
       gsap.from('.hero-cta a', {
@@ -70,8 +69,7 @@ export default function HomePage() {
         y: 20,
         duration: 0.6,
         stagger: 0.15,
-        ease: 'power2.out',
-        delay: 0.8
+        ease: 'power2.out'
       })
 
       gsap.from('.hero-swiper', {
@@ -79,22 +77,22 @@ export default function HomePage() {
         scale: 0.9,
         rotation: -5,
         duration: 1,
-        ease: 'back.out(1.2)',
-        delay: 0.5
+        ease: 'back.out(1.2)'
       })
 
-      // Process cards slide in from bottom with bounce
+      // Process cards - FIXED: Set initial state, then animate from 0
+      gsap.set('.process-step', { y: 0, opacity: 1 })
       gsap.from('.process-step', {
         scrollTrigger: {
           trigger: processRef.current,
           start: 'top 75%',
           toggleActions: 'play none none none'
         },
-        y: 80,
+        y: 50,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.5)'
+        duration: 0.6,
+        stagger: 0.12,
+        ease: 'power2.out'
       })
 
       // About section slide from left
@@ -106,7 +104,7 @@ export default function HomePage() {
         },
         x: -60,
         opacity: 0,
-        duration: 1,
+        duration: 0.8,
         ease: 'power3.out'
       })
 
@@ -118,7 +116,7 @@ export default function HomePage() {
         },
         x: 60,
         opacity: 0,
-        duration: 1,
+        duration: 0.8,
         ease: 'power3.out'
       })
 
@@ -129,10 +127,10 @@ export default function HomePage() {
           start: 'top 80%',
           toggleActions: 'play none none none'
         },
-        scale: 0.9,
+        scale: 0.95,
         opacity: 0,
-        duration: 0.8,
-        ease: 'back.out(1.5)'
+        duration: 0.6,
+        ease: 'power2.out'
       })
     })
 
