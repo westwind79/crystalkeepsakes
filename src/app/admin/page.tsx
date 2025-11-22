@@ -364,7 +364,7 @@ export default finalProductList;
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Products saved!\n\n📁 Files updated:\n• ${result.jsPath} (dev)\n• ${result.jsonPath} (production)\n\n📤 FTP TO GODADDY:\n/public_html/crystalkeepsakes.com/data/final-products.json`);
+        alert(`✅ Products saved!\n\n📁 File: ${result.jsonPath}\n\n📤 FTP TO GODADDY:\n/public_html/crystalkeepsakes.com/data/final-products.json\n\n✨ ONE FILE - Works everywhere!`);
         return;
       }
     } catch (error) {
