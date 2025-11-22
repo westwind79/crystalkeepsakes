@@ -14,10 +14,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { cockpit3dProducts } from '@/data/cockpit3d-products';
 import ProductGallery from '@/components/ProductGallery';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { getProductCategories, getCategoryLabel, isOnSale, OCCASION_CATEGORIES } from '@/utils/categoriesConfig';
+import { getProducts } from '@/lib/products';
 
 // Production safeguard
 if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
