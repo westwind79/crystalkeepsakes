@@ -111,16 +111,36 @@ export default function EnhancedProductAdminPage() {
     }
   }, []);
 
-  // Load available masks from folder
+  // Load available masks from folder (dev only - auto-generates from /public/img/masks/)
   useEffect(() => {
     fetch('/api/admin/masks/')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
-        if (data.success) {
+        if (data.success && data.masks) {
           setAvailableMasks(data.masks);
+          console.log(`✅ Loaded ${data.masks.length} masks from folder`);
+        } else {
+          console.error('Invalid response from masks API:', data);
         }
       })
-      .catch(err => console.error('Failed to load masks:', err));
+      .catch(err => {
+        console.error('Failed to load masks from API:', err);
+        // Fallback: try to load from static JSON if API fails
+        fetch('/data/available-masks.json')
+          .then(res => res.json())
+          .then(masks => {
+            setAvailableMasks(masks);
+            console.log('✅ Loaded masks from static JSON (fallback)');
+          })
+          .catch(() => {
+            console.warn('⚠️ Could not load masks from API or static file');
+          });
+      });
   }, []);
 
   // Keyboard shortcut: Ctrl+S / Cmd+S to save
