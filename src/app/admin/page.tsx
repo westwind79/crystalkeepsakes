@@ -2,12 +2,12 @@
 
 /**
  * Enhanced Product Admin Panel
- * Version: 2.0.0
+ * Version: 3.0.0 - JSON-ONLY SYSTEM
  * Features:
  * - Complete price control (base + all options)
  * - Option configuration (enable/disable per product)
  * - Size, lightbase, background, text option management
- * - Generates final-product-list.js with all customizations
+ * - Saves directly to final-products.json (single source of truth)
  * 
  * NOTE: This page is for DEVELOPMENT ONLY
  * Do NOT upload the /admin directory to production server
