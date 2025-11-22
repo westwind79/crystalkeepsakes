@@ -53,8 +53,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Await params (Next.js 15 requirement)
     const { slug } = await params
     
-    const products = await import('../../../public/data/final-products.json')
-    const cockpit3dProducts = products.default || products
+    // Read JSON file from filesystem
+    const fs = await import('fs')
+    const path = await import('path')
+    const filePath = path.join(process.cwd(), 'public', 'data', 'final-products.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const cockpit3dProducts = JSON.parse(fileContent)
     const product = cockpit3dProducts.find((p: any) => p.slug === slug)
     
     if (!product) {
