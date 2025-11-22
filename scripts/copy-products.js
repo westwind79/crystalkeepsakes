@@ -1,37 +1,34 @@
 // scripts/copy-products.js
-// Copies final-product-list.js to /public/data for easy FTP updates
+// JSON-ONLY SYSTEM: Verifies final-products.json exists for build
 
 const fs = require('fs-extra');
 const path = require('path');
 
-const sourceFile = path.join(__dirname, '..', 'src', 'data', 'final-product-list.js');
-const publicDataDir = path.join(__dirname, '..', 'public', 'data');
-const destFile = path.join(publicDataDir, 'final-product-list.js');
+const jsonFile = path.join(__dirname, '..', 'public', 'data', 'final-products.json');
 
-async function copyProducts() {
+async function checkProducts() {
   try {
-    console.log('📦 Copying final-product-list.js to /public/data...');
+    console.log('📦 Checking products JSON file...');
     
-    // Check if source file exists
-    if (!await fs.pathExists(sourceFile)) {
-      console.warn('⚠️ Warning: final-product-list.js not found in src/data/');
-      console.warn('   Run admin panel to generate it first');
-      process.exit(0);
+    // Check if JSON file exists
+    if (!await fs.pathExists(jsonFile)) {
+      console.error('❌ Error: final-products.json not found in /public/data/');
+      console.error('   This file is required for the build to succeed.');
+      console.error('   Run the admin panel and save products to generate it.');
+      process.exit(1);
     }
     
-    // Ensure public/data directory exists
-    await fs.ensureDir(publicDataDir);
+    // Verify it's valid JSON
+    const content = await fs.readFile(jsonFile, 'utf-8');
+    const products = JSON.parse(content);
     
-    // Copy the file
-    await fs.copy(sourceFile, destFile, { overwrite: true });
-    
-    console.log('✅ Products copied to /public/data/final-product-list.js');
-    console.log('📌 You can now FTP this file to update production products!');
+    console.log(`✅ Products JSON verified: ${products.length} products found`);
+    console.log('📌 Ready for build!');
     
   } catch (error) {
-    console.error('❌ Error copying products:', error);
+    console.error('❌ Error checking products:', error.message);
     process.exit(1);
   }
 }
 
-copyProducts();
+checkProducts();
