@@ -97,42 +97,7 @@ export default function EnhancedProductAdminPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'options' | 'images'>('basic');
-
-  // Available mask images
-  const availableMasks = [
-    { filename: '2d-ornament-mask.png', path: '/img/masks/2d-ornament-mask.png', displayName: '2D Ornament' },
-    { filename: '3CRS-portrait-mask.png', path: '/img/masks/3CRS-portrait-mask.png', displayName: '3D Crystal Portrait' },
-    { filename: '3D-crystal-prestige-iceberg-mask.png', path: '/img/masks/3D-crystal-prestige-iceberg-mask.png', displayName: '3D Crystal Prestige Iceberg' },
-    { filename: '3d-crystal-block-wide.png', path: '/img/masks/3d-crystal-block-wide.png', displayName: '3D Crystal Block Wide' },
-    { filename: '3d-crystal-cut-corner-diamond_o.png', path: '/img/masks/3d-crystal-cut-corner-diamond_o.png', displayName: '3D Crystal Cut Corner Diamond' },
-    { filename: '3d-crystal-diamond-cut-corner-2.png', path: '/img/masks/3d-crystal-diamond-cut-corner-2.png', displayName: '3D Crystal Diamond Cut Corner 2' },
-    { filename: '3d-crystal-monument_o.png', path: '/img/masks/3d-crystal-monument_o.png', displayName: '3D Crystal Monument' },
-    { filename: '3d-crystal-oval_mask.png', path: '/img/masks/3d-crystal-oval_mask.png', displayName: '3D Crystal Oval' },
-    { filename: '3d-crystal-rectangle-wide-mask.png', path: '/img/masks/3d-crystal-rectangle-wide-mask.png', displayName: '3D Crystal Rectangle Wide' },
-    { filename: '3d-crystal-urn-small-mask.png', path: '/img/masks/3d-crystal-urn-small-mask.png', displayName: '3D Crystal Urn Small' },
-    { filename: '3d-rectangle-tall-mask.png', path: '/img/masks/3d-rectangle-tall-mask.png', displayName: '3D Rectangle Tall' },
-    { filename: 'cat-shape-large-mask.png', path: '/img/masks/cat-shape-large-mask.png', displayName: 'Cat Shape Large' },
-    { filename: 'crystal-heart-mask.png', path: '/img/masks/crystal-heart-mask.png', displayName: 'Crystal Heart' },
-    { filename: 'crystal-urn-large-mask.png', path: '/img/masks/crystal-urn-large-mask.png', displayName: 'Crystal Urn Large' },
-    { filename: 'desk-lamp-mask.png', path: '/img/masks/desk-lamp-mask.png', displayName: 'Desk Lamp' },
-    { filename: 'diamond-mask.png', path: '/img/masks/diamond-mask.png', displayName: 'Diamond' },
-    { filename: 'dogbone-horizontal-mask.png', path: '/img/masks/dogbone-horizontal-mask.png', displayName: 'Dogbone Horizontal' },
-    { filename: 'dogbone-vertical-mask.png', path: '/img/masks/dogbone-vertical-mask.png', displayName: 'Dogbone Vertical' },
-    { filename: 'globe-mask.png', path: '/img/masks/globe-mask.png', displayName: 'Globe' },
-    { filename: 'heart-keychain-mask.png', path: '/img/masks/heart-keychain-mask.png', displayName: 'Heart Keychain' },
-    { filename: 'heart-mask.png', path: '/img/masks/heart-mask.png', displayName: 'Heart' },
-    { filename: 'heart-necklace-mask.png', path: '/img/masks/heart-necklace-mask.png', displayName: 'Heart Necklace' },
-    { filename: 'notched-horizontal-mask.png', path: '/img/masks/notched-horizontal-mask.png', displayName: 'Notched Horizontal' },
-    { filename: 'notched-vertical-mask.png', path: '/img/masks/notched-vertical-mask.png', displayName: 'Notched Vertical' },
-    { filename: 'ornament-mask.png', path: '/img/masks/ornament-mask.png', displayName: 'Ornament' },
-    { filename: 'photo-crystal-ornament-with-a-hole.png', path: '/img/masks/photo-crystal-ornament-with-a-hole.png', displayName: 'Photo Crystal Ornament with Hole' },
-    { filename: 'prestige-mask.png', path: '/img/masks/prestige-mask.png', displayName: 'Prestige' },
-    { filename: 'rectangle-horizontal-mask.png', path: '/img/masks/rectangle-horizontal-mask.png', displayName: 'Rectangle Horizontal' },
-    { filename: 'rectangle-keychain-horizontal-mask.png', path: '/img/masks/rectangle-keychain-horizontal-mask.png', displayName: 'Rectangle Keychain Horizontal' },
-    { filename: 'rectangle-keychain-vertical-mask.png', path: '/img/masks/rectangle-keychain-vertical-mask.png', displayName: 'Rectangle Keychain Vertical' },
-    { filename: 'rectangle-necklace-mask.png', path: '/img/masks/rectangle-necklace-mask.png', displayName: 'Rectangle Necklace' },
-    { filename: 'rectangle-vertical-mask.png', path: '/img/masks/rectangle-vertical-mask.png', displayName: 'Rectangle Vertical' }
-  ];
+  const [availableMasks, setAvailableMasks] = useState<Array<{filename: string, path: string, displayName: string}>>([]);
 
   // Load existing customizations from localStorage
   useEffect(() => {
