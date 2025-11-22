@@ -92,12 +92,29 @@ interface ProductCustomizations {
 }
 
 export default function EnhancedProductAdminPage() {
-  const [sourceProducts] = useState<Product[]>(cockpit3dProducts as Product[]);
+  const [sourceProducts, setSourceProducts] = useState<Product[]>([]);
   const [editedProducts, setEditedProducts] = useState<ProductCustomizations>({});
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'options' | 'images'>('basic');
   const [availableMasks, setAvailableMasks] = useState<Array<{filename: string, path: string, displayName: string}>>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load products from JSON on mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const products = await getProducts();
+        setSourceProducts(products as Product[]);
+      } catch (error) {
+        console.error('Failed to load products:', error);
+        alert('Failed to load products from JSON file');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
 
   // Load existing customizations from localStorage
   useEffect(() => {
