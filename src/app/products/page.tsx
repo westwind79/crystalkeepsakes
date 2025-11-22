@@ -145,46 +145,35 @@ export default function ProductsPage() {
   }, [products, loading, error])
 
   /**
-   * Fetch products from generated file or API fallback
+   * Fetch products from JSON (single source of truth)
    */
   const fetchProducts = async () => {
     try {
       if (shouldLog) {
-        console.log('📄 Loading products from generated file...')
+        console.log('📄 Loading products from JSON...')
       }
 
-      // Import the generated products file - use relative path
-      // Development: use static import, Production: fetch JSON
-      let cockpit3dProducts
-      if (process.env.NODE_ENV === 'development') {
-        const { finalProductList } = await import('../../data/final-product-list.js')
-        cockpit3dProducts = finalProductList
-      } else {
-        const res = await fetch(assetPath('/data/final-products.json'))
-        if (!res.ok) {
-          throw new Error(`Failed to fetch products: ${res.status} ${res.statusText}`)
-        }
-        cockpit3dProducts = await res.json()
-      }
+      // Use getProducts() which always fetches from JSON file
+      const allProducts = await getProducts()
       
       if (shouldLog) {
         console.log('📦 Products loaded:', {
-          count: cockpit3dProducts.length,
+          count: allProducts.length,
           environment: process.env.NODE_ENV
         })
       }
 
       // Filter out hidden products (visible !== false)
-      const visibleProducts = cockpit3dProducts.filter((p: any) => p.visible !== false)
+      const visibleProducts = allProducts.filter((p: any) => p.visible !== false)
 
       setProducts(visibleProducts || [])
       
       if (shouldLog) {
-        console.log(`✅ Loaded ${cockpit3dProducts?.length || 0} products`)
+        console.log(`✅ Loaded ${allProducts?.length || 0} products`)
       }
 
     } catch (err: any) {
-      console.error('❌ Error loading products from file:', err)
+      console.error('❌ Error loading products from JSON:', err)
       
       // Fallback to API if file doesn't exist
       if (shouldLog) {
