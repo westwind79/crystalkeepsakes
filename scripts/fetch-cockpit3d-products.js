@@ -69,7 +69,8 @@ http.get(API_URL, (res) => {
         console.log(`   📦 Total: ${result.total_count || result.products_count || 0} products`);
         console.log(`   📁 Static: ${result.static_count || 0} products`);
         console.log(`   🌐 CockPit3D: ${result.cockpit3d_count || 0} products`);
-        console.log(`   💾 Saved to: ${result.file_path || 'src/data/cockpit3d-products.js'}`);
+        console.log(`   💾 Saved to: public/data/final-products.json`);
+        console.log('   ⚠️  NOTE: This script needs to be updated to save JSON instead of JS');
         process.exit(0);
       }
   });
