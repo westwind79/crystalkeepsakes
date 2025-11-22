@@ -93,7 +93,7 @@
       {
         "id": "wooden-premium-base-mini",
         "name": "Wooden Premium Base Mini",
-        "price": 60
+        "price": 45
       },
       {
         "id": "concave-lightbase",
@@ -431,7 +431,7 @@
       {
         "id": "765",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "765"
       },
       {
@@ -558,7 +558,7 @@
       {
         "id": "845",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "845"
       },
       {
@@ -783,7 +783,7 @@
       {
         "id": "864",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "864"
       },
       {
@@ -1132,7 +1132,7 @@
       {
         "id": "775",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "775"
       },
       {
@@ -1256,7 +1256,7 @@
       {
         "id": "876",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "876"
       },
       {
@@ -1463,7 +1463,7 @@
       {
         "id": "897",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "897"
       }
     ],
@@ -1672,7 +1672,7 @@
       {
         "id": "879",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "879"
       },
       {
@@ -1771,7 +1771,7 @@
       {
         "id": "1029",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1029"
       },
       {
@@ -2539,7 +2539,7 @@
       {
         "id": "1867",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1867"
       },
       {
@@ -2741,7 +2741,7 @@
       {
         "id": "1954",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1954"
       },
       {
@@ -2860,7 +2860,7 @@
       {
         "id": "2090",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "2090"
       },
       {
@@ -3094,7 +3094,7 @@
       {
         "id": "2062",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "2062"
       },
       {
@@ -3183,7 +3183,7 @@
       {
         "id": "1897",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1897"
       },
       {
