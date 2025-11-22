@@ -347,28 +347,7 @@ export default finalProductList;
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
     const jsContent = generateFinalProducts();
     
-    // Try to save to server (works in dev mode)
-    try {
-      const response = await fetch('/api/admin/save-products/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          jsContent,
-          isBackup: false 
-        })
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert(`✅ Products saved!\n\n📁 File: ${result.jsonPath}\n\n📤 FTP TO GODADDY:\n/public_html/crystalkeepsakes.com/data/final-products.json\n\n✨ ONE FILE - Works everywhere!`);
-        return;
-      }
-    } catch (error) {
-      console.log('Server save failed, downloading file instead');
-    }
-    
-    // Fallback: Download file (for production/static export)
+    // Download file (works with static export)
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
@@ -379,7 +358,7 @@ export default finalProductList;
     document.body.removeChild(jsLink);
     URL.revokeObjectURL(jsUrl);
     
-    alert(`✅ Products saved!\n\n📥 Downloaded: final-product-list.js\n\n📤 FTP to:\n/public_html/crystalkeepsakes.com/src/data/final-product-list.js`);
+    alert(`✅ Products saved!\n\n📥 Downloaded: final-product-list.js\n\n📤 FTP to your server:\n/crystalkeepsakes/src/data/final-product-list.js\n\n✨ Upload via FTP and refresh site!`);
   };
 
   // Backup Products (with timestamp) - ONE FILE ONLY
