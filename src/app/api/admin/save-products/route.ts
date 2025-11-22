@@ -13,31 +13,38 @@ export async function POST(request: NextRequest) {
 
     const appRoot = process.cwd()
     
+    // Extract JSON array from JS content
+    const match = jsContent.match(/export const finalProductList = (\[[\s\S]*?\]);/)
+    if (!match) {
+      return NextResponse.json({ error: 'Invalid JS content format' }, { status: 400 })
+    }
+    const jsonContent = match[1]
+    
     if (isBackup) {
-      // Save timestamped backup - JS ONLY
-      const jsPath = join(appRoot, 'src', 'data', `final-product-list-${timestamp}.js`)
+      // Save timestamped backup - JSON ONLY
+      const jsonPath = join(appRoot, 'public', 'data', `final-products-${timestamp}.json`)
       
-      writeFileSync(jsPath, jsContent, 'utf-8')
+      writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      console.log('✅ Backup created:', jsPath)
+      console.log('✅ Backup created:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: `Backup created with timestamp ${timestamp}`,
-        jsPath
+        message: `Backup created: final-products-${timestamp}.json`,
+        jsonPath
       })
     } else {
-      // Save current working file - JS ONLY
-      const jsPath = join(appRoot, 'src', 'data', 'final-product-list.js')
+      // Save current working file - JSON ONLY
+      const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
       
-      writeFileSync(jsPath, jsContent, 'utf-8')
+      writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      console.log('✅ Products saved:', jsPath)
+      console.log('✅ Products saved:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
         message: 'Products saved to server',
-        jsPath
+        jsonPath
       })
     }
 

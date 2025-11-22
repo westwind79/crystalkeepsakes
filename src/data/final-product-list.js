@@ -5,6 +5,7 @@
 // This file is the SOURCE OF TRUTH for product display and pricing
 // All frontend pages, cart, checkout, and orders use this file
 
+
 export const finalProductList = [
   {
     "id": "001",
@@ -100,7 +101,7 @@ export const finalProductList = [
       {
         "id": "wooden-premium-base-mini",
         "name": "Wooden Premium Base Mini",
-        "price": 60
+        "price": 45
       },
       {
         "id": "concave-lightbase",
@@ -438,7 +439,7 @@ export const finalProductList = [
       {
         "id": "765",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "765"
       },
       {
@@ -565,7 +566,7 @@ export const finalProductList = [
       {
         "id": "845",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "845"
       },
       {
@@ -790,7 +791,7 @@ export const finalProductList = [
       {
         "id": "864",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "864"
       },
       {
@@ -1139,7 +1140,7 @@ export const finalProductList = [
       {
         "id": "775",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "775"
       },
       {
@@ -1263,7 +1264,7 @@ export const finalProductList = [
       {
         "id": "876",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "876"
       },
       {
@@ -1472,7 +1473,7 @@ export const finalProductList = [
       {
         "id": "897",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "897"
       }
     ],
@@ -1681,7 +1682,7 @@ export const finalProductList = [
       {
         "id": "879",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "879"
       },
       {
@@ -1780,7 +1781,7 @@ export const finalProductList = [
       {
         "id": "1029",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1029"
       },
       {
@@ -2548,7 +2549,7 @@ export const finalProductList = [
       {
         "id": "1867",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1867"
       },
       {
@@ -2750,7 +2751,7 @@ export const finalProductList = [
       {
         "id": "1954",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1954"
       },
       {
@@ -2870,7 +2871,7 @@ export const finalProductList = [
       {
         "id": "2090",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "2090"
       },
       {
@@ -3104,7 +3105,7 @@ export const finalProductList = [
       {
         "id": "2062",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "2062"
       },
       {
@@ -3193,7 +3194,7 @@ export const finalProductList = [
       {
         "id": "1897",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "1897"
       },
       {
