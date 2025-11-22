@@ -50,7 +50,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Await params (Next.js 15 requirement)
     const { slug } = await params
     
-    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
+    const products = await import('../../../public/data/final-products.json')
+    const cockpit3dProducts = products.default || products
     const product = cockpit3dProducts.find((p: any) => p.slug === slug)
     
     if (!product) {
