@@ -73,8 +73,8 @@ export default function Testimonials() {
             },
             scale: 0,
             opacity: 0,
-            duration: 0.25,
-            stagger: 0.05,
+            duration: 0.45,
+            stagger: 0.085,
             ease: 'back.out(1.7)'
           })
         }
