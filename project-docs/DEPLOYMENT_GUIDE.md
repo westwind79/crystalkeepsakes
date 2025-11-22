@@ -94,7 +94,7 @@ Live site for customers.
 
 ### Configuration
 
-**File**: `.env.production.root`
+**File**: `.env.production`
 
 ```env
 NODE_ENV=production
@@ -165,7 +165,7 @@ public_html/
 
 ### Before Building (Test or Production)
 
-- [ ] Update `.env.production.test` or `.env.production.root` with real credentials
+- [ ] Update `.env.production.test` or `.env.production` with real credentials
 - [ ] Verify Stripe keys (test vs live)
 - [ ] Verify Cockpit3D credentials
 - [ ] Verify email addresses
@@ -218,7 +218,7 @@ Contact your Cockpit3D account manager for:
 
 ### Email Not Sending
 - Verify PHP `mail()` function is enabled on server
-- Check email addresses in `.env.production.test` or `.env.production.root`
+- Check email addresses in `.env.production.test` or `.env.production`
 - Check server email logs (ask hosting provider)
 
 ### Pages Return 404
@@ -236,9 +236,9 @@ Contact your Cockpit3D account manager for:
 ## 📁 Important Files
 
 ### Environment Files
-- `.env.local` - Development (Mailhog)
+- `.env` - Development (Mailhog)
 - `.env.production.test` - Test environment
-- `.env.production.root` - Production
+- `.env.production` - Production
 
 ### Build Outputs
 - `/out/` - Static export directory

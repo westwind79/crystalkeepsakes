@@ -24,12 +24,13 @@ Production Build:
 ### File Locations
 ```
 Your Project Root:
-  ├── .env.local          ← Development (IGNORED by git)
-  ├── .env.production     ← Production settings
-  └── .env.example        ← Template for others
+  |── .env                 ← Development (IGNORED by git)
+  ├── .env.production      ← Production settings (IGNORED by git)
+  ├── .env.production.test ← TEST Production settings with DEV keys (IGNORED by git)
+  └── .env.example         ← Template for others
 ```
 
-### .env.local (Development)
+### .env (Development)
 Used when running:
 - `npm run dev` or `yarn dev`
 - Local MAMP development
@@ -211,8 +212,9 @@ Your GoDaddy Server:
 ### Source Files (Development)
 ```
 C:\MAMP\htdocs\crystalkeepsakes\
-├── .env.local                    ← Dev credentials
+├── .env                          ← Dev credentials
 ├── .env.production               ← Prod credentials
+├── .env.production.test               ← Prod credentials
 ├── package.json                  ← Build scripts
 ├── next.config.ts                ← Next.js config
 ├── src/
@@ -227,6 +229,7 @@ C:\MAMP\htdocs\crystalkeepsakes\
 │   └── cockpit3d-data-fetcher.php
 └── public/                       ← Static assets
     └── img/
+    └── data/final-products.json  ← FTP final products Source of all product information (homepage, product card, product details page, etc)
 ```
 
 ### Build Output (Production)
@@ -239,6 +242,9 @@ out/                              ← Upload to GoDaddy
 │   └── [72 more products]
 ├── _next/                        ← JavaScript bundles
 ├── img/                          ← Images
+└── api/
+└── data/
+└── [other folders]
 └── [other pages]
 ```
 

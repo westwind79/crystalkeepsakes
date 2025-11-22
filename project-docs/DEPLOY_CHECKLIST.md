@@ -36,7 +36,7 @@ npm run build:test
 
 ### 1. Configure
 ```bash
-# Edit .env.production.root
+# Edit .env.production
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_SECRET_KEY=sk_live_...
 COCKPIT3D_USERNAME=production_user

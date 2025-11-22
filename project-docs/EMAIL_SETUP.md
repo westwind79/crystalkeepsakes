@@ -40,7 +40,7 @@ docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 - Web interface: http://localhost:8025
 - SMTP server: localhost:1025
 
-**Environment Variables (.env.local):**
+**Environment Variables (.env):**
 ```env
 SMTP_HOST=localhost
 SMTP_PORT=1025
@@ -115,7 +115,7 @@ export function getEmailEndpoint(type: 'contact' | 'order'): string {
 ### Mailhog not receiving emails
 - Check Mailhog is running: `curl localhost:1025`
 - Check environment: `console.log(process.env.NODE_ENV)`
-- Check SMTP settings in `.env.local`
+- Check SMTP settings in `.env`
 
 ### Production emails not sending
 - Verify PHP `mail()` is enabled on server
@@ -124,7 +124,7 @@ export function getEmailEndpoint(type: 'contact' | 'order'): string {
 
 ### Force Mailhog in any environment
 ```env
-# Add to .env.local
+# Add to .env
 NEXT_PUBLIC_USE_MAILHOG=true
 ```
 
@@ -141,5 +141,5 @@ NEXT_PUBLIC_USE_MAILHOG=true
 
 ### Configuration
 - `/src/lib/emailConfig.ts` - Environment detection utility
-- `/.env.local` - Development SMTP settings
-- `/.env.local.example` - Template with all options
+- `/.env` - Development SMTP settings
+- `/.env.example` - Template with all options

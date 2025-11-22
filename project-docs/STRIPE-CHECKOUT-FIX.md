@@ -23,7 +23,7 @@ Your checkout was failing with `ERR_CONNECTION_REFUSED` because:
 
 ### 2. Updated Checkout Page
 
-**File:** `/app/src/app/checkout/page.tsx`
+**File:** `/src/app/checkout/page.tsx`
 
 **Changed from:**
 ```typescript
@@ -34,7 +34,7 @@ const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
 ```typescript
 const isDev = process.env.NODE_ENV === 'development'
 const apiUrl = isDev 
-  ? '/api/stripe/create-checkout-session'  // Next.js API route (dev only)
+  ? '/src/api/stripe/create-checkout-session'  // Next.js API route (dev only)
   : '/api/stripe/create-checkout-session.php'  // PHP file (production)
 ```
 
@@ -44,7 +44,6 @@ const apiUrl = isDev
 
 - For local development in container
 - Contains development Stripe keys (needs your actual keys)
-- Removed confusing `.env.local`
 
 ---
 
@@ -145,8 +144,8 @@ Once you add your Stripe keys:
 - **Environment:** `/.env`
 
 ### Production (GoDaddy):
-- **PHP backend:** `/app/api/stripe/create-checkout-session.php`
-- **Environment:** `/app/.env.production`
+- **PHP backend:** `/api/stripe/create-checkout-session.php`
+- **Environment:** `/.env.production`
 
 ---
 

@@ -206,7 +206,7 @@ This means:
 ### Local Development
 ```bash
 npm run dev
-# Uses .env.local or default settings
+# Uses .env or default settings
 # NEXT_PUBLIC_ENV_MODE=development
 # Debug logs enabled ✅
 ```

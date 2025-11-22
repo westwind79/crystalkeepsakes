@@ -117,7 +117,7 @@ Status: RUNNING
 The following changes I made to master are **NOT** in v8 (and they're not needed since v8 already works):
 
 - Documentation files (various MD files)
-- .env.production.root and .env.production.test (you may want these though)
+- .env.production and .env.production.test (you may want these though)
 - Any incomplete code changes
 
 ## What You Should Keep
@@ -125,7 +125,7 @@ The following changes I made to master are **NOT** in v8 (and they're not needed
 ### Recommended: Create .env Files for Production
 v8 doesn't have these, but they're useful:
 
-**`.env.production.root`** (for production build):
+**`.env.production`** (for production build):
 ```bash
 NEXT_PUBLIC_ENV_MODE=production
 NEXT_PUBLIC_BASE_PATH=
@@ -170,7 +170,7 @@ npm run build:test
 
 ### For Production:
 ```bash
-# 1. Create .env.production.root with live Stripe keys
+# 1. Create .env.production with live Stripe keys
 # 2. Build
 npm run build:prod
 # 3. Upload /out/ to server's root directory

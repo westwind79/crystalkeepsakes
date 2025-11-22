@@ -4,19 +4,19 @@
 
 **NEVER commit real API keys to the repository!**
 
-All sensitive credentials should be stored in `.env.local` (gitignored) or your hosting environment's secrets management.
+All sensitive credentials should be stored in `` (gitignored) or your hosting environment's secrets management.
 
 ## 📝 Quick Setup
 
 ### 1. Copy the Example File
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
 ### 2. Fill in Your Credentials
 
-Edit `.env.local` and replace all placeholder values:
+Edit `` and replace all placeholder values:
 
 #### Stripe Keys (Required for Checkout)
 
@@ -81,13 +81,13 @@ The app supports three modes via `NEXT_PUBLIC_ENV_MODE`:
 
 ### Local Development (MAMP)
 
-1. Create `.env.local` as described above
+1. Create `.env` as described above
 2. Ensure `NEXT_PUBLIC_PHP_BACKEND_URL=http://localhost:8888/crystalkeepsakes`
 3. Run `yarn dev`
 
 ### Production (GoDaddy/cPanel)
 
-1. Create `.env` file on the server (not `.env.local`)
+1. Create `.env` file on the server (not `.env`)
 2. Set `NEXT_PUBLIC_ENV_MODE=production`
 3. Use **live** Stripe keys
 4. Update `NEXT_PUBLIC_PHP_BACKEND_URL=https://yourdomain.com`
@@ -105,7 +105,7 @@ Most hosting providers allow setting environment variables via:
 
 1. **Using test keys in production** - Always use `sk_live_*` and `pk_live_*` for production
 2. **Hardcoding keys in code** - Use `process.env.VARIABLE_NAME` instead
-3. **Committing .env.local** - Already in .gitignore, but double-check!
+3. **Committing .env** - Already in .gitignore, but double-check!
 4. **Wrong key format** - Stripe keys have specific prefixes:
    - Secret: `sk_test_*` or `sk_live_*`
    - Publishable: `pk_test_*` or `pk_live_*`
@@ -151,7 +151,7 @@ This will verify:
 
 ### "Stripe key not found" Error
 
-1. Check `.env.local` exists and has the key
+1. Check `.env` exists and has the key
 2. Verify key format starts with `sk_test_` or `sk_live_`
 3. Restart dev server after adding keys
 
@@ -174,4 +174,4 @@ This will verify:
 
 ---
 
-**Remember**: Keep your `.env.local` file safe and never share it publicly!
+**Remember**: Keep your `.env` file safe and never share it publicly!

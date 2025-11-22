@@ -6,7 +6,9 @@ Before pushing to GitHub or deploying publicly, verify:
 
 ### 1. Environment Files
 
-- [ ] `.env.local` is **NOT** in the repository
+- [ ] `.env` is **NOT** in the repository
+- [ ] `.env.production` is **NOT** in the repository
+- [ ] `.env.production.test` is **NOT** in the repository
 - [ ] `.env.example` contains only placeholder values
 - [ ] `.gitignore` includes `.env*` patterns
 - [ ] No `.env` files are tracked by git
@@ -110,6 +112,7 @@ git log -S "sk_test_" --all
 - `.env.local`
 - `.env.development`
 - `.env.production`
+- `.env.production.test`
 - Any file with real credentials
 - Database dumps with user data
 - Private keys (`.pem`, `.key` files)

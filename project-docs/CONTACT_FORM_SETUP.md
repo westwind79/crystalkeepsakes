@@ -39,7 +39,7 @@ http://localhost:8025
 You'll see all emails sent from your application here!
 
 ### Configuration
-The `.env.local` file is already configured for MailHog:
+The `.env` file is already configured for MailHog:
 ```env
 SMTP_HOST=localhost
 SMTP_PORT=1025
@@ -75,7 +75,7 @@ SMTP_SECURE=false
 ## Production Setup (GoDaddy)
 
 ### Step 1: Update Environment Variables
-Edit `.env.local` (or `.env.production` for deployment):
+Edit `.env` (or `.env.production` for deployment):
 
 ```env
 # GoDaddy SMTP Settings
@@ -106,8 +106,8 @@ CONTACT_EMAIL=info@crystalkeepsakes.com
 ### Emails not appearing in MailHog
 1. Check if MailHog is running: `curl http://localhost:8025`
 2. Check console for errors
-3. Verify SMTP_PORT=1025 in `.env.local`
-4. Restart your Next.js app after changing `.env.local`
+3. Verify SMTP_PORT=1025 in `.env`
+4. Restart your Next.js app after changing `.env`
 
 ### Emails going to spam (Production)
 1. Set up SPF record: `v=spf1 include:secureserver.net ~all`
@@ -157,17 +157,17 @@ POST /api/contact
 
 ## File Structure
 ```
-/app/
+/crystalkeepsakes/
 ├── src/
 │   ├── app/
 │   │   ├── contact/
-│   │   │   └── page.tsx          # Contact form UI
-│   │   └── api/
-│   │       └── contact/
-│   │           └── route.ts      # Email sending API
-├── .env.local                    # Local environment config
-├── .env.local.example            # Example config
-└── CONTACT_FORM_SETUP.md         # This file
+│   │        └── page.tsx                      # Contact form UI
+── api/
+│   └── contact.php                            # Email sending API
+│                          
+├──.env                                        # Local environment config
+├── .env.example                               # Example config
+└── project-docs/CONTACT_FORM_SETUP.md         # This file
 ```
 
 ## Features Implemented
