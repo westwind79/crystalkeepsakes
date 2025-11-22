@@ -21,35 +21,29 @@ export async function POST(request: NextRequest) {
     const jsonContent = match[1]
     
     if (isBackup) {
-      // Save timestamped backup - BOTH FILES
-      const jsPath = join(appRoot, 'src', 'data', `final-product-list-${timestamp}.js`)
+      // Save timestamped backup - JSON ONLY
       const jsonPath = join(appRoot, 'public', 'data', `final-products-${timestamp}.json`)
       
-      writeFileSync(jsPath, jsContent, 'utf-8')
       writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      console.log('✅ Backup created:', { jsPath, jsonPath })
+      console.log('✅ Backup created:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: `Backup created with timestamp ${timestamp}`,
-        jsPath,
+        message: `Backup created: final-products-${timestamp}.json`,
         jsonPath
       })
     } else {
-      // Save current working files - BOTH FILES
-      const jsPath = join(appRoot, 'src', 'data', 'final-product-list.js')
+      // Save current working file - JSON ONLY
       const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
       
-      writeFileSync(jsPath, jsContent, 'utf-8')
       writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      console.log('✅ Products saved:', { jsPath, jsonPath })
+      console.log('✅ Products saved:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
         message: 'Products saved to server',
-        jsPath,
         jsonPath
       })
     }
