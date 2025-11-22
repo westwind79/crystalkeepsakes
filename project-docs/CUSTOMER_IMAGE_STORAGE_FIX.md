@@ -10,7 +10,7 @@
 ### Current Setup (WRONG!)
 ```
 /app/
-  ├── api/
+    api/
   │   ├── stripe/
   │   │   └── image-storage.php
   │   └── uploads/              ← Customer images here
@@ -27,7 +27,7 @@
 
 ### What Happens Now
 1. Customer uploads image
-2. Image saved to `api/uploads/order-images/[order-number]/`
+2. Image saved to `/cart-data/order-images/[order-number]/`
 3. Build script runs: `npm run build:prod`
 4. `/out` directory is DELETED and recreated
 5. **❌ ALL CUSTOMER IMAGES ARE LOST!**
@@ -44,8 +44,8 @@
 ### Option 1: Store OUTSIDE Project Directory (RECOMMENDED)
 ```
 Server filesystem:
-/var/www/                      ← Web root
-  ├── crystalkeepsakes/        ← Your Next.js app
+home/[username]/public_html/                      ← Web root
+  ├── crystalkeepsakes.com/        ← Your Next.js app
   │   ├── out/                 ← Gets rebuilt
   │   └── api/                 ← PHP files
   │
@@ -146,7 +146,7 @@ chown -R nginx:nginx crystal-data/order-images        # Nginx
 
 ### Step 2: Update PHP Upload Handler
 
-Update `/app/api/stripe/image-storage.php`:
+Update `/api/stripe/image-storage.php`:
 
 ```php
 public function __construct($uploadDir = null, $maxFileSizeMB = 5) {

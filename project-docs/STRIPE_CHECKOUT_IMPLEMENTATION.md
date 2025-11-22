@@ -8,12 +8,12 @@ This document explains the complete Stripe Hosted Checkout implementation for Cr
 ## ✅ What's Been Implemented
 
 ### 1. **Cart Page Improvements**
-- **File:** `/app/src/app/cart/page.tsx`
+- **File:** `/src/app/cart/page.tsx`
 - **Custom Text Display:** Fixed to show two separate lines (Line 1 and Line 2) with proper pricing
 - **Checkout Button:** Now redirects to Stripe Hosted Checkout flow
 
 ### 2. **Stripe Hosted Checkout Flow**
-- **File:** `/app/src/app/checkout-hosted/page.tsx`
+- **File:** `/src/app/checkout/page.tsx`
 - **Purpose:** Initiates Stripe Checkout Session and redirects customer to Stripe's hosted checkout page
 - **Features:**
   - Prepares cart data (strips large images)
@@ -21,7 +21,7 @@ This document explains the complete Stripe Hosted Checkout implementation for Cr
   - Redirects to Stripe's secure checkout page
 
 ### 3. **Order Confirmation Page**
-- **File:** `/app/src/app/order-confirmation/page.tsx`
+- **File:** `/src/app/order-confirmation/page.tsx`
 - **Purpose:** Success page after payment completion
 - **Features:**
   - Verifies payment with session ID
@@ -30,7 +30,7 @@ This document explains the complete Stripe Hosted Checkout implementation for Cr
   - Provides next steps information
 
 ### 4. **Backend Checkout Session Creator**
-- **File:** `/app/api/stripe/create-checkout-session.php`
+- **File:** `/api/stripe/create-checkout-session.php`
 - **Already Configured With:**
   - ✅ Shipping address collection (US & Canada)
   - ✅ 5 shipping rate options
@@ -49,7 +49,7 @@ This document explains the complete Stripe Hosted Checkout implementation for Cr
    ↓
 3. Clicks "Proceed to Checkout"
    ↓
-4. Redirects to /checkout-hosted
+4. Redirects to /checkout
    ↓
 5. PHP backend creates Stripe Checkout Session
    ↓
@@ -159,7 +159,7 @@ $sessionParams = [
 ### Test Flow
 1. Add items to cart
 2. Click "Proceed to Checkout"
-3. Should redirect to `/checkout-hosted`
+3. Should redirect to `/checkout`
 4. Should redirect to Stripe's checkout page
 5. Enter test card details
 6. Complete payment
