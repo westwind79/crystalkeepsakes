@@ -59,7 +59,7 @@ export default function CheckoutHostedPage() {
 
       logger.info('Making API call', { 
         url: apiUrl,
-        environment: isDev ? 'development' : 'production',
+        environment: process.env.NODE_ENV,
         itemCount: cartForCheckout.length,
         subtotal
       })
