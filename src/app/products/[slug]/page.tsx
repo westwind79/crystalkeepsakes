@@ -15,15 +15,16 @@ export const dynamicParams = false  // Required for output: 'export'
 /**
  * Build-time static generation for all known slugs
  * Pre-renders all product pages at build time for SEO and performance
- * Reads from cached cockpit3d-products.js file
+ * Reads from final-products.json
  */
 export async function generateStaticParams() {
   try {
-    // Import the cached products file (populated by prebuild script)
-    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
+    // Import JSON directly at build time
+    const products = await import('../../../public/data/final-products.json')
+    const cockpit3dProducts = products.default || products
     
     if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
-      console.warn('⚠️ No products found in cached file during build')
+      console.warn('⚠️ No products found in JSON file during build')
       return []
     }
     
@@ -35,7 +36,6 @@ export async function generateStaticParams() {
     }))
   } catch (error) {
     console.error('❌ [BUILD] Failed to load products for static generation:', error)
-    console.error('⚠️ Run: npm run prebuild OR node scripts/fetch-cockpit3d-products.js')
     // Return empty array - build will succeed but no product pages will be generated
     return []
   }
