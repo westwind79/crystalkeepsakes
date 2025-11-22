@@ -46,13 +46,9 @@ export default function CheckoutHostedPage() {
       // Calculate totals
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
-      // Create checkout session
-      // Development: Uses Next.js API route
-      // Production: Uses PHP backend on GoDaddy
-      const isDev = process.env.NODE_ENV === 'development'
-      const apiUrl = isDev 
-        ? '/api/stripe/create-checkout-session'  // Next.js API route (dev only)
-        : '/api/stripe/create-checkout-session.php'  // PHP file (production)
+      // Create checkout session - Call MAMP PHP backend
+      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
+      const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
       const payload = {
         cartItems: cartForCheckout,
@@ -62,7 +58,7 @@ export default function CheckoutHostedPage() {
 
       logger.info('Making API call', { 
         url: apiUrl,
-        isDev,
+        phpBackendUrl,
         itemCount: cartForCheckout.length,
         subtotal
       })
