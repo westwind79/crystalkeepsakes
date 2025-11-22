@@ -376,7 +376,17 @@ export function saveCart(cart: CartItem[]): void {
       // Try clearing some old data
       try {
         cleanupLocalStorage()
-        localStorage.setItem('cart', JSON.stringify(cart))
+        // Strip images and try again
+        const cartForStorage = cart.map(item => {
+          const cleaned = { ...item }
+          delete cleaned.rawImageUrl
+          delete cleaned.maskedImageUrl
+          if (cleaned.options) {
+            cleaned.options = cleanOptions(cleaned.options)
+          }
+          return cleaned
+        })
+        localStorage.setItem('cart', JSON.stringify(cartForStorage))
         logger.warn('Cart saved after cleanup')
       } catch (fallbackError) {
         throw new Error('Unable to save cart. Please clear browser data.')
