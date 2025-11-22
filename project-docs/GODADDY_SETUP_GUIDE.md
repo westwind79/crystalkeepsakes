@@ -18,7 +18,6 @@
   │   └── crystalkeepsakes.com/      ← Your Next.js site
   │       ├── api/                   ← PHP backend
   │       ├── out/                   ← Build output (gets deleted/rebuilt)
-  │       ├── test/                  ← Testing subdirectory
   │       ├── .env.production
   │       └── .env.production.test
 ```
@@ -35,7 +34,7 @@ htdocs/
 ### Local Next.js Dev
 ```
 Project runs on: localhost:3000
-Uses: .env.local or .env
+Uses: .env
 ```
 
 ---
@@ -91,7 +90,7 @@ chmod 755 crystal-data/order-images-test
 
 ## Step 2: Update PHP Image Storage
 
-The code is already updated! `/app/api/stripe/image-storage.php` now:
+The code is already updated! `/api/stripe/image-storage.php` now:
 1. Checks environment variable `CUSTOMER_IMAGE_PATH`
 2. Falls back to auto-detection
 3. Stores images OUTSIDE project directory
@@ -326,7 +325,7 @@ DB_USER=root
 DB_PASS=root
 ```
 
-### For Next.js Dev (`project/.env.local`)
+### For Next.js Dev (`project/.env`)
 ```bash
 NEXT_PUBLIC_ENV_MODE=development
 NEXT_PUBLIC_BASE_PATH=

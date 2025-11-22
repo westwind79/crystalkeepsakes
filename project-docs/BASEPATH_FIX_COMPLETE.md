@@ -34,7 +34,7 @@ NEXT_PUBLIC_BASE_PATH=/test
 assetPath('/data/products.json') → '/test/data/products.json'
 ```
 
-**Production Build** (`.env.production.root`):
+**Production Build** (`.env.production`):
 ```
 NEXT_PUBLIC_BASE_PATH=
 assetPath('/data/products.json') → '/data/products.json'
@@ -102,13 +102,12 @@ Result: 66 pages generated successfully
 
 ✅ **Output Structure:**
 ```
-/app/out/
+/out/
 ├── data/
 │   └── products.json (73KB)
 ├── api/
 │   ├── contact.php
 │   └── upload-image.php
-├── test/  (for subdirectory deployment)
 └── ... (all other pages)
 ```
 
@@ -150,7 +149,6 @@ After deploying to `/test`:
 - [ ] Products page shows all 47 products
 - [ ] No console errors (press F12)
 - [ ] Contact form submits successfully
-- [ ] Admin panel loads: `crystalkeepsakes.com/test/admin/products`
 - [ ] Cart functionality works
 - [ ] All images load correctly
 

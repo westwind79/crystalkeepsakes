@@ -9,9 +9,8 @@ This is a **hybrid setup**:
 ## ✅ What's Already Done
 
 1. ✅ Enhanced checkout page with debug logging
-2. ✅ Created `.env.local` with `NEXT_PUBLIC_PHP_BACKEND_URL`
-3. ✅ Built diagnostic tools
-4. ✅ Fixed Windows build scripts
+2. ✅ Built diagnostic tools
+3. ✅ Fixed Windows build scripts
 
 ## 🔧 Setup Steps on Your Local Machine
 
@@ -47,7 +46,7 @@ STRIPE_SECRET_KEY=sk_live_YOUR_LIVE_SECRET_KEY_HERE
 
 ### 4. Update Next.js Environment
 
-Your `.env.local` already has:
+Your `.env` already has:
 ```env
 NEXT_PUBLIC_PHP_BACKEND_URL=http://localhost:8888/crystalkeepsakes
 ```
@@ -105,7 +104,7 @@ This allows you to:
 **Solution**:
 - Start MAMP
 - Verify URL: `http://localhost:8888/crystalkeepsakes/api/stripe/diagnose.php`
-- Update `NEXT_PUBLIC_PHP_BACKEND_URL` in `.env.local` if different
+- Update `NEXT_PUBLIC_PHP_BACKEND_URL` in `.env` if different
 
 ### Issue 2: "Stripe library not found"
 
@@ -150,9 +149,9 @@ Update URLs if needed:
 │   └── test-stripe-backend.html        ← Checkout test UI
 ├── src/
 │   └── app/
-│       └── checkout-hosted/
+│       └── checkout/
 │           └── page.tsx                 ← Enhanced with debug info
-├── .env.local                           ← Next.js environment vars
+├── .env                                 ← Next.js environment vars
 ├── composer.json                        ← PHP dependencies
 └── vendor/                              ← Composer packages (local only)
 ```
@@ -165,7 +164,7 @@ Update URLs if needed:
 2. **Run composer install on server**:
    ```bash
    ssh your-server
-   cd public_html/crystalkeepsakes
+   cd public_html/crystalkeepsakes.com
    composer install
    ```
 

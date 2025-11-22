@@ -23,7 +23,7 @@ This script:
 
 **Old command:**
 ```json
-"build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.root && bash scripts/prepare-production.sh"
+"build:prod": "env-cmd -f .env.production next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production && bash scripts/prepare-production.sh"
 ```
 
 **New command:**

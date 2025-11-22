@@ -66,6 +66,8 @@ export default function AboutPageClient() {
       {/* Main About Content */}
       <section className="bg-white py-8">
           <div className="mx-auto max-w-3xl">
+            
+
             <div className="mx-auto">
 
               {/* What 3D Crystal Engraving Means Section */}

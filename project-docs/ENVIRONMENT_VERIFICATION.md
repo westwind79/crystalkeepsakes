@@ -49,7 +49,7 @@ STRIPE_DEVELOPMENT_SECRET_KEY=sk_test_xxxxx
 NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY=pk_test_xxxxx
 ```
 
-### `.env` or `.env.local` (Local Development)
+### `.env` or `.env` (Local Development)
 ```bash
 NEXT_PUBLIC_ENV_MODE=development  # ← CRITICAL!
 NEXT_PUBLIC_BASE_PATH=
