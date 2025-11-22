@@ -37,6 +37,12 @@ All components now use the same JSON file:
 ### 4. `/src/app/admin/page.tsx`
 **Changed:** Loads products from JSON on mount instead of static JS import
 
+### 5. `/scripts/copy-products.js`
+**Changed:** Now verifies JSON file exists instead of copying JS file
+
+### 6. `/scripts/fetch-cockpit3d-products.js`
+**Changed:** Updated messages to reflect JSON-only system
+
 ---
 
 ## Files Deleted
