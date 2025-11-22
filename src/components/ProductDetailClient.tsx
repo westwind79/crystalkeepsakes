@@ -929,7 +929,12 @@ export default function ProductDetailClient() {
                       className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
                     />
                     <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
-                      Add Custom Text (+${((product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0).toFixed(2)})
+                      {(() => {
+                        const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
+                        return textPrice > 0 
+                          ? `Add Custom Text (+$${textPrice.toFixed(2)})`
+                          : 'Add Custom Text (No Extra Cost)';
+                      })()}
                     </label>
                   </div>
                   
