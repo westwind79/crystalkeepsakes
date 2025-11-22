@@ -21,6 +21,7 @@ import ProductGallery from '@/components/ProductGallery'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
+import { getProducts } from '@/lib/products'
 
 // Environment
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
