@@ -343,8 +343,8 @@ yarn build
 1. `/app/src/components/ProductDetailClient.tsx` - Image re-upload fix
 2. `/app/src/lib/cartUtils.ts` - Better thumbnail compression
 3. `/app/src/app/cart/page.tsx` - Cart image display & link
-4. `/app/api/stripe/create-checkout-session.php` - Dynamic redirect URL
-5. `/app/.env.example` - Complete environment documentation
+4. `/api/stripe/create-checkout-session.php` - Dynamic redirect URL
+5. `/.env.example` - Complete environment documentation
 
 ---
 
@@ -362,7 +362,7 @@ yarn build
 3. **Environment vars** - Last resort based on NEXT_PUBLIC_ENV_MODE
 
 ### Subdirectory Support:
-- Detects: `/test`, `/crystalkeepsakes`, `/staging`
+- Detects: `/test`, `/crystalkeepsakes`, `/development`
 - Automatically includes in redirect URLs
 - Works with Next.js `basePath` config
 

@@ -14,7 +14,7 @@ Your checkout was failing with `ERR_CONNECTION_REFUSED` because:
 
 ### 1. Created Next.js API Route for Development
 
-**File:** `/app/src/app/api/stripe/create-checkout-session/route.ts`
+**File:** `/src/app/api/stripe/create-checkout-session/route.ts`
 
 - Works in development mode (`npm run dev`)
 - Uses Stripe Node.js library
@@ -40,7 +40,7 @@ const apiUrl = isDev
 
 ### 3. Created Proper Environment File
 
-**File:** `/app/.env` (NEW)
+**File:** `/.env` (NEW)
 
 - For local development in container
 - Contains development Stripe keys (needs your actual keys)
@@ -64,7 +64,7 @@ Your project now has:
 
 ### Add Your Stripe Test Keys
 
-Edit `/app/.env` and replace these placeholder values:
+Edit `/.env` and replace these placeholder values:
 
 ```bash
 STRIPE_DEVELOPMENT_SECRET_KEY=sk_test_YOUR_ACTUAL_KEY_HERE
@@ -122,7 +122,7 @@ Once you add your Stripe keys:
 
 **IMPORTANT:** For production on GoDaddy:
 
-1. The **PHP files in `/app/api/stripe/`** need to be on the server
+1. The **PHP files in `/api/stripe/`** need to be on the server
 2. They require:
    - PHP 7.4+ with `php-fpm`
    - Stripe PHP library (via Composer)
@@ -140,9 +140,9 @@ Once you add your Stripe keys:
 ## File Locations
 
 ### Development (Container):
-- **Checkout page:** `/app/src/app/checkout/page.tsx`
-- **Next.js API route:** `/app/src/app/api/stripe/create-checkout-session/route.ts`
-- **Environment:** `/app/.env`
+- **Checkout page:** `/src/app/checkout/page.tsx`
+- **Next.js API route:** `/src/app/api/stripe/create-checkout-session/route.ts`
+- **Environment:** `/.env`
 
 ### Production (GoDaddy):
 - **PHP backend:** `/app/api/stripe/create-checkout-session.php`

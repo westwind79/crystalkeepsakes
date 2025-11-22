@@ -225,7 +225,7 @@ async function proceedToCheckout() {
 ```
 
 ### Checkout Hosted Page
-**File:** `/app/src/app/checkout-hosted/page.tsx`
+**File:** `/app/src/app/checkout/page.tsx`
 
 1. Gets cart items from localStorage
 2. Prepares cart data (strips image data)
@@ -234,7 +234,7 @@ async function proceedToCheckout() {
 5. Redirects customer to Stripe's hosted checkout page
 
 ### PHP Backend
-**File:** `/app/api/stripe/create-checkout-session.php`
+**File:** `/api/stripe/create-checkout-session.php`
 
 Creates Stripe Checkout Session with:
 - Line items from cart
@@ -398,13 +398,13 @@ Creates Stripe Checkout Session with:
    - Lines 287-326: Extract custom text for Cockpit3D
    - Lines 186-196: Add custom text to special_instructions
 
-4. **`/app/src/app/checkout-hosted/page.tsx`**
+4. **`/app/src/app/checkout/page.tsx`**
    - NEW: Stripe hosted checkout initiator
 
 5. **`/app/src/app/order-confirmation/page.tsx`**
    - UPDATED: Order confirmation after payment
 
-6. **`/app/api/stripe/create-checkout-session.php`**
+6. **`/api/stripe/create-checkout-session.php`**
    - EXISTING: Already configured with shipping & coupons
 
 ---
