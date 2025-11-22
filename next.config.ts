@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       { protocol: "http", hostname: "localhost" },
     ],
   },
+  experimental: {
+    // Disable features that don't work with static export
+    ppr: false,
+  },
   compiler: {
     removeConsole:
       process.env.NEXT_PUBLIC_ENV_MODE === "production"
