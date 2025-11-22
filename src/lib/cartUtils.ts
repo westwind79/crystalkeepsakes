@@ -335,7 +335,20 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
  */
 export function saveCart(cart: CartItem[]): void {
   try {
-    const cartJson = JSON.stringify(cart)
+    // Strip large image data URLs before saving to localStorage
+    const cartForStorage = cart.map(item => {
+      const cleaned = { ...item }
+      // Remove image data URLs - only keep imageId references
+      delete cleaned.rawImageUrl
+      delete cleaned.maskedImageUrl
+      // Clean options object too
+      if (cleaned.options) {
+        cleaned.options = cleanOptions(cleaned.options)
+      }
+      return cleaned
+    })
+    
+    const cartJson = JSON.stringify(cartForStorage)
     const sizeKB = (cartJson.length / 1024).toFixed(2)
     
     logger.info('Saving cart to localStorage', { 
