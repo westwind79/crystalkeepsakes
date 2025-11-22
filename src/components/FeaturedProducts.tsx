@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { finalProductList } from '@/data/final-product-list'
 import { getProducts } from '@/lib/products'
 import ProductCard from './ProductCard'
 
@@ -18,19 +17,19 @@ interface FeaturedProductsProps {
 }
 
 export default function FeaturedProducts({ limit = 6, title = "Featured Designs" }: FeaturedProductsProps) {
-  const [products, setProducts] = useState(finalProductList)
+  const [products, setProducts] = useState<any[]>([])
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   
   useEffect(() => {
-    // Load products using the environment-aware helper
+    // Load products from JSON
     getProducts().then(loadedProducts => {
       // Filter out hidden products
       const visibleProducts = loadedProducts.filter((p: any) => p.visible !== false)
       setProducts(visibleProducts)
     }).catch(err => {
       console.error('Failed to load products:', err)
-      // Fallback to static import
+      setProducts([])
     })
   }, [])
 
