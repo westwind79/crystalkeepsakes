@@ -113,11 +113,12 @@ export default function EnhancedProductAdminPage() {
 
   // Load available masks from static JSON file
   useEffect(() => {
-    fetch('/data/available-masks.json')
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+    fetch(`${basePath}/data/available-masks.json`)
       .then(res => res.json())
       .then(masks => {
         setAvailableMasks(masks);
-        console.log(`✅ Loaded ${masks.length} masks`);
+        console.log(`✅ Loaded ${masks.length} masks from ${basePath}/data/available-masks.json`);
       })
       .catch(err => {
         console.error('Failed to load masks:', err);
