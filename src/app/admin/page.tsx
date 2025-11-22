@@ -461,6 +461,18 @@ export default finalProductList;
 
   const selectedProductData = selectedProduct ? getProductData(selectedProduct.id) : null;
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-12 h-12 border-4 border-[#72B01D] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600">Loading products from JSON...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Development-Only Warning Banner */}
