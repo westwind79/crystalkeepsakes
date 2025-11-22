@@ -19,9 +19,12 @@ export const dynamicParams = false  // Required for output: 'export'
  */
 export async function generateStaticParams() {
   try {
-    // Import JSON directly at build time
-    const products = await import('../../../public/data/final-products.json')
-    const cockpit3dProducts = products.default || products
+    // Read JSON file from filesystem at build time
+    const fs = await import('fs')
+    const path = await import('path')
+    const filePath = path.join(process.cwd(), 'public', 'data', 'final-products.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const cockpit3dProducts = JSON.parse(fileContent)
     
     if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
       console.warn('⚠️ No products found in JSON file during build')
