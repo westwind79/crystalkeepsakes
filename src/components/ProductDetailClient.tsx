@@ -854,7 +854,7 @@ export default function ProductDetailClient() {
                           </span>
                           <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
                             <span className="font-medium text-gray-900">
-                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'Included'}
+                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'No Extra Cost'}
                             </span>
                           </span>
                           {selectedBackground?.id === bg.id && (
