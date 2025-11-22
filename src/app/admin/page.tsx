@@ -146,6 +146,18 @@ export default function EnhancedProductAdminPage() {
     }
   }, []);
 
+  // Load available masks from folder
+  useEffect(() => {
+    fetch('/api/admin/masks/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setAvailableMasks(data.masks);
+        }
+      })
+      .catch(err => console.error('Failed to load masks:', err));
+  }, []);
+
   // Keyboard shortcut: Ctrl+S / Cmd+S to save
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
