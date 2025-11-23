@@ -5,6 +5,7 @@ vendor/
 # Next.js
 .next/
 out/
+out-test/
 
 # Environment
 .env
