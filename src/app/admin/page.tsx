@@ -465,6 +465,31 @@ export default finalProductList;
         🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
       </div>
       
+      {/* Unsaved Changes Warning */}
+      {hasUnsavedChanges && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="text-2xl mr-3">⚠️</span>
+              <div>
+                <p className="text-sm font-medium text-yellow-800">
+                  You have unsaved changes in browser memory
+                </p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  Data shown = Saved JSON file + Your edits (not yet saved)
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={resetToSaved}
+              className="px-3 py-1.5 bg-yellow-600 text-white text-sm rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+            >
+              🔄 Discard Changes
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
@@ -473,9 +498,20 @@ export default finalProductList;
               <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
               <p className="text-sm text-gray-600 mt-1">
                 Complete control over products, prices, and options
+                {hasUnsavedChanges && (
+                  <span className="ml-2 text-yellow-600 font-semibold">• Unsaved Edits Active</span>
+                )}
               </p>
             </div>
             <div className="flex gap-3">
+              <button
+                onClick={resetToSaved}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors flex items-center gap-2"
+                title="Discard all unsaved changes and reload from JSON file"
+              >
+                <span>🔄</span>
+                <span>Reset</span>
+              </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
