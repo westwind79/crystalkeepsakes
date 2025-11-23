@@ -398,7 +398,33 @@ export default finalProductList;
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const jsContent = generateFinalProducts();
     
-    // Download backup file
+    // Try to save to server (works in dev mode)
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (isDev) {
+      try {
+        const response = await fetch('/api/admin/save-products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            jsContent,
+            isBackup: true,
+            timestamp
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ Backup created!\n\n📁 File: ${result.jsPath}\n\nKeep this as a restore point.`);
+          return;
+        }
+      } catch (error) {
+        console.log('Server backup failed, downloading file instead:', error);
+      }
+    }
+    
+    // Fallback: Download backup file
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
