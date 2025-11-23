@@ -2,11 +2,15 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development';
+
+// Separate output directories for different environments
+const distDir = envMode === 'testing' ? 'out-test' : 'out';
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
   output: 'export',
-  distDir: 'out',
+  distDir: distDir,
   basePath: basePath,
   assetPrefix: basePath,
   reactStrictMode: true,
