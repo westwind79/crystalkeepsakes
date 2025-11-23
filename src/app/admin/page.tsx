@@ -416,6 +416,34 @@ export default finalProductList;
     return editedProducts[productId] && Object.keys(editedProducts[productId]).length > 0;
   };
 
+  // Check if there are ANY unsaved changes
+  const hasUnsavedChanges = Object.keys(editedProducts).length > 0;
+
+  // Reset to saved data (clear localStorage)
+  const resetToSaved = async () => {
+    if (!confirm('⚠️ DISCARD ALL UNSAVED CHANGES?\n\nThis will:\n• Clear all your edits from memory\n• Reload products from the saved JSON file\n• Cannot be undone\n\nContinue?')) {
+      return;
+    }
+    
+    try {
+      // Clear localStorage
+      localStorage.removeItem('productCustomizations');
+      setEditedProducts({});
+      
+      // Reload products from JSON file
+      const products = await getProducts();
+      setSourceProducts(products as Product[]);
+      
+      // Clear selection
+      setSelectedProduct(null);
+      
+      alert('✅ Reset complete!\n\nAll unsaved changes discarded.\nNow showing saved data from JSON file.');
+    } catch (error) {
+      console.error('Reset failed:', error);
+      alert('❌ Reset failed. Check console for details.');
+    }
+  };
+
   const selectedProductData = selectedProduct ? getProductData(selectedProduct.id) : null;
 
   // Show loading state
