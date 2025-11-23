@@ -1,11 +1,15 @@
 // scripts/copy-api.js
-// Copies /api folder into /out after Next.js build
+// Copies /api folder into /out or /out-test after Next.js build
 
 const fs = require('fs-extra');
 const path = require('path');
 
 const apiSource = path.join(__dirname, '..', 'api');
-const outDir = path.join(__dirname, '..', 'out');
+
+// Determine output directory based on environment mode
+const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'production';
+const isTestBuild = envMode === 'testing';
+const outDir = path.join(__dirname, '..', isTestBuild ? 'out-test' : 'out');
 const apiDest = path.join(outDir, 'api');
 
 async function copyApi() {
