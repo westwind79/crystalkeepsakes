@@ -48,6 +48,8 @@ export default function CheckoutHostedPage() {
 
       // Create checkout session using PHP backend
       // PHP backend works in all environments (development, test, production)
+      // Reads NEXT_PUBLIC_PHP_BACKEND_URL from your local .env file
+
       const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
       const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
