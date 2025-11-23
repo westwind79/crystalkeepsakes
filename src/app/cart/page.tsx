@@ -53,6 +53,12 @@ interface CartItem {
   }
   productImage?: string
   cockpit3d_id?: string
+  // Sale information
+  onSale?: boolean
+  salePrice?: number
+  salePercent?: number
+  originalPrice?: number
+  discountAmount?: number
   dateAdded: string
 }
 
@@ -175,6 +181,22 @@ export default function CartPage() {
     return options
   }
 
+  /**
+   * Hero Component - Single source of truth
+   */
+  const ContinueShoppingBtn = () => (
+    <div className="text-center mt-10">
+      {/* Continue Shopping */}
+      <Link 
+        href="/products" 
+        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
+      >
+        <span>←</span>
+        <span>Continue Shopping</span>
+      </Link>
+    </div>
+  )
+
   const getCustomTextDetails = (item: CartItem) => {
     if (item.customText) {
       const line1 = item.customText.line1 || ''
@@ -206,7 +228,8 @@ export default function CartPage() {
     
     try {
       // Redirect to Stripe Hosted Checkout
-      window.location.href = '/checkout-hosted'
+      // OLD window.location.href = '/checkout-hosted'
+      window.location.href = '/checkout'
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
@@ -262,6 +285,7 @@ export default function CartPage() {
             Clear Cart
           </button>
         </div>
+
 
         {/* Storage Stats Banner (Dev Mode) */}
         {process.env.NODE_ENV === 'development' && storageStats && (
@@ -402,6 +426,29 @@ export default function CartPage() {
                           )}
                         </div>
                         
+                        {/* Sale/Discount Information */}
+                        {item.onSale && (item.discountAmount ?? 0) > 0 && (
+                          <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-red-700 font-semibold">
+                                {item.salePercent 
+                                  ? `💰 Sale (${item.salePercent}% OFF)` 
+                                  : item.salePrice 
+                                    ? `💰 Sale ($${item.salePrice.toFixed(2)} discount)` 
+                                    : '💰 On Sale'}
+                              </span>
+                              <span className="text-red-700 font-bold">
+                                -${item.discountAmount.toFixed(2)}
+                              </span>
+                            </div>
+                            {item.originalPrice && (
+                              <div className="text-xs text-red-600 mt-1">
+                                Original: <span className="line-through">${item.originalPrice.toFixed(2)}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Total Item Price */}
                         <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
                           <span className="text-base font-bold text-gray-900">Item Total:</span>
@@ -531,15 +578,7 @@ export default function CartPage() {
         </div>
 
         {/* Continue Shopping */}
-        <div className="text-center mt-10">
-          <Link 
-            href="/products" 
-            className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
-          >
-            <span>←</span>
-            <span>Continue Shopping</span>
-          </Link>
-        </div>
+        <ContinueShoppingBtn />
 
         {/* Organized Debug Section (Collapsible) */}
         {process.env.NODE_ENV === 'development' && (

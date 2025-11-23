@@ -71,7 +71,7 @@ export default function AboutPageClient() {
               {/* What 3D Crystal Engraving Means Section */}
               <div className="align-items-center mb-5">
                 <div>
-                  <h2 className="mb-4">What 3D Crystal Engraving Means to Us</h2>
+                  <h2 className="mb-4 text-2xl">What 3D Crystal Engraving Means to Us</h2>
                   <p className="mb-4">
                     Since the beginning of time, humans have sought ways to preserve important
                     moments and protect them from the relentless passage of time. Stone Age
@@ -115,8 +115,8 @@ export default function AboutPageClient() {
                   </div>
                 </div>
                 <div className="order-2 order-md-2">
-                  <h2 className="mb-4">Noah</h2>
-                  <p className="lead mb-4">Visionary Designer and Master Developer</p>
+                  <h2 className="mb-1 text-2xl text-semi-bold">Noah</h2>
+                  <p className="lead mb-4 text-md leading-relaxed">Visionary Designer and Master Developer</p>
                   <p className="mb-4">
                     Noah is the creative force and technical mastermind behind CrystalKeepsakes.
                     With an innate talent for design and an unmatched understanding of 3D laser
@@ -154,7 +154,7 @@ export default function AboutPageClient() {
                   </div>
                 </div>
                 <div md={8} className="order-2 order-md-1">
-                  <h2 className="mb-4">Janell</h2>
+                  <h2 className="mb-1 text-2xl">Janell</h2>
                   <p className="lead mb-4">Sales Maven and Customer Service Enthusiast</p>
                   <p className="mb-4">
                     Janell is the heart and soul of CrystalKeepsakes&apos; customer experience.
@@ -178,7 +178,7 @@ export default function AboutPageClient() {
               {/* Together Section */}
               <div className="text-center">
                 <div>
-                  <h2 className="mb-4">Together, Creating Lasting Memories</h2>
+                  <h2 className="mb-4 text-3xl">Together, Creating Lasting Memories</h2>
                   <p className="lead">
                     Noah and Janell&apos;s partnership is the cornerstone of CrystalKeepsakes.
                   </p>
@@ -205,15 +205,15 @@ export default function AboutPageClient() {
       </section>
 
       {/* Contact CTA */}
-      <section className="contact-cta py-5 text-center">
+      <section className="contact-cta py-8 md:py-12 lg:py-24 text-center bg-[var(--brand-700)] bg-gradient-to-r from-violet-600 to-indigo-600">
         <div>
-          <h2 className="mb-4">Ready to Create Your Crystal?</h2>
-          <p className="lead mb-4">
+          <h2 className="mb-4 text-white text-3xl">Ready to Create Your Crystal?</h2>
+          <p className="lead mb-6 text-white">
             Let us help you preserve your most precious memories in stunning crystal form.
           </p>
           <Link
             href="/contact"
-            className="btn btn-secondary py-3 px-6 rounded-lg"
+            className="bg-[var(--brand-400)] text-white py-3 px-6 rounded-xl my-3 hover:text-[var(--surface-900)] hover:bg-[var(--brand-350)] transition-all"
             onClick={() => logDev('🔗 Contact CTA clicked from About page')}
           >
             Get Started Today

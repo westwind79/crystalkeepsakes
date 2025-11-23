@@ -8,13 +8,21 @@
  * - Option configuration (enable/disable per product)
  * - Size, lightbase, background, text option management
  * - Generates final-product-list.js with all customizations
+ * 
+ * NOTE: This page is for DEVELOPMENT ONLY
+ * Do NOT upload the /admin directory to production server
  */
 
 import React, { useState, useEffect } from 'react';
 import { cockpit3dProducts } from '@/data/cockpit3d-products';
-import ProductGallery2 from '@/components/ProductGallery2';
+import ProductGallery from '@/components/ProductGallery';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { getProductCategories, getCategoryLabel, isOnSale, OCCASION_CATEGORIES } from '@/utils/categoriesConfig';
+
+// Production safeguard
+if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
+  window.location.href = '/';
+}
 
 // Types
 interface ProductImage {
@@ -418,6 +426,11 @@ export default finalProductList;
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Development-Only Warning Banner */}
+      <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
+        🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
+      </div>
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
@@ -995,8 +1008,18 @@ export default finalProductList;
                               {/* Fixed Sale Price */}
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Fixed Sale Price <span className="text-xs text-gray-500">(Alternative)</span>
+                                  {selectedProductData.sizes && selectedProductData.sizes.length > 0 
+                                    ? 'Dollar Discount (per item)'
+                                    : 'Fixed Sale Price'
+                                  }
+                                  <span className="text-xs text-gray-500 ml-1">(Alternative)</span>
                                 </label>
+                                <p className="text-xs text-blue-600 mb-2">
+                                  {selectedProductData.sizes && selectedProductData.sizes.length > 0 
+                                    ? '💡 This amount will be subtracted from each size price'
+                                    : '💡 This is the final sale price (not a discount)'
+                                  }
+                                </p>
                                 <div className="relative">
                                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                                   <input
@@ -1011,7 +1034,7 @@ export default finalProductList;
                                         updateProduct(selectedProduct.id, { salePercent: undefined })
                                       }
                                     }}
-                                    placeholder="e.g., 39.99"
+                                    placeholder={selectedProductData.sizes && selectedProductData.sizes.length > 0 ? "e.g., 10 ($10 off each)" : "e.g., 39.99"}
                                     className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white"
                                   />
                                 </div>
@@ -1039,15 +1062,30 @@ export default finalProductList;
                                   )}
                                   {selectedProductData.salePrice && !selectedProductData.salePercent && (
                                     <>
-                                      <div className="flex justify-between text-green-700 font-bold">
-                                        <span>Sale Price:</span>
-                                        <span>${selectedProductData.salePrice.toFixed(2)}</span>
-                                      </div>
-                                      {selectedProductData.salePrice < selectedProductData.basePrice && (
-                                        <div className="flex justify-between text-gray-600 text-xs">
-                                          <span>Savings ({Math.round(((selectedProductData.basePrice - selectedProductData.salePrice) / selectedProductData.basePrice) * 100)}%):</span>
-                                          <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
-                                        </div>
+                                      {selectedProductData.sizes && selectedProductData.sizes.length > 0 ? (
+                                        <>
+                                          <div className="flex justify-between text-green-700 font-bold">
+                                            <span>Discount Amount:</span>
+                                            <span>-${selectedProductData.salePrice.toFixed(2)}</span>
+                                          </div>
+                                          <div className="flex justify-between text-gray-600 text-xs">
+                                            <span>Applied to each size</span>
+                                            <span>${Math.max(0, selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="flex justify-between text-green-700 font-bold">
+                                            <span>Sale Price:</span>
+                                            <span>${selectedProductData.salePrice.toFixed(2)}</span>
+                                          </div>
+                                          {selectedProductData.salePrice < selectedProductData.basePrice && (
+                                            <div className="flex justify-between text-gray-600 text-xs">
+                                              <span>Savings:</span>
+                                              <span>${(selectedProductData.basePrice - selectedProductData.salePrice).toFixed(2)}</span>
+                                            </div>
+                                          )}
+                                        </>
                                       )}
                                     </>
                                   )}
@@ -1363,9 +1401,8 @@ export default finalProductList;
                       {/* Gallery Preview */}
                       <div>
                         <h3 className="text-sm font-semibold text-gray-700 mb-2">Image Gallery</h3>
-                        <ProductGallery2
+                        <ProductGallery
                           images={selectedProductData.images || []}
-                          productName={selectedProductData.name}
                         />
                       </div>
 

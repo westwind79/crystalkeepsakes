@@ -1,9 +1,15 @@
 # .htaccess for Next.js static export in /test subfolder
-# Place this in /public_html/crystalkeepsakes/test/.htaccess
+# Place this in /public_html/crystalkeepsakes.com/test/.htaccess
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /test/
+
+  # In public_html/test/.htaccess
+  AuthType Basic
+  AuthName "CK Test Site"
+  AuthUserFile /home/uydbo2r007mb/.htpasswd
+  Require valid-user
 
   # Redirect to HTTPS
   RewriteCond %{HTTPS} off

@@ -15,6 +15,7 @@ import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtil
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 import { assetPath } from '@/lib/assetPath'
+import { calculateTotal, calculateOptionsPrice, getSaleInfo } from '@/utils/pricingUtils'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
@@ -252,47 +253,32 @@ export default function ProductDetailClient() {
     return isValid
   }
 
-  const calculateTotal = (): number => {
-    // Get the base price from selected size or product basePrice
-    let basePrice = selectedSize?.price || product?.basePrice || 0
-    const originalPrice = basePrice
+  // Use centralized pricing utilities
+  const getTotalPrice = (): number => {
+    const optionsPrice = calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
     
-    // Apply sale discount if product is on sale
-    if (product?.sale) {
-      if (product?.salePercent) {
-        // Percentage-based discount
-        basePrice = basePrice * (1 - product.salePercent / 100)
-      } else if (product?.salePrice && !selectedSize) {
-        // Fixed sale price ONLY for products without sizes
-        basePrice = product.salePrice
-      }
-    }
-    
-    let total = basePrice
-    if (selectedLightBase?.price) total += selectedLightBase.price
-    if (selectedBackground?.price) total += selectedBackground.price
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions && product.textOptions.length > 0) {
-      const textOption = product.textOptions.find(t => t.price > 0) || product.textOptions[1]
-      total += textOption?.price || 0
-    }
-    
-    return total * quantity
+    return calculateTotal(
+      product,
+      selectedSize,
+      optionsPrice,
+      quantity
+    )
   }
   
-  const calculateOptionsPrice = (): number => {
-    let optionsPrice = 0
-    if (selectedLightBase?.price) optionsPrice += selectedLightBase.price
-    if (selectedBackground?.price) optionsPrice += selectedBackground.price
-    if (selectedTextOption?.price) optionsPrice += selectedTextOption.price
-    
-    // Add custom text price if enabled
-    if (showCustomText && product?.textOptions?.[1]?.price) {
-      optionsPrice += product.textOptions[1].price
-    }
-    
-    return optionsPrice
+  const getOptionsPrice = (): number => {
+    return calculateOptionsPrice(
+      selectedLightBase,
+      selectedBackground,
+      selectedTextOption,
+      showCustomText,
+      product?.textOptions
+    )
   }
 
   const buildProductOptions = (): ProductOption[] => {
@@ -410,14 +396,19 @@ export default function ProductDetailClient() {
         console.log('✍️ [ADD TO CART] Custom Text:', customTextString)
       }
       
-      const optionsPrice = calculateOptionsPrice()
-      const totalPrice = calculateTotal()
+      const optionsPrice = getOptionsPrice()
+      const totalPrice = getTotalPrice()
+      const originalPrice = selectedSize?.price || product.basePrice
+      
+      // Get sale information using centralized utility
+      const saleInfo = getSaleInfo(product, totalPrice / quantity, originalPrice)
       
       console.log('💰 [ADD TO CART] Pricing:', {
-        basePrice: selectedSize?.price || product.basePrice,
+        basePrice: originalPrice,
         optionsPrice,
         totalPrice,
-        quantity
+        quantity,
+        saleInfo
       })
       
       const lineItem: OrderLineItem = {
@@ -426,7 +417,7 @@ export default function ProductDetailClient() {
         cockpit3d_id: product.cockpit3d_id || String(product.id),
         name: product.name,
         sku: product.sku,
-        basePrice: selectedSize?.price || product.basePrice,
+        basePrice: originalPrice,
         optionsPrice: optionsPrice,
         totalPrice: totalPrice,
         quantity: quantity,
@@ -435,6 +426,12 @@ export default function ProductDetailClient() {
         productImage: mainImage?.src || null,
         customImage: customImage,
         customText: customTextString ? { text: customTextString } : undefined,
+        // Sale information for cart display - use centralized isOnSale utility
+        onSale: isOnSale(product),
+        salePrice: product.salePrice,
+        salePercent: product.salePercent,
+        originalPrice: originalPrice,
+        discountAmount: saleInfo.discountAmount * quantity,
         dateAdded: new Date().toISOString(),
         lastModified: new Date().toISOString()
       }
@@ -485,7 +482,7 @@ export default function ProductDetailClient() {
       setAddedItemDetails({
         name: product.name,
         image: finalMaskedImage || mainImage?.src || '/placeholder.png',
-        price: totalPrice,
+        price: totalPrice / quantity, // Price per item for display
         quantity: quantity,
         options: optionsList
       })
@@ -572,14 +569,14 @@ export default function ProductDetailClient() {
       </nav>
 
       {/* Product */}
-      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           
-          <div className="sticky top-[85px]">
+          <div className="relative lg:sticky lg:top-[85px]">
             {/* Image gallery */}
             <div className="flex flex-col-reverse">
 
-              <div className="w-full overflow-hidden rounded-lg">
+              <div className="w-full overflow-hidden rounded-lg relative">
                 {finalMaskedImage ? (
                   <div className="space-y-4">
                     <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
@@ -609,7 +606,7 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
-                  <>
+                  <> 
                     <ProductGallery images={product.images} />
                      {/* Featured Badge */}
                     {isFeaturedProduct(product) && (
@@ -644,8 +641,7 @@ export default function ProductDetailClient() {
                         </svg>
                         Light Base
                       </span>
-                    )}
-                     
+                    )} 
                   </>
                 ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
@@ -733,10 +729,10 @@ export default function ProductDetailClient() {
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              {product.sale && (product.salePercent || product.salePrice) ? (
+              {isOnSale(product) && (product.salePercent || product.salePrice) ? (
                 <div className="flex items-center gap-3 flex-wrap">
                   <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
-                    ${calculateTotal().toFixed(2)}
+                    ${getTotalPrice().toFixed(2)}
                   </p>
                   <p className="text-2xl tracking-tight text-gray-500 line-through">
                     ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
@@ -744,11 +740,11 @@ export default function ProductDetailClient() {
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
                     {product.salePercent 
                       ? `${product.salePercent}% OFF` 
-                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (calculateTotal() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (getTotalPrice() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
                   </span>
                 </div>
               ) : (
-                <p className="text-4xl font-bold tracking-tight text-gray-900">${calculateTotal().toFixed(2)}</p>
+                <p className="text-4xl font-bold tracking-tight text-gray-900">${getTotalPrice().toFixed(2)}</p>
               )}
             </div>
 
@@ -969,7 +965,7 @@ export default function ProductDetailClient() {
                   </div>
                   
                   {showCustomText && (
-                    <div className="ml-7 space-y-3">
+                    <div className="space-y-2">
                       <div>
                         <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
                           Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
@@ -980,7 +976,23 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Anniversary 2024"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="block w-full 
+                          rounded-md 
+                          border-0 
+                          py-2.5 
+                          pl-4 
+                          text-gray-900 
+                          shadow-sm 
+                          ring-1 
+                          ring-inset 
+                          ring-gray-300 
+                          placeholder:text-gray-400 
+                          focus:ring-2 
+                          focus:ring-inset 
+                          focus:ring-[var(--brand-400)]
+                          active:ring-[var(--brand-400)]
+                          sm:text-sm 
+                          sm:leading-6"
                           maxLength={30}
                         />
                       </div>
@@ -994,7 +1006,7 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Forever & Always"
                           value={customText.line2}
                           onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 py-2.5 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
                           maxLength={30}
                         />
                       </div>
@@ -1044,7 +1056,7 @@ export default function ProductDetailClient() {
                 disabled={addingToCart}
                 className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {addingToCart ? 'Adding to cart...' : `Add to cart - $${calculateTotal().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
           </div>
