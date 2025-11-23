@@ -347,7 +347,37 @@ export default finalProductList;
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
     const jsContent = generateFinalProducts();
     
-    // Download file (works with static export)
+    // Try to save to server (works in dev mode with Node.js)
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (isDev) {
+      try {
+        const response = await fetch('/api/admin/save-products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            jsContent,
+            isBackup: false 
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ Products saved to project!\n\n📁 Files updated:\n• ${result.jsPath}\n• /public/data/final-products.json\n\n🔄 Refresh browser to see changes!`);
+          
+          // Clear localStorage since changes are now saved
+          localStorage.removeItem('productCustomizations');
+          setEditedProducts({});
+          
+          return;
+        }
+      } catch (error) {
+        console.log('Server save failed, downloading file instead:', error);
+      }
+    }
+    
+    // Fallback: Download file (for production/static export or if server save fails)
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
     const jsUrl = URL.createObjectURL(jsBlob);
     const jsLink = document.createElement('a');
