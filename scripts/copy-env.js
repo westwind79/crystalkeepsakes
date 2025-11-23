@@ -1,5 +1,5 @@
 // scripts/copy-env.js
-// Cross-platform script to copy .env files to /out or /out-test
+// Cross-platform script to copy .env files to /out
 
 const fs = require('fs');
 const path = require('path');
@@ -7,11 +7,7 @@ const path = require('path');
 // Determine which env file to copy based on command line argument
 const envFile = process.argv[2] || '.env.production';
 const sourcePath = path.join(__dirname, '..', envFile);
-
-// Determine target directory based on env file
-// If it's .env.production.test, copy to out-test, otherwise to out
-const isTestBuild = envFile.includes('.test');
-const targetDir = path.join(__dirname, '..', isTestBuild ? 'out-test' : 'out');
+const targetDir = path.join(__dirname, '..', 'out');
 const targetPath = path.join(targetDir, '.env');
 
 try {
