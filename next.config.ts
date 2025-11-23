@@ -5,7 +5,8 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
-  output: 'export',
+  // Only use static export for builds, not development
+  ...(isDev ? {} : { output: 'export' }),
   distDir: 'out',
   basePath: basePath,
   assetPrefix: basePath,
