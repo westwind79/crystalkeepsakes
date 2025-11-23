@@ -28,7 +28,8 @@ try {
 
   // Copy the file
   fs.copyFileSync(sourcePath, targetPath);
-  console.log(`✅ Copied ${envFile} to out/.env`);
+  const outputDir = isTestBuild ? 'out-test' : 'out';
+  console.log(`✅ Copied ${envFile} to ${outputDir}/.env`);
 } catch (error) {
   console.error(`❌ Error copying env file:`, error.message);
   process.exit(1);
