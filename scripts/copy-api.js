@@ -14,7 +14,8 @@ const apiDest = path.join(outDir, 'api');
 
 async function copyApi() {
   try {
-    console.log('📁 Copying /api folder to /out...');
+    const outputDirName = isTestBuild ? 'out-test' : 'out';
+    console.log(`📁 Copying /api folder to /${outputDirName}...`);
     
     // Ensure out directory exists
     await fs.ensureDir(outDir);
@@ -28,17 +29,16 @@ async function copyApi() {
       }
     });
     
-    console.log('✅ API folder copied to /out/api');
+    console.log(`✅ API folder copied to /${outputDirName}/api`);
     
     // Copy correct .htaccess based on environment
-    const isTest = process.env.NEXT_PUBLIC_BASE_PATH === '/test';
-    const htaccessSource = isTest
+    const htaccessSource = isTestBuild
       ? path.join(__dirname, '..', 'public', '.htaccess')
       : path.join(__dirname, '..', '.htaccess.production');
     const htaccessDest = path.join(outDir, '.htaccess');
     
     await fs.copy(htaccessSource, htaccessDest, { overwrite: true });
-    console.log(`✅ Copied ${isTest ? 'public/.htaccess (test)' : '.htaccess.production'} to /out/.htaccess`);
+    console.log(`✅ Copied ${isTestBuild ? 'public/.htaccess (test)' : '.htaccess.production'} to /${outputDirName}/.htaccess`);
     
   } catch (error) {
     console.error('❌ Error copying API folder:', error);
