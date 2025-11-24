@@ -141,13 +141,14 @@ export default function ProductGallery({ images = [] }) {
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {sortedImages.length > 1 && (
         <div className="thumbnails">
           <div className="row g-2">
             
-            {images.map((img, idx) => {
+            {sortedImages.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
               const thumbDisplaySrc = assetPath(thumbSrc || '')
+              const isMainImage = typeof img === 'object' && img.isMain
               
               return (
                 <div key={idx} className="col-3">
@@ -158,7 +159,8 @@ export default function ProductGallery({ images = [] }) {
                       height: '80px',
                       cursor: 'pointer',
                       border: idx === activeIndex ? '2px solid var(--brand-500)' : '1px solid #dee2e6',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      borderRadius: '4px'
                     }}
                     onClick={() => setActiveIndex(idx)}
                   >
@@ -170,6 +172,15 @@ export default function ProductGallery({ images = [] }) {
                         e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                       }}
                     />
+                    {/* Main badge on thumbnail */}
+                    {isMainImage && (
+                      <div 
+                        className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1 rounded"
+                        style={{ fontSize: '10px', fontWeight: 'bold' }}
+                      >
+                        MAIN
+                      </div>
+                    )}
                   </div>
                 </div>
               )
