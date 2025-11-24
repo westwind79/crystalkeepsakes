@@ -75,8 +75,11 @@ export default function ProductGallery({ images = [], useBackend = false }) {
             
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
+              const thumbDisplaySrc = useBackend && backendUrl 
+                ? `${backendUrl}${thumbSrc}`
+                : assetPath(thumbSrc || '')
+              
               return (
-                
                 <div key={idx} className="col-3">
                   <div 
                     className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
@@ -88,18 +91,28 @@ export default function ProductGallery({ images = [], useBackend = false }) {
                       overflow: 'hidden'
                     }}
                     onClick={() => setActiveIndex(idx)}
-                  > 
-                    <Image
-                      src={thumbSrc || 'https://placehold.co/800x800?text=No+Image'}
-                      alt={`Thumbnail ${idx + 1}`}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-                      }}
-                    />
+                  >
+                    {useBackend ? (
+                      <img
+                        src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                        alt={`Thumbnail ${idx + 1}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                        alt={`Thumbnail ${idx + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                        }}
+                      />
+                    )}
                   </div>
-
                 </div>
               )
             })}
