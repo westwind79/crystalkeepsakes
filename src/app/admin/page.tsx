@@ -1539,7 +1539,6 @@ export default finalProductList;
                         <h3 className="text-sm font-semibold text-gray-700 mb-2">Image Gallery</h3>
                         <ProductGallery
                           images={selectedProductData.images || []}
-                          useBackend={true}
                         />
                       </div>
 
