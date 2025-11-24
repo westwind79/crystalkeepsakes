@@ -113,6 +113,12 @@ try {
         throw new Exception('No image file provided');
     }
 
+    // Get productId from form data
+    if (!isset($_POST['productId'])) {
+        throw new Exception('Product ID not provided');
+    }
+    
+    $productId = $_POST['productId'];
     $file = $_FILES['image'];
     
     // Validate file
@@ -136,12 +142,13 @@ try {
         throw new Exception('File too large. Maximum size is 10MB.');
     }
 
-    // Generate unique filename
+    // Generate unique filename with product ID
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = 'customer_' . uniqid() . '_' . time() . '.' . $extension;
+    $timestamp = round(microtime(true) * 1000); // Milliseconds timestamp
+    $filename = 'product_' . $productId . '_' . $timestamp . '.' . $extension;
     
-    // Define upload directory
-    $uploadDir = __DIR__ . '/../public/uploads/';
+    // Define upload directory - product-specific folder
+    $uploadDir = __DIR__ . '/../public/img/products/cockpit3d/' . $productId . '/';
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
