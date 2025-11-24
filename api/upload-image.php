@@ -61,9 +61,18 @@ try {
     
     $uploadPath = $uploadDir . $filename;
     
-    // Move uploaded file
+    // Move uploaded file temporarily
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         throw new Exception('Failed to save uploaded file');
+    }
+
+    // ✅ COMPRESS & OPTIMIZE IMAGE FOR WEB
+    // Create optimized versions at different sizes
+    $optimized = compressAndResizeImage($uploadPath, $mimeType);
+    
+    if (!$optimized) {
+        // If compression fails, keep original
+        error_log("Warning: Image compression failed for $filename");
     }
 
     // Return success with file URL
@@ -73,8 +82,10 @@ try {
         'success' => true,
         'filename' => $filename,
         'url' => $fileUrl,
-        'size' => $file['size'],
-        'mimeType' => $mimeType
+        'size' => filesize($uploadPath),  // Return actual compressed size
+        'originalSize' => $file['size'],
+        'mimeType' => $mimeType,
+        'compressed' => $optimized
     ]);
 
 } catch (Exception $e) {
