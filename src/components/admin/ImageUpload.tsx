@@ -43,7 +43,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
 
         // ✅ Use Next.js API route for development, PHP for production
         const isDev = process.env.NODE_ENV === 'development' || !process.env.NEXT_PUBLIC_PHP_BACKEND_URL;
-        const apiUrl = isDev ? '/api/upload-image' : `${process.env.NEXT_PUBLIC_PHP_BACKEND_URL}/api/upload-image.php`;
+        const apiUrl = isDev ? '/api/upload-image/' : `${process.env.NEXT_PUBLIC_PHP_BACKEND_URL}/api/upload-image.php`;
         
         console.log('📤 Uploading to:', apiUrl, '(mode:', isDev ? 'Next.js API' : 'PHP', ')');
         
