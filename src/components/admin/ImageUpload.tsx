@@ -74,6 +74,24 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         console.log('📥 Upload Response:', result);
 
         if (result.success) {
+          // 🐛 DEBUG: Success event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('debug-step', {
+              detail: {
+                id: `upload-${i}`,
+                label: `✅ Upload successful: ${result.filename}`,
+                status: 'complete',
+                data: {
+                  url: result.url,
+                  fileSize: result.size,
+                  originalSize: result.originalSize,
+                  compressed: result.compressed,
+                  debug: result.debug
+                }
+              }
+            }));
+          }
+
           // Add new image to array
           // First image becomes main if no main exists
           const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
@@ -99,6 +117,18 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             console.warn(`⚠️ Image compression failed: ${result.compressionError} - Using original file`);
           }
         } else {
+          // 🐛 DEBUG: Error event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('debug-step', {
+              detail: {
+                id: `upload-${i}`,
+                label: `❌ Upload failed: ${file.name}`,
+                status: 'error',
+                error: result.error
+              }
+            }));
+          }
+          
           console.error('❌ Upload failed:', result.error);
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
