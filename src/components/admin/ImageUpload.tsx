@@ -27,7 +27,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       try {
         const formData = new FormData();
         formData.append('productId', productId);
-        formData.append('file', file);
+        formData.append('image', file);  // ✅ PHP expects 'image' field name
 
         // ✅ FIX: Use backend URL for PHP API (MAMP or production)
         const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || '';
