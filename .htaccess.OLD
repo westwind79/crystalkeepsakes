@@ -1,0 +1,72 @@
+# Crystal Keepsakes - MAMP Local Development
+# Document Root: C:\MAMP\htdocs\crystalkeepsakes
+# Serves: /out/ for static HTML, /api/ for PHP
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /crystalkeepsakes/
+  
+  # ============================================
+  # NO HTTPS REDIRECT FOR LOCAL DEV
+  # ============================================
+  # Keep HTTP for localhost - DO NOT uncomment!
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  
+  # ============================================
+  # API FILES - Serve from /api/ directory
+  # ============================================
+  # Allow PHP files in /api/ to execute directly
+  RewriteCond %{REQUEST_URI} ^/crystalkeepsakes/api/
+  RewriteRule ^ - [L]
+  
+  # ============================================
+  # VENDOR - Allow Composer files
+  # ============================================
+  RewriteCond %{REQUEST_URI} ^/crystalkeepsakes/vendor/
+  RewriteRule ^ - [L]
+  
+  # ============================================
+  # STATIC SITE - Serve from /out/ directory
+  # ============================================
+  # If file exists in /out/, serve it
+  RewriteCond %{DOCUMENT_ROOT}/crystalkeepsakes/out%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
+  
+  # If directory exists in /out/, serve it
+  RewriteCond %{DOCUMENT_ROOT}/crystalkeepsakes/out%{REQUEST_URI} -d
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
+  
+  # Default: try to serve from /out/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
+</IfModule>
+
+# ============================================
+# SECURITY - Protect sensitive files
+# ============================================
+<FilesMatch "\.(env|sql|md|log|json|lock|backup)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Prevent directory browsing
+Options -Indexes
+
+# ============================================
+# PHP CONFIGURATION
+# ============================================
+php_value memory_limit 256M
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_flag display_errors Off
+php_flag log_errors On
+
+# ============================================
+# ALLOW IMAGES
+# ============================================
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
