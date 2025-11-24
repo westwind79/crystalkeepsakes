@@ -25,6 +25,18 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       setUploadProgress(`Uploading ${i + 1} of ${files.length}...`);
 
       try {
+        // 🐛 DEBUG: Emit debug event
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('debug-step', {
+            detail: {
+              id: `upload-${i}`,
+              label: `Starting upload: ${file.name}`,
+              status: 'active',
+              data: { fileName: file.name, fileSize: file.size, fileType: file.type }
+            }
+          }));
+        }
+
         const formData = new FormData();
         formData.append('productId', productId);
         formData.append('image', file);  // ✅ PHP expects 'image' field name
@@ -34,6 +46,18 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         const apiUrl = backendUrl ? `${backendUrl}/api/upload-image.php` : '/api/upload-image.php';
         
         console.log('📤 Uploading to:', apiUrl);
+        
+        // 🐛 DEBUG: Track fetch
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('debug-step', {
+            detail: {
+              id: `upload-${i}`,
+              label: `Sending request to ${apiUrl}`,
+              status: 'active',
+              data: { apiUrl, productId }
+            }
+          }));
+        }
         
         const response = await fetch(apiUrl, {
           method: 'POST',
