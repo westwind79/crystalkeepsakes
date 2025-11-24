@@ -66,7 +66,7 @@ export default function ProductGallery({ images = [] }) {
 
   return (
     <div className="product-gallery">
-      {/* Main Image - Use regular img tag to avoid Next.js optimization issues */}
+      {/* Main Image with Navigation */}
       <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
         <img
           src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
@@ -107,6 +107,37 @@ export default function ProductGallery({ images = [] }) {
             e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
           }}
         />
+
+        {/* Navigation Arrows - Only show if multiple images */}
+        {sortedImages.length > 1 && (
+          <>
+            <button
+              onClick={() => setActiveIndex((prev) => (prev - 1 + sortedImages.length) % sortedImages.length)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all"
+              style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setActiveIndex((prev) => (prev + 1) % sortedImages.length)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all"
+              style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
+
+        {/* Image Counter */}
+        {sortedImages.length > 1 && (
+          <div className="absolute bottom-2 right-2 bg-black/70 text-white px-3 py-1 rounded text-sm">
+            {activeIndex + 1} / {sortedImages.length}
+          </div>
+        )}
       </div>
 
       {/* Thumbnails */}
