@@ -18,6 +18,95 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
+/**
+ * Compress and resize image for web optimization
+ * Creates a high-quality web-ready version
+ * 
+ * @param string $filepath Path to the uploaded image
+ * @param string $mimeType MIME type of the image
+ * @return bool Success status
+ */
+function compressAndResizeImage($filepath, $mimeType) {
+    // Load image based on type
+    switch ($mimeType) {
+        case 'image/jpeg':
+        case 'image/jpg':
+            $image = @imagecreatefromjpeg($filepath);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($filepath);
+            break;
+        case 'image/gif':
+            $image = @imagecreatefromgif($filepath);
+            break;
+        case 'image/webp':
+            $image = @imagecreatefromwebp($filepath);
+            break;
+        default:
+            return false;
+    }
+    
+    if (!$image) {
+        return false;
+    }
+    
+    $originalWidth = imagesx($image);
+    $originalHeight = imagesy($image);
+    
+    // Calculate new dimensions - maintain aspect ratio
+    // Max width: 1920px (good for product images)
+    $maxWidth = 1920;
+    $maxHeight = 1920;
+    
+    $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight);
+    
+    // Only resize if image is larger than max dimensions
+    if ($ratio < 1) {
+        $newWidth = (int)($originalWidth * $ratio);
+        $newHeight = (int)($originalHeight * $ratio);
+        
+        // Create new image with better quality
+        $resized = imagecreatetruecolor($newWidth, $newHeight);
+        
+        // Preserve transparency for PNG/GIF
+        if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+            $transparent = imagecolorallocatealpha($resized, 255, 255, 255, 127);
+            imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+        }
+        
+        // High-quality resampling
+        imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+        imagedestroy($image);
+        $image = $resized;
+    }
+    
+    // Save compressed image back to same file
+    $success = false;
+    switch ($mimeType) {
+        case 'image/jpeg':
+        case 'image/jpg':
+            // JPEG: Quality 85 (good balance of quality vs size)
+            $success = imagejpeg($image, $filepath, 85);
+            break;
+        case 'image/png':
+            // PNG: Compression level 6 (0-9, 6 is good balance)
+            $success = imagepng($image, $filepath, 6);
+            break;
+        case 'image/gif':
+            $success = imagegif($image, $filepath);
+            break;
+        case 'image/webp':
+            // WebP: Quality 85
+            $success = imagewebp($image, $filepath, 85);
+            break;
+    }
+    
+    imagedestroy($image);
+    return $success;
+}
+
 try {
     // Check if file was uploaded
     if (!isset($_FILES['image'])) {
