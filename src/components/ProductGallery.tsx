@@ -3,13 +3,14 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { assetPath } from '@/lib/assetPath'
 
-export default function ProductGallery({ images = [] }) {
+export default function ProductGallery({ images = [], useBackend = false }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
 
   if (isDev) {
-    console.log('🖼️ Gallery images:', images?.length || 0)
+    console.log('🖼️ Gallery images:', images?.length || 0, 'useBackend:', useBackend)
   }
 
   if (!images || images.length === 0) {
@@ -27,21 +28,44 @@ export default function ProductGallery({ images = [] }) {
 
   const currentImage = images[activeIndex]
   const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
+  
+  // ✅ In admin panel, use backend URL for PHP-served images
+  const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
+  const displaySrc = useBackend && backendUrl 
+    ? `${backendUrl}${imageSrc}`
+    : assetPath(imageSrc || '')
+
+  if (isDev) {
+    console.log('📸 Image source:', imageSrc, '→', displaySrc)
+  }
 
   return (
     <div className="product-gallery">
       {/* Main Image */}
       <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
-        <Image
-          src={imageSrc || 'https://placehold.co/800x800?text=No+Image'}
-          alt={`Product image ${activeIndex + 1}`}
-          fill
-          style={{ objectFit: 'cover' }}
-          onError={(e) => {
-            if (isDev) console.log('❌ Image error:', imageSrc)
-            e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-          }}
-        />
+        {useBackend ? (
+          // Use regular img tag for backend images (avoids Next.js Image optimization)
+          <img
+            src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
+            alt={`Product image ${activeIndex + 1}`}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            onError={(e) => {
+              if (isDev) console.log('❌ Image error:', displaySrc)
+              e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+            }}
+          />
+        ) : (
+          <Image
+            src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
+            alt={`Product image ${activeIndex + 1}`}
+            fill
+            style={{ objectFit: 'cover' }}
+            onError={(e) => {
+              if (isDev) console.log('❌ Image error:', displaySrc)
+              e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+            }}
+          />
+        )}
       </div>
 
       {/* Thumbnails */}
