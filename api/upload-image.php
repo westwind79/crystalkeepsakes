@@ -268,7 +268,11 @@ try {
             'fileExists' => file_exists($uploadPath),
             'fileSize' => $finalSize,
             'isReadable' => is_readable($uploadPath),
-            'isDirWritable' => is_writable($uploadDir)
+            'isDirWritable' => is_writable($uploadDir),
+            'filePermissions' => substr(sprintf('%o', fileperms($uploadPath)), -4), // e.g., "0644"
+            'dirPermissions' => substr(sprintf('%o', fileperms($uploadDir)), -4), // e.g., "0755"
+            'fileOwner' => function_exists('posix_getpwuid') ? posix_getpwuid(fileowner($uploadPath))['name'] : 'N/A',
+            'processUser' => function_exists('posix_getpwuid') ? posix_getpwuid(posix_geteuid())['name'] : 'N/A'
         ]
     ]);
 
