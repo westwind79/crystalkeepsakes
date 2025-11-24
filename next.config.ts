@@ -8,8 +8,32 @@ let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 if (basePath === '/') basePath = ''; // Fix: "/" is not allowed
 basePath = basePath.trim(); // Remove any whitespace
 
-// Separate output directories for different environments
-const distDir = envMode === 'testing' ? 'out-test' : 'out';
+// ✅ CRITICAL FIX: Separate output directories to prevent overwriting!
+// This prevents test builds from overwriting production builds
+const getDistDir = () => {
+  // Check for explicit BUILD_MODE from environment
+  if (process.env.BUILD_MODE === 'test') return 'out-test';
+  if (process.env.BUILD_MODE === 'prod') return 'out-prod';
+  if (process.env.BUILD_MODE === 'local') return 'out';
+  
+  // Fallback: determine by env mode
+  if (envMode === 'testing') return 'out-test';
+  if (envMode === 'production') return 'out-prod';
+  
+  return 'out'; // local/development
+};
+
+const distDir = getDistDir();
+
+console.log(`
+╔════════════════════════════════════════════════════╗
+║         BUILD CONFIGURATION                        ║
+╠════════════════════════════════════════════════════╣
+║ Environment:  ${envMode.padEnd(24)}                ║
+║ Base Path:    ${(basePath || '(root)').padEnd(24)} ║
+║ Output Dir:   ${distDir.padEnd(24)}                ║
+╚════════════════════════════════════════════════════╝
+`);
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
