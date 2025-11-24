@@ -41,10 +41,10 @@ try {
         throw new Exception('Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.');
     }
 
-    // Validate file size (max 5MB)
-    $maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    // Validate file size (max 10MB - we'll compress it)
+    $maxSize = 10 * 1024 * 1024; // 10MB in bytes
     if ($file['size'] > $maxSize) {
-        throw new Exception('File too large. Maximum size is 5MB.');
+        throw new Exception('File too large. Maximum size is 10MB.');
     }
 
     // Generate unique filename
