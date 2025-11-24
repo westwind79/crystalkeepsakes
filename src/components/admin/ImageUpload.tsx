@@ -52,12 +52,12 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
           const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
           
           newImages.push({
-            src: result.data.url,
+            src: result.url,  // ✅ PHP returns 'url' not 'data.url'
             isMain: isMain,
             alt: file.name,
           });
 
-          console.log(`✅ Uploaded image: ${result.data.url}`);
+          console.log(`✅ Uploaded image: ${result.url}`);
         } else {
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
