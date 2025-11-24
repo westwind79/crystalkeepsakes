@@ -46,6 +46,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
 
         const result = await response.json();
 
+        // 🐛 DEBUG: Log full response for debugging
+        console.log('📥 Upload Response:', result);
+
         if (result.success) {
           // Add new image to array
           // First image becomes main if no main exists
@@ -58,7 +61,21 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
           });
 
           console.log(`✅ Uploaded image: ${result.url}`);
+          console.log('📊 Upload Stats:', {
+            filename: result.filename,
+            size: `${(result.size / 1024).toFixed(2)} KB`,
+            originalSize: `${(result.originalSize / 1024).toFixed(2)} KB`,
+            compressed: result.compressed,
+            compressionError: result.compressionError,
+            debug: result.debug
+          });
+
+          // Show compression warning if needed
+          if (!result.compressed && result.compressionError) {
+            console.warn(`⚠️ Image compression failed: ${result.compressionError} - Using original file`);
+          }
         } else {
+          console.error('❌ Upload failed:', result.error);
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
       } catch (error) {
