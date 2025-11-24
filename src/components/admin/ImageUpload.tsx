@@ -142,10 +142,13 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                 Click to upload images or drag and drop
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                PNG, JPG, GIF up to 10MB each
+                PNG, JPG, GIF, WebP up to 10MB each
               </p>
               <p className="text-xs text-blue-600 font-semibold mt-2">
-                💡 Tip: Multiple images auto-create gallery view
+                💡 Images are automatically compressed & optimized for web
+              </p>
+              <p className="text-xs text-green-600 font-semibold">
+                ✨ Multiple images auto-create gallery view
               </p>
             </div>
           )}
