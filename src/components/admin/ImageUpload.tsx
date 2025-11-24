@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ProductImage } from '@/types/productTypes';
-import { assetPath } from '@/lib/assetPath';
 
 interface ImageUploadProps {
   productId: string;
@@ -30,10 +29,15 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         formData.append('productId', productId);
         formData.append('file', file);
 
-        const response = await fetch(assetPath('/api/admin/upload-image'), {
+        // ✅ FIX: Correct API endpoint path
+        const response = await fetch('/api/upload-image.php', {
           method: 'POST',
           body: formData,
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const result = await response.json();
 
@@ -47,12 +51,14 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             isMain: isMain,
             alt: file.name,
           });
+
+          console.log(`✅ Uploaded image: ${result.data.url}`);
         } else {
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
       } catch (error) {
         console.error('Upload error:', error);
-        alert(`Error uploading ${file.name}`);
+        alert(`Error uploading ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -133,6 +139,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
               <p className="text-xs text-gray-500 mt-1">
                 PNG, JPG, GIF up to 10MB each
               </p>
+              <p className="text-xs text-blue-600 font-semibold mt-2">
+                💡 Tip: Multiple images auto-create gallery view
+              </p>
             </div>
           )}
         </label>
@@ -142,6 +151,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       {images.length > 0 && (
         <div className="space-y-3">
           <h4 className="font-semibold text-gray-700">Current Images ({images.length})</h4>
+          {images.length > 1 && (
+            <p className="text-sm text-green-600 font-medium">✅ Gallery mode enabled - customers can browse all images</p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images.map((image, index) => (
               <div
