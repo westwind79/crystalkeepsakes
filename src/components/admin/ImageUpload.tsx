@@ -29,8 +29,13 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         formData.append('productId', productId);
         formData.append('file', file);
 
-        // ✅ FIX: Correct API endpoint path
-        const response = await fetch('/api/upload-image.php', {
+        // ✅ FIX: Use backend URL for PHP API (MAMP or production)
+        const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || '';
+        const apiUrl = backendUrl ? `${backendUrl}/api/upload-image.php` : '/api/upload-image.php';
+        
+        console.log('📤 Uploading to:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
           method: 'POST',
           body: formData,
         });
