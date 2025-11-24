@@ -191,6 +191,13 @@ try {
         throw new Exception('Failed to save uploaded file');
     }
 
+    // ✅ FIX PERMISSIONS: Make file readable by everyone (Next.js needs to read it)
+    // This is CRITICAL for Next.js dev server to serve the image
+    chmod($uploadPath, 0644); // rw-r--r-- (owner can write, everyone can read)
+    
+    // Also ensure directory is accessible
+    chmod($uploadDir, 0755); // rwxr-xr-x (owner can write, everyone can read/execute)
+
     // Verify file was saved correctly
     if (!file_exists($uploadPath) || filesize($uploadPath) === 0) {
         throw new Exception('File was not saved correctly');
