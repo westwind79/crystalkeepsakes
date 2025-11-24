@@ -27,7 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
  * @return bool Success status
  */
 function compressAndResizeImage($filepath, $mimeType) {
+    // Check if GD library is available
+    if (!extension_loaded('gd')) {
+        error_log('GD library not available - skipping compression');
+        return false;
+    }
+    
+    // Verify file exists and is readable
+    if (!file_exists($filepath) || !is_readable($filepath)) {
+        error_log("File not readable: $filepath");
+        return false;
+    }
+    
     // Load image based on type
+    $image = false;
     switch ($mimeType) {
         case 'image/jpeg':
         case 'image/jpg':
@@ -40,13 +53,17 @@ function compressAndResizeImage($filepath, $mimeType) {
             $image = @imagecreatefromgif($filepath);
             break;
         case 'image/webp':
-            $image = @imagecreatefromwebp($filepath);
+            if (function_exists('imagecreatefromwebp')) {
+                $image = @imagecreatefromwebp($filepath);
+            }
             break;
         default:
+            error_log("Unsupported mime type: $mimeType");
             return false;
     }
     
     if (!$image) {
+        error_log("Failed to create image from file: $filepath (mime: $mimeType)");
         return false;
     }
     
