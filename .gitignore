@@ -83,3 +83,7 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+-e 
+# Environment files
+*.env
+*.env.*
