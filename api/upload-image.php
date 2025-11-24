@@ -157,32 +157,62 @@ try {
     
     $uploadPath = $uploadDir . $filename;
     
-    // Move uploaded file temporarily
+    // Move uploaded file
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         throw new Exception('Failed to save uploaded file');
     }
 
-    // ✅ COMPRESS & OPTIMIZE IMAGE FOR WEB
-    // Create optimized versions at different sizes
-    $optimized = compressAndResizeImage($uploadPath, $mimeType);
+    // Verify file was saved correctly
+    if (!file_exists($uploadPath) || filesize($uploadPath) === 0) {
+        throw new Exception('File was not saved correctly');
+    }
+
+    $originalSize = filesize($uploadPath);
     
-    if (!$optimized) {
-        // If compression fails, keep original
-        error_log("Warning: Image compression failed for $filename");
+    // ✅ TRY TO COMPRESS & OPTIMIZE IMAGE FOR WEB (optional)
+    // If compression fails, we keep the original
+    $optimized = false;
+    $compressionError = null;
+    
+    try {
+        $optimized = compressAndResizeImage($uploadPath, $mimeType);
+        
+        // Verify compression didn't corrupt the file
+        if ($optimized && file_exists($uploadPath) && filesize($uploadPath) > 0) {
+            $optimized = true;
+        } else {
+            // Compression failed - restore original or re-upload
+            if (filesize($uploadPath) === 0) {
+                throw new Exception('Compression corrupted the file');
+            }
+        }
+    } catch (Exception $e) {
+        $compressionError = $e->getMessage();
+        error_log("Image compression failed for $filename: " . $compressionError);
+        // Keep original file
+        $optimized = false;
     }
 
     // Return success with file URL
     $fileUrl = '/img/products/cockpit3d/' . $productId . '/' . $filename;
+    $finalSize = filesize($uploadPath);
     
     echo json_encode([
         'success' => true,
         'filename' => $filename,
         'url' => $fileUrl,
-        'size' => filesize($uploadPath),  // Return actual compressed size
-        'originalSize' => $file['size'],
+        'size' => $finalSize,
+        'originalSize' => $originalSize,
         'mimeType' => $mimeType,
         'compressed' => $optimized,
-        'productId' => $productId
+        'compressionError' => $compressionError,
+        'productId' => $productId,
+        'debug' => [
+            'uploadPath' => $uploadPath,
+            'fileExists' => file_exists($uploadPath),
+            'fileSize' => $finalSize,
+            'isReadable' => is_readable($uploadPath)
+        ]
     ]);
 
 } catch (Exception $e) {
