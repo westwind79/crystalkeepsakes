@@ -1,54 +1,84 @@
+# ============================================
+# Crystal Keepsakes - Git Ignore
+# ============================================
+
 # Dependencies
 node_modules/
 vendor/
+yarn.lock
+package-lock.json
 
-# Next.js
+# Next.js Build Outputs
 .next/
 out/
 out-test/
 out-prod/
-# Environment
+.turbo/
+tsconfig.tsbuildinfo
+
+# Environment Variables
 .env
 .env.local
 .env.production
+.env.production.local
 .env.development
+.env.development.local
 .env.test
+.env.test.local
+*.env
+*.env.*
 
-# Product data (edited in admin - don't commit)
+# Product Data (Edited in Admin - Don't Commit)
 src/data/final-product-list.js
 public/data/products.json
 public/data/final-products*.json
 
+# Uploaded Images (Don't Commit User Uploads)
+public/uploads/
+public/img/products/cockpit3d/*/product_*
+
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+/var/log/
 
-# OS
+# OS Files
 .DS_Store
+Thumbs.db
+desktop.ini
 
-# IDE
+# IDE / Editors
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
 
-# Cache
+# Cache & Temp Files
 .cache/
-.turbo/
+.temp/
+*.tmp
 
-# Backup
+# Backups
 *.backup
 *.bak
-.env.production.test-e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+*.old
+*~
+
+# PHP
+composer.lock
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
