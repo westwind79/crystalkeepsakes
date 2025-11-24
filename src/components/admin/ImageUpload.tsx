@@ -111,10 +111,22 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             compressionError: result.compressionError,
             debug: result.debug
           });
+          
+          // 🔧 PHP Environment Info
+          if (result.phpInfo) {
+            console.log('🔧 PHP Environment:', result.phpInfo);
+            
+            // Warn if GD not available
+            if (!result.phpInfo.gdAvailable) {
+              console.warn('⚠️ GD Library NOT available - image compression disabled');
+            } else {
+              console.log(`✅ GD Library available: ${result.phpInfo.gdVersion}`);
+            }
+          }
 
           // Show compression warning if needed
           if (!result.compressed && result.compressionError) {
-            console.warn(`⚠️ Image compression failed: ${result.compressionError} - Using original file`);
+            console.warn(`⚠️ Image compression: ${result.compressionError}`);
           }
         } else {
           // 🐛 DEBUG: Error event
