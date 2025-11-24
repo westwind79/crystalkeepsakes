@@ -165,20 +165,23 @@ try {
     $filename = 'product_' . $productId . '_' . $timestamp . '.' . $extension;
     
     // Define upload directory - product-specific folder
-    // Use $_SERVER['DOCUMENT_ROOT'] for proper absolute path in all environments
-    $documentRoot = $_SERVER['DOCUMENT_ROOT'];
-    $uploadDir = $documentRoot . '/public/img/products/cockpit3d/' . $productId . '/';
+    // MAMP Setup: Document root is /MAMP/htdocs/, project is /MAMP/htdocs/crystalkeepsakes/
+    // Images should go in: /MAMP/htdocs/crystalkeepsakes/public/img/products/cockpit3d/{id}/
     
-    // Fallback: If document root doesn't have /public, try relative path
-    if (!is_dir($documentRoot . '/public')) {
-        $uploadDir = __DIR__ . '/../public/img/products/cockpit3d/' . $productId . '/';
-    }
+    // Get the project root (where this api folder is)
+    $projectRoot = dirname(__DIR__); // Go up one level from /api to project root
+    $uploadDir = $projectRoot . '/public/img/products/cockpit3d/' . $productId . '/';
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
         if (!mkdir($uploadDir, 0755, true)) {
-            throw new Exception("Failed to create upload directory: $uploadDir");
+            throw new Exception("Failed to create upload directory: $uploadDir (Check write permissions)");
         }
+    }
+    
+    // Verify directory is writable
+    if (!is_writable($uploadDir)) {
+        throw new Exception("Upload directory is not writable: $uploadDir");
     }
     
     $uploadPath = $uploadDir . $filename;
