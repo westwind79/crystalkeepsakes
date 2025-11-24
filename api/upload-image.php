@@ -198,11 +198,12 @@ try {
 
     $originalSize = filesize($uploadPath);
     
-    // ✅ TRY TO COMPRESS & OPTIMIZE IMAGE FOR WEB (optional)
-    // If compression fails, we keep the original
+    // ⚠️ COMPRESSION DISABLED FOR DEBUGGING
+    // Enable this after verifying upload works without compression
     $optimized = false;
-    $compressionError = null;
+    $compressionError = 'Disabled for debugging';
     
+    /* COMPRESSION CODE - UNCOMMENT TO ENABLE
     try {
         $optimized = compressAndResizeImage($uploadPath, $mimeType);
         
@@ -221,6 +222,7 @@ try {
         // Keep original file
         $optimized = false;
     }
+    */
 
     // Return success with file URL
     // Return RELATIVE path (frontend will add backend URL with assetPath)
