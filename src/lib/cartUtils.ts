@@ -233,23 +233,10 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       lineItemId: item.lineItemId
     }
     
-    // Check if identical item already exists (same product, size, options)
-    const existingIndex = cart.findIndex(existing => 
-      existing.productId === cartItem.productId &&
-      existing.size?.name === cartItem.size?.name &&
-      JSON.stringify(existing.options) === JSON.stringify(cartItem.options) &&
-      existing.customText?.text === cartItem.customText?.text
-    )
-    
-    if (existingIndex >= 0) {
-      // Update existing item - add quantities and recalculate total
-      cart[existingIndex].quantity += cartItem.quantity
-      cart[existingIndex].totalPrice = cart[existingIndex].price * cart[existingIndex].quantity
-      cart[existingIndex].lastModified = new Date().toISOString()
-    } else {
-      // Add as new item
-      cart.push(cartItem)
-    }
+    // ✅ BUSINESS DECISION: NEVER combine cart items - always add as separate line items
+    // This ensures customers see each item distinctly, making it clear they're ordering multiple units
+    // Even if items are identical, they remain separate for clarity and easier order management
+    cart.push(cartItem)
     
     saveCart(cart)
     
