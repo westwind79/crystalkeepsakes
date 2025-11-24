@@ -5,7 +5,8 @@
 # Dependencies
 node_modules/
 vendor/
-yarn.lock
+# Keep yarn.lock for reproducible builds
+# But ignore package-lock.json since we use yarn
 package-lock.json
 
 # Next.js Build Outputs
