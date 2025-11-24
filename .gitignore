@@ -6,7 +6,7 @@ vendor/
 .next/
 out/
 out-test/
-
+out-prod/
 # Environment
 .env
 .env.local
