@@ -237,10 +237,13 @@ try {
         'compressionError' => $compressionError,
         'productId' => $productId,
         'debug' => [
+            'projectRoot' => dirname(__DIR__),
+            'uploadDir' => $uploadDir,
             'uploadPath' => $uploadPath,
             'fileExists' => file_exists($uploadPath),
             'fileSize' => $finalSize,
-            'isReadable' => is_readable($uploadPath)
+            'isReadable' => is_readable($uploadPath),
+            'isDirWritable' => is_writable($uploadDir)
         ]
     ]);
 
