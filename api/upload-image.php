@@ -172,7 +172,7 @@ try {
     }
 
     // Return success with file URL
-    $fileUrl = '/uploads/' . $filename;
+    $fileUrl = '/img/products/cockpit3d/' . $productId . '/' . $filename;
     
     echo json_encode([
         'success' => true,
@@ -181,7 +181,8 @@ try {
         'size' => filesize($uploadPath),  // Return actual compressed size
         'originalSize' => $file['size'],
         'mimeType' => $mimeType,
-        'compressed' => $optimized
+        'compressed' => $optimized,
+        'productId' => $productId
     ]);
 
 } catch (Exception $e) {
