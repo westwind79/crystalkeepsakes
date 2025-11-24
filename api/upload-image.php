@@ -165,11 +165,20 @@ try {
     $filename = 'product_' . $productId . '_' . $timestamp . '.' . $extension;
     
     // Define upload directory - product-specific folder
-    $uploadDir = __DIR__ . '/../public/img/products/cockpit3d/' . $productId . '/';
+    // Use $_SERVER['DOCUMENT_ROOT'] for proper absolute path in all environments
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+    $uploadDir = $documentRoot . '/public/img/products/cockpit3d/' . $productId . '/';
+    
+    // Fallback: If document root doesn't have /public, try relative path
+    if (!is_dir($documentRoot . '/public')) {
+        $uploadDir = __DIR__ . '/../public/img/products/cockpit3d/' . $productId . '/';
+    }
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
+        if (!mkdir($uploadDir, 0755, true)) {
+            throw new Exception("Failed to create upload directory: $uploadDir");
+        }
     }
     
     $uploadPath = $uploadDir . $filename;
