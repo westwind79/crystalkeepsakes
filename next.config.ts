@@ -27,11 +27,11 @@ const distDir = getDistDir();
 
 console.log(`
 ╔════════════════════════════════════════════════════╗
-║         BUILD CONFIGURATION                        ║
+║         BUILD CONFIGURATION - NextConfig           ║
 ╠════════════════════════════════════════════════════╣
-║ Environment:  ${envMode.padEnd(24)}                ║
+║ Environment:  ${envMode.padEnd(24)}             ║
 ║ Base Path:    ${(basePath || '(root)').padEnd(24)} ║
-║ Output Dir:   ${distDir.padEnd(24)}                ║
+║ Output Dir:   ${distDir.padEnd(24)}             ║
 ╚════════════════════════════════════════════════════╝
 `);
 
@@ -44,7 +44,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   transpilePackages: ["swiper"],
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: {
     unoptimized: true,

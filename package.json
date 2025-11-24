@@ -8,9 +8,9 @@
     "fetch-products": "node scripts/fetch-cockpit3d-products.js",
     "copy-products": "node scripts/copy-products.js",
     "build": "next build && node scripts/copy-api.js",
-    "build:test": "cross-env NEXT_PUBLIC_BASE_PATH=/test NEXT_PUBLIC_ENV_MODE=testing next build && node scripts/prepare-build.js test",
-    "build:prod": "cross-env NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=production next build && node scripts/prepare-build.js prod",
-    "build:local": "cross-env NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=development next build && node scripts/prepare-build.js local",
+    "build:test": "cross-env BUILD_MODE=test NEXT_PUBLIC_BASE_PATH=/test NEXT_PUBLIC_ENV_MODE=testing next build && node scripts/prepare-build.js test",
+    "build:prod": "cross-env BUILD_MODE=prod NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=production next build && node scripts/prepare-build.js prod",
+    "build:local": "cross-env BUILD_MODE=local NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=development next build && node scripts/prepare-build.js local",
     "clean": "rimraf out out-test out-prod .next",
     "start": "next start",
     "lint": "next lint"
@@ -21,7 +21,7 @@
     "@types/gsap": "^1.20.2",
     "browser-image-compression": "^2.0.2",
     "gsap": "^3.13.0",
-    "next": "15.4.6",
+    "next": "^16.0.3",
     "nodemailer": "^7.0.10",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -46,7 +46,7 @@
     "lucide-react": "^0.552.0",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",
-    "rimraf": "^5.0.10",
+    "rimraf": "^5.0.5",
     "tailwindcss": "^4.1.16",
     "typescript": "^5"
   }
