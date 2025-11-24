@@ -223,6 +223,7 @@ try {
     }
 
     // Return success with file URL
+    // Return RELATIVE path (frontend will add backend URL with assetPath)
     $fileUrl = '/img/products/cockpit3d/' . $productId . '/' . $filename;
     $finalSize = filesize($uploadPath);
     
