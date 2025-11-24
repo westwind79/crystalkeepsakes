@@ -86,6 +86,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                   fileSize: result.size,
                   originalSize: result.originalSize,
                   compressed: result.compressed,
+                  phpInfo: result.phpInfo,
                   debug: result.debug
                 }
               }
