@@ -17,6 +17,10 @@ out-prod/
 .turbo/
 tsconfig.tsbuildinfo
 
+# Admin Panel (should NOT be in production builds)
+out-prod/admin/
+out-test/admin/
+
 # Environment Variables
 .env
 .env.local
