@@ -45,6 +45,27 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   transpilePackages: ["swiper"],
   typescript: { ignoreBuildErrors: true },
+  
+  // ✅ EXCLUDE ADMIN PANEL FROM PRODUCTION/TEST BUILDS
+  // Admin panel should ONLY exist in local development
+  async rewrites() {
+    // Only applies to dev server, not static export
+    return [];
+  },
+  
+  // Exclude admin from static generation in prod/test builds
+  ...(envMode !== 'development' && {
+    async redirects() {
+      return [
+        {
+          source: '/admin',
+          destination: '/',
+          permanent: false,
+        },
+      ];
+    },
+  }),
+  
   images: {
     unoptimized: true,
     remotePatterns: [
