@@ -57,9 +57,7 @@ export default function ProductGallery({ images = [] }) {
             
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
-              const thumbDisplaySrc = useBackend && backendUrl 
-                ? `${backendUrl}${thumbSrc}`
-                : assetPath(thumbSrc || '')
+              const thumbDisplaySrc = assetPath(thumbSrc || '')
               
               return (
                 <div key={idx} className="col-3">
@@ -74,26 +72,14 @@ export default function ProductGallery({ images = [] }) {
                     }}
                     onClick={() => setActiveIndex(idx)}
                   >
-                    {useBackend ? (
-                      <img
-                        src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
-                        alt={`Thumbnail ${idx + 1}`}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
-                        alt={`Thumbnail ${idx + 1}`}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-                        }}
-                      />
-                    )}
+                    <img
+                      src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                      alt={`Thumbnail ${idx + 1}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                      }}
+                    />
                   </div>
                 </div>
               )
