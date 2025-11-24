@@ -1,81 +1,72 @@
-# Crystal Keepsakes - LOCAL DEVELOPMENT .htaccess
-# Use this for MAMP local development (HTTP only)
-# Copy this as .htaccess in: C:\MAMP\htdocs\crystalkeepsakes\.htaccess
+# Crystal Keepsakes - MAMP Local Development
+# Document Root: C:\MAMP\htdocs\crystalkeepsakes
+# Serves: /out/ for static HTML, /api/ for PHP
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /crystalkeepsakes/
   
   # ============================================
-  # REDIRECT TO /out/ FOLDER FOR MAMP
-  # ============================================
-  # Uncomment these lines if you want http://localhost:8888/crystalkeepsakes/ 
-  # to serve the built site from /out/
-  
-  # RewriteRule ^$ out/ [L]
-  # RewriteRule ^(?!out/|api/)(.*)$ out/$1 [L]
-  
-  # ============================================
   # NO HTTPS REDIRECT FOR LOCAL DEV
   # ============================================
-  # (Commented out - keep HTTP for MAMP)
+  # Keep HTTP for localhost - DO NOT uncomment!
   # RewriteCond %{HTTPS} off
   # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
+  
   # ============================================
-  # PHP FILES - Allow direct access
+  # API FILES - Serve from /api/ directory
   # ============================================
-  # Allow PHP files in /api/ to execute
+  # Allow PHP files in /api/ to execute directly
   RewriteCond %{REQUEST_URI} ^/crystalkeepsakes/api/
   RewriteRule ^ - [L]
   
   # ============================================
-  # STATIC FILES - Allow direct access
+  # VENDOR - Allow Composer files
   # ============================================
-  # Serve existing files directly
-  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteCond %{REQUEST_URI} ^/crystalkeepsakes/vendor/
   RewriteRule ^ - [L]
-
-  # Serve existing directories
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
+  
   # ============================================
-  # NEXT.JS ROUTING (if serving /out/)
+  # STATIC SITE - Serve from /out/ directory
   # ============================================
-  # Add trailing slash to directories
+  # If file exists in /out/, serve it
+  RewriteCond %{DOCUMENT_ROOT}/crystalkeepsakes/out%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
+  
+  # If directory exists in /out/, serve it
+  RewriteCond %{DOCUMENT_ROOT}/crystalkeepsakes/out%{REQUEST_URI} -d
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
+  
+  # Default: try to serve from /out/
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_URI} !(.*)/$
-  RewriteRule ^(.*)$ $1/ [L,R=301]
-
-  # Serve index.html for directories
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^(.*)$ $1index.html [L]
-
-  # Try to serve .html file
-  RewriteCond %{REQUEST_FILENAME}.html -f
-  RewriteRule ^(.*)$ $1.html [L]
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ /crystalkeepsakes/out/$1 [L]
 </IfModule>
 
 # ============================================
-# DEVELOPMENT - Allow directory browsing (optional)
+# SECURITY - Protect sensitive files
 # ============================================
-# Options +Indexes
-
-# ============================================
-# SECURITY (Keep these)
-# ============================================
-# Prevent directory browsing
-Options -Indexes
-
-# Protect sensitive files
-<FilesMatch "\.(env|sql|md|log|json|lock)$">
+<FilesMatch "\.(env|sql|md|log|json|lock|backup)$">
   Order Allow,Deny
   Deny from all
 </FilesMatch>
 
-# Allow access to image files
-<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+# Prevent directory browsing
+Options -Indexes
+
+# ============================================
+# PHP CONFIGURATION
+# ============================================
+php_value memory_limit 256M
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_flag display_errors Off
+php_flag log_errors On
+
+# ============================================
+# ALLOW IMAGES
+# ============================================
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
   Order Allow,Deny
   Allow from all
 </FilesMatch>
