@@ -1,18 +1,30 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { assetPath } from '@/lib/assetPath'
 
 export default function ProductGallery({ images = [] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
 
+  // ✅ FIX: Sort images so isMain comes first
+  const sortedImages = [...images].sort((a, b) => {
+    const aIsMain = typeof a === 'object' && a.isMain ? 1 : 0
+    const bIsMain = typeof b === 'object' && b.isMain ? 1 : 0
+    return bIsMain - aIsMain  // isMain=true comes first
+  })
+
+  // Reset active index when images change
+  useEffect(() => {
+    setActiveIndex(0)
+  }, [images])
+
   if (isDev) {
-    console.log('🖼️ Gallery images:', images?.length || 0)
+    console.log('🖼️ Gallery images:', images?.length || 0, 'Main image first:', sortedImages[0])
   }
 
-  if (!images || images.length === 0) {
+  if (!sortedImages || sortedImages.length === 0) {
     return (
       <div className="product-gallery">
         <div 
@@ -25,7 +37,7 @@ export default function ProductGallery({ images = [] }) {
     )
   }
 
-  const currentImage = images[activeIndex]
+  const currentImage = sortedImages[activeIndex]
   const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
   
   // ✅ Use assetPath for all images - works in dev and production
