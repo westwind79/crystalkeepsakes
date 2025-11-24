@@ -469,29 +469,34 @@ export default function CartPage() {
                         </div>
                       )}
 
-                      {/* Quantity Controls and Line Total */}
+                      {/* Quantity Controls and Line Total - ENHANCED VISIBILITY */}
                       <div className="flex items-center justify-between flex-wrap gap-4 pt-3">
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-semibold text-gray-700">Quantity:</span>
-                          <div className="flex items-center gap-2 border-2 border-[#8DC63F] rounded-lg overflow-hidden">
+                          <div className="flex items-center gap-2 border-3 border-[#8DC63F] rounded-lg overflow-hidden shadow-md">
                             <button 
                               type="button"
                               onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold transition-colors"
+                              className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold text-xl transition-colors"
                             >
                               −
                             </button>
-                            <span className="text-lg font-bold text-gray-900 min-w-[3rem] text-center">
+                            <span className="text-2xl font-black text-gray-900 min-w-[4rem] text-center px-4 bg-white">
                               {item.quantity}
                             </span>
                             <button 
                               type="button"
                               onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold transition-colors"
+                              className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold text-xl transition-colors"
                             >
                               +
                             </button>
                           </div>
+                          {item.quantity > 1 && (
+                            <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded">
+                              × {item.quantity} items
+                            </span>
+                          )}
                         </div>
                         
                         <div className="text-right">
@@ -499,6 +504,11 @@ export default function CartPage() {
                           <p className="text-2xl font-bold text-gray-900">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
+                          {item.quantity > 1 && (
+                            <p className="text-xs text-gray-500">
+                              ${item.price.toFixed(2)} each
+                            </p>
+                          )}
                         </div>
                       </div>
 
