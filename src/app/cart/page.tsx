@@ -328,25 +328,29 @@ export default function CartPage() {
                 <div key={index} className="bg-white shadow-lg rounded-xl p-6 border border-green-100 hover:shadow-xl transition-shadow">
                   <div className="flex items-start gap-6">
                     
-                    {/* Images Section */}
+                    {/* Images Section - ENHANCED SIZE & QUALITY */}
                     <div className="flex-shrink-0 space-y-3">
                       {/* Product Image */}
                       <div className="text-center">
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
-                          className="w-32 h-32 object-contain rounded-lg border-2 border-gray-200"
+                          className="w-40 h-40 object-contain rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => window.open(item.productImage, '_blank')}
+                          title="Click to view full size"
                         />
                         <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
                       </div>
                       
-                      {/* Final Masked Image (if available) */}
+                      {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
                       {item.customImage?.thumbnail && (
                         <div className="text-center">
                           <img 
                             src={item.customImage.thumbnail}
                             alt="Final Engraved Version"
-                            className="w-32 h-32 object-contain rounded-lg border-2 border-green-500"
+                            className="w-40 h-40 object-contain rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            onClick={() => window.open(item.customImage?.dataUrl, '_blank')}
+                            title="Click to view full size"
                           />
                           <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
                         </div>
