@@ -229,6 +229,20 @@ try {
     $fileUrl = '/img/products/cockpit3d/' . $productId . '/' . $filename;
     $finalSize = filesize($uploadPath);
     
+    // ✅ PHP ENVIRONMENT INFO FOR DEBUGGING
+    $phpInfo = [
+        'version' => phpversion(),
+        'gdAvailable' => extension_loaded('gd'),
+        'gdVersion' => extension_loaded('gd') ? gd_info()['GD Version'] : 'N/A',
+        'maxUploadSize' => ini_get('upload_max_filesize'),
+        'maxPostSize' => ini_get('post_max_size'),
+        'memoryLimit' => ini_get('memory_limit'),
+        'tempDir' => sys_get_temp_dir(),
+        'loadedExtensions' => implode(', ', array_filter(get_loaded_extensions(), function($ext) {
+            return in_array(strtolower($ext), ['gd', 'imagick', 'fileinfo', 'mbstring']);
+        }))
+    ];
+    
     echo json_encode([
         'success' => true,
         'filename' => $filename,
@@ -239,6 +253,7 @@ try {
         'compressed' => $optimized,
         'compressionError' => $compressionError,
         'productId' => $productId,
+        'phpInfo' => $phpInfo,
         'debug' => [
             'projectRoot' => dirname(__DIR__),
             'uploadDir' => $uploadDir,
