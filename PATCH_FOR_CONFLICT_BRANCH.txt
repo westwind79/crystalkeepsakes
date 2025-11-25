@@ -1,0 +1,136 @@
+# Patch for conflict_241125_2301 branch
+# Apply these changes to your local branch
+
+===== FILE: api/upload-image.php =====
+Location: After line ~215 (after chmod commands)
+
+ADD THIS CODE:
+
+    // ✅ WINDOWS FIX: Remove read-only flag using attrib command
+    // Windows sometimes marks uploaded files as read-only
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $escapedPath = escapeshellarg($uploadPath);
+        exec("attrib -R $escapedPath", $output, $returnCode);
+        
+        // Also try via PowerShell as backup
+        if ($returnCode !== 0) {
+            $psCommand = "Set-ItemProperty -Path $escapedPath -Name IsReadOnly -Value \$false";
+            exec("powershell -Command \"$psCommand\"", $output2, $returnCode2);
+        }
+    }
+
+===== FILE: next.config.ts =====
+Location: Function getDistDir() around line 13-24
+
+REPLACE:
+const getDistDir = () => {
+  // Check for explicit BUILD_MODE from environment
+  if (process.env.BUILD_MODE === 'test') return 'out-test';
+  if (process.env.BUILD_MODE === 'prod') return 'out-prod';
+  if (process.env.BUILD_MODE === 'local') return 'out';
+  
+  // Fallback: determine by env mode
+  if (envMode === 'testing') return 'out-test';
+  if (envMode === 'production') return 'out-prod';
+  
+  return 'out'; // local/development
+};
+
+WITH:
+const getDistDir = () => {
+  // ALWAYS use .next for development (yarn dev)
+  if (isDev || process.env.NODE_ENV === 'development') {
+    return '.next';
+  }
+  
+  // For builds only (yarn build:test, yarn build:prod, etc)
+  if (process.env.BUILD_MODE === 'test') return 'out-test';
+  if (process.env.BUILD_MODE === 'prod') return 'out-prod';
+  if (process.env.BUILD_MODE === 'local') return 'out';
+  
+  // Fallback for builds
+  if (envMode === 'testing') return 'out-test';
+  if (envMode === 'production') return 'out-prod';
+  
+  // Default for builds
+  return 'out';
+};
+
+===== FILE: next.config.ts (continued) =====
+Location: Around line 39-51
+
+REMOVE these lines:
+  // ✅ EXCLUDE ADMIN PANEL FROM PRODUCTION/TEST BUILDS
+  // Admin panel should ONLY exist in local development
+  async rewrites() {
+    // Only applies to dev server, not static export
+    return [];
+  },
+  
+  // Exclude admin from static generation in prod/test builds
+  ...(envMode !== 'development' && {
+    async redirects() {
+      return [
+        {
+          source: '/admin',
+          destination: '/',
+          permanent: false,
+        },
+      ];
+    },
+  }),
+
+REPLACE WITH:
+  // Note: rewrites/redirects don't work with output: 'export'
+  // Admin panel is excluded at build time via remove-admin-from-build.js script
+
+===== FILE: next-env.d.ts =====
+Location: Line 3
+
+REPLACE:
+import "./.next/dev/types/routes.d.ts";
+
+WITH:
+/// <reference types="./.next/types/routes.d.ts" />
+
+===== FILE: package.json =====
+Location: "scripts" section
+
+REPLACE:
+    "build:test": "cross-env BUILD_MODE=test NEXT_PUBLIC_BASE_PATH=/test NEXT_PUBLIC_ENV_MODE=testing next build && node scripts/prepare-build.js test && node scripts/remove-admin-from-build.js",
+    "build:prod": "cross-env BUILD_MODE=prod NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=production next build && node scripts/prepare-build.js prod && node scripts/remove-admin-from-build.js",
+    "build:local": "cross-env BUILD_MODE=local NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=development next build && node scripts/prepare-build.js local",
+
+WITH:
+    "build:test": "node scripts/safe-build.js test",
+    "build:prod": "node scripts/safe-build.js prod",
+    "build:local": "node scripts/safe-build.js local",
+    "build:test:old": "cross-env BUILD_MODE=test NEXT_PUBLIC_BASE_PATH=/test NEXT_PUBLIC_ENV_MODE=testing next build && node scripts/prepare-build.js test && node scripts/remove-admin-from-build.js",
+    "build:prod:old": "cross-env BUILD_MODE=prod NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=production next build && node scripts/prepare-build.js prod && node scripts/remove-admin-from-build.js",
+
+===== NEW FILE: scripts/safe-build.js =====
+See attached file: /app/scripts/safe-build.js
+Copy this entire file to your local scripts/ folder
+
+===== NEW FILE: fix-readonly-files.bat =====
+See attached file: /app/fix-readonly-files.bat
+Copy to your local project root
+
+===== NEW FILE: fix-readonly-files.ps1 =====
+See attached file: /app/fix-readonly-files.ps1
+Copy to your local project root
+
+===== NEW FILE: clear-caches.bat =====
+See attached file: /app/clear-caches.bat
+Copy to your local project root
+
+===================================
+SUMMARY OF CHANGES:
+===================================
+1. PHP upload script now removes read-only flag on Windows
+2. Next.js config always uses .next for dev mode
+3. Removed rewrites/redirects warnings
+4. Build scripts now use safe-build.js wrapper
+5. Added utility scripts for fixing permissions and clearing caches
+
+PRIORITY: Apply #1 (PHP upload fix) immediately to fix your current issue!
