@@ -61,6 +61,10 @@ export async function POST(request: NextRequest) {
     
     await writeFile(filepath, buffer);
 
+    // ✅ Set proper permissions so Node.js build can read/copy files
+    await chmod(filepath, 0o644); // rw-r--r--
+    await chmod(uploadDir, 0o755); // rwxr-xr-x
+
     // Return success with file URL (relative path for Next.js)
     const fileUrl = `/img/products/cockpit3d/${productId}/${filename}`;
     
