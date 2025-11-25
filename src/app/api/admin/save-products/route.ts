@@ -45,10 +45,25 @@ export async function POST(request: NextRequest) {
         const jsonContent = match[1]
         const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
         writeFileSync(jsonPath, jsonContent, 'utf-8')
+        
+        // ✅ Set proper permissions so build can read/copy the file
+        try {
+          chmodSync(jsonPath, 0o644); // rw-r--r--
+        } catch (e) {
+          console.warn('Could not set permissions on JSON file (might be Windows)');
+        }
+        
         console.log('✅ JSON saved:', jsonPath)
       }
       
       writeFileSync(jsPath, jsContent, 'utf-8')
+      
+      // ✅ Set permissions on JS file too
+      try {
+        chmodSync(jsPath, 0o644); // rw-r--r--
+      } catch (e) {
+        console.warn('Could not set permissions on JS file (might be Windows)');
+      }
       
       console.log('✅ Products saved:', jsPath)
       
