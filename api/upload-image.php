@@ -165,12 +165,8 @@ try {
     $filename = 'product_' . $productId . '_' . $timestamp . '.' . $extension;
     
     // Define upload directory - product-specific folder
-    // MAMP Setup: Document root is /MAMP/htdocs/, project is /MAMP/htdocs/crystalkeepsakes/
-    // Images should go in: /MAMP/htdocs/crystalkeepsakes/public/img/products/cockpit3d/{id}/
-    
-    // Get the project root (where this api folder is)
-    $projectRoot = dirname(__DIR__); // Go up one level from /api to project root
-    $uploadDir = $projectRoot . '/public/img/products/cockpit3d/' . $productId . '/';
+    // Use relative path from api directory
+    $uploadDir = __DIR__ . '/../public/img/products/cockpit3d/' . $productId . '/';
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
