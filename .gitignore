@@ -156,6 +156,9 @@ coverage/
 *.env
 *.env.*
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> conflict_241125_2301
 -e 
 # Environment files
 *.env
@@ -176,9 +179,12 @@ coverage/
 # Environment files
 *.env
 *.env.*
+<<<<<<< HEAD
 -e 
 # Environment files
 *.env
 *.env.*
+=======
+>>>>>>> conflict_241125_2301
 =======
 >>>>>>> conflict_241125_2301

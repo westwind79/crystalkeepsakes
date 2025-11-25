@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Raw Cockpit3D Catalog API data - 2025-11-24 20:54:10
+=======
+// Raw Cockpit3D Catalog API data - 2025-11-25 00:15:16
+>>>>>>> conflict_241125_2301
 
 export const cockpit3dRawCatalog = [
     {

@@ -6,11 +6,15 @@
  * @description Stripe handles shipping/tax via Dashboard settings
  */
 
+
+
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/payment_intent_errors.log');
+
+require_once __DIR__ . '/env-loader.php';
 
 // CORS Headers
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -40,63 +44,63 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-function getEnvVariable($key) {
-    static $envCache = null;
+// function getEnvVariable($key) {
+//     static $envCache = null;
     
-    if ($envCache === null) {
-        $envCache = [];
+//     if ($envCache === null) {
+//         $envCache = [];
         
-        $possibleEnvPaths = [
-            dirname(dirname(__DIR__)) . '/.env',
-            dirname(__DIR__) . '/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/.env'
-        ];
+//         $possibleEnvPaths = [
+//             dirname(dirname(__DIR__)) . '/.env',
+//             dirname(__DIR__) . '/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/.env'
+//         ];
         
-        $envFile = null;
-        foreach ($possibleEnvPaths as $path) {
-            if (file_exists($path)) {
-                $envFile = $path;
-                error_log("✓ Found .env at: $path");
-                break;
-            }
-        }
+//         $envFile = null;
+//         foreach ($possibleEnvPaths as $path) {
+//             if (file_exists($path)) {
+//                 $envFile = $path;
+//                 error_log("✓ Found .env at: $path");
+//                 break;
+//             }
+//         }
         
-        if (!$envFile) {
-            error_log("❌ .env not found");
-            return null;
-        }
+//         if (!$envFile) {
+//             error_log("❌ .env not found");
+//             return null;
+//         }
         
-        $content = file_get_contents($envFile);
-        $lines = explode("\n", $content);
+//         $content = file_get_contents($envFile);
+//         $lines = explode("\n", $content);
         
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (empty($line) || strpos($line, '#') === 0) continue;
+//         foreach ($lines as $line) {
+//             $line = trim($line);
+//             if (empty($line) || strpos($line, '#') === 0) continue;
             
-            $parts = explode('=', $line, 2);
-            if (count($parts) !== 2) continue;
+//             $parts = explode('=', $line, 2);
+//             if (count($parts) !== 2) continue;
             
-            $envKey = trim($parts[0]);
-            $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
-            $envCache[$envKey] = $envValue;
-        }
-    }
+//             $envKey = trim($parts[0]);
+//             $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
+//             $envCache[$envKey] = $envValue;
+//         }
+//     }
     
-    return $envCache[$key] ?? null;
-}
+//     return $envCache[$key] ?? null;
+// }
 
 try {
     error_log("=== NEW PAYMENT REQUEST ===");
     
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
     // Get correct Stripe key
     if ($mode === 'production') {
-        $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     } else {
-        $secretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
     }
     
     if (!$secretKey) {

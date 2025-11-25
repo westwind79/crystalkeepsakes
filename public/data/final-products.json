@@ -2197,6 +2197,11 @@
       {
         "src": "/img/products/cockpit3d/444/cockpit3d_444_2D_Crystal_Cat_Necklace.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/444/product_444_1764059951149.jpg",
+        "isMain": false,
+        "alt": "ornament-products.jpg"
       }
     ],
     "options": [],

@@ -26,6 +26,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+require_once __DIR__ . '/env-loader.php';
+
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -39,50 +41,50 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-// Function to get .env variables
-function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '/.env';
-    if (!file_exists($envFile)) {
-        return null;
-    }
+// // Function to get .env variables
+// function getEnvVariable($key) {
+//     $envFile = dirname(__DIR__) . '/.env';
+//     if (!file_exists($envFile)) {
+//         return null;
+//     }
     
-    $content = file_get_contents($envFile);
-    if ($content === false) {
-        return null;
-    }
+//     $content = file_get_contents($envFile);
+//     if ($content === false) {
+//         return null;
+//     }
     
-    $lines = explode("\n", $content);
-    foreach ($lines as $line) {
-        $line = trim($line);
+//     $lines = explode("\n", $content);
+//     foreach ($lines as $line) {
+//         $line = trim($line);
         
-        if (empty($line) || strpos($line, '#') === 0) {
-            continue;
-        }
+//         if (empty($line) || strpos($line, '#') === 0) {
+//             continue;
+//         }
         
-        $parts = explode('=', $line, 2);
-        if (count($parts) !== 2) {
-            continue;
-        }
+//         $parts = explode('=', $line, 2);
+//         if (count($parts) !== 2) {
+//             continue;
+//         }
         
-        $envKey = trim($parts[0]);
-        $envValue = trim($parts[1]);
+//         $envKey = trim($parts[0]);
+//         $envValue = trim($parts[1]);
         
-        if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
-            (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
-            $envValue = substr($envValue, 1, -1);
-        }
+//         if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
+//             (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
+//             $envValue = substr($envValue, 1, -1);
+//         }
         
-        if ($envKey === $key) {
-            return $envValue;
-        }
-    }
+//         if ($envKey === $key) {
+//             return $envValue;
+//         }
+//     }
     
-    return null;
-}
+//     return null;
+// }
 
 // CONSOLE LOG FUNCTION FOR DEVELOPMENT/TEST MODE
 function console_log($message, $data = null) {
-    $currentMode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $currentMode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     if ($currentMode !== 'live') {
         if ($data !== null) {
             error_log("🖼️ PROXY: $message - " . json_encode($data));
@@ -104,7 +106,7 @@ class CockPit3DImageProxy extends CockPit3DFetcher {
         parent::__construct();
         
         // Set up possible local image paths based on environment
-        $stripeMode = getEnvVariable('VITE_STRIPE_MODE') ?: 'development';
+        $stripeMode = getEnvVar('VITE_STRIPE_MODE') ?: 'development';
         
         console_log("🎯 Initializing image proxy", ['environment' => $stripeMode]);
         

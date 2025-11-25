@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Combined processed products (static + CockPit3D) - 2025-11-24 20:54:11
+=======
+// Combined processed products (static + CockPit3D) - 2025-11-25 00:15:16
+>>>>>>> conflict_241125_2301
 
 export const cockpit3dProducts = [
     {
@@ -3122,7 +3126,11 @@ export const cockpit3dProducts = [
     }
 ];
 
+<<<<<<< HEAD
 export const generatedAt = "2025-11-24T20:54:11-08:00";
+=======
+export const generatedAt = "2025-11-25T00:15:16-08:00";
+>>>>>>> conflict_241125_2301
 
 export const isRealTimeData = true;
 
