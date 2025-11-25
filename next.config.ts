@@ -48,20 +48,8 @@ const nextConfig: NextConfig = {
   
   // ✅ EXCLUDE ADMIN PANEL FROM PRODUCTION/TEST BUILDS
   // Admin panel should ONLY exist in local development
-  // Note: rewrites() removed - not compatible with output: 'export'
-  
-  // Exclude admin from static generation in prod/test builds
-  ...(envMode !== 'development' && {
-    async redirects() {
-      return [
-        {
-          source: '/admin',
-          destination: '/',
-          permanent: false,
-        },
-      ];
-    },
-  }),
+  // Note: rewrites() and redirects() removed - not compatible with output: 'export'
+  // Admin panel will be excluded during build via scripts/remove-admin-from-build.js
   
   images: {
     unoptimized: true,
