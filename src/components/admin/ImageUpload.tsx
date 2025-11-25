@@ -100,18 +100,20 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             }));
           }
 
-          // ✅ FIX: Get current images from props (which will have latest state)
-          // Add new image to the current array
-          const isMain = images.length === 0 || !images.some(img => img.isMain);
+          // ✅ FIX: Add to current images array
+          const isMain = currentImages.length === 0 || !currentImages.some(img => img.isMain);
           
-          const updatedImages = [...images, {
+          const newImage: ProductImage = {
             src: result.url,
             isMain: isMain,
             alt: file.name,
-          }];
-
-          // ✅ Update parent state immediately
-          onImagesUpdated(updatedImages);
+          };
+          
+          currentImages = [...currentImages, newImage];
+          
+          // Update both local and parent state
+          setLocalImages(currentImages);
+          onImagesUpdated(currentImages);
 
           console.log(`✅ Uploaded image: ${result.url}`);
           console.log('📊 Upload Stats:', {
