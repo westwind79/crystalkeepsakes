@@ -172,21 +172,23 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
   };
 
   const handleRemoveImage = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index);
+    const newImages = localImages.filter((_, i) => i !== index);
     
     // If we removed the main image, set the first remaining image as main
-    if (images[index].isMain && newImages.length > 0) {
+    if (localImages[index].isMain && newImages.length > 0) {
       newImages[0].isMain = true;
     }
     
+    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
   const handleSetMainImage = (index: number) => {
-    const newImages = images.map((img, i) => ({
+    const newImages = localImages.map((img, i) => ({
       ...img,
       isMain: i === index,
     }));
+    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
