@@ -193,6 +193,19 @@ try {
     
     // Also ensure directory is accessible
     chmod($uploadDir, 0755); // rwxr-xr-x (owner can write, everyone can read/execute)
+    
+    // ✅ WINDOWS FIX: Remove read-only flag using attrib command
+    // Windows sometimes marks uploaded files as read-only
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $escapedPath = escapeshellarg($uploadPath);
+        exec("attrib -R $escapedPath", $output, $returnCode);
+        
+        // Also try via PowerShell as backup
+        if ($returnCode !== 0) {
+            $psCommand = "Set-ItemProperty -Path $escapedPath -Name IsReadOnly -Value \$false";
+            exec("powershell -Command \"$psCommand\"", $output2, $returnCode2);
+        }
+    }
 
     // Verify file was saved correctly
     if (!file_exists($uploadPath) || filesize($uploadPath) === 0) {
