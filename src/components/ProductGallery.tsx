@@ -51,12 +51,12 @@ export default function ProductGallery({ images = [] }) {
       window.dispatchEvent(new CustomEvent('debug-step', {
         detail: {
           id: 'gallery-display',
-          label: `Gallery displaying image ${activeIndex + 1}/${images.length}`,
+          label: `Gallery displaying image ${activeIndex + 1}/${sortedImages.length}`,
           status: 'active',
           data: {
             originalSrc: imageSrc,
             displaySrc: displaySrc,
-            imageCount: images.length,
+            imageCount: sortedImages.length,
             activeIndex: activeIndex
           }
         }
