@@ -193,9 +193,10 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
   };
 
   const handleReorderImages = (fromIndex: number, toIndex: number) => {
-    const newImages = [...images];
+    const newImages = [...localImages];
     const [movedItem] = newImages.splice(fromIndex, 1);
     newImages.splice(toIndex, 0, movedItem);
+    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
