@@ -1,30 +1,18 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
-import { assetPath } from '@/lib/assetPath'
+import { useState } from 'react'
+import Image from 'next/image'
 
 export default function ProductGallery({ images = [] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
 
-  // ✅ FIX: Sort images so isMain comes first
-  const sortedImages = [...images].sort((a, b) => {
-    const aIsMain = typeof a === 'object' && a.isMain ? 1 : 0
-    const bIsMain = typeof b === 'object' && b.isMain ? 1 : 0
-    return bIsMain - aIsMain  // isMain=true comes first
-  })
-
-  // Reset active index when images change
-  useEffect(() => {
-    setActiveIndex(0)
-  }, [images])
-
   if (isDev) {
-    console.log('🖼️ Gallery images:', images?.length || 0, 'Main image first:', sortedImages[0])
+    console.log('🖼️ Gallery images:', images?.length || 0)
   }
 
-  if (!sortedImages || sortedImages.length === 0) {
+  if (!images || images.length === 0) {
     return (
       <div className="product-gallery">
         <div 
@@ -37,106 +25,61 @@ export default function ProductGallery({ images = [] }) {
     )
   }
 
-  const currentImage = sortedImages[activeIndex]
+  const currentImage = images[activeIndex]
   const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
-  
-  // ✅ Use assetPath for all images - works in dev and production
-  const displaySrc = assetPath(imageSrc || '')
-
-  if (isDev) {
-    console.log('📸 Image source:', imageSrc, '→', displaySrc)
-  }
 
   return (
-    <div className="product-gallery-container">
-      {/* Main Image with Navigation */}
-      <div className="product-gallery mb-3">
-        <img
-          src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
+    <div className="product-gallery">
+      {/* Main Image */}
+      <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
+        <Image
+          src={imageSrc || 'https://placehold.co/800x800?text=No+Image'}
           alt={`Product image ${activeIndex + 1}`}
-          className="img-fluid"
-          onLoad={(e) => {
-            if (isDev) {
-              console.log('✅ Image loaded successfully:', displaySrc);
-            }
-          }}
+          fill
+          style={{ objectFit: 'cover' }}
           onError={(e) => {
-            if (isDev) {
-              console.log('❌ Image error:', displaySrc);
-            }
+            if (isDev) console.log('❌ Image error:', imageSrc)
             e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
           }}
         />
-
-        {/* Navigation Arrows - Only show if multiple images */}
-        {sortedImages.length > 1 && (
-          <>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev - 1 + sortedImages.length) % sortedImages.length)}
-              className="previousImage btn-gallery-contols"
-              aria-label="Previous image"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev + 1) % sortedImages.length)}
-              className="nextImage btn-gallery-contols"
-              aria-label="Next image"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </>
-        )}
       </div>
 
       {/* Thumbnails */}
-      {sortedImages.length > 1 && (
-        <div className="d-flex flex-wrap mt-2">
-            {sortedImages.map((img, idx) => {
+      {images.length > 1 && (
+        <div className="thumbnails">
+          <div className="row g-2">
+            
+            {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
-              const thumbDisplaySrc = assetPath(thumbSrc || '')
-              const isMainImage = typeof img === 'object' && img.isMain
-              
               return (
-                <button
-                  key={idx}
-                  onClick={() => setActiveIndex(idx)}
-                  className={`gallery-thumbnail ${idx === activeIndex ? 'active' : ''}`}
-                  style={{ position: 'relative' }}
-                >
-                  <img
-                    src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
-                    alt={`Thumbnail ${idx + 1}`}
-                    className="img-fluid"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                
+                <div key={idx} className="col-3">
+                  <div 
+                    className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
+                    style={{ 
+                      position: 'relative',
+                      height: '80px',
+                      cursor: 'pointer',
+                      border: idx === activeIndex ? '2px solid var(--brand-500)' : '1px solid #dee2e6',
+                      overflow: 'hidden'
                     }}
-                  />
-                  {/* Main badge on thumbnail */}
-                  {isMainImage && (
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        top: '2px',
-                        left: '2px',
-                        backgroundColor: '#0d6efd',
-                        color: 'white',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        padding: '2px 4px',
-                        borderRadius: '2px'
+                    onClick={() => setActiveIndex(idx)}
+                  > 
+                    <Image
+                      src={thumbSrc || 'https://placehold.co/800x800?text=No+Image'}
+                      alt={`Thumbnail ${idx + 1}`}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                       }}
-                    >
-                      MAIN
-                    </div>
-                  )}
-                </button>
+                    />
+                  </div>
+
+                </div>
               )
             })}
+          </div>
         </div>
       )}
     </div>
