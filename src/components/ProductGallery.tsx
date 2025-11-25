@@ -33,9 +33,11 @@ export default function ProductGallery({ images = [] }) {
 
   if (isDev) {
     console.log('📸 Image source:', imageSrc, '→', displaySrc)
-    
-    // 🐛 DEBUG: Emit debug event for gallery display
-    if (typeof window !== 'undefined') {
+  }
+  
+  // 🐛 DEBUG: Emit debug event for gallery display
+  useEffect(() => {
+    if (isDev && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('debug-step', {
         detail: {
           id: 'gallery-display',
@@ -50,7 +52,7 @@ export default function ProductGallery({ images = [] }) {
         }
       }));
     }
-  }
+  }, [isDev, imageSrc, displaySrc, activeIndex, images.length])
 
   return (
     <div className="product-gallery">
