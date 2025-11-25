@@ -5,7 +5,7 @@
  * @date 2025-11-10
  * @description Handles Stripe Checkout sessions and sends orders to Cockpit3D
  */
-
+require_once __DIR__ . '/env-loader.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Load environment helper

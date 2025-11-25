@@ -10,9 +10,9 @@
 header('Content-Type: text/html; charset=utf-8');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+require_once __DIR__ . '/env-loader.php';
 // Include your existing fetcher
-require_once __DIR__ . '/cockpit3d-data-fetcher2.php';
+require_once __DIR__ . '/cockpit3d-data-fetcher.php';
 
 ?>
 <!DOCTYPE html>

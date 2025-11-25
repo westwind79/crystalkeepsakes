@@ -7,6 +7,7 @@
 // Fixed: Removed broken extractLightbaseOptions() method
 // Added: Proper fallback when product has no lightbase options
 // Previous: Missing logic for products without lightbase options in data
+require_once __DIR__ . '/env-loader.php';
 
 // Only set headers and handle requests if this file is called directly
 if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
