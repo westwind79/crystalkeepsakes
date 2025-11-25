@@ -18,8 +18,8 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
     if (!files || files.length === 0) return;
 
     setUploading(true);
-    const newImages: ProductImage[] = [...images];
-
+    
+    // Process files sequentially and update state after each one
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       setUploadProgress(`Uploading ${i + 1} of ${files.length}...`);
