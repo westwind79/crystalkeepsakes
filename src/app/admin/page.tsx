@@ -122,7 +122,7 @@ export default function EnhancedProductAdminPage() {
  
   // Load available masks from API
   useEffect(() => {
-    fetch('/api/masks')
+    fetch('/data/available-masks.json')
       .then(res => res.json())
       .then(masks => {
         setAvailableMasks(masks);
