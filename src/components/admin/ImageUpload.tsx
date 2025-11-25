@@ -103,6 +103,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             alt: file.name,
           });
 
+          // ✅ Update state immediately after each upload
+          onImagesUpdated([...newImages]);
+
           console.log(`✅ Uploaded image: ${result.url}`);
           console.log('📊 Upload Stats:', {
             filename: result.filename,
