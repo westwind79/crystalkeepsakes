@@ -156,7 +156,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
 
     setUploading(false);
     setUploadProgress('');
-    onImagesUpdated(newImages);
+    // State already updated after each upload
     
     // Reset input
     event.target.value = '';
