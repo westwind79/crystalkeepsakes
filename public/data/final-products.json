@@ -1738,6 +1738,21 @@
       {
         "src": "/img/products/cockpit3d/279/cockpit3d_279_Ornament_Stand.png",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1764053153883.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1764053165147.png",
+        "isMain": false,
+        "alt": "2d-christmas-ornament-2.png"
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1764053165164.png",
+        "isMain": false,
+        "alt": "2d-christmas-ornament-3.png"
       }
     ],
     "options": [],
@@ -2069,6 +2084,11 @@
       {
         "src": "/img/products/cockpit3d/442/cockpit3d_442_2D_Crystal_Cat_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/442/product_442_1764053082974.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
       }
     ],
     "options": [],
