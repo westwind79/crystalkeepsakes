@@ -5,7 +5,7 @@ const http = require('http');
 
 // Get port from MAMP config (check your MAMP settings)
 const MAMP_PORT = process.env.MAMP_PORT || '8888';
-const API_URL = `http://localhost:${MAMP_PORT}/crystalkeepsakes/api/cockpit3d-data-fetcher.php?action=generate-products`;
+const API_URL = `http://localhost:${MAMP_PORT}/crystalkeepsakes/api/cockpit3d/cockpit3d-data-fetcher.php?action=generate-products`;
 
 console.log('[FETCH] Fetching products from CockPit3D...');
 console.log(`📍 API URL: ${API_URL}`);
