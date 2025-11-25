@@ -45,23 +45,6 @@ export default function ProductGallery({ images = [] }) {
 
   if (isDev) {
     console.log('📸 Image source:', imageSrc, '→', displaySrc)
-    
-    // 🐛 DEBUG: Emit debug event for gallery display
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('debug-step', {
-        detail: {
-          id: 'gallery-display',
-          label: `Gallery displaying image ${activeIndex + 1}/${sortedImages.length}`,
-          status: 'active',
-          data: {
-            originalSrc: imageSrc,
-            displaySrc: displaySrc,
-            imageCount: sortedImages.length,
-            activeIndex: activeIndex
-          }
-        }
-      }));
-    }
   }
 
   return (
