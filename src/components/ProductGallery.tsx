@@ -1,7 +1,7 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { assetPath } from '@/lib/assetPath'
 
 export default function ProductGallery({ images = [] }) {
