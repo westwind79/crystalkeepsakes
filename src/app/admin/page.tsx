@@ -700,7 +700,7 @@ export default finalProductList;
                         <h3 className={`font-semibold text-sm truncate ${!isVisible ? 'text-gray-500' : 'text-gray-900'}`}>
                           {product.name}
                         </h3>
-                        <p className="text-xs text-gray-600">SKU: {product.sku}</p>
+                        <p className="text-xs text-gray-600">ID: {product.id} | SKU: {product.sku}</p>
                         <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
                         {hasCustomizations(product.id) && (
                           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
