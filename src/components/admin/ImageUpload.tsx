@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ProductImage } from '@/types/productTypes';
+import { assetPath } from '@/lib/assetPath';
 
 interface ImageUploadProps {
   productId: string;
@@ -12,191 +13,80 @@ interface ImageUploadProps {
 export default function ImageUpload({ productId, images, onImagesUpdated }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string>('');
-  const [localImages, setLocalImages] = useState<ProductImage[]>(images);
-
-  // Sync local images with prop changes
-  React.useEffect(() => {
-    setLocalImages(images);
-  }, [images]);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
     setUploading(true);
-    let currentImages = [...localImages];
-    
-    // Process files sequentially and update state after each one
+    const newImages: ProductImage[] = [...images];
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       setUploadProgress(`Uploading ${i + 1} of ${files.length}...`);
 
       try {
-        // 🐛 DEBUG: Emit debug event
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('debug-step', {
-            detail: {
-              id: `upload-${i}`,
-              label: `Starting upload: ${file.name}`,
-              status: 'active',
-              data: { fileName: file.name, fileSize: file.size, fileType: file.type }
-            }
-          }));
-        }
-
         const formData = new FormData();
         formData.append('productId', productId);
-        formData.append('image', file);  // ✅ PHP expects 'image' field name
+        formData.append('file', file);
 
-        // ✅ Use Next.js API route for development, PHP for production
-        const isDev = process.env.NODE_ENV === 'development' || !process.env.NEXT_PUBLIC_PHP_BACKEND_URL;
-        const apiUrl = isDev ? '/api/upload-image/' : `${process.env.NEXT_PUBLIC_PHP_BACKEND_URL}/api/upload-image.php`;
-        
-        console.log('📤 Uploading to:', apiUrl, '(mode:', isDev ? 'Next.js API' : 'PHP', ')');
-        
-        // 🐛 DEBUG: Track fetch
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('debug-step', {
-            detail: {
-              id: `upload-${i}`,
-              label: `Sending request to ${apiUrl}`,
-              status: 'active',
-              data: { apiUrl, productId }
-            }
-          }));
-        }
-        
-        const response = await fetch(apiUrl, {
+        const response = await fetch(assetPath('/api/admin/upload-image'), {
           method: 'POST',
           body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const result = await response.json();
 
-        // 🐛 DEBUG: Log full response for debugging
-        console.log('📥 Upload Response:', result);
-
         if (result.success) {
-          // 🐛 DEBUG: Success event
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('debug-step', {
-              detail: {
-                id: `upload-${i}`,
-                label: `✅ Upload successful: ${result.filename}`,
-                status: 'complete',
-                data: {
-                  url: result.url,
-                  fileSize: result.size,
-                  originalSize: result.originalSize,
-                  compressed: result.compressed,
-                  phpInfo: result.phpInfo,
-                  debug: result.debug
-                }
-              }
-            }));
-          }
-
-          // ✅ FIX: Add to current images array
-          const isMain = currentImages.length === 0 || !currentImages.some(img => img.isMain);
+          // Add new image to array
+          // First image becomes main if no main exists
+          const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
           
-          const newImage: ProductImage = {
-            src: result.url,
+          newImages.push({
+            src: result.data.url,
             isMain: isMain,
             alt: file.name,
-          };
-          
-          currentImages = [...currentImages, newImage];
-          
-          // Update both local and parent state
-          setLocalImages(currentImages);
-          onImagesUpdated(currentImages);
-
-          console.log(`✅ Uploaded image: ${result.url}`);
-          console.log('📊 Upload Stats:', {
-            filename: result.filename,
-            size: `${(result.size / 1024).toFixed(2)} KB`,
-            originalSize: `${(result.originalSize / 1024).toFixed(2)} KB`,
-            compressed: result.compressed,
-            compressionError: result.compressionError,
-            debug: result.debug
           });
-          
-          // 🔧 PHP Environment Info
-          if (result.phpInfo) {
-            console.log('🔧 PHP Environment:', result.phpInfo);
-            
-            // Warn if GD not available
-            if (!result.phpInfo.gdAvailable) {
-              console.warn('⚠️ GD Library NOT available - image compression disabled');
-            } else {
-              console.log(`✅ GD Library available: ${result.phpInfo.gdVersion}`);
-            }
-          }
-
-          // Show compression warning if needed
-          if (!result.compressed && result.compressionError) {
-            console.warn(`⚠️ Image compression: ${result.compressionError}`);
-          }
         } else {
-          // 🐛 DEBUG: Error event
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('debug-step', {
-              detail: {
-                id: `upload-${i}`,
-                label: `❌ Upload failed: ${file.name}`,
-                status: 'error',
-                error: result.error
-              }
-            }));
-          }
-          
-          console.error('❌ Upload failed:', result.error);
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
       } catch (error) {
         console.error('Upload error:', error);
-        alert(`Error uploading ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        alert(`Error uploading ${file.name}`);
       }
     }
 
     setUploading(false);
     setUploadProgress('');
-    // State already updated after each upload
+    onImagesUpdated(newImages);
     
     // Reset input
     event.target.value = '';
   };
 
   const handleRemoveImage = (index: number) => {
-    const newImages = localImages.filter((_, i) => i !== index);
+    const newImages = images.filter((_, i) => i !== index);
     
     // If we removed the main image, set the first remaining image as main
-    if (localImages[index].isMain && newImages.length > 0) {
+    if (images[index].isMain && newImages.length > 0) {
       newImages[0].isMain = true;
     }
     
-    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
   const handleSetMainImage = (index: number) => {
-    const newImages = localImages.map((img, i) => ({
+    const newImages = images.map((img, i) => ({
       ...img,
       isMain: i === index,
     }));
-    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
   const handleReorderImages = (fromIndex: number, toIndex: number) => {
-    const newImages = [...localImages];
+    const newImages = [...images];
     const [movedItem] = newImages.splice(fromIndex, 1);
     newImages.splice(toIndex, 0, movedItem);
-    setLocalImages(newImages);
     onImagesUpdated(newImages);
   };
 
@@ -241,13 +131,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                 Click to upload images or drag and drop
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                PNG, JPG, GIF, WebP up to 10MB each
-              </p>
-              <p className="text-xs text-blue-600 font-semibold mt-2">
-                💡 Images are automatically compressed & optimized for web
-              </p>
-              <p className="text-xs text-green-600 font-semibold">
-                ✨ Multiple images auto-create gallery view
+                PNG, JPG, GIF up to 10MB each
               </p>
             </div>
           )}
@@ -255,14 +139,11 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       </div>
 
       {/* Current Images */}
-      {localImages.length > 0 && (
+      {images.length > 0 && (
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-700">Current Images ({localImages.length})</h4>
-          {localImages.length > 1 && (
-            <p className="text-sm text-green-600 font-medium">✅ Gallery mode enabled - customers can browse all images</p>
-          )}
+          <h4 className="font-semibold text-gray-700">Current Images ({images.length})</h4>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {localImages.map((image, index) => (
+            {images.map((image, index) => (
               <div
                 key={index}
                 className="relative group border rounded-lg overflow-hidden bg-gray-50"
@@ -314,7 +195,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                       ←
                     </button>
                   )}
-                  {index < localImages.length - 1 && (
+                  {index < images.length - 1 && (
                     <button
                       onClick={() => handleReorderImages(index, index + 1)}
                       className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700"
