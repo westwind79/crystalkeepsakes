@@ -93,18 +93,18 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
             }));
           }
 
-          // Add new image to array
-          // First image becomes main if no main exists
-          const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
+          // ✅ FIX: Get current images from props (which will have latest state)
+          // Add new image to the current array
+          const isMain = images.length === 0 || !images.some(img => img.isMain);
           
-          newImages.push({
-            src: result.url,  // ✅ PHP returns 'url' not 'data.url'
+          const updatedImages = [...images, {
+            src: result.url,
             isMain: isMain,
             alt: file.name,
-          });
+          }];
 
-          // ✅ Update state immediately after each upload
-          onImagesUpdated([...newImages]);
+          // ✅ Update parent state immediately
+          onImagesUpdated(updatedImages);
 
           console.log(`✅ Uploaded image: ${result.url}`);
           console.log('📊 Upload Stats:', {
