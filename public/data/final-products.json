@@ -252,19 +252,8 @@
     "longDescription": " <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Why Light Bases Matter:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Choosing Your Base:</h2>\n    \n    <div class=\"space-y-6 mb-8\">\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Traditional/Classic Decor:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Modern/Contemporary Decor:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Dynamic Displays:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Ball Crystals:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.\n        </p>\n      </div>\n    </div>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Light Colors & Moods:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Professional Presentation:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Gift Considerations:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed\">\n      When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.\n    </p> \n",
     "images": [
       {
-        "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
-        "isMain": true,
-        "alt": "Main product image"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1764022388288.jpg",
-        "isMain": false,
-        "alt": "Alternative view 1"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1764022388399.png",
-        "isMain": false,
-        "alt": "Alternative view 2"
+        "src": "/img/products/cockpit3d/105/cockpit3d_105_Lightbase_Rectangle.jpg",
+        "isMain": true
       }
     ],
     "options": [],
