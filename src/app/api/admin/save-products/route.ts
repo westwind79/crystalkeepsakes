@@ -1,7 +1,7 @@
 // app/api/admin/save-products/route.ts
 // DEVELOPMENT ONLY - For local admin panel file saving
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFileSync } from 'fs'
+import { writeFileSync, chmodSync } from 'fs'
 import { join } from 'path'
 
 export async function POST(request: NextRequest) {
