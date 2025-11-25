@@ -30,54 +30,54 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
 }
 
 // Function to get .env variables
-function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '/.env';
-    if (!file_exists($envFile)) {
-        error_log(".env file not found at: $envFile");
-        return null;
-    }
+// function getEnvVar($key) {
+//     $envFile = dirname(__DIR__) . '/.env';
+//     if (!file_exists($envFile)) {
+//         error_log(".env file not found at: $envFile");
+//         return null;
+//     }
     
-    $content = file_get_contents($envFile);
-    if ($content === false) {
-        error_log("Failed to read .env file");
-        return null;
-    }
+//     $content = file_get_contents($envFile);
+//     if ($content === false) {
+//         error_log("Failed to read .env file");
+//         return null;
+//     }
     
-    $lines = explode("\n", $content);
-    foreach ($lines as $line) {
-        $line = trim($line);
+//     $lines = explode("\n", $content);
+//     foreach ($lines as $line) {
+//         $line = trim($line);
         
-        // Skip comments and empty lines
-        if (empty($line) || strpos($line, '#') === 0) {
-            continue;
-        }
+//         // Skip comments and empty lines
+//         if (empty($line) || strpos($line, '#') === 0) {
+//             continue;
+//         }
         
-        $parts = explode('=', $line, 2);
-        if (count($parts) !== 2) {
-            continue;
-        }
+//         $parts = explode('=', $line, 2);
+//         if (count($parts) !== 2) {
+//             continue;
+//         }
         
-        $envKey = trim($parts[0]);
-        $envValue = trim($parts[1]);
+//         $envKey = trim($parts[0]);
+//         $envValue = trim($parts[1]);
         
-        // Remove quotes if present
-        if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
-            (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
-            $envValue = substr($envValue, 1, -1);
-        }
+//         // Remove quotes if present
+//         if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
+//             (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
+//             $envValue = substr($envValue, 1, -1);
+//         }
         
-        if ($envKey === $key) {
-            return $envValue;
-        }
-    }
+//         if ($envKey === $key) {
+//             return $envValue;
+//         }
+//     }
     
-    error_log("Key '$key' not found in .env file");
-    return null;
-}
+//     error_log("Key '$key' not found in .env file");
+//     return null;
+// }
 
 // CONSOLE LOG FUNCTION FOR DEVELOPMENT/TEST MODE
 function console_log($message, $data = null) {
-    $currentMode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $currentMode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     if ($currentMode !== 'live') {
         if ($data !== null) {
             error_log("FETCHER: $message - " . json_encode($data));
@@ -100,10 +100,10 @@ class CockPit3DFetcher {
     public function __construct() {
         console_log("🚀 Initializing CockPit3DFetcher...");
 
-        $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
-        $this->username = getEnvVariable('COCKPIT3D_USERNAME');
-        $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
+        $this->baseUrl   = rtrim((string)(getEnvVar('COCKPIT3D_BASE_URL') ?: ''), '/');
+        $this->username = getEnvVar('COCKPIT3D_USERNAME');
+        $this->password = getEnvVar('COCKPIT3D_PASSWORD');
+        $this->retailerId = getEnvVar('COCKPIT3D_RETAILER_ID');
        
         // Fallbacks for safety
         if (!$this->baseUrl) {
@@ -169,15 +169,15 @@ class CockPit3DFetcher {
         console_log("Login data prepared", array_keys($loginData));
 
         // Allow login path override via env, default to current value
-        $loginPath = rtrim(getEnvVariable('COCKPIT3D_LOGIN_PATH') ?: '/rest/V2/login', '/');
+        $loginPath = rtrim(getEnvVar('COCKPIT3D_LOGIN_PATH') ?: '/rest/V2/login', '/');
         $url = $this->baseUrl . $loginPath;
 
         $ch = curl_init();
-        $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?: 'development';
+        $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?: 'development';
         $baseUrl = $mode === 'production'
-          ? (getEnvVariable('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com')
-           : (getEnvVariable('COCKPIT3D_DEV_URL')   ?: 'https://c3d-profit-dev.host.alva.tools');
-        $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
+          ? (getEnvVar('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com')
+           : (getEnvVar('COCKPIT3D_DEV_URL')   ?: 'https://c3d-profit-dev.host.alva.tools');
+        $this->baseUrl   = rtrim((string)(getEnvVar('COCKPIT3D_BASE_URL') ?: ''), '/');
         
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/rest/V2/login');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

@@ -25,6 +25,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+require_once __DIR__ . '/env-loader.php';
+
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -43,7 +45,7 @@ class CockPit3DImageDownloader extends CockPit3DFetcher {
     public function __construct() {
         parent::__construct();
         
-        $stripeMode = getEnvVariable('VITE_STRIPE_MODE') ?: 'development';
+        $stripeMode = getEnvVar('VITE_STRIPE_MODE') ?: 'development';
         $this->environment = $stripeMode;
         
         // Use public/img/products/cockpit3d/ for all environments
@@ -440,7 +442,7 @@ try {
             
         case 'status':
             // Get status of downloaded images
-            $environment = getEnvVariable('VITE_STRIPE_MODE') ?: 'development';
+            $environment = getEnvVar('VITE_STRIPE_MODE') ?: 'development';
             $imageDir = dirname(__DIR__) . '/public/img/products/cockpit3d/';
             
             $productDirs = [];

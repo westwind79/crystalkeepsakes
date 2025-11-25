@@ -9,42 +9,42 @@ require_once __DIR__ . '/env-loader.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Load environment helper
-function getEnvVariable($key) {
-    static $envCache = null;
+// function getEnvVariable($key) {
+//     static $envCache = null;
     
-    if ($envCache === null) {
-        $envCache = [];
+//     if ($envCache === null) {
+//         $envCache = [];
         
-        $possibleEnvPaths = [
-            dirname(dirname(__DIR__)) . '/.env',
-            dirname(__DIR__) . '/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/.env'
-        ];
+//         $possibleEnvPaths = [
+//             dirname(dirname(__DIR__)) . '/.env',
+//             dirname(__DIR__) . '/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/.env'
+//         ];
         
-        foreach ($possibleEnvPaths as $path) {
-            if (file_exists($path)) {
-                $content = file_get_contents($path);
-                $lines = explode("\n", $content);
+//         foreach ($possibleEnvPaths as $path) {
+//             if (file_exists($path)) {
+//                 $content = file_get_contents($path);
+//                 $lines = explode("\n", $content);
                 
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (empty($line) || strpos($line, '#') === 0) continue;
+//                 foreach ($lines as $line) {
+//                     $line = trim($line);
+//                     if (empty($line) || strpos($line, '#') === 0) continue;
                     
-                    $parts = explode('=', $line, 2);
-                    if (count($parts) !== 2) continue;
+//                     $parts = explode('=', $line, 2);
+//                     if (count($parts) !== 2) continue;
                     
-                    $envKey = trim($parts[0]);
-                    $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
-                    $envCache[$envKey] = $envValue;
-                }
-                break;
-            }
-        }
-    }
+//                     $envKey = trim($parts[0]);
+//                     $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
+//                     $envCache[$envKey] = $envValue;
+//                 }
+//                 break;
+//             }
+//         }
+//     }
     
-    return $envCache[$key] ?? null;
-}
+//     return $envCache[$key] ?? null;
+// }
 
 // Get database connection if available
 $conn = null;
@@ -57,14 +57,14 @@ if (file_exists(__DIR__ . '/db-connect.php')) {
 }
 
 // Get environment variables
-$mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+$mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
 
 if ($mode === 'production') {
-    $stripeSecretKey = getEnvVariable('STRIPE_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_WEBHOOK_SECRET');
+    $stripeSecretKey = getEnvVar('STRIPE_SECRET_KEY');
+    $webhookSecret = getEnvVar('STRIPE_WEBHOOK_SECRET');
 } else {
-    $stripeSecretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_DEVELOPMENT_WEBHOOK_SECRET');
+    $stripeSecretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
+    $webhookSecret = getEnvVar('STRIPE_DEVELOPMENT_WEBHOOK_SECRET');
 }
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
@@ -196,7 +196,7 @@ function buildCockpit3DOrder($session, $orderNumber) {
     $firstName = $nameParts[0] ?? '';
     $lastName = $nameParts[1] ?? '';
     
-    $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
+    $retailerId = getEnvVar('COCKPIT3D_RETAIL_ID') ?? '256568874';
     
     $order = [
         'retailer_id' => $retailerId,
@@ -244,17 +244,17 @@ function buildCockpit3DOrder($session, $orderNumber) {
  * Send order to Cockpit3D API
  */
 function sendToCockpit3D($orderData) {
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     
     // Use DEV URL for testing
     if ($mode === 'development' || $mode === 'test') {
         $baseUrl = 'https://c3d-profit-dev.host.alva.tools';
     } else {
-        $baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?? 'https://api.cockpit3d.com';
+        $baseUrl = getEnvVar('COCKPIT3D_BASE_URL') ?? 'https://api.cockpit3d.com';
     }
     
-    $username = getEnvVariable('COCKPIT3D_USERNAME');
-    $password = getEnvVariable('COCKPIT3D_PASSWORD');
+    $username = getEnvVar('COCKPIT3D_USERNAME');
+    $password = getEnvVar('COCKPIT3D_PASSWORD');
     
     if (!$username || !$password) {
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
@@ -419,7 +419,7 @@ function handlePaymentSuccess($paymentIntent) {
             $shippingAddress = json_decode($paymentIntent->metadata->shipping_address ?? '{}', true);
             
             // Build Cockpit3D order
-            $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
+            $retailerId = getEnvVar('COCKPIT3D_RETAIL_ID') ?? '256568874';
             
             $nameParts = explode(' ', $cockpitOrderData['customer_name'] ?? '', 2);
             $firstName = $nameParts[0] ?? '';

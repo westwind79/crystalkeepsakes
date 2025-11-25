@@ -41,54 +41,54 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Use existing environment loader
-function getEnvVariable($key) {
-    static $envCache = null;
+// function getEnvVariable($key) {
+//     static $envCache = null;
     
-    if ($envCache === null) {
-        $envCache = [];
+//     if ($envCache === null) {
+//         $envCache = [];
         
-        $possibleEnvPaths = [
-            dirname(dirname(__DIR__)) . '/.env',
-            dirname(__DIR__) . '/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/.env'
-        ];
+//         $possibleEnvPaths = [
+//             dirname(dirname(__DIR__)) . '/.env',
+//             dirname(__DIR__) . '/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
+//             $_SERVER['DOCUMENT_ROOT'] . '/.env'
+//         ];
         
-        foreach ($possibleEnvPaths as $path) {
-            if (file_exists($path)) {
-                $content = file_get_contents($path);
-                $lines = explode("\n", $content);
+//         foreach ($possibleEnvPaths as $path) {
+//             if (file_exists($path)) {
+//                 $content = file_get_contents($path);
+//                 $lines = explode("\n", $content);
                 
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (empty($line) || strpos($line, '#') === 0) continue;
+//                 foreach ($lines as $line) {
+//                     $line = trim($line);
+//                     if (empty($line) || strpos($line, '#') === 0) continue;
                     
-                    $parts = explode('=', $line, 2);
-                    if (count($parts) !== 2) continue;
+//                     $parts = explode('=', $line, 2);
+//                     if (count($parts) !== 2) continue;
                     
-                    $envKey = trim($parts[0]);
-                    $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
-                    $envCache[$envKey] = $envValue;
-                }
-                break;
-            }
-        }
-    }
+//                     $envKey = trim($parts[0]);
+//                     $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
+//                     $envCache[$envKey] = $envValue;
+//                 }
+//                 break;
+//             }
+//         }
+//     }
     
-    return $envCache[$key] ?? null;
-}
+//     return $envCache[$key] ?? null;
+// }
 
 try {
     error_log("=== CHECKOUT SESSION REQUEST ===");
     
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
     // Get Stripe key
     if ($mode === 'production') {
-        $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     } else {
-        $secretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
     }
     
     if (!$secretKey) {
