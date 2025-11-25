@@ -23,7 +23,11 @@ import { getProducts } from '@/lib/products';
 if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
   window.location.href = '/';
 }
-
+interface FileOption {
+  filename: string;
+  path: string;
+  displayName: string;
+}
 // Types
 interface ProductImage {
   src: string;
@@ -114,6 +118,15 @@ export default function EnhancedProductAdminPage() {
       }
     };
     loadProducts();
+  }, []);
+
+  const [availableMasks, setAvailableMasks] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/masks')
+      .then(res => res.json())
+      .then(data => setAvailableMasks(data))
+      .catch(err => console.error('Failed to load masks', err));
   }, []);
 
   // Load existing customizations from localStorage
