@@ -12,12 +12,19 @@ interface ImageUploadProps {
 export default function ImageUpload({ productId, images, onImagesUpdated }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string>('');
+  const [localImages, setLocalImages] = useState<ProductImage[]>(images);
+
+  // Sync local images with prop changes
+  React.useEffect(() => {
+    setLocalImages(images);
+  }, [images]);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
     setUploading(true);
+    let currentImages = [...localImages];
     
     // Process files sequentially and update state after each one
     for (let i = 0; i < files.length; i++) {
