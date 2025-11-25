@@ -101,7 +101,7 @@ export default function EnhancedProductAdminPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'options' | 'images'>('basic');
-  const [availableMasks, setAvailableMasks] = useState<Array<{filename: string, path: string, displayName: string}>>([]);
+  const [availableMasks, setAvailableMasks] = useState<FileOption[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load products from JSON on mount
@@ -119,14 +119,19 @@ export default function EnhancedProductAdminPage() {
     };
     loadProducts();
   }, []);
-
-  const [availableMasks, setAvailableMasks] = useState([]);
-
+ 
+  // Load available masks from API
   useEffect(() => {
     fetch('/api/masks')
       .then(res => res.json())
-      .then(data => setAvailableMasks(data))
-      .catch(err => console.error('Failed to load masks', err));
+      .then(masks => {
+        setAvailableMasks(masks);
+        console.log(`✅ Loaded ${masks.length} masks from /api/masks`);
+      })
+      .catch(err => {
+        console.error('Failed to load masks:', err);
+        setAvailableMasks([]);
+      });
   }, []);
 
   // Load existing customizations from localStorage
