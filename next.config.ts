@@ -8,19 +8,24 @@ let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 if (basePath === '/') basePath = ''; // Fix: "/" is not allowed
 basePath = basePath.trim(); // Remove any whitespace
 
-// ✅ CRITICAL FIX: Separate output directories to prevent overwriting!
-// This prevents test builds from overwriting production builds
+// ✅ CRITICAL: Always use .next for dev mode, separate dirs for builds
 const getDistDir = () => {
-  // Check for explicit BUILD_MODE from environment
+  // ALWAYS use .next for development (yarn dev)
+  if (isDev || process.env.NODE_ENV === 'development') {
+    return '.next';
+  }
+  
+  // For builds only (yarn build:test, yarn build:prod, etc)
   if (process.env.BUILD_MODE === 'test') return 'out-test';
   if (process.env.BUILD_MODE === 'prod') return 'out-prod';
   if (process.env.BUILD_MODE === 'local') return 'out';
   
-  // Fallback: determine by env mode
+  // Fallback for builds
   if (envMode === 'testing') return 'out-test';
   if (envMode === 'production') return 'out-prod';
   
-  return 'out'; // local/development
+  // Default for builds
+  return 'out';
 };
 
 const distDir = getDistDir();
