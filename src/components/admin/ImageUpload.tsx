@@ -314,7 +314,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                       ←
                     </button>
                   )}
-                  {index < images.length - 1 && (
+                  {index < localImages.length - 1 && (
                     <button
                       onClick={() => handleReorderImages(index, index + 1)}
                       className="bg-gray-800 text-white p-1 rounded text-xs hover:bg-gray-700"
