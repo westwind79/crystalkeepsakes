@@ -255,14 +255,14 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       </div>
 
       {/* Current Images */}
-      {images.length > 0 && (
+      {localImages.length > 0 && (
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-700">Current Images ({images.length})</h4>
-          {images.length > 1 && (
+          <h4 className="font-semibold text-gray-700">Current Images ({localImages.length})</h4>
+          {localImages.length > 1 && (
             <p className="text-sm text-green-600 font-medium">✅ Gallery mode enabled - customers can browse all images</p>
           )}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {images.map((image, index) => (
+            {localImages.map((image, index) => (
               <div
                 key={index}
                 className="relative group border rounded-lg overflow-hidden bg-gray-50"
