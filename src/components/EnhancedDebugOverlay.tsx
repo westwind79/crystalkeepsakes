@@ -111,6 +111,13 @@ export default function EnhancedDebugOverlay() {
         basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/',
         backend: process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'Not set',
         stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST'
+      },
+      production: {
+        cartItems: cart.length,
+        productSource: '/data/final-products.json',
+        assetPathBase: process.env.NEXT_PUBLIC_BASE_PATH || '(root)',
+        cockpit3dConfigured: !!(process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID),
+        stripeConfigured: !!(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
       }
     }
   }
