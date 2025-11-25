@@ -58,34 +58,11 @@ export default function ProductGallery({ images = [] }) {
           onLoad={(e) => {
             if (isDev) {
               console.log('✅ Image loaded successfully:', displaySrc);
-              // 🐛 DEBUG: Success event
-              if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('debug-step', {
-                  detail: {
-                    id: 'gallery-display',
-                    label: `✅ Image loaded: ${displaySrc}`,
-                    status: 'complete',
-                    data: { src: displaySrc, naturalWidth: e.currentTarget.naturalWidth, naturalHeight: e.currentTarget.naturalHeight }
-                  }
-                }));
-              }
             }
           }}
           onError={(e) => {
             if (isDev) {
               console.log('❌ Image error:', displaySrc);
-              // 🐛 DEBUG: Error event
-              if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('debug-step', {
-                  detail: {
-                    id: 'gallery-display',
-                    label: `❌ Image failed to load`,
-                    status: 'error',
-                    error: `Failed to load: ${displaySrc}`,
-                    data: { attemptedSrc: displaySrc }
-                  }
-                }));
-              }
             }
             e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
           }}
