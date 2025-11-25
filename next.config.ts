@@ -46,25 +46,8 @@ const nextConfig: NextConfig = {
   transpilePackages: ["swiper"],
   typescript: { ignoreBuildErrors: true },
   
-  // ✅ EXCLUDE ADMIN PANEL FROM PRODUCTION/TEST BUILDS
-  // Admin panel should ONLY exist in local development
-  async rewrites() {
-    // Only applies to dev server, not static export
-    return [];
-  },
-  
-  // Exclude admin from static generation in prod/test builds
-  ...(envMode !== 'development' && {
-    async redirects() {
-      return [
-        {
-          source: '/admin',
-          destination: '/',
-          permanent: false,
-        },
-      ];
-    },
-  }),
+  // Note: rewrites/redirects don't work with output: 'export'
+  // Admin panel is excluded at build time via remove-admin-from-build.js script
   
   images: {
     unoptimized: true,
