@@ -75,6 +75,10 @@ export default function EnhancedDebugOverlay() {
       limit: (performance as any).memory.jsHeapSizeLimit
     } : undefined
 
+    // Product data verification
+    const cartData = localStorage.getItem('cart')
+    const cart = cartData ? JSON.parse(cartData) : []
+    
     return {
       userAgent: navigator.userAgent,
       platform: navigator.platform,
