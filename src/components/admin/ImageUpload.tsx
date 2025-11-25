@@ -28,9 +28,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       try {
         const formData = new FormData();
         formData.append('productId', productId);
-        formData.append('file', file);
+        formData.append('image', file);
 
-        const response = await fetch(assetPath('/api/admin/upload-image'), {
+        const response = await fetch('/api/upload-image/', {
           method: 'POST',
           body: formData,
         });
