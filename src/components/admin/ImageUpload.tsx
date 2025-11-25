@@ -43,7 +43,7 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
           const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
           
           newImages.push({
-            src: result.data.url,
+            src: result.url,
             isMain: isMain,
             alt: file.name,
           });
