@@ -135,50 +135,48 @@ export default function ProductGallery({ images = [] }) {
 
       {/* Thumbnails */}
       {sortedImages.length > 1 && (
-        <div className="thumbnails">
-          <div className="row g-2">
-            
+        <div className="d-flex flex-wrap mt-2">
             {sortedImages.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
               const thumbDisplaySrc = assetPath(thumbSrc || '')
               const isMainImage = typeof img === 'object' && img.isMain
               
               return (
-                <div key={idx} className="col-3">
-                  <div 
-                    className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
-                    style={{ 
-                      position: 'relative',
-                      height: '80px',
-                      cursor: 'pointer',
-                      border: idx === activeIndex ? '2px solid var(--brand-500)' : '1px solid #dee2e6',
-                      overflow: 'hidden',
-                      borderRadius: '4px'
+                <button
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`gallery-thumbnail ${idx === activeIndex ? 'active' : ''}`}
+                  style={{ position: 'relative' }}
+                >
+                  <img
+                    src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="img-fluid"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                     }}
-                    onClick={() => setActiveIndex(idx)}
-                  >
-                    <img
-                      src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
-                      alt={`Thumbnail ${idx + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                  />
+                  {/* Main badge on thumbnail */}
+                  {isMainImage && (
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        top: '2px',
+                        left: '2px',
+                        backgroundColor: '#0d6efd',
+                        color: 'white',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        padding: '2px 4px',
+                        borderRadius: '2px'
                       }}
-                    />
-                    {/* Main badge on thumbnail */}
-                    {isMainImage && (
-                      <div 
-                        className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1 rounded"
-                        style={{ fontSize: '10px', fontWeight: 'bold' }}
-                      >
-                        MAIN
-                      </div>
-                    )}
-                  </div>
-                </div>
+                    >
+                      MAIN
+                    </div>
+                  )}
+                </button>
               )
             })}
-          </div>
         </div>
       )}
     </div>
