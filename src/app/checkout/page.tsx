@@ -23,8 +23,8 @@ export default function CheckoutHostedPage() {
       setLoading(true)
       setError('')
 
-      // Get cart items
-      const cart = getCart()
+      // Get cart items WITH images from IndexedDB
+      const cart = await getCartWithImages()
       
       if (!cart || cart.length === 0) {
         setError('Your cart is empty')
@@ -38,13 +38,13 @@ export default function CheckoutHostedPage() {
       logger.info('📤 Uploading customer images to server...')
       const cartWithServerUrls = await Promise.all(
         cart.map(async (item) => {
-          // Check if this item has images that need upload
-          if (item.maskedImageUrl && needsUpload(item.maskedImageUrl)) {
+          // Check if this item has images in IndexedDB
+          if (item.customImage?.dataUrl) {
             logger.info(`Uploading images for item: ${item.productId}`)
             
             const uploadResult = await uploadCustomerImages(
-              item.maskedImageUrl,
-              item.rawImageUrl,
+              item.customImage.dataUrl, // Masked image from IndexedDB
+              item.customImage.rawImageDataUrl, // Raw image from IndexedDB
               item.productId
             )
             
@@ -55,8 +55,8 @@ export default function CheckoutHostedPage() {
             // Replace base64 with server URLs
             return {
               ...item,
-              maskedImageUrl: uploadResult.maskedUrl || item.maskedImageUrl,
-              rawImageUrl: uploadResult.rawUrl || item.rawImageUrl,
+              maskedImageUrl: uploadResult.maskedUrl,
+              rawImageUrl: uploadResult.rawUrl,
               imageUploadErrors: uploadResult.errors
             }
           }
