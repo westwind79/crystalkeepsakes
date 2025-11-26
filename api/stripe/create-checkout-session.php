@@ -198,19 +198,6 @@ try {
         'metadata' => $metadata,
         
         // Collect shipping address
-        'shipping_address_collection' => [
-            'allowed_countries' => ['US', 'CA'],
-        ],
-        
-        // Shipping options - Use your Stripe Dashboard shipping rates
-        'shipping_options' => [
-            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
-            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
-            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
-            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
-            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
-        ],
-        
         // Customer email
         'customer_email' => $data->customerEmail ?? null,
         
@@ -218,8 +205,27 @@ try {
         'allow_promotion_codes' => true,
     ];
     
-    // Enable tax if configured in Stripe Dashboard
-    $sessionParams['automatic_tax'] = ['enabled' => true];
+    // Add shipping for production only (requires Stripe Dashboard configuration)
+    if ($mode === 'production') {
+        $sessionParams['shipping_address_collection'] = [
+            'allowed_countries' => ['US', 'CA'],
+        ];
+        
+        // Shipping options - Use your Stripe Dashboard shipping rates
+        $sessionParams['shipping_options'] = [
+            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
+            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
+            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
+            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
+            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
+        ];
+        
+        // Enable tax if configured in Stripe Dashboard
+        $sessionParams['automatic_tax'] = ['enabled' => true];
+    } else {
+        // Development mode: Use simple shipping
+        error_log('⚠️  Development mode: Shipping and tax disabled for testing');
+    }
     
     $checkoutSession = \Stripe\Checkout\Session::create($sessionParams);
     
