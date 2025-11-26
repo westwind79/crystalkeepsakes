@@ -31,13 +31,13 @@ const getDistDir = () => {
 const distDir = getDistDir();
 
 console.log(`
-╔════════════════════════════════════════════════════╗
+╔═══════════════════════════════════════════════════╗
 ║         BUILD CONFIGURATION - NextConfig           ║
-╠════════════════════════════════════════════════════╣
+╠═══════════════════════════════════════════════════╣
 ║ Environment:  ${envMode.padEnd(24)}             ║
 ║ Base Path:    ${(basePath || '(root)').padEnd(24)} ║
 ║ Output Dir:   ${distDir.padEnd(24)}             ║
-╚════════════════════════════════════════════════════╝
+╚═══════════════════════════════════════════════════╝
 `);
 
 const nextConfig: NextConfig = {
@@ -50,17 +50,6 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   transpilePackages: ["swiper"],
   typescript: { ignoreBuildErrors: true },
-  
-<<<<<<< HEAD
-  // ✅ EXCLUDE ADMIN PANEL FROM PRODUCTION/TEST BUILDS
-  // Admin panel should ONLY exist in local development
-  // Note: rewrites() and redirects() removed - not compatible with output: 'export'
-  // Admin panel will be excluded during build via scripts/remove-admin-from-build.js
-=======
-  // Note: rewrites/redirects don't work with output: 'export'
-  // Admin panel is excluded at build time via remove-admin-from-build.js script
->>>>>>> conflict_241125_2301
-  
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -74,6 +63,17 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_ENV_MODE === "production"
         ? { exclude: ["error"] }
         : false,
+  },
+  // ✅ Exclude API routes from static export build
+  exportPathMap: async function (defaultPathMap) {
+    const pathMap: Record<string, { page: string }> = {};
+    // Filter out any /api/* routes from the build
+    for (const [path, config] of Object.entries(defaultPathMap)) {
+      if (!path.startsWith('/api')) {
+        pathMap[path] = config;
+      }
+    }
+    return pathMap;
   },
 };
 

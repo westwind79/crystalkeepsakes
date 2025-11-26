@@ -2030,6 +2030,11 @@
       {
         "src": "/img/products/cockpit3d/441/cockpit3d_441_2D_Crystal_Flower_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/441/product_441_1764060768675.jpg",
+        "isMain": false,
+        "alt": "ornament-products.jpg"
       }
     ],
     "options": [],
@@ -2143,6 +2148,11 @@
       {
         "src": "/img/products/cockpit3d/443/cockpit3d_443_2D_Crystal_Dog_Bone_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/443/product_443_1764060713998.jpg",
+        "isMain": false,
+        "alt": "ornament-products.jpg"
       }
     ],
     "options": [],
@@ -2199,7 +2209,7 @@
         "isMain": true
       },
       {
-        "src": "/img/products/cockpit3d/444/product_444_1764059951149.jpg",
+        "src": "/img/products/cockpit3d/444/product_444_1764060693594.jpg",
         "isMain": false,
         "alt": "ornament-products.jpg"
       }
