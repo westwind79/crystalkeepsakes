@@ -44,14 +44,14 @@ require_once dirname(__DIR__) . '/env-loader.php';
 try {
     error_log("=== CHECKOUT SESSION REQUEST ===");
     
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
     // Get Stripe key
     if ($mode === 'production') {
-        $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     } else {
-        $secretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
     }
     
     if (!$secretKey) {
