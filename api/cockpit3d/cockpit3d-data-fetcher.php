@@ -30,59 +30,52 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
 }
 
 // Function to get .env variables
-<<<<<<< HEAD
-function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '../../.env';
+
+function getEnvVar($key) {
+    $envFile = dirname(__DIR__) . '/.env';
     if (!file_exists($envFile)) {
         error_log(".env file not found at: $envFile");
         return null;
     }
-=======
-// function getEnvVar($key) {
-//     $envFile = dirname(__DIR__) . '/.env';
-//     if (!file_exists($envFile)) {
-//         error_log(".env file not found at: $envFile");
-//         return null;
-//     }
->>>>>>> conflict_241125_2301
+
     
-//     $content = file_get_contents($envFile);
-//     if ($content === false) {
-//         error_log("Failed to read .env file");
-//         return null;
-//     }
+    $content = file_get_contents($envFile);
+    if ($content === false) {
+        error_log("Failed to read .env file");
+        return null;
+    }
     
-//     $lines = explode("\n", $content);
-//     foreach ($lines as $line) {
-//         $line = trim($line);
+    $lines = explode("\n", $content);
+    foreach ($lines as $line) {
+        $line = trim($line);
         
-//         // Skip comments and empty lines
-//         if (empty($line) || strpos($line, '#') === 0) {
-//             continue;
-//         }
+        // Skip comments and empty lines
+        if (empty($line) || strpos($line, '#') === 0) {
+            continue;
+        }
         
-//         $parts = explode('=', $line, 2);
-//         if (count($parts) !== 2) {
-//             continue;
-//         }
+        $parts = explode('=', $line, 2);
+        if (count($parts) !== 2) {
+            continue;
+        }
         
-//         $envKey = trim($parts[0]);
-//         $envValue = trim($parts[1]);
+        $envKey = trim($parts[0]);
+        $envValue = trim($parts[1]);
         
-//         // Remove quotes if present
-//         if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
-//             (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
-//             $envValue = substr($envValue, 1, -1);
-//         }
+        // Remove quotes if present
+        if ((strpos($envValue, '"') === 0 && strrpos($envValue, '"') === strlen($envValue) - 1) || 
+            (strpos($envValue, "'") === 0 && strrpos($envValue, "'") === strlen($envValue) - 1)) {
+            $envValue = substr($envValue, 1, -1);
+        }
         
-//         if ($envKey === $key) {
-//             return $envValue;
-//         }
-//     }
+        if ($envKey === $key) {
+            return $envValue;
+        }
+    }
     
-//     error_log("Key '$key' not found in .env file");
-//     return null;
-// }
+    error_log("Key '$key' not found in .env file");
+    return null;
+}
 
 // CONSOLE LOG FUNCTION FOR DEVELOPMENT/TEST MODE
 function console_log($message, $data = null) {
