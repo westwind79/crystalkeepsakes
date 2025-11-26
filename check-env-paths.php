@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=utf-8');
     
     // TEST 1: Check if .env exists
     echo '<div class="section">';
-    echo '<h2>1ï¸âƒ£ .env File Location</h2>';
+    echo '<h2>1 .env File Location</h2>';
     echo '<table>';
     
     $envFile = $projectRoot . '/.env';
@@ -44,7 +44,7 @@ header('Content-Type: text/html; charset=utf-8');
     $envReadable = $envExists ? is_readable($envFile) : false;
     
     $statusClass = $envExists && $envReadable ? 'success' : 'error';
-    $statusText = $envExists && $envReadable ? 'âœ… Found & Readable' : 'âŒ Not Found or Not Readable';
+    $statusText = $envExists && $envReadable ? '✓… Found & Readable' : '✓ Not Found or Not Readable';
     
     echo "<tr><td>Project Root</td><td><code>$projectRoot</code></td></tr>";
     echo "<tr><td>.env Path</td><td><code>$envFile</code></td></tr>";
@@ -74,7 +74,7 @@ header('Content-Type: text/html; charset=utf-8');
     
     // TEST 2: Find all PHP files that might load .env
     echo '<div class="section">';
-    echo '<h2>2ï¸âƒ£ PHP Files Scanning for .env Issues</h2>';
+    echo '<h2>2 PHP Files Scanning for .env Issues</h2>';
     
     $phpFiles = array_merge(
         glob($projectRoot . '/*.php'),
@@ -113,20 +113,20 @@ header('Content-Type: text/html; charset=utf-8');
     }
     
     if (!empty($issues)) {
-        echo '<h3 class="error">âŒ Files with Issues (' . count($issues) . ')</h3>';
+        echo '<h3 class="error">✓ Files with Issues (' . count($issues) . ')</h3>';
         echo '<table>';
         echo '<tr><td><strong>File</strong></td><td><strong>Issues Found</strong></td></tr>';
         
         foreach ($issues as $issue) {
             $problems = [];
             if ($issue['hasOldFunction']) {
-                $problems[] = '<span class="error">âŒ Has old getEnvVariable() function</span>';
+                $problems[] = '<span class="error">✓ Has old getEnvVariable() function</span>';
             }
             if ($issue['hasWrongPath']) {
-                $problems[] = '<span class="error">âŒ Uses dirname(__DIR__)/.env (wrong path)</span>';
+                $problems[] = '<span class="error">✓ Uses dirname(__DIR__)/.env (wrong path)</span>';
             }
             if (!$issue['hasEnvLoader']) {
-                $problems[] = '<span class="warning">âš ï¸ Not using env-loader.php</span>';
+                $problems[] = '<span class="warning">⚠️¸ Not using env-loader.php</span>';
             }
             
             echo '<tr>';
@@ -137,15 +137,15 @@ header('Content-Type: text/html; charset=utf-8');
         
         echo '</table>';
     } else {
-        echo '<p class="success">âœ… No issues found in scanned files!</p>';
+        echo '<p class="success">✓… No issues found in scanned files!</p>';
     }
     
     if (!empty($goodFiles)) {
-        echo '<h3 class="success">âœ… Files Already Fixed (' . count($goodFiles) . ')</h3>';
+        echo '<h3 class="success">✓… Files Already Fixed (' . count($goodFiles) . ')</h3>';
         echo '<table>';
         
         foreach ($goodFiles as $good) {
-            $status = $good['hasEnvLoader'] ? 'âœ… Using env-loader.php' : 'âœ… Using getEnvVar()';
+            $status = $good['hasEnvLoader'] ? '✓… Using env-loader.php' : '✓… Using getEnvVar()';
             echo '<tr>';
             echo '<td><code>' . htmlspecialchars($good['path']) . '</code></td>';
             echo '<td class="success">' . $status . '</td>';
@@ -159,32 +159,32 @@ header('Content-Type: text/html; charset=utf-8');
     
     // TEST 3: Check if env-loader.php exists
     echo '<div class="section">';
-    echo '<h2>3ï¸âƒ£ env-loader.php Status</h2>';
+    echo '<h2>3 env-loader.php Status</h2>';
     
     $envLoaderPath = $projectRoot . '/env-loader.php';
     $envLoaderExists = file_exists($envLoaderPath);
     
     if ($envLoaderExists) {
-        echo '<p class="success">âœ… env-loader.php found at: <code>' . $envLoaderPath . '</code></p>';
+        echo '<p class="success">✓… env-loader.php found at: <code>' . $envLoaderPath . '</code></p>';
         
         // Try to load it and test
         try {
             require_once $envLoaderPath;
             
-            echo '<p class="success">âœ… env-loader.php loaded successfully</p>';
+            echo '<p class="success">✓… env-loader.php loaded successfully</p>';
             
             // Test the functions
             if (function_exists('getEnvVar')) {
-                echo '<p class="success">âœ… getEnvVar() function available</p>';
+                echo '<p class="success">✓… getEnvVar() function available</p>';
                 
                 // Test loading a variable
                 $testKey = 'NEXT_PUBLIC_ENV_MODE';
                 $testValue = getEnvVar($testKey);
                 
                 if ($testValue) {
-                    echo '<p class="success">âœ… Successfully loaded test variable: <code>' . $testKey . ' = ' . $testValue . '</code></p>';
+                    echo '<p class="success">✓… Successfully loaded test variable: <code>' . $testKey . ' = ' . $testValue . '</code></p>';
                 } else {
-                    echo '<p class="warning">âš ï¸ Could not load test variable: <code>' . $testKey . '</code></p>';
+                    echo '<p class="warning">⚠️¸ Could not load test variable: <code>' . $testKey . '</code></p>';
                 }
                 
                 // Test helper functions
@@ -202,14 +202,14 @@ header('Content-Type: text/html; charset=utf-8');
                     echo '</table>';
                 }
             } else {
-                echo '<p class="error">âŒ getEnvVar() function not found!</p>';
+                echo '<p class="error">✓ getEnvVar() function not found!</p>';
             }
         } catch (Exception $e) {
-            echo '<p class="error">âŒ Error loading env-loader.php: ' . htmlspecialchars($e->getMessage()) . '</p>';
+            echo '<p class="error">✓ Error loading env-loader.php: ' . htmlspecialchars($e->getMessage()) . '</p>';
         }
     } else {
-        echo '<p class="error">âŒ env-loader.php NOT FOUND!</p>';
-        echo '<p class="warning">âš ï¸ You need to add env-loader.php to your project root.</p>';
+        echo '<p class="error">✓ env-loader.php NOT FOUND!</p>';
+        echo '<p class="warning">⚠️¸ You need to add env-loader.php to your project root.</p>';
         echo '<p>Expected location: <code>' . $envLoaderPath . '</code></p>';
     }
     
@@ -217,43 +217,43 @@ header('Content-Type: text/html; charset=utf-8');
     
     // TEST 4: Summary & Action Items
     echo '<div class="section">';
-    echo '<h2>âœ… Summary & Action Items</h2>';
+    echo '<h2>Summary & Action Items</h2>';
     
     $actionItems = [];
     
     if (!$envExists || !$envReadable) {
-        $actionItems[] = 'âŒ Create or fix .env file in project root';
+        $actionItems[] = '✓ Create or fix .env file in project root';
     }
     
     if (!$envLoaderExists) {
-        $actionItems[] = 'âŒ Add env-loader.php to project root';
+        $actionItems[] = '✓ Add env-loader.php to project root';
     }
     
     if (!empty($issues)) {
-        $actionItems[] = 'âŒ Update ' . count($issues) . ' PHP file(s) to use env-loader.php';
+        $actionItems[] = 'Update ' . count($issues) . ' PHP file(s) to use env-loader.php';
         foreach ($issues as $issue) {
-            $actionItems[] = '  â†' Update: ' . $issue['path'];
+            $actionItems[] = ' Update: ' . $issue['path'];
         }
     }
     
     if (empty($actionItems)) {
         echo '<p class="success">ðŸŽ‰ All checks passed! Your .env configuration looks good.</p>';
     } else {
-        echo '<p class="warning">ðŸ"§ Action items needed:</p>';
+        echo '<p class="warning">🎐 Action items needed:</p>';
         echo '<ol>';
         foreach ($actionItems as $item) {
             echo '<li>' . htmlspecialchars($item) . '</li>';
         }
         echo '</ol>';
         
-        echo '<p class="info">ðŸ"š See: <strong>FIX_ENV_PATHS.md</strong> for detailed instructions</p>';
+        echo '<p class="info">🔥 See: <strong>FIX_ENV_PATHS.md</strong> for detailed instructions</p>';
     }
     
     echo '</div>';
     ?>
     
     <div class="section">
-        <h2>ðŸ"„ Refresh</h2>
+        <h2>Refresh</h2>
         <button onclick="location.reload()" style="padding: 10px 20px; background: #007acc; color: white; border: none; cursor: pointer; font-size: 16px;">
             Refresh Diagnostics
         </button>
