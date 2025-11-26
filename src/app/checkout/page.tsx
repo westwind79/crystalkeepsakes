@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCart } from '@/lib/cartUtils'
 import { logger, isDevelopment } from '@/utils/logger'
+import { uploadCustomerImages, needsUpload } from '@/lib/customerImageUpload'
 
 export default function CheckoutHostedPage() {
   const router = useRouter()
