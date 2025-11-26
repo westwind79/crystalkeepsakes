@@ -34,13 +34,49 @@ export default function CheckoutHostedPage() {
 
       logger.info('Initiating Stripe Checkout', { items: cart.length })
 
-      // Prepare cart items for checkout (strip out image data)
-      const cartForCheckout = cart.map(item => {
+      // STEP 1: Upload images to server BEFORE creating checkout session
+      logger.info('📤 Uploading customer images to server...')
+      const cartWithServerUrls = await Promise.all(
+        cart.map(async (item) => {
+          // Check if this item has images that need upload
+          if (item.maskedImageUrl && needsUpload(item.maskedImageUrl)) {
+            logger.info(`Uploading images for item: ${item.productId}`)
+            
+            const uploadResult = await uploadCustomerImages(
+              item.maskedImageUrl,
+              item.rawImageUrl,
+              item.productId
+            )
+            
+            if (uploadResult.errors.length > 0) {
+              logger.error('Image upload errors:', uploadResult.errors)
+            }
+            
+            // Replace base64 with server URLs
+            return {
+              ...item,
+              maskedImageUrl: uploadResult.maskedUrl || item.maskedImageUrl,
+              rawImageUrl: uploadResult.rawUrl || item.rawImageUrl,
+              imageUploadErrors: uploadResult.errors
+            }
+          }
+          
+          return item
+        })
+      )
+
+      logger.info('✅ Images uploaded, preparing checkout...')
+
+      // Prepare cart items for checkout (now with server URLs)
+      const cartForCheckout = cartWithServerUrls.map(item => {
         const { customImage, ...itemWithoutImage } = item as any
         return {
           ...itemWithoutImage,
           customImageId: item.customImageId,
-          customImageMetadata: item.customImageMetadata
+          customImageMetadata: item.customImageMetadata,
+          // Include image URLs for webhook/Cockpit3D
+          maskedImageUrl: item.maskedImageUrl,
+          rawImageUrl: item.rawImageUrl
         }
       })
 
