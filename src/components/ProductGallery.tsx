@@ -1,8 +1,9 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { assetPath } from '@/lib/assetPath'
 
 export default function ProductGallery({ images = [] }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -27,6 +28,32 @@ export default function ProductGallery({ images = [] }) {
 
   const currentImage = images[activeIndex]
   const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
+  
+  // ✅ Use assetPath for all images - works in dev and production
+  const displaySrc = assetPath(imageSrc || '')
+
+  if (isDev) {
+    console.log('📸 Image source:', imageSrc, '→', displaySrc)
+  }
+  
+  // 🐛 DEBUG: Emit debug event for gallery display
+  useEffect(() => {
+    if (isDev && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('debug-step', {
+        detail: {
+          id: 'gallery-display',
+          label: `Gallery displaying image ${activeIndex + 1}/${images.length}`,
+          status: 'active',
+          data: {
+            originalSrc: imageSrc,
+            displaySrc: displaySrc,
+            imageCount: images.length,
+            activeIndex: activeIndex
+          }
+        }
+      }));
+    }
+  }, [isDev, imageSrc, displaySrc, activeIndex, images.length])
 
   return (
     <div className="product-gallery">
