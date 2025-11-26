@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
+// Load environment loader
+require_once __DIR__ . '/env-loader.php';
+
 try {
     // Get JSON payload (images are sent as base64)
     $input = file_get_contents('php://input');
@@ -58,32 +61,32 @@ try {
     }
     
     // Determine upload directory based on environment
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     $projectRoot = dirname(__DIR__);
     
-    // For development: Store in /public/uploads/customers/
-    // For production: Store in /crystal-data/customer-images/ (outside project)
-    $isDev = (strpos($projectRoot, 'localhost') !== false || 
-              strpos($projectRoot, 'MAMP') !== false ||
-              getenv('NEXT_PUBLIC_ENV_MODE') === 'development');
+    error_log("🖼️  Image Upload - Mode: $mode");
     
-    if ($isDev) {
-        // Development: Store in project /public/uploads/customers/
-        $uploadDir = $projectRoot . '/public/uploads/customers/';
-        $webPath = '/uploads/customers/';
+    // Get custom image path from environment or use defaults
+    $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
+    
+    if ($customPath) {
+        // Use path from .env
+        $uploadDir = $customPath;
+        error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // Production: Store outside project to persist across deployments
-        // Try environment variable first
-        $customPath = getenv('CUSTOMER_IMAGE_PATH');
-        if ($customPath) {
-            $uploadDir = $customPath;
-            $webPath = '/crystal-data/customer-images/'; // Adjust based on your setup
+        // Fallback: Detect based on mode
+        if ($mode === 'development') {
+            // Local dev: Use public/img/customer-uploads (web-accessible)
+            $uploadDir = $projectRoot . '/public/img/customer-uploads/';
         } else {
-            // Default: Outside project directory
-            $parentDir = dirname(dirname($projectRoot));
-            $uploadDir = $parentDir . '/crystal-data/customer-images/';
-            $webPath = '/crystal-data/customer-images/';
+            // Production: Use crystal-data outside public_html
+            $uploadDir = '/home/uydbo2r007mb/crystal-data/order-images/';
         }
+        error_log("Using default path for $mode: $uploadDir");
     }
+    
+    // Ensure directory has trailing slash
+    $uploadDir = rtrim($uploadDir, '/') . '/';
     
     // Create directory if doesn't exist
     if (!file_exists($uploadDir)) {
