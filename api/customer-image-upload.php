@@ -63,6 +63,7 @@ try {
     // Determine upload directory based on environment
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     $projectRoot = dirname(__DIR__);
+    $backendUrl = getEnvVar('NEXT_PUBLIC_PHP_BACKEND_URL') ?? 'http://localhost:8888/crystalkeepsakes';
     
     error_log("🖼️  Image Upload - Mode: $mode");
     
@@ -76,8 +77,8 @@ try {
     } else {
         // Fallback: Detect based on mode
         if ($mode === 'development') {
-            // Local dev: Use public/img/customer-uploads (web-accessible)
-            $uploadDir = $projectRoot . '/public/img/customer-uploads/';
+            // Local dev: Use crystal-data outside project
+            $uploadDir = dirname($projectRoot) . '/crystal-data/order-images-test/';
         } else {
             // Production: Use crystal-data outside public_html
             $uploadDir = '/home/uydbo2r007mb/crystal-data/order-images/';
