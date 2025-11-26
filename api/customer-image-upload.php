@@ -40,17 +40,40 @@ try {
     $productId = $data['productId'] ?? 'unknown';
     $imageType = $data['imageType'] ?? 'masked'; // 'masked' or 'raw'
     
+    // Debug: Log image data info
+    error_log("📥 Received image data - Type: $imageType, Product: $productId");
+    error_log("📏 Data length: " . strlen($imageData) . " chars");
+    error_log("🔍 Data starts with: " . substr($imageData, 0, 50) . "...");
+    
     // Parse base64 image
     if (!preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
+        error_log("❌ Invalid format. Expected: data:image/TYPE;base64,...");
         throw new Exception('Invalid base64 image format');
     }
     
     $imageExtension = $matches[1];
+    error_log("📸 Image type detected: $imageExtension");
+    
     $base64Image = substr($imageData, strpos($imageData, ',') + 1);
-    $binaryImage = base64_decode($base64Image);
+    error_log("📏 Base64 string length: " . strlen($base64Image) . " chars");
+    
+    $binaryImage = base64_decode($base64Image, true); // Strict mode
     
     if ($binaryImage === false) {
+        error_log("❌ Base64 decode failed!");
         throw new Exception('Failed to decode base64 image');
+    }
+    
+    error_log("✓ Decoded to binary: " . strlen($binaryImage) . " bytes");
+    
+    // Validate it's actually an image by checking magic bytes
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $detectedMime = $finfo->buffer($binaryImage);
+    error_log("🔍 Detected MIME type: $detectedMime");
+    
+    if (!str_starts_with($detectedMime, 'image/')) {
+        error_log("❌ Not a valid image! MIME: $detectedMime");
+        throw new Exception("Invalid image data. Detected type: $detectedMime");
     }
     
     // Validate image size (max 10MB for customer uploads)
@@ -59,6 +82,8 @@ try {
     if ($imageSize > $maxSize) {
         throw new Exception('Image too large. Maximum size is 10MB.');
     }
+    
+    error_log("✓ Image validated: $imageSize bytes, type: $detectedMime");
     
     // Determine upload directory based on environment
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
