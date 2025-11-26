@@ -90,9 +90,11 @@ try {
     
     // Create directory if doesn't exist
     if (!file_exists($uploadDir)) {
+        error_log("Creating directory: $uploadDir");
         if (!mkdir($uploadDir, 0755, true)) {
             throw new Exception("Failed to create upload directory: $uploadDir");
         }
+        error_log("✓ Directory created successfully");
     }
     
     // Verify writable
@@ -106,6 +108,8 @@ try {
     $filename = "customer_{$productId}_{$imageType}_{$timestamp}_{$uniqueId}.{$imageExtension}";
     $filePath = $uploadDir . $filename;
     
+    error_log("Saving image to: $filePath");
+    
     // Save file
     if (file_put_contents($filePath, $binaryImage) === false) {
         throw new Exception('Failed to save image file');
@@ -114,8 +118,16 @@ try {
     // Set proper permissions (readable by web server)
     chmod($filePath, 0644);
     
-    // Generate web-accessible URL
-    $fileUrl = $webPath . $filename;
+    error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
+    
+    // Generate web-accessible URL based on mode
+    if ($mode === 'development') {
+        // Local: Relative to public folder
+        $fileUrl = '/img/customer-uploads/' . $filename;
+    } else {
+        // Production: Adjust based on server setup
+        $fileUrl = '/crystal-data/order-images/' . $filename;
+    }
     
     // Return success with file info
     echo json_encode([
