@@ -9,9 +9,13 @@
 }
 
 .mySwiper {
-  max-width: 450px;  
-  height: 450px;
+  max-width: 250px;  
+  height: 250px;
   aspect-ratio: 1/1;
+  @media screen and (min-width: 1024px) {
+    max-width: 450px;
+    height: 450px;
+  }  
 }
 
 
@@ -21,7 +25,10 @@
   justify-content: center;
   background: #ffffff;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  max-width: 450px;  
+  max-width: 250px;
+  @media screen and (min-width: 1024px) {
+    max-width: 450px;
+  }  
 }
 
 /* FIX: Consistent image sizing with aspect ratio preservation */
