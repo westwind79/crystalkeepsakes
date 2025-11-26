@@ -121,14 +121,22 @@ try {
     
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
-    // Generate web-accessible URL based on mode
+    // Generate web-accessible URL
+    // In local dev, images are served by MAMP (port 8888), not Next.js (port 3000)
+    // So we need the full backend URL
+    $relativePath = str_replace($projectRoot, '', $uploadDir);
+    $relativePath = str_replace('\\', '/', $relativePath); // Windows paths
+    $relativePath = ltrim($relativePath, '/');
+    
     if ($mode === 'development') {
-        // Local: Relative to public folder
-        $fileUrl = '/img/customer-uploads/' . $filename;
+        // Local: Full URL via MAMP backend (port 8888)
+        $fileUrl = $backendUrl . '/' . $relativePath . $filename;
     } else {
-        // Production: Adjust based on server setup
-        $fileUrl = '/crystal-data/order-images/' . $filename;
+        // Production: Relative path (same domain)
+        $fileUrl = '/' . $relativePath . $filename;
     }
+    
+    error_log("Image URL: $fileUrl");
     
     // Return success with file info
     echo json_encode([
