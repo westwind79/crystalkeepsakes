@@ -576,8 +576,6 @@ export default function CartPage() {
         {/* Continue Shopping */}
         <ContinueShoppingBtn />
 
-        {/* Global Debug Panel (bottom-left button) */}
-        <CartDebugPanel />
       </div>
     </div>
   )
