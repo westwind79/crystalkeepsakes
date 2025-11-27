@@ -95,7 +95,8 @@ export async function uploadCustomerImage(
 export async function uploadCustomerImages(
   maskedImage: string,
   rawImage: string | undefined,
-  productId: string
+  productId: string,
+  orderNumber?: string
 ): Promise<{
   maskedUrl?: string
   rawUrl?: string
@@ -105,17 +106,17 @@ export async function uploadCustomerImages(
   let maskedUrl: string | undefined
   let rawUrl: string | undefined
   
-  // Upload masked image
-  const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked')
+  // Upload masked image with order number
+  const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
   if (maskedResult.success) {
     maskedUrl = maskedResult.url
   } else {
     errors.push(`Masked image: ${maskedResult.error}`)
   }
   
-  // Upload raw image if provided
+  // Upload raw image if provided with order number
   if (rawImage) {
-    const rawResult = await uploadCustomerImage(rawImage, productId, 'raw')
+    const rawResult = await uploadCustomerImage(rawImage, productId, 'raw', orderNumber)
     if (rawResult.success) {
       rawUrl = rawResult.url
     } else {
