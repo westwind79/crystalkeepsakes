@@ -157,8 +157,8 @@ try {
     $htdocsPath = $_SERVER['DOCUMENT_ROOT']; // e.g., C:/MAMP/htdocs
     error_log("Document root: $htdocsPath");
     
-    // Get path relative to htdocs
-    $relativePath = str_replace($htdocsPath, '', $uploadDir);
+    // Get path relative to htdocs (include date subfolder)
+    $relativePath = str_replace($htdocsPath, '', $fullUploadDir);
     $relativePath = str_replace('\\', '/', $relativePath); // Windows to Unix paths
     $relativePath = ltrim($relativePath, '/');
     
@@ -166,7 +166,7 @@ try {
     
     if ($mode === 'development') {
         // Local: MAMP serves from htdocs root on port 8888
-        // URL: http://localhost:8888/crystal-data/order-images-test/file.jpg
+        // URL: http://localhost:8888/crystal-data/order-images-test/2025-11/26/file.jpg
         $fileUrl = 'http://localhost:8888/' . $relativePath . $filename;
     } else {
         // Production: Relative path (same domain)
