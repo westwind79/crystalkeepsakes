@@ -36,36 +36,70 @@ export default function CheckoutHostedPage() {
 
       // STEP 1: Upload images to server BEFORE creating checkout session
       logger.info('📤 Uploading customer images to server...')
+      console.log('=== CHECKOUT DEBUG ===')
+      console.log('Cart items:', cart.length)
+      cart.forEach((item, idx) => {
+        console.log(`Item ${idx}:`, {
+          productId: item.productId,
+          hasCustomImage: !!item.customImage,
+          dataUrlLength: item.customImage?.dataUrl?.length,
+          dataUrlStart: item.customImage?.dataUrl?.substring(0, 50),
+          rawImageLength: item.customImage?.rawImageDataUrl?.length
+        })
+      })
+      
       const cartWithServerUrls = await Promise.all(
-        cart.map(async (item) => {
+        cart.map(async (item, idx) => {
           // Check if this item has images in IndexedDB
           if (item.customImage?.dataUrl) {
+            console.log(`📤 Uploading images for item ${idx}: ${item.productId}`)
+            console.log('  - Masked image length:', item.customImage.dataUrl.length)
+            console.log('  - Masked image starts with:', item.customImage.dataUrl.substring(0, 50))
+            
             logger.info(`Uploading images for item: ${item.productId}`)
             
-            const uploadResult = await uploadCustomerImages(
-              item.customImage.dataUrl, // Masked image from IndexedDB
-              item.customImage.rawImageDataUrl, // Raw image from IndexedDB
-              item.productId
-            )
-            
-            if (uploadResult.errors.length > 0) {
-              logger.error('Image upload errors:', uploadResult.errors)
-            }
-            
-            // Replace base64 with server URLs
-            return {
-              ...item,
-              maskedImageUrl: uploadResult.maskedUrl,
-              rawImageUrl: uploadResult.rawUrl,
-              imageUploadErrors: uploadResult.errors
+            try {
+              const uploadResult = await uploadCustomerImages(
+                item.customImage.dataUrl, // Masked image from IndexedDB
+                item.customImage.rawImageDataUrl, // Raw image from IndexedDB
+                item.productId
+              )
+              
+              console.log('  - Upload result:', uploadResult)
+              
+              if (uploadResult.errors.length > 0) {
+                console.error('  - Upload errors:', uploadResult.errors)
+                logger.error('Image upload errors:', uploadResult.errors)
+              }
+              
+              // Replace base64 with server URLs
+              return {
+                ...item,
+                maskedImageUrl: uploadResult.maskedUrl,
+                rawImageUrl: uploadResult.rawUrl,
+                imageUploadErrors: uploadResult.errors
+              }
+            } catch (error) {
+              console.error('  - Upload exception:', error)
+              return item
             }
           }
           
+          console.log(`⏭️  Item ${idx} has no custom image, skipping upload`)
           return item
         })
       )
 
       logger.info('✅ Images uploaded, preparing checkout...')
+      console.log('=== AFTER UPLOAD ===')
+      cartWithServerUrls.forEach((item, idx) => {
+        console.log(`Item ${idx}:`, {
+          productId: item.productId,
+          maskedImageUrl: item.maskedImageUrl,
+          rawImageUrl: item.rawImageUrl,
+          errors: item.imageUploadErrors
+        })
+      })
 
       // Prepare cart items for checkout (now with server URLs)
       const cartForCheckout = cartWithServerUrls.map(item => {
