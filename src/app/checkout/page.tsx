@@ -34,10 +34,16 @@ export default function CheckoutHostedPage() {
 
       logger.info('Initiating Stripe Checkout', { items: cart.length })
 
+      // Generate order number ONCE for entire checkout process
+      const orderNumber = `CK-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`
+      console.log('🎫 Generated Order Number:', orderNumber)
+      localStorage.setItem('pending_order_number', orderNumber)
+
       // STEP 1: Upload images to server BEFORE creating checkout session
       logger.info('📤 Uploading customer images to server...')
       console.log('=== CHECKOUT DEBUG ===')
       console.log('Cart items:', cart.length)
+      console.log('Order number:', orderNumber)
       cart.forEach((item, idx) => {
         console.log(`Item ${idx}:`, {
           productId: item.productId,
