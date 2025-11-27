@@ -95,7 +95,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
-        <EnhancedDebugOverlay />
+        <CartDebugPanel />
       </body>
     </html>
   )
