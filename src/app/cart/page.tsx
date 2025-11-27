@@ -512,24 +512,6 @@ export default function CartPage() {
                           )}
                         </div>
                       </div>
-
-                      {/* Compact Debug Info */}
-                      {process.env.NODE_ENV === 'development' && (
-                        <details className="mt-4">
-                          <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-700 font-medium">🔧 Debug Info</summary>
-                          <div className="mt-2 p-3 rounded-lg border border-green-200 bg-green-50">
-                            <div className="text-xs space-y-1 text-gray-700">
-                              <div><strong>SKU:</strong> {item.sku}</div>
-                              <div><strong>Cockpit3D ID:</strong> {item.cockpit3d_id || 'N/A'}</div>
-                              <div><strong>Base Price:</strong> ${item.basePrice?.toFixed(2)}</div>
-                              <div><strong>Options Price:</strong> ${item.optionsPrice?.toFixed(2)}</div>
-                              <div><strong>Has Raw Image:</strong> {item.customImage?.rawImageDataUrl ? '✅ Yes' : '❌ No'}</div>
-                              <div><strong>Has Masked Image:</strong> {item.customImage?.dataUrl ? '✅ Yes' : '❌ No'}</div>
-                              <div><strong>Options Array:</strong> {item.options ? `${item.options.length} options` : 'None'}</div>
-                            </div>
-                          </div>
-                        </details>
-                      )}
                     </div>
                   </div>
                 </div>
