@@ -16,6 +16,7 @@ out-test/
 out-prod/
 .turbo/
 tsconfig.tsbuildinfo
+next-env.d.ts
 
 # Admin Panel (should NOT be in production builds)
 out-prod/admin/
