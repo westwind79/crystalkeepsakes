@@ -100,7 +100,6 @@ export default function CartPage() {
   }
 
   useEffect(() => {
-    debugStep('cart-load', 'Loading cart', 'active')
     loadCart()
 
     const handleCartUpdate = () => {
