@@ -6,7 +6,7 @@ import './css/navigation.css'
 import './css/modal.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import EnhancedDebugOverlay from '@/components/EnhancedDebugOverlay'
+import CartDebugPanel from '@/components/CartDebugPanel'
 import { assetPath } from '@/lib/assetPath'
 
 // Font Theme: Option 3 - Refined Luxury
