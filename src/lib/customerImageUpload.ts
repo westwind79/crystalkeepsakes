@@ -21,7 +21,8 @@ interface UploadResult {
 export async function uploadCustomerImage(
   imageData: string,
   productId: string,
-  imageType: 'masked' | 'raw' = 'masked'
+  imageType: 'masked' | 'raw' = 'masked',
+  orderNumber?: string
 ): Promise<UploadResult> {
   try {
     // Get backend URL
@@ -31,6 +32,9 @@ export async function uploadCustomerImage(
       : '/api/customer-image-upload.php'
     
     console.log('📤 Uploading customer image to:', apiUrl)
+    if (orderNumber) {
+      console.log('📁 Order folder:', orderNumber)
+    }
     
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -40,7 +44,8 @@ export async function uploadCustomerImage(
       body: JSON.stringify({
         imageData,
         productId,
-        imageType
+        imageType,
+        orderNumber // Include order number for folder structure
       })
     })
     
