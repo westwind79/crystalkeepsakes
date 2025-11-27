@@ -38,6 +38,25 @@ The code now automatically detects if you're accessing via the `/test` subdirect
 
 ## 🧪 Testing on GoDaddy /test
 
+### Important: Shipping Address Collection
+
+✅ **Shipping address IS collected in all modes (test and production)**
+- Needed for Cockpit3D fulfillment
+- Customer will fill out shipping form during checkout
+- Address data is available on order-confirmation page
+
+❌ **Shipping RATES are only in production mode**
+- Test mode: No shipping charges, but address is still collected
+- Production mode: Full shipping rates and tax enabled
+
+This means in `/test`, customers will:
+1. Enter their shipping address ✅
+2. See product prices ✅
+3. NOT be charged for shipping ✅
+4. NOT see tax calculations ✅
+
+---
+
 ### What You Need on the Server:
 
 **1. Environment File (.env) - Place at website root:**
