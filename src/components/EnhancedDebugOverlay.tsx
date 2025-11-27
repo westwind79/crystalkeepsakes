@@ -38,7 +38,7 @@ export default function EnhancedDebugOverlay() {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null)
   const [mounted, setMounted] = useState(false)
   const [shouldShowDebug, setShouldShowDebug] = useState(false)
-  const [activeTab, setActiveTab] = useState<'steps' | 'system' | 'storage'>('steps')
+  const [activeTab, setActiveTab] = useState<'steps' | 'system' | 'storage' | 'cart'>('steps')
   const [autoRefresh, setAutoRefresh] = useState(false)
 
   const gatherSystemInfo = async (): Promise<SystemInfo> => {
