@@ -39,6 +39,7 @@ try {
     $imageData = $data['imageData'];
     $productId = $data['productId'] ?? 'unknown';
     $imageType = $data['imageType'] ?? 'masked'; // 'masked' or 'raw'
+    $orderNumber = $data['orderNumber'] ?? null; // CRITICAL: Order number for folder structure
     
     // Debug: Log image data info
     error_log("📥 Received image data - Type: $imageType, Product: $productId");
