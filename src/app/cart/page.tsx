@@ -21,7 +21,7 @@ import {
   saveCart
 } from '@/lib/cartUtils'
 import { logger } from '@/utils/logger'
-import { debugStep } from '@/components/DebugOverlay'
+import CartDebugPanel from '@/components/CartDebugPanel'
 
 // Type interface
 interface CartItem {
