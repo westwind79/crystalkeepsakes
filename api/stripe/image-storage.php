@@ -11,13 +11,58 @@ class ImageStorage {
     private $maxFileSize;
     
     public function __construct($uploadDir = null, $maxFileSizeMB = 5) {
-        $this->uploadDir = $uploadDir ?? dirname(__DIR__) . '/uploads/order-images';
+        // CRITICAL FIX: Store images OUTSIDE project directory to prevent data loss on builds
+        if ($uploadDir === null) {
+            // Try environment variable first (recommended)
+            $uploadDir = getenv('CUSTOMER_IMAGE_PATH');
+            
+            if (!$uploadDir) {
+                // Auto-detect: Look for persistent storage directory IN public_html
+                // For GoDaddy: /home/user/public_html/crystal-data/order-images/
+                
+                // Current file is in: /exposethegrove.com/crystalkeepsakes.com/api/stripe/
+                // Target should be: /public_html/crystal-data/order-images/
+                
+                $currentDir = __DIR__;  // /api/stripe/
+                $apiDir = dirname($currentDir);  // /api/
+                $projectRoot = dirname($apiDir);  // /crystalkeepsakes.com/
+                $parentDomain = dirname($projectRoot);  // /exposethegrove.com/
+                $publicHtml = dirname($parentDomain);  // /public_html/
+                
+                // MUST be inside public_html for web access!
+                $uploadDir = $publicHtml . '/crystal-data/order-images';
+                
+                error_log("Auto-detected upload directory: {$uploadDir}");
+                error_log("Current directory: {$currentDir}");
+                
+                // Verify we're actually in public_html
+                if (strpos($uploadDir, 'public_html') === false) {
+                    error_log("WARNING: Upload path not in public_html! Path: {$uploadDir}");
+                }
+            }
+        }
+        
+        $this->uploadDir = $uploadDir;
         $this->maxFileSize = $maxFileSizeMB * 1024 * 1024; // Convert to bytes
         
         // Create directory if it doesn't exist
         if (!file_exists($this->uploadDir)) {
-            mkdir($this->uploadDir, 0755, true);
+            if (!mkdir($this->uploadDir, 0755, true)) {
+                error_log("CRITICAL: Failed to create upload directory: {$this->uploadDir}");
+                error_log("Check: Does parent directory exist? Do you have write permissions?");
+                throw new Exception('Upload directory not accessible. Check permissions.');
+            }
+            error_log("Created upload directory: {$this->uploadDir}");
         }
+        
+        // Verify directory is writable
+        if (!is_writable($this->uploadDir)) {
+            error_log("CRITICAL: Upload directory not writable: {$this->uploadDir}");
+            error_log("Run: chmod 755 on the directory");
+            throw new Exception('Upload directory not writable. Check permissions.');
+        }
+        
+        error_log("Using upload directory: {$this->uploadDir}");
     }
     
     /**

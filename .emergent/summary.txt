@@ -1,125 +1,147 @@
-<analysis>
-The trajectory details the iterative development of a Next.js e-commerce application for crystalkeepsakes.com. The work involved a significant number of feature implementations, bug fixes, and architectural adjustments, primarily driven by the user's hands-on feedback.
+<analysis>An analysis of the conversation and codebase changes has been completed. Here is the handover summary for the next agent.
 
-A recurring challenge was managing the project's complex setup. The AI engineer initially struggled with a misconfigured environment where a template Create-React-App was running instead of the main Next.js project. This was resolved by manually starting the correct dev server. A major architectural pivot occurred late in the project when the user's GoDaddy hosting environment required a static site export (), which breaks Next.js API routes. This necessitated converting the contact form's backend to a separate PHP script and revealed a fundamental issue with updating product data, as the data was compiled at build time.
+**original_problem_statement:** The user's Crystal Keepsakes project (a Next.js app with a PHP backend) has several issues after recent structural changes on the  branch.
 
-Key features implemented include: a multi-faceted pricing model (cost, base price, percentage/fixed sales), manual occasion category management in the admin panel, a revamped contact page with topic-based email routing, and a redesigned cart UI. Numerous bugs were addressed, including fixing broken mobile animations, incorrect breadcrumb paths, and critical add to cart validation errors.
+**PRODUCT REQUIREMENTS:**
+1.  **Admin Image Upload:** Fix the broken image upload feature in the admin panel. Uploaded images should be saved to product-specific folders (), be readable by the Next.js application, and appear correctly in the admin gallery.
+2.  **Cart Logic:**
+    -   Initially, the user wanted to combine identical items in the cart. This was later reversed. **Requirement: Each add to cart action must create a separate line item, even for identical products.**
+    -   Improve the quality and size of images displayed on the cart page as they are blurry.
+3.  **Persistent Customer Images:** Customer-edited images are stored in the browser's IndexedDB and are lost on session end. These images need to be uploaded and stored permanently on the server when added to the cart.
+4.  **Pricing:** The user mentioned that pricing logic might be lost or incorrect, and that prices for products and their options (like lightbases) must come from a single, reliable source managed in the admin panel, overriding any incorrect data from external APIs.
+5.  **Build/Deployment:**
+    -   The  file needs to be cleaned up to exclude build artifacts (like the  folder), environment files, and redundant lock files.
+    -   The admin panel () should be completely excluded from all production and test builds.
+6.  **Debugging:** Enhance the on-screen debug overlay to provide more information about the application state, including storage, performance, and PHP environment details, to help diagnose issues.
 
-The most recent work focuses on solving the product update dilemma for the static site. The user wants to update products by FTP'ing a single data file, which is incompatible with the compile-time data import. The AI began refactoring the data loading mechanism to use a dynamically fetched JSON file in production, but this introduced a conflict with the local development workflow. The final user request is to resolve this conflict.
+**User's preferred language**: English
 
-The user's primary language is English. Future responses should be in English.
-</analysis>
+**what currently exists?**
+The project is a Next.js frontend application with a separate PHP backend, which the user runs locally via MAMP. Product data is stored in JSON files. The agent has implemented several fixes, including cleaning the  file, creating an enhanced debug overlay, and adding logic to exclude the admin panel from production builds. The primary unresolved issues relate to file handling and permissions between the MAMP/PHP environment and the Next.js dev server.
 
-<product_requirements>
-The project is to build and enhance the crystalkeepsakes.com e-commerce storefront using Next.js. The application must feature a product catalog, a shopping cart, and an admin panel for product management, with the end goal of producing an order payload compatible with the Cockpit3D fulfillment API and processing payments via Stripe.
+**Last working item**:
+- **Last item agent was working:** Implementing a system to permanently store customer-customized images. The current implementation uses IndexedDB, which is temporary. The agent created a new PHP endpoint () and a corresponding TypeScript utility () to handle uploading these images to the server.
+- **Status:** IN PROGRESS
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** Frontend testing agent. The test should simulate a user adding a product with a custom image to the cart, and verify that an API call is made to  and that the resulting image URL is stored correctly in the cart state.
+- **User Testing Done:** N
 
-**Implemented Features:**
--   **Product Management:** An admin panel at  allows editing product details.
--   **Advanced Pricing:** Products support , , and sale pricing (either a fixed  or a percentage-based ). For products with sizes, the  is automatically set to the price of the smallest size.
--   **Category System:** A hybrid system combines automatic category detection (e.g., 3D Crystals) with manually assigned Occasions (e.g., Wedding, Memorial).
--   **Fulfillment Flag:** A toggle in the admin panel () marks whether a product is fulfilled by Cockpit3D or by the user.
--   **Contact Page:** A revamped contact form with a topic dropdown that routes emails to different addresses (, , etc.) via a PHP backend script to support static hosting.
--   **Static Site Deployment:** The application is configured for static export () to run on a standard PHP web host (GoDaddy), with build scripts to handle asset paths for subdirectory testing ().
-</product_requirements>
+**All Pending/In progress Issue list**:
+-   **Issue 1: Admin panel image uploads result in blank/unreadable images. (P0)**
+-   **Issue 2: Customer-customized images are not persisted on the server. (P0)**
 
-<key_technical_concepts>
-- **Framework:** Next.js (React) configured for static site generation ().
-- **Styling:** Tailwind CSS, augmented with custom CSS files (, component-specific styles).
-- **State Management:** React Hooks (, , , ) and URL query parameters for filtering.
-- **Data Handling:** Product data was initially imported from a static JS file (). The current effort is to transition this to a dynamically fetched  file for production to allow updates without a full site rebuild.
-- **Build Process:** yarn install v1.22.22
-[1/4] Resolving packages...
-[2/4] Fetching packages...
-[3/4] Linking dependencies...
-[4/4] Building fresh packages...
-success Saved lockfile.
-Done in 58.00s./npm <command>
+**Issues Detail:**
+-   **Issue 1: Admin panel image uploads result in blank/unreadable images.**
+    -   **Attempted fixes:**
+        1.  Corrected the API endpoint path in the frontend.
+        2.  Adjusted the file-saving path in the PHP script to point to the Next.js  directory.
+        3.  Disabled server-side image compression to rule it out as a cause of corruption.
+        4.  Added extensive debug logging to the frontend and backend to trace the file's path and status.
+        5.  The root cause was identified as a file permission issue: the PHP process (run by MAMP) was creating files that the Next.js dev server process could not read.
+        6.  The last fix was to add  to the  script to set read permissions on the newly created image file.
+    -   **Next debug checklist:**
+        1.  Ask the user to perform an image upload in the admin panel.
+        2.  Review the logs from the enhanced debug panel, specifically looking for the File Permissions debug event.
+        3.  Check the browser's network tab to see the HTTP status code for the image request (e.g., ). It should be , not .
+        4.  If it still fails, confirm the user has the GD extension enabled in their  file, as some functions depend on it.
+    -   **Why fix this issue and what will be achieved with the fix?** Fixing this is critical for the user to manage product imagery through the admin panel, which is a core business function.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend (manual test of upload functionality).
+    -   **Blocked on other issue:** None.
 
-Usage:
+**In progress Task List**:
+-   **Task 1: Finish implementing persistent storage for customer-customized images. (P0)**
+    -   **Where to resume:** The agent has already created  and . The next step is to modify  in the  function. Inside this function, before the item is pushed to the cart, check if  exists. If it does, call the new  utility, await the returned server URL, and replace the client-side  data with the persistent URL.
+    -   **What will be achieved with this?** Customer-edited product images will be saved on the server, ensuring they are not lost between sessions or on different devices, which is essential for a reliable checkout process.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Blocked on something:** None.
 
-npm install        install all the dependencies in your project
-npm install <foo>  add the <foo> dependency to your project
-npm test           run this project's tests
-npm run <foo>      run the script named <foo>
-npm <command> -h   quick help on <command>
-npm -l             display usage info for all commands
-npm help <term>    search for help on <term>
-npm help npm       more involved overview
+**Upcoming and Future Tasks**
+- **Upcoming Tasks:**
+  - **P1: Consolidate and Verify Pricing Logic:**
+    - **File:** 
+    - **Action:** Review the user's requirement that prices set in the admin panel are the single source of truth, overriding any other data sources. Audit  and related components to ensure this logic is correctly implemented for both base products and selectable options (like lightbases).
+- **Future Tasks:**
+  - **P2: Automated Gallery from Folder:**
+    - **Action:** Implement the user's request for a feature where product galleries on the frontend are automatically populated by reading the contents of the corresponding product image directory (). This may require a server-side script or an adjustment to how product data is built/served.
 
-All commands:
+**Completed work in this session**
+- **Cart Logic Update:** Modified  to ensure each item added to the cart is a unique entry, disabling the previous item-combining logic.
+- **Git Repository Cleanup:**
+    - Fixed and cleaned  to correctly ignore build outputs, local environment files, and lock files.
+    - Removed over 300 previously tracked files from the  directory from git tracking.
+- **Admin Panel Build Exclusion:**
+    - Configured  and added a post-build script () to completely remove the  directory from production builds.
+- **Enhanced Debugging:**
+    - Created and integrated a new  component to provide detailed runtime information on storage, performance, and the PHP environment.
+- **Cart UI Improvement:**
+    - Increased the size of product images on the cart page () for better visibility.
 
-    access, adduser, audit, bugs, cache, ci, completion,
-    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
-    edit, exec, explain, explore, find-dupes, fund, get, help,
-    help-search, hook, init, install, install-ci-test,
-    install-test, link, ll, login, logout, ls, org, outdated,
-    owner, pack, ping, pkg, prefix, profile, prune, publish,
-    query, rebuild, repo, restart, root, run-script, sbom,
-    search, set, shrinkwrap, star, stars, start, stop, team,
-    test, token, uninstall, unpublish, unstar, update, version,
-    view, whoami
-
-Specify configs in the ini-formatted file:
-    /root/.npmrc
-or on the command line via: npm <command> --key=value
-
-More configuration info: npm help config
-Configuration fields: npm help 7 config
-
-npm@10.8.2 /usr/lib/node_modules/npm scripts using  to manage environment variables for different build targets (local, test, production) and  configuration.
-- **Backend (Static Context):** A PHP script () handles the contact form submission since Next.js API routes are disabled.
-</key_technical_concepts>
-
-<code_architecture>
-The application is a monolithic Next.js project located in the  directory. It is configured for static export, meaning the final build consists of HTML, CSS, JS, and any files in the  directory.
-
-**Directory Structure:**
+**Code Architecture**
 
 
-**Key File Summaries:**
+**Key Technical Concepts**
+- **Frameworks:** Next.js (React), PHP
+- **Styling:** Tailwind CSS
+- **Data Storage:** Product data is sourced from JSON files. Temporary customer data is stored in the browser's IndexedDB.
+- **Local Environment:** A hybrid setup where the user runs the PHP backend on a MAMP server and the Next.js frontend via its development server. This separation is a key source of file permission and pathing challenges.
 
--   ****
-    -   **Importance:** The core of the admin UI. Allows editing all product attributes, including the new pricing model (cost, basePrice, salePercent) and category/fulfillment flags.
-    -   **Changes:** Heavily modified to add new input fields, reorganize the layout into tabs (Basic, Pricing), and change the save functionality from a file download to an attempted dynamic save. Logic was added to auto-calculate  from the smallest size.
+**key DB schema**
+-   N/A (Data is stored in JSON files).
+-   ****: An array of product objects, each with properties like uid=0(root) gid=0(root) groups=0(root), , , , , , .
 
--   ** and **
-    -   **Importance:** These two components are responsible for rendering products on the list and detail pages, respectively. They contain the bulk of the client-side pricing and display logic.
-    -   **Changes:** Both were significantly updated to correctly calculate and display prices based on the complex rules (sizes, sales percentages, fixed sale prices). They were also modified to use the  helper for all image URLs and to render dynamic breadcrumbs.
+**All files**
+- **Created Files:**
+  - : Provides an enhanced debug view on the frontend.
+  - : A Node.js script to remove the admin panel from production builds.
+  - : A new PHP endpoint for persisting customer-edited images.
+  - : A client-side utility to handle uploads to the new endpoint.
+  - : Documentation for the gitignore rules.
+  - : Documentation explaining that the admin panel is for development only.
+- **Key Updated Files:**
+  - : Heavily modified to fix paths, add permissions (), and include extensive debugging.
+  - : Updated to use the correct API endpoint and add debug logging.
+  - : Cleaned and updated to exclude build artifacts and environment files.
+  - : Modified to add a  script.
+  - : Updated to conditionally exclude the admin page from builds.
+  - : Logic for combining cart items was removed. (Awaiting further changes for image persistence).
 
--   ** and **
-    -   **Importance:** These files define the entire build and deployment strategy.
-    -   **Changes:**  was configured with  and a dynamic  and .  was updated with  and  scripts using  to manage the different environments.  was added as a new dependency.
+**Critical Info for New Agent**
+- **The MAMP + Next.js Environment is CRITICAL:** The core of the recurring image upload problem lies in the interaction between two separate local servers (MAMP for PHP, and the Next.js dev server). Files created by PHP need explicit read permissions () for the Next.js process to access them. The last attempt to fix this is pending user verification.
+- **User is Technical:** The user understands their local setup (MAMP, ), file structures, and Git (SourceTree). You can provide technical explanations and instructions.
+- **Follow the Debug Panel:** The agent has built extensive logging into the . Use this as the primary source of truth when asking the user for feedback on the image upload issue. Ask for the output from the panel.
 
--   ****
-    -   **Importance:** A new PHP script created to provide a backend for the contact form, since Next.js API routes are disabled by the static export.
-    -   **Changes:** Created from scratch to receive JSON POST data, route emails to different inboxes based on a topic field, and send a confirmation to the user.
+**Last 5 User Messages and any pending user messages**
+1.  **User Message:** 
+    -   **Summary:** User reported that newly uploaded admin images are blank or corrupted, though they save to the correct folder.
+    -   **Status:** In Progress. The agent identified this as a likely permissions or compression issue.
+2.  **User Message:** 
+    -   **Summary:** User questioned the new compression logic and suggested comparing the current broken implementation to the simpler, working version from a previous branch ().
+    -   **Status:** Addressed. The agent reviewed the  implementation and disabled compression as a debugging step.
+3.  **User Message:** 
+    -   **Summary:** User confirmed that images must go into product-specific folders and crucially identified that the problem is file permissions.
+    -   **Status:** Addressed. The agent added  to the PHP upload script to set correct permissions. This fix is now pending user verification.
+4.  **User Message:** 
+    -   **Summary:** User raised a new, critical issue: customer-edited images are not being persisted on the server and are lost.
+    -   **Status:** In Progress. The agent started implementing a fix by creating a new API endpoint and client utility.
+5.  **User Message:** 
+    - **Summary:** The user indicated a pathing issue and provided a screenshot showing a 400 error from the Next.js server when trying to access an uploaded image.
+    - **Status:** Addressed. This led the agent down a path of debugging the interaction between the MAMP server and the Next.js server, culminating in the file permissions fix.
 
--   ****
-    -   **Importance:** This new file is central to solving the current data-update problem. It's intended to abstract away the data source.
-    -   **Changes:** Created to house a  function. It is currently in a half-implemented state, intended to load from the static JS file during development and fetch the  file in production.
-</code_architecture>
+**Project Health Check:**
+-   **Broken:**
+    -   The admin panel image upload feature is not fully functional. It is currently blocked pending user verification of the latest file permission fix.
+-   **Mocked:**
+    -   None.
 
-<pending_tasks>
-- **Stripe Integration:** The checkout process needs to be built, likely requiring a new PHP script to handle payment intent creation, similar to the  implementation.
-- **Cockpit3D Order Submission:** The final order payload must be structured according to the Cockpit3D API specification and sent to their endpoint. This will also likely require a PHP script.
-- **Admin Panel Authentication:** The admin panel has no security. If it's to be deployed online, it needs password protection (e.g., via ).
-</pending_tasks>
+**Testing status**
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** []
+-   **Known regressions:** The admin panel image upload was reportedly working in a previous version () but is broken now after several changes, including the addition of image compression (now disabled) and saving to product-specific folders.
 
-<current_work>
-The AI engineer was in the middle of a critical refactor to solve a fundamental conflict between the development workflow and the production deployment requirements for product data.
-
-**The Problem:** The user wants to update products on the live site by FTP'ing a single data file. However, the application was built to import product data from  at *build time*, meaning any data updates require a complete site rebuild and redeployment.
-
-**The In-Progress Solution:**
-The engineer's approach was to switch to loading product data at *runtime* in production.
-1.  **Create a JSON data file:** A  file was created in . This file can be updated via FTP.
-2.  **Abstract Data Loading:** A new helper file, , was created to contain a  function.
-3.  **Modify Pages:** Pages like  were being modified to call  instead of directly importing from .
-4.  **Modify Admin Panel:** The Save function in the admin panel was being changed to update the new  file directly, rather than initiating a download.
-
-This work was incomplete and had introduced a new problem: how to handle data loading differently in development (which benefits from static imports for hot-reloading) versus production (which needs the dynamic fetch). The user's last message, fix up where we are now, is a direct request to stabilize this partially implemented and broken data loading mechanism.
-</current_work>
-
-<optional_next_step>
-Finalize the dual data-loading strategy. Use an environment variable inside  to conditionally load from the static  file in development and  the  file in production.
-</optional_next_step>
+**What agent forgot to execute**
+-   The agent has not yet performed the deep dive and refactor of the pricing logic as requested in the original problem statement. It was identified () but not acted upon.
+-   The feature request to have product galleries automatically populate from image folders has not been started.</analysis>

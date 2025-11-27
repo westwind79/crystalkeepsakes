@@ -7,13 +7,15 @@ import { useState, useEffect } from 'react'
 import ProductCard from '@/components/ProductCard'
 import Breadcrumbs from '@/components/BreadCrumbs'
 import { assetPath } from '@/lib/assetPath'
+import { getProducts } from '@/lib/products'
 
 import { 
   isLightbaseProduct, 
   isFeaturedProduct,
   isOnSale,
   PRODUCT_CATEGORIES,
-  filterProductsByCategory 
+  filterProductsByCategory,
+  getCategoryIcon
 } from '@/utils/categoriesConfig'
 
 // Environment logging
@@ -80,9 +82,13 @@ const ProductsHero = () => (
 const ProductsBreadcrumbs = ({ breadcrumbs }: { breadcrumbs?: string[] }) => {
   const items = breadcrumbs 
     ? breadcrumbs.map((label, index) => {
-        // First item should be "Products" (links to /products)
-        if (index === 0) return { label, href: '/products' }
-        // Other items (categories) are not clickable
+        // First item is "Products"
+        if (index === 0) {
+          // If there's only one item (just "Products"), make it non-clickable (current page)
+          // If there are more items (Products > Category), make "Products" clickable
+          return breadcrumbs.length > 1 ? { label, href: '/products' } : { label }
+        }
+        // Other items (categories) are not clickable (current page)
         return { label }
       })
     : [{ label: 'Products' }];
@@ -139,46 +145,35 @@ export default function ProductsPage() {
   }, [products, loading, error])
 
   /**
-   * Fetch products from generated file or API fallback
+   * Fetch products from JSON (single source of truth)
    */
   const fetchProducts = async () => {
     try {
       if (shouldLog) {
-        console.log('📄 Loading products from generated file...')
+        console.log('📄 Loading products from JSON...')
       }
 
-      // Import the generated products file - use relative path
-      // Development: use static import, Production: fetch JSON
-      let cockpit3dProducts
-      if (process.env.NODE_ENV === 'development') {
-        const { finalProductList } = await import('../../data/final-product-list.js')
-        cockpit3dProducts = finalProductList
-      } else {
-        const res = await fetch(assetPath('/data/final-products.json'))
-        if (!res.ok) {
-          throw new Error(`Failed to fetch products: ${res.status} ${res.statusText}`)
-        }
-        cockpit3dProducts = await res.json()
-      }
+      // Use getProducts() which always fetches from JSON file
+      const allProducts = await getProducts()
       
       if (shouldLog) {
         console.log('📦 Products loaded:', {
-          count: cockpit3dProducts.length,
+          count: allProducts.length,
           environment: process.env.NODE_ENV
         })
       }
 
       // Filter out hidden products (visible !== false)
-      const visibleProducts = cockpit3dProducts.filter((p: any) => p.visible !== false)
+      const visibleProducts = allProducts.filter((p: any) => p.visible !== false)
 
       setProducts(visibleProducts || [])
       
       if (shouldLog) {
-        console.log(`✅ Loaded ${cockpit3dProducts?.length || 0} products`)
+        console.log(`✅ Loaded ${allProducts?.length || 0} products`)
       }
 
     } catch (err: any) {
-      console.error('❌ Error loading products from file:', err)
+      console.error('❌ Error loading products from JSON:', err)
       
       // Fallback to API if file doesn't exist
       if (shouldLog) {
@@ -236,86 +231,7 @@ export default function ProductsPage() {
   };
 
   /**
-   * Loading State
-   */
-  if (loading) {
-    return (
-      <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
-        <ProductsHero />
-        <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
-
-        {/* Loading Spinner */}
-        <section className="bg-white py-8">
-          <div className="text-center">
-            <div 
-              className="inline-block w-12 h-12 border-4 border-[var(--brand-500)] border-t-transparent rounded-full animate-spin" 
-              role="status"
-            >
-              <span className="sr-only">Loading...</span>
-            </div>
-            <p className="mt-4 text-xl text-text-secondary">
-              Loading products from CockPit3D...
-            </p>
-            {shouldLog && (
-              <p className="text-text-tertiary text-sm mt-2">Environment: {ENV_MODE}</p>
-            )}
-          </div>
-        </section>
-      </div>
-    )
-  }
-
-  /**
-   * Error State
-   */
-  if (error) {
-    return (
-      <div className="products min-h-screen bg-dark-bg text-dark-text pt-[100px]">
-        <ProductsHero />
-        <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
-
-        {/* Error Alert */}
-        <section className="bg-white py-8">
-          <div className="max-w-2xl mx-auto bg-red-900/20 border border-red-500 rounded-lg p-6">
-            <h4 className="text-xl font-semibold text-red-400 mb-3">
-              ⚠️ Error Loading Products
-            </h4>
-            <p className="text-text-secondary mb-4">{error}</p>
-            <hr className="border-red-500/30 mb-4" />
-            <div className="flex gap-3 flex-wrap">
-              <button 
-                onClick={() => {
-                  setLoading(true)
-                  setError('')
-                  fetchProducts()
-                }} 
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
-              >
-                🔄 Retry
-              </button>
-              <Link 
-                href="/" 
-                className="px-4 py-2 bg-transparent border border-gray-400 hover:bg-gray-800 text-white rounded-lg transition-colors font-medium"
-              >
-                ← Back to Home
-              </Link>
-            </div>
-            {shouldLog && (
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <small className="text-text-tertiary">
-                  Environment: {ENV_MODE}<br />
-                  Check browser console for details
-                </small>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-    )
-  }
-
-  /**
-   * Main Products View
+   * Main Products View - Always renders structure
    */
   return (
     <div className="products min-h-screen relative">
@@ -380,26 +296,22 @@ export default function ProductsPage() {
                   Categories
                 </h5>
 
-                <div className="space-y-2">
+                <div className="space-y-2">{selectedCategory !== 'all' && (
+                    <button
+                      onClick={() => handleCategoryChange('all')}
+                      className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                      Clear Filter
+                    </button>
+                  )}
                   {PRODUCT_CATEGORIES
                     .filter(cat => cat.value !== 'all') // Filter out only 'all'
                     .map(category => {
                       const count = filterProductsByCategory(products, category.value).length
                       const isActive = selectedCategory === category.value
-                      
-                      // Category icons
-                      const categoryIcons = {
-                        'featured': '⭐',
-                        '3d-crystals': '🔮',
-                        '2d-crystals': '💎',
-                        'keychains-necklaces': '🔑',
-                        'ornaments': '🎄',
-                        'heart-shapes': '❤️',
-                        'memorial': '🕊️',
-                        'pet': '🐾',
-                        'custom': '⚙️',
-                        'sale': '💰'
-                      };
                       
                       return (
                         <button
@@ -415,7 +327,7 @@ export default function ProductsPage() {
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-lg">{categoryIcons[category.value] || '📦'}</span>
+                            <span className="text-lg">{getCategoryIcon(category.value)}</span>
                             <span className="font-medium">{category.label}</span>
                           </span>
                           <span className={`text-sm px-2 py-1 rounded-full ${
@@ -431,17 +343,7 @@ export default function ProductsPage() {
                       )
                     })}
                   
-                  {selectedCategory !== 'all' && selectedCategory !== 'featured' && selectedCategory !== 'sale' && (
-                    <button
-                      onClick={() => handleCategoryChange('all')}
-                      className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-                      </svg>
-                      Clear Filter
-                    </button>
-                  )}
+                  
                 </div>
               </div>
             </section>
@@ -498,7 +400,7 @@ export default function ProductsPage() {
                   </h3>
                   <button 
                     onClick={() => setSelectedCategory('all')}
-                    className="px-6 py-3 bg-[var(--brand-500)] hover:bg-brand-600 text-white rounded-lg transition-colors font-medium shadow-glow-soft"
+                    className="px-6 py-3 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white rounded-lg transition-colors font-medium shadow-glow-soft"
                   >
                     View All Products
                   </button>

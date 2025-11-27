@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ProductImage } from '@/types/productTypes';
-import { assetPath } from '@/lib/assetPath';
 
 interface ImageUploadProps {
   productId: string;
@@ -26,33 +25,129 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       setUploadProgress(`Uploading ${i + 1} of ${files.length}...`);
 
       try {
+        // 🐛 DEBUG: Emit debug event
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('debug-step', {
+            detail: {
+              id: `upload-${i}`,
+              label: `Starting upload: ${file.name}`,
+              status: 'active',
+              data: { fileName: file.name, fileSize: file.size, fileType: file.type }
+            }
+          }));
+        }
+
         const formData = new FormData();
         formData.append('productId', productId);
-        formData.append('file', file);
+        formData.append('image', file);  // ✅ PHP expects 'image' field name
 
-        const response = await fetch(assetPath('/api/admin/upload-image'), {
+        // ✅ FIX: Use backend URL for PHP API (MAMP or production)
+        const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || '';
+        const apiUrl = backendUrl ? `${backendUrl}/api/upload-image.php` : '/api/upload-image.php';
+        
+        console.log('📤 Uploading to:', apiUrl);
+        
+        // 🐛 DEBUG: Track fetch
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('debug-step', {
+            detail: {
+              id: `upload-${i}`,
+              label: `Sending request to ${apiUrl}`,
+              status: 'active',
+              data: { apiUrl, productId }
+            }
+          }));
+        }
+        
+        const response = await fetch(apiUrl, {
           method: 'POST',
           body: formData,
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
 
+        // 🐛 DEBUG: Log full response for debugging
+        console.log('📥 Upload Response:', result);
+
         if (result.success) {
+          // 🐛 DEBUG: Success event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('debug-step', {
+              detail: {
+                id: `upload-${i}`,
+                label: `✅ Upload successful: ${result.filename}`,
+                status: 'complete',
+                data: {
+                  url: result.url,
+                  fileSize: result.size,
+                  originalSize: result.originalSize,
+                  compressed: result.compressed,
+                  phpInfo: result.phpInfo,
+                  debug: result.debug
+                }
+              }
+            }));
+          }
+
           // Add new image to array
           // First image becomes main if no main exists
           const isMain = newImages.length === 0 || !newImages.some(img => img.isMain);
           
           newImages.push({
-            src: result.data.url,
+            src: result.url,  // ✅ PHP returns 'url' not 'data.url'
             isMain: isMain,
             alt: file.name,
           });
+
+          console.log(`✅ Uploaded image: ${result.url}`);
+          console.log('📊 Upload Stats:', {
+            filename: result.filename,
+            size: `${(result.size / 1024).toFixed(2)} KB`,
+            originalSize: `${(result.originalSize / 1024).toFixed(2)} KB`,
+            compressed: result.compressed,
+            compressionError: result.compressionError,
+            debug: result.debug
+          });
+          
+          // 🔧 PHP Environment Info
+          if (result.phpInfo) {
+            console.log('🔧 PHP Environment:', result.phpInfo);
+            
+            // Warn if GD not available
+            if (!result.phpInfo.gdAvailable) {
+              console.warn('⚠️ GD Library NOT available - image compression disabled');
+            } else {
+              console.log(`✅ GD Library available: ${result.phpInfo.gdVersion}`);
+            }
+          }
+
+          // Show compression warning if needed
+          if (!result.compressed && result.compressionError) {
+            console.warn(`⚠️ Image compression: ${result.compressionError}`);
+          }
         } else {
+          // 🐛 DEBUG: Error event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('debug-step', {
+              detail: {
+                id: `upload-${i}`,
+                label: `❌ Upload failed: ${file.name}`,
+                status: 'error',
+                error: result.error
+              }
+            }));
+          }
+          
+          console.error('❌ Upload failed:', result.error);
           alert(`Failed to upload ${file.name}: ${result.error}`);
         }
       } catch (error) {
         console.error('Upload error:', error);
-        alert(`Error uploading ${file.name}`);
+        alert(`Error uploading ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -131,7 +226,13 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
                 Click to upload images or drag and drop
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                PNG, JPG, GIF up to 10MB each
+                PNG, JPG, GIF, WebP up to 10MB each
+              </p>
+              <p className="text-xs text-blue-600 font-semibold mt-2">
+                💡 Images are automatically compressed & optimized for web
+              </p>
+              <p className="text-xs text-green-600 font-semibold">
+                ✨ Multiple images auto-create gallery view
               </p>
             </div>
           )}
@@ -142,6 +243,9 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
       {images.length > 0 && (
         <div className="space-y-3">
           <h4 className="font-semibold text-gray-700">Current Images ({images.length})</h4>
+          {images.length > 1 && (
+            <p className="text-sm text-green-600 font-medium">✅ Gallery mode enabled - customers can browse all images</p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images.map((image, index) => (
               <div

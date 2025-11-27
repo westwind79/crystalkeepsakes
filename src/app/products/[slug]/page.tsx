@@ -15,15 +15,19 @@ export const dynamicParams = false  // Required for output: 'export'
 /**
  * Build-time static generation for all known slugs
  * Pre-renders all product pages at build time for SEO and performance
- * Reads from cached cockpit3d-products.js file
+ * Reads from final-products.json
  */
 export async function generateStaticParams() {
   try {
-    // Import the cached products file (populated by prebuild script)
-    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
+    // Read JSON file from filesystem at build time
+    const fs = await import('fs')
+    const path = await import('path')
+    const filePath = path.join(process.cwd(), 'public', 'data', 'final-products.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const cockpit3dProducts = JSON.parse(fileContent)
     
     if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
-      console.warn('⚠️ No products found in cached file during build')
+      console.warn('⚠️ No products found in JSON file during build')
       return []
     }
     
@@ -35,7 +39,6 @@ export async function generateStaticParams() {
     }))
   } catch (error) {
     console.error('❌ [BUILD] Failed to load products for static generation:', error)
-    console.error('⚠️ Run: npm run prebuild OR node scripts/fetch-cockpit3d-products.js')
     // Return empty array - build will succeed but no product pages will be generated
     return []
   }
@@ -50,7 +53,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Await params (Next.js 15 requirement)
     const { slug } = await params
     
-    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
+    // Read JSON file from filesystem
+    const fs = await import('fs')
+    const path = await import('path')
+    const filePath = path.join(process.cwd(), 'public', 'data', 'final-products.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const cockpit3dProducts = JSON.parse(fileContent)
     const product = cockpit3dProducts.find((p: any) => p.slug === slug)
     
     if (!product) {

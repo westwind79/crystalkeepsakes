@@ -19,12 +19,11 @@ let stripePromise: ReturnType<typeof loadStripe> | null = null
 export const getStripe = () => {
   if (!stripePromise) {
     if (!STRIPE_PUBLISHABLE_KEY) {
-      console.error('❌ Stripe publishable key not found!')
-      console.error('Mode:', process.env.NEXT_PUBLIC_ENV_MODE)
+      logger.error('Stripe publishable key not found', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
       throw new Error('Stripe publishable key not configured')
     }
     stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY)
-    console.log('✅ Stripe initialized:', process.env.NEXT_PUBLIC_ENV_MODE)
+    logger.success('Stripe initialized', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
   }
   return stripePromise
 }
@@ -285,7 +284,7 @@ export async function startCheckout(
  * @deprecated Use startCheckout() instead
  */
 export function calculateShipping(subtotal: number, shippingMethod?: string): number {
-  console.warn('calculateShipping is deprecated - Stripe Checkout handles shipping')
+  logger.warn('calculateShipping is deprecated - Stripe Checkout handles shipping')
   if (subtotal >= 100) return 0
   switch (shippingMethod) {
     case 'express': return 15.00
@@ -299,7 +298,7 @@ export function calculateShipping(subtotal: number, shippingMethod?: string): nu
  * @deprecated Use startCheckout() instead
  */
 export function calculateTax(subtotal: number, shippingCost: number): number {
-  console.warn('calculateTax is deprecated - Stripe Checkout handles tax')
+  logger.warn('calculateTax is deprecated - Stripe Checkout handles tax')
   const TAX_RATE = 0.085
   return (subtotal + shippingCost) * TAX_RATE
 }
@@ -311,7 +310,7 @@ export function calculateOrderTotals(
   cartItems: CartItem[], 
   shippingMethod: string = 'standard'
 ) {
-  console.warn('calculateOrderTotals is deprecated - Stripe Checkout handles totals')
+  logger.warn('calculateOrderTotals is deprecated - Stripe Checkout handles totals')
   const subtotal = cartItems.reduce((sum, item) => 
     sum + (item.price * item.quantity), 0
   )

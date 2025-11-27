@@ -1,33 +1,46 @@
+# ============================================
+# Crystal Keepsakes - Git Ignore
+# ============================================
+
 # Dependencies
 node_modules/
 vendor/
+# Keep yarn.lock for reproducible builds
+# But ignore package-lock.json since we use yarn
+package-lock.json
 
-# Next.js build outputs
+# Next.js Build Outputs
 .next/
 out/
-build/
-dist/
+out-test/
+out-prod/
+.turbo/
+tsconfig.tsbuildinfo
 
-# Environment variables
+# Admin Panel (should NOT be in production builds)
+out-prod/admin/
+out-test/admin/
+
+# Environment Variables
 .env
 .env.local
 .env.production
+.env.production.local
 .env.development
+.env.development.local
 .env.test
-!.env.example
+.env.test.local
+*.env
+*.env.*
 
-# Stripe configuration
-stripe.json
-**/stripe*.json
-.stripe/
+# Product Data (Edited in Admin - Don't Commit)
+src/data/final-product-list.js
+public/data/products.json
+public/data/final-products*.json
 
-# PHP configuration (for MAMP)
-config/*.php
-!config/*.example.php
-
-# Testing & Coverage
-coverage/
-.nyc_output/
+# Uploaded Images (Don't Commit User Uploads)
+public/uploads/
+public/img/products/cockpit3d/*/product_*
 
 # Logs
 *.log
@@ -35,15 +48,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-.pnpm-debug.log*
+/var/log/
 
-# OS files
+# OS Files
 .DS_Store
 Thumbs.db
 desktop.ini
-$RECYCLE.BIN/
 
-# IDE/Editor files
+# IDE / Editors
 .vscode/
 .idea/
 *.swp
@@ -52,198 +64,29 @@ $RECYCLE.BIN/
 .project
 .classpath
 .settings/
-*.sublime-*
 
-# Debug
-debug/
-*.local
-.pnp.*
-
-# Cache
+# Cache & Temp Files
 .cache/
-.parcel-cache/
-.turbo/
-.vercel/
-.vite/
-.eslintcache
-.stylelintcache
-
-# Temporary files
+.temp/
 *.tmp
-*.temp
-tmp/
-temp/
 
-# TypeScript
-*.tsbuildinfo
-.tsc-tmp/
-
-# Optional npm cache
-.npm/
-
-# Optional REPL history
-.node_repl_history
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# pnpm
-pnpm-lock.yaml
-
-# Windows specific
-*.lnk
-ehthumbs.db
-ehthumbs_vista.db
-
-# MAMP specific
-.htaccess.bak
-php_error.log
-
-# Production files (GoDaddy)
-public_html/
-cgi-bin/
-
-# SSL Certificates
-*.pem
-*.key
-*.crt
-*.cer
-!*.example.*
-
-# Database dumps
-*.sql
-*.sqlite
-*.db
-
-# Backup files
+# Backups
 *.backup
 *.bak
-backup/
+*.old
+*~
 
-# Documentation build
-docs/_build/
+# PHP
+composer.lock
 
-# Lock files (keep package-lock.json for consistency)
-# Uncomment if you prefer yarn or pnpm:
-# package-lock.json
-# yarn.lock
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
-<<<<<<< HEAD
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
-=======
->>>>>>> origin/frontend-edits
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
-*.zip
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
 -e 
 # Environment files
 *.env

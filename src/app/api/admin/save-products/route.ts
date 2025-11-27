@@ -1,47 +1,61 @@
 // app/api/admin/save-products/route.ts
+// DEVELOPMENT ONLY - For local admin panel file saving
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFileSync } from 'fs'
 import { join } from 'path'
 
 export async function POST(request: NextRequest) {
-  try {
-    const { jsonContent, jsContent, isBackup, timestamp } = await request.json()
+  // Only allow in development
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json(
+      { error: 'This endpoint is only available in development' },
+      { status: 403 }
+    )
+  }
 
-    if (!jsonContent || !jsContent) {
+  try {
+    const { jsContent, isBackup, timestamp } = await request.json()
+
+    if (!jsContent) {
       return NextResponse.json({ error: 'Missing content' }, { status: 400 })
     }
 
     const appRoot = process.cwd()
     
     if (isBackup) {
-      // Save timestamped backups
-      const jsonPath = join(appRoot, 'public', 'data', `final-products-${timestamp}.json`)
-      const jsPath = join(appRoot, 'src', 'data', `final-products-${timestamp}.js`)
+      // Save timestamped backup - JS file
+      const jsPath = join(appRoot, 'src', 'data', `final-product-list-${timestamp}.js`)
       
-      writeFileSync(jsonPath, jsonContent, 'utf-8')
       writeFileSync(jsPath, jsContent, 'utf-8')
       
-      console.log('✅ Backup created:', { jsonPath, jsPath })
+      console.log('✅ Backup created:', jsPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: `Backup created with timestamp ${timestamp}`,
-        files: { json: jsonPath, js: jsPath }
+        message: `Backup created: final-product-list-${timestamp}.js`,
+        jsPath
       })
     } else {
-      // Save current working files
-      const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
+      // Save current working file - JS file
       const jsPath = join(appRoot, 'src', 'data', 'final-product-list.js')
       
-      writeFileSync(jsonPath, jsonContent, 'utf-8')
+      // Also save JSON version for static export
+      const match = jsContent.match(/export const finalProductList = (\[[\s\S]*?\]);/)
+      if (match) {
+        const jsonContent = match[1]
+        const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
+        writeFileSync(jsonPath, jsonContent, 'utf-8')
+        console.log('✅ JSON saved:', jsonPath)
+      }
+      
       writeFileSync(jsPath, jsContent, 'utf-8')
       
-      console.log('✅ Products saved:', { jsonPath, jsPath })
+      console.log('✅ Products saved:', jsPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: 'Products saved to server',
-        files: { json: jsonPath, js: jsPath }
+        message: 'Products saved to project (JS + JSON)',
+        jsPath
       })
     }
 

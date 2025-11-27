@@ -38,55 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Use existing environment loader
-function getEnvVariable($key) {
-    static $envCache = null;
-    
-    if ($envCache === null) {
-        $envCache = [];
-        
-        $possibleEnvPaths = [
-            dirname(dirname(__DIR__)) . '/.env',
-            dirname(__DIR__) . '/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/.env',
-            $_SERVER['DOCUMENT_ROOT'] . '/.env'
-        ];
-        
-        foreach ($possibleEnvPaths as $path) {
-            if (file_exists($path)) {
-                $content = file_get_contents($path);
-                $lines = explode("\n", $content);
-                
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (empty($line) || strpos($line, '#') === 0) continue;
-                    
-                    $parts = explode('=', $line, 2);
-                    if (count($parts) !== 2) continue;
-                    
-                    $envKey = trim($parts[0]);
-                    $envValue = trim($parts[1], " \t\n\r\0\x0B\"'");
-                    $envCache[$envKey] = $envValue;
-                }
-                break;
-            }
-        }
-    }
-    
-    return $envCache[$key] ?? null;
-}
+// Load centralized environment loader
+require_once dirname(__DIR__) . '/env-loader.php';
 
 try {
     error_log("=== CHECKOUT SESSION REQUEST ===");
     
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
     // Get Stripe key
     if ($mode === 'production') {
-        $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     } else {
-        $secretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
+        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
     }
     
     if (!$secretKey) {
@@ -159,13 +124,51 @@ try {
         $orderNumber = 'TEST_' . $orderNumber;
     }
     
-    // Determine URLs
-    $baseUrl = ($mode === 'production') 
-        ? 'https://crystalkeepsakes.com'
-        : 'http://localhost:3000';
+    // ✅ FIX: Dynamic URL detection based on request origin
+    // Supports localhost, /test subdirectory, and production
+    $baseUrl = '';
+    
+    // Check for origin header first (most reliable)
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        $baseUrl = $_SERVER['HTTP_ORIGIN'];
+        error_log("Using HTTP_ORIGIN: $baseUrl");
+    } 
+    // Fallback to HTTP_REFERER
+    elseif (isset($_SERVER['HTTP_REFERER'])) {
+        $referer = $_SERVER['HTTP_REFERER'];
+        $parsedUrl = parse_url($referer);
+        $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+        
+        // Handle subdirectory paths (e.g., /test, /crystalkeepsakes)
+        if (isset($parsedUrl['path'])) {
+            $pathParts = explode('/', trim($parsedUrl['path'], '/'));
+            // If path starts with known subdirectory, include it
+            if (!empty($pathParts[0]) && in_array($pathParts[0], ['test', 'crystalkeepsakes', 'staging'])) {
+                $baseUrl .= '/' . $pathParts[0];
+            }
+        }
+        error_log("Using HTTP_REFERER: $baseUrl");
+    }
+    // Fallback to environment-based detection
+    else {
+        if ($mode === 'production') {
+            $baseUrl = 'https://crystalkeepsakes.com';
+        } else {
+            // Check if running in MAMP subdirectory
+            $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+            if (strpos($docRoot, 'MAMP') !== false || strpos($docRoot, 'htdocs') !== false) {
+                $baseUrl = 'http://localhost:8888/crystalkeepsakes';
+            } else {
+                $baseUrl = 'http://localhost:3000';
+            }
+        }
+        error_log("Using fallback URL: $baseUrl");
+    }
     
     $successUrl = $baseUrl . '/order-confirmation?session_id={CHECKOUT_SESSION_ID}';
     $cancelUrl = $baseUrl . '/cart';
+    
+    error_log("Final URLs - Success: $successUrl | Cancel: $cancelUrl");
     
     // Store cart for webhook (limited to 500 chars per metadata field)
     $cartSummary = [];
@@ -193,19 +196,6 @@ try {
         'metadata' => $metadata,
         
         // Collect shipping address
-        'shipping_address_collection' => [
-            'allowed_countries' => ['US', 'CA'],
-        ],
-        
-        // Shipping options - Use your Stripe Dashboard shipping rates
-        'shipping_options' => [
-            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
-            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
-            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
-            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
-            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
-        ],
-        
         // Customer email
         'customer_email' => $data->customerEmail ?? null,
         
@@ -213,8 +203,27 @@ try {
         'allow_promotion_codes' => true,
     ];
     
-    // Enable tax if configured in Stripe Dashboard
-    $sessionParams['automatic_tax'] = ['enabled' => true];
+    // Add shipping for production only (requires Stripe Dashboard configuration)
+    if ($mode === 'production') {
+        $sessionParams['shipping_address_collection'] = [
+            'allowed_countries' => ['US', 'CA'],
+        ];
+        
+        // Shipping options - Use your Stripe Dashboard shipping rates
+        $sessionParams['shipping_options'] = [
+            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
+            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
+            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
+            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
+            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
+        ];
+        
+        // Enable tax if configured in Stripe Dashboard
+        $sessionParams['automatic_tax'] = ['enabled' => true];
+    } else {
+        // Development mode: Use simple shipping
+        error_log('⚠️  Development mode: Shipping and tax disabled for testing');
+    }
     
     $checkoutSession = \Stripe\Checkout\Session::create($sessionParams);
     
