@@ -68,7 +68,8 @@ export default function CheckoutHostedPage() {
               const uploadResult = await uploadCustomerImages(
                 item.customImage.dataUrl, // Masked image from IndexedDB
                 item.customImage.rawImageDataUrl, // Raw image from IndexedDB
-                item.productId
+                item.productId,
+                orderNumber // Pass order number for folder structure
               )
               
               console.log('  - Upload result:', uploadResult)
