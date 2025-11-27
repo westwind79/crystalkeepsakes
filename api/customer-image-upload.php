@@ -115,11 +115,15 @@ try {
     // Ensure directory has trailing slash
     $uploadDir = rtrim($uploadDir, '/') . '/';
     
-    // Create subfolder structure: YYYY-MM/DD/
-    $datePath = date('Y-m') . '/' . date('d') . '/';
-    $fullUploadDir = $uploadDir . $datePath;
-    
-    error_log("Creating date-based subfolder: $fullUploadDir");
+    // Create ORDER-BASED subfolder (one folder per order)
+    if ($orderNumber) {
+        $fullUploadDir = $uploadDir . $orderNumber . '/';
+        error_log("📁 Creating order-based folder: $fullUploadDir");
+    } else {
+        // Fallback: use temp folder if no order number yet
+        $fullUploadDir = $uploadDir . 'temp-' . time() . '/';
+        error_log("⚠️  No order number provided, using temp folder: $fullUploadDir");
+    }
     
     // Create directory if doesn't exist
     if (!file_exists($fullUploadDir)) {
