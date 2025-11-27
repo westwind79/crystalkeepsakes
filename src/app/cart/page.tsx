@@ -576,69 +576,8 @@ export default function CartPage() {
         {/* Continue Shopping */}
         <ContinueShoppingBtn />
 
-        {/* Organized Debug Section (Collapsible) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-12 pt-8 border-t-2 border-gray-300">
-            <button
-              onClick={() => setShowDebug(!showDebug)}
-              className="cursor-pointer flex items-center gap-3 text-lg font-bold text-amber-600 hover:text-amber-700 mb-4 transition-colors"
-            >
-              <span className="text-2xl">{showDebug ? '▼' : '▶'}</span>
-              <span>🔧 Developer Debug Panel</span>
-            </button>
-            
-            {showDebug && (
-              <div className="space-y-4">
-                {/* Cart Summary */}
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-5 rounded-lg border-2 border-amber-200">
-                  <h4 className="font-bold text-amber-900 mb-3">📊 Cart Summary</h4>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="text-amber-700 font-semibold">Total Items:</span>
-                      <span className="ml-2 text-amber-900 font-bold">{cart.length}</span>
-                    </div>
-                    <div>
-                      <span className="text-amber-700 font-semibold">With Images:</span>
-                      <span className="ml-2 text-amber-900 font-bold">{cart.filter(i => i.customImage).length}</span>
-                    </div>
-                    <div>
-                      <span className="text-amber-700 font-semibold">Cart Total:</span>
-                      <span className="ml-2 text-amber-900 font-bold">${total.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Full JSON */}
-                <div className="bg-slate-900 p-4 rounded-lg overflow-auto max-h-96 border-2 border-slate-700">
-                  <h4 className="text-amber-400 font-bold mb-2">📋 Full Cart JSON</h4>
-                  <pre className="text-green-300 text-xs font-mono">
-                    {JSON.stringify(cart, null, 2)}
-                  </pre>
-                </div>
-
-                {/* Cockpit3D Validation */}
-                <div className="bg-blue-50 p-5 rounded-lg border-2 border-blue-200">
-                  <h4 className="font-bold text-blue-900 mb-3">🚀 Cockpit3D Readiness Check</h4>
-                  <div className="space-y-2 text-sm">
-                    {cart.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <span className={item.cockpit3d_id ? 'text-green-600' : 'text-red-600'}>●</span>
-                        <span className="text-gray-700">
-                          <strong>{item.name}:</strong> 
-                          {item.cockpit3d_id ? (
-                            <span className="text-green-700 ml-2">✓ Has Cockpit3D ID ({item.cockpit3d_id})</span>
-                          ) : (
-                            <span className="text-red-700 ml-2">✗ Missing Cockpit3D ID</span>
-                          )}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Global Debug Panel (bottom-left button) */}
+        <CartDebugPanel />
       </div>
     </div>
   )
