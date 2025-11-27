@@ -70,7 +70,6 @@ export default function CartPage() {
   const [storageStats, setStorageStats] = useState<any>(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  const [showDebug, setShowDebug] = useState(false)
 
   const loadCart = async () => {
     try {
