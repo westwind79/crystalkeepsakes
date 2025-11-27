@@ -106,7 +106,9 @@ Add any product to cart (with or without custom image).
 Click "Checkout" - you should:
 - ✅ NOT see "No such shipping rate" error
 - ✅ Get redirected to Stripe checkout page
-- ✅ See simple payment form (NO shipping fields)
+- ✅ See email + card + **shipping address fields** (for Cockpit3D)
+- ✅ NOT see shipping rate/speed selection
+- ✅ NOT see tax calculations
 
 ### Step 4: Complete Test Payment
 Use Stripe test card:
