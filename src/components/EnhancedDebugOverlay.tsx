@@ -424,6 +424,120 @@ export default function EnhancedDebugOverlay() {
               </div>
             )}
 
+            {activeTab === 'cart' && (
+              <div className="space-y-4">
+                {(() => {
+                  try {
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+                    const orderNumber = localStorage.getItem('pending_order_number')
+                    
+                    return (
+                      <>
+                        <div className="bg-purple-900/30 border border-purple-700 rounded-lg p-3">
+                          <h3 className="text-sm font-bold text-purple-400 mb-2">🛒 Cart Summary</h3>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <span className="text-gray-400">Items:</span>
+                              <span className="ml-2 text-white font-bold">{cart.length}</span>
+                            </div>
+                            <div>
+                              <span className="text-gray-400">Total:</span>
+                              <span className="ml-2 text-white font-bold">
+                                ${cart.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                          {orderNumber && (
+                            <div className="mt-2 pt-2 border-t border-purple-700">
+                              <span className="text-gray-400 text-xs">Order #:</span>
+                              <span className="ml-2 text-purple-300 font-mono text-xs">{orderNumber}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {cart.length > 0 && cart.map((item: any, idx: number) => (
+                          <div key={idx} className="bg-gray-800 rounded-lg p-3">
+                            <h4 className="text-sm font-semibold text-white mb-2">{item.name || item.productId}</h4>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">SKU:</span>
+                                <span className="text-white font-mono">{item.sku}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Price:</span>
+                                <span className="text-white">${item.price} × {item.quantity}</span>
+                              </div>
+                              {item.cockpit3d_id && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-400">Cockpit3D ID:</span>
+                                  <span className="text-green-400">{item.cockpit3d_id}</span>
+                                </div>
+                              )}
+                              {item.customImageId && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-400">Has Image:</span>
+                                  <span className="text-green-400">✓</span>
+                                </div>
+                              )}
+                              {item.options && item.options.length > 0 && (
+                                <div className="mt-2 pt-2 border-t border-gray-700">
+                                  <span className="text-gray-400">Options:</span>
+                                  <ul className="ml-2 mt-1 space-y-0.5">
+                                    {item.options.map((opt: any, oi: number) => (
+                                      <li key={oi} className="text-gray-300">• {opt.name}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+
+                        {cart.length === 0 && (
+                          <div className="text-center py-8 text-gray-500">
+                            Cart is empty
+                          </div>
+                        )}
+
+                        <div className="bg-gray-800 rounded-lg p-3">
+                          <h4 className="text-sm font-semibold text-yellow-400 mb-2">⚡ Quick Actions</h4>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                console.log('Cart Data:', cart)
+                                alert('Cart logged to console')
+                              }}
+                              className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs py-1 px-2 rounded"
+                            >
+                              Log Cart
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm('Clear cart?')) {
+                                  localStorage.removeItem('cart')
+                                  localStorage.removeItem('pending_order_number')
+                                  location.reload()
+                                }
+                              }}
+                              className="flex-1 bg-red-600 hover:bg-red-700 text-xs py-1 px-2 rounded"
+                            >
+                              Clear Cart
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )
+                  } catch (e) {
+                    return (
+                      <div className="bg-red-900/30 border border-red-700 rounded-lg p-3 text-center text-red-400 text-sm">
+                        Error loading cart data
+                      </div>
+                    )
+                  }
+                })()}
+              </div>
+            )}
+
             <div className="mt-6 pt-4 border-t border-gray-700">
               <button
                 onClick={() => {
