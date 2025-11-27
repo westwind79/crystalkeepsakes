@@ -147,21 +147,27 @@ try {
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
     // Generate web-accessible URL
-    // In local dev, images are served by MAMP (port 8888), not Next.js (port 3000)
-    // So we need the full backend URL
-    $relativePath = str_replace($projectRoot, '', $uploadDir);
-    $relativePath = str_replace('\\', '/', $relativePath); // Windows paths
+    // Figure out the path relative to MAMP htdocs
+    $htdocsPath = $_SERVER['DOCUMENT_ROOT']; // e.g., C:/MAMP/htdocs
+    error_log("Document root: $htdocsPath");
+    
+    // Get path relative to htdocs
+    $relativePath = str_replace($htdocsPath, '', $uploadDir);
+    $relativePath = str_replace('\\', '/', $relativePath); // Windows to Unix paths
     $relativePath = ltrim($relativePath, '/');
     
+    error_log("Relative path from htdocs: $relativePath");
+    
     if ($mode === 'development') {
-        // Local: Full URL via MAMP backend (port 8888)
-        $fileUrl = $backendUrl . '/' . $relativePath . $filename;
+        // Local: MAMP serves from htdocs root on port 8888
+        // URL: http://localhost:8888/crystal-data/order-images-test/file.jpg
+        $fileUrl = 'http://localhost:8888/' . $relativePath . $filename;
     } else {
         // Production: Relative path (same domain)
         $fileUrl = '/' . $relativePath . $filename;
     }
     
-    error_log("Image URL: $fileUrl");
+    error_log("✅ Final image URL: $fileUrl");
     
     // Return success with file info
     echo json_encode([
