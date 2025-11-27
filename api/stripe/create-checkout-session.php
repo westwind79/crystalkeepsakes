@@ -64,15 +64,26 @@ try {
     
     error_log("Mode: $mode");
     
-    // Get Stripe key
+    // Get Stripe key based on mode
     if ($mode === 'production') {
         $secretKey = getEnvVar('STRIPE_SECRET_KEY');
+        error_log("Using LIVE Stripe key");
     } else {
         $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
+        error_log("Using TEST Stripe key");
     }
     
     if (!$secretKey) {
-        throw new Exception("Stripe secret key not found");
+        throw new Exception("Stripe secret key not found for mode: $mode");
+    }
+    
+    // Verify key matches mode
+    $keyPrefix = substr($secretKey, 0, 8);
+    if ($mode === 'production' && strpos($keyPrefix, 'sk_live') === false) {
+        error_log("⚠️  WARNING: Production mode but using test key!");
+    }
+    if ($mode !== 'production' && strpos($keyPrefix, 'sk_test') === false) {
+        error_log("⚠️  WARNING: Test mode but using live key!");
     }
     
     // Load Stripe
