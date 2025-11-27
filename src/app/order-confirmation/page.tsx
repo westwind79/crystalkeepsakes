@@ -98,12 +98,28 @@ function OrderConfirmationContent() {
         }
       }
 
+      // Get debug info from Stripe session
+      let debugInfo: any = null
+      try {
+        const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
+        const debugResponse = await fetch(`${phpBackendUrl}/api/stripe/verify-session-debug.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        })
+        debugInfo = await debugResponse.json()
+        console.log('🐛 [DEBUG] Complete order info:', debugInfo)
+      } catch (e) {
+        console.warn('Could not fetch debug info:', e)
+      }
+
       // Set order details for display
       setOrderDetails({
         orderNumber,
         sessionId: sessionId,
         status: 'complete',
-        message: 'Your order has been confirmed!'
+        message: 'Your order has been confirmed!',
+        debug: debugInfo // Include debug info for display
       })
       
       // Clear the cart and sessionStorage after successful order
