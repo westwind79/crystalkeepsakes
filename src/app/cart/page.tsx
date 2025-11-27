@@ -92,7 +92,6 @@ export default function CartPage() {
         items: cartWithImages.length,
         withImages: cartWithImages.filter(item => item.customImage).length
       })
-      debugStep('cart-load', 'Cart loaded', 'complete', { itemCount: cartWithImages.length, items: cartWithImages })
     } catch (error) {
       logger.error('Failed to load cart', error)
     } finally {
