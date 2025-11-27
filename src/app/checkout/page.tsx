@@ -134,7 +134,7 @@ export default function CheckoutHostedPage() {
       const payload = {
         cartItems: cartForCheckout,
         subtotal: subtotal,
-        orderNumber: `CK-${Date.now()}`
+        orderNumber: orderNumber // Use the same order number
       }
 
       logger.info('Making API call', { 
