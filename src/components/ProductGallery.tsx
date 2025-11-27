@@ -1,8 +1,8 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { assetPath } from '@/lib/assetPath'
 
 export default function ProductGallery({ images = [] }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -27,18 +27,73 @@ export default function ProductGallery({ images = [] }) {
 
   const currentImage = images[activeIndex]
   const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
+  
+  // ✅ Use assetPath for all images - works in dev and production
+  const displaySrc = assetPath(imageSrc || '')
+
+  if (isDev) {
+    console.log('📸 Image source:', imageSrc, '→', displaySrc)
+  }
+  
+  // 🐛 DEBUG: Emit debug event for gallery display
+  useEffect(() => {
+    if (isDev && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('debug-step', {
+        detail: {
+          id: 'gallery-display',
+          label: `Gallery displaying image ${activeIndex + 1}/${images.length}`,
+          status: 'active',
+          data: {
+            originalSrc: imageSrc,
+            displaySrc: displaySrc,
+            imageCount: images.length,
+            activeIndex: activeIndex
+          }
+        }
+      }));
+    }
+  }, [isDev, imageSrc, displaySrc, activeIndex, images.length])
 
   return (
     <div className="product-gallery">
-      {/* Main Image */}
+      {/* Main Image - Use regular img tag to avoid Next.js optimization issues */}
       <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
-        <Image
-          src={imageSrc || 'https://placehold.co/800x800?text=No+Image'}
+        <img
+          src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
           alt={`Product image ${activeIndex + 1}`}
-          fill
-          style={{ objectFit: 'cover' }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          onLoad={(e) => {
+            if (isDev) {
+              console.log('✅ Image loaded successfully:', displaySrc);
+              // 🐛 DEBUG: Success event
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('debug-step', {
+                  detail: {
+                    id: 'gallery-display',
+                    label: `✅ Image loaded: ${displaySrc}`,
+                    status: 'complete',
+                    data: { src: displaySrc, naturalWidth: e.currentTarget.naturalWidth, naturalHeight: e.currentTarget.naturalHeight }
+                  }
+                }));
+              }
+            }
+          }}
           onError={(e) => {
-            if (isDev) console.log('❌ Image error:', imageSrc)
+            if (isDev) {
+              console.log('❌ Image error:', displaySrc);
+              // 🐛 DEBUG: Error event
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('debug-step', {
+                  detail: {
+                    id: 'gallery-display',
+                    label: `❌ Image failed to load`,
+                    status: 'error',
+                    error: `Failed to load: ${displaySrc}`,
+                    data: { attemptedSrc: displaySrc }
+                  }
+                }));
+              }
+            }
             e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
           }}
         />
@@ -51,8 +106,9 @@ export default function ProductGallery({ images = [] }) {
             
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
+              const thumbDisplaySrc = assetPath(thumbSrc || '')
+              
               return (
-                
                 <div key={idx} className="col-3">
                   <div 
                     className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
@@ -64,18 +120,16 @@ export default function ProductGallery({ images = [] }) {
                       overflow: 'hidden'
                     }}
                     onClick={() => setActiveIndex(idx)}
-                  > 
-                    <Image
-                      src={thumbSrc || 'https://placehold.co/800x800?text=No+Image'}
+                  >
+                    <img
+                      src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
                       alt={`Thumbnail ${idx + 1}`}
-                      fill
-                      style={{ objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                       }}
                     />
                   </div>
-
                 </div>
               )
             })}

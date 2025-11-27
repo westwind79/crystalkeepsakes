@@ -1,31 +1,32 @@
 // app/products/[slug]/generate-params.ts
-// CRITICAL: This reads the CACHED file, not the network endpoint
+// CRITICAL: This reads from JSON file as single source of truth
+
+import { getProducts } from '@/lib/products'
 
 /**
  * Get product slugs for static generation at build time
- * Reads from the pre-generated cockpit3d-products.js file
+ * Reads from the JSON file (single source of truth)
  */
 export async function getProductSlugs() {
   try {
-    console.log('📦 [BUILD] Loading product slugs from cached file...')
+    console.log('📦 [BUILD] Loading product slugs from JSON...')
     
-    // FIXED: Import the generated file directly (not network call)
-    const { finalProductList: cockpit3dProducts } = await import('../../../data/final-product-list.js')
+    const allProducts = await getProducts()
     
-    if (!cockpit3dProducts || !Array.isArray(cockpit3dProducts)) {
-      console.warn('⚠️ No products found in cached file')
+    if (!allProducts || !Array.isArray(allProducts)) {
+      console.warn('⚠️ No products found in JSON file')
       return getFallbackSlugs()
     }
     
-    console.log(`✅ [BUILD] Loaded ${cockpit3dProducts.length} products from cache`)
+    console.log(`✅ [BUILD] Loaded ${allProducts.length} products from JSON`)
     
     // Extract slugs
-    return cockpit3dProducts.map((p: any) => ({ 
+    return allProducts.map((p: any) => ({ 
       slug: p.slug 
     }))
     
   } catch (error) {
-    console.error('❌ [BUILD] Failed to load cached products:', error)
+    console.error('❌ [BUILD] Failed to load products from JSON:', error)
     return getFallbackSlugs()
   }
 }

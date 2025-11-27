@@ -1,529 +1,268 @@
-// app/checkout/page.tsx
-// Version: 3.1.0 | Date: 2025-11-10
-// Fixed: Import from correct @/lib/stripe path
-
+// app/checkout-hosted/page.tsx
+// Stripe Hosted Checkout - Redirects to Stripe's checkout page
 'use client'
 
 import { useState, useEffect } from 'react'
-import { PaymentElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js'
-import { getStripe, createPaymentIntent, calculateOrderTotals } from '@/lib/stripe'
-import { getCart, clearCart, type CartItem } from '@/lib/cartUtils'
+import { useRouter } from 'next/navigation'
+import { getCartWithImages } from '@/lib/cartUtils'
+import { logger, isDevelopment } from '@/utils/logger'
+import { uploadCustomerImages } from '@/lib/customerImageUpload'
 
-// Payment form component
-function CheckoutForm({ clientSecret, orderTotals }: { 
-  clientSecret: string
-  orderTotals: { subtotal: number, shippingCost: number, taxAmount: number, total: number }
-}) {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [message, setMessage] = useState('')
-  const [processing, setProcessing] = useState(false)
+export default function CheckoutHostedPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [debugInfo, setDebugInfo] = useState<any>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!stripe || !elements) return
+  useEffect(() => {
+    initiateCheckout()
+  }, [])
 
-    setProcessing(true)
-    setMessage('Processing payment...')
-
+  async function initiateCheckout() {
     try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        redirect: 'if_required'
+      setLoading(true)
+      setError('')
+
+      // Get cart items WITH images from IndexedDB
+      const cart = await getCartWithImages()
+      
+      if (!cart || cart.length === 0) {
+        setError('Your cart is empty')
+        setTimeout(() => router.push('/cart'), 2000)
+        return
+      }
+
+      logger.info('Initiating Stripe Checkout', { items: cart.length })
+
+      // Generate order number ONCE for entire checkout process
+      const orderNumber = `CK-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`
+      console.log('🎫 Generated Order Number:', orderNumber)
+      localStorage.setItem('pending_order_number', orderNumber)
+
+      // STEP 1: Upload images to server BEFORE creating checkout session
+      logger.info('📤 Uploading customer images to server...')
+      console.log('=== CHECKOUT DEBUG ===')
+      console.log('Cart items:', cart.length)
+      console.log('Order number:', orderNumber)
+      cart.forEach((item, idx) => {
+        console.log(`Item ${idx}:`, {
+          productId: item.productId,
+          hasCustomImage: !!item.customImage,
+          dataUrlLength: item.customImage?.dataUrl?.length,
+          dataUrlStart: item.customImage?.dataUrl?.substring(0, 50),
+          rawImageLength: item.customImage?.rawImageDataUrl?.length
+        })
+      })
+      
+      const cartWithServerUrls = await Promise.all(
+        cart.map(async (item, idx) => {
+          // Check if this item has images in IndexedDB
+          if (item.customImage?.dataUrl) {
+            console.log(`📤 Uploading images for item ${idx}: ${item.productId}`)
+            console.log('  - Masked image length:', item.customImage.dataUrl.length)
+            console.log('  - Masked image starts with:', item.customImage.dataUrl.substring(0, 50))
+            
+            logger.info(`Uploading images for item: ${item.productId}`)
+            
+            try {
+              const uploadResult = await uploadCustomerImages(
+                item.customImage.dataUrl, // Masked image from IndexedDB
+                item.customImage.rawImageDataUrl, // Raw image from IndexedDB
+                item.productId,
+                orderNumber // Pass order number for folder structure
+              )
+              
+              console.log('  - Upload result:', uploadResult)
+              
+              if (uploadResult.errors.length > 0) {
+                console.error('  - Upload errors:', uploadResult.errors)
+                logger.error('Image upload errors:', uploadResult.errors)
+              }
+              
+              // Replace base64 with server URLs
+              return {
+                ...item,
+                maskedImageUrl: uploadResult.maskedUrl,
+                rawImageUrl: uploadResult.rawUrl,
+                imageUploadErrors: uploadResult.errors
+              }
+            } catch (error) {
+              console.error('  - Upload exception:', error)
+              return item
+            }
+          }
+          
+          console.log(`⏭️  Item ${idx} has no custom image, skipping upload`)
+          return item
+        })
+      )
+
+      logger.info('✅ Images uploaded, preparing checkout...')
+      console.log('=== AFTER UPLOAD ===')
+      cartWithServerUrls.forEach((item, idx) => {
+        console.log(`Item ${idx}:`, {
+          productId: item.productId,
+          maskedImageUrl: item.maskedImageUrl,
+          rawImageUrl: item.rawImageUrl,
+          errors: item.imageUploadErrors
+        })
       })
 
-      if (error) throw error
-      if (paymentIntent?.status !== 'succeeded') throw new Error('Payment failed')
+      // Prepare cart items for checkout (now with server URLs)
+      const cartForCheckout = cartWithServerUrls.map(item => {
+        const { customImage, ...itemWithoutImage } = item as any
+        return {
+          ...itemWithoutImage,
+          customImageId: item.customImageId,
+          customImageMetadata: item.customImageMetadata,
+          // Include image URLs for webhook/Cockpit3D
+          maskedImageUrl: item.maskedImageUrl,
+          rawImageUrl: item.rawImageUrl
+        }
+      })
 
-      setMessage('✅ Payment successful!')
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+
+      // Create checkout session using PHP backend
+      // PHP backend works in all environments (development, test, production)
+      // Reads NEXT_PUBLIC_PHP_BACKEND_URL from your local .env file
+
+      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
+      const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
-      setTimeout(() => {
-        clearCart()
-        window.location.href = '/order-confirmation?order=' + paymentIntent.id
-      }, 2000)
+      const payload = {
+        cartItems: cartForCheckout,
+        subtotal: subtotal,
+        orderNumber: orderNumber // Use the same order number
+      }
+
+      logger.info('Making API call', { 
+        url: apiUrl,
+        environment: process.env.NODE_ENV,
+        itemCount: cartForCheckout.length,
+        subtotal
+      })
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      })
+
+      logger.info('Response received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      })
+
+      let data
+      try {
+        const responseText = await response.text()
+        logger.info('Raw response', responseText.substring(0, 500))
+        data = JSON.parse(responseText)
+      } catch (parseError: any) {
+        logger.error('Failed to parse response', parseError)
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            status: response.status,
+            statusText: response.statusText,
+            responsePreview: await response.text()
+          })
+        }
+        throw new Error(`Server returned invalid JSON. Status: ${response.status}`)
+      }
+
+      if (!response.ok) {
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            status: response.status,
+            statusText: response.statusText,
+            errorData: data,
+            payload: payload
+          })
+        }
+        throw new Error(data.error || `Server error: ${response.status}`)
+      }
+
+      if (!data.success) {
+        if (isDevelopment) {
+          setDebugInfo({
+            url: apiUrl,
+            responseData: data,
+            payload: payload
+          })
+        }
+        throw new Error(data.error || 'Checkout session creation failed')
+      }
+
+      logger.success('Checkout session created', { sessionId: data.sessionId })
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error('No checkout URL received')
+      }
 
     } catch (err: any) {
-      console.error('Payment error:', err)
-      setMessage(`❌ Error: ${err.message}`)
-      setProcessing(false)
+      logger.error('Checkout error', err)
+      setError(err.message || 'Failed to initiate checkout')
+      setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 text-gray-900">
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Order Summary */}
-        <div className="bg-white text-gray-900 p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4 text-gray-900">Order Summary</h3>
-          
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-slate-900">
-              <span>Subtotal:</span>
-              <span>${orderTotals.subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shipping:</span>
-              <span>
-                {orderTotals.shippingCost === 0 ? (
-                  <span className="text-green-600">FREE</span>
-                ) : (
-                  `$${orderTotals.shippingCost.toFixed(2)}`
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tax:</span>
-              <span>${orderTotals.taxAmount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-              <span>Total:</span>
-              <span>${orderTotals.total.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Form */}
-        <div className="bg-white text-gray-900 p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Payment Details</h3>
-          
-          <PaymentElement />
-
-          <button
-            type="submit"
-            disabled={!stripe || processing}
-            className="w-full mt-6 bg-[#8ac644] text-black py-3 rounded font-bold hover:bg-[#7ab534] disabled:bg-gray-400"
-          >
-            {processing ? 'Processing...' : `Pay $${orderTotals.total.toFixed(2)}`}
-          </button>
-
-          {message && (
-            <div className={`mt-4 p-3 rounded text-sm ${
-              message.includes('✅') ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-            }`}>
-              {message}
-            </div>
+    <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
+      <div className="max-w-md w-full mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          {loading && !error && (
+            <>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Redirecting to Checkout
+              </h2>
+              <p className="text-gray-600">
+                Please wait while we prepare your secure checkout session...
+              </p>
+            </>
           )}
 
-          <p className="text-xs text-gray-500 mt-4 text-center">
-            Test: 4242 4242 4242 4242 | Any future date | Any CVC
-          </p>
-        </div>
-      </div>
-    </form>
-  )
-}
-
-// Main checkout page
-export default function CheckoutPage() {
-  const [clientSecret, setClientSecret] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [shippingMethod, setShippingMethod] = useState('standard')
-  const [orderTotals, setOrderTotals] = useState({
-    subtotal: 0,
-    shippingCost: 0,
-    taxAmount: 0,
-    total: 0
-  })
-  const [shippingAddress, setShippingAddress] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    line1: '',
-    line2: '',
-    city: '',
-    state: '',
-    postal_code: '',
-    country: 'US'
-  })
-  const [addressComplete, setAddressComplete] = useState(false)
-
-  // Calculate totals when cart or shipping changes
-  useEffect(() => {
-    const cartItems = getCart()
-    setCart(cartItems)
-    
-    if (cartItems.length > 0) {
-      const totals = calculateOrderTotals(cartItems, shippingMethod)
-      console.log('📊 Order totals calculated:', totals)
-      setOrderTotals(totals)
-    }
-  }, [shippingMethod])
-
-  // Build Cockpit3D order structure from cart
-  function buildCockpit3DOrder() {
-    console.log('🏗️ Building Cockpit3D order structure')
-    
-    const items = cart.map(item => {
-      const orderItem: any = {
-        product_id: item.cockpit3d_id || item.productId,
-        quantity: item.quantity,
-        options: []
-      }
-
-      // Add size option if present
-      if (item.options?.size) {
-        orderItem.options.push({
-          option_id: '151',
-          value_id: item.options.size.cockpit3d_id || item.options.size.id,
-          name: 'Size',
-          value: item.options.size.name
-        })
-      }
-
-      // Add lightbase option if present and not "none"
-      if (item.options?.lightbase && item.options.lightbase.id !== 'none') {
-        orderItem.options.push({
-          option_id: '152',
-          value_id: item.options.lightbase.cockpit3d_id || item.options.lightbase.id,
-          name: 'Light Base',
-          value: item.options.lightbase.name
-        })
-      }
-
-      // Add background option if present and not "rm"
-      if (item.options?.background && item.options.background.id !== 'rm') {
-        orderItem.options.push({
-          option_id: item.options.background.cockpit3d_option_id || '154',
-          name: item.options.background.name,
-          value: 'true'
-        })
-      }
-
-      // Add text option if present and not "none"
-      if (item.options?.text && item.options.text.id !== 'none') {
-        orderItem.options.push({
-          option_id: item.options.text.cockpit3d_option_id || '199',
-          name: 'Customer text',
-          value: item.options.text.value || ''
-        })
-      }
-
-      // Add custom image reference
-      if (item.customImageId) {
-        orderItem.custom_image = {
-          image_id: item.customImageId,
-          filename: item.customImageMetadata?.filename || 'custom.jpg'
-        }
-      }
-
-      return orderItem
-    })
-
-    console.log('📦 Cockpit3D order items:', items)
-
-    return {
-      items: items,
-      shipping_address: shippingAddress,
-      customer_email: shippingAddress.email,
-      customer_name: shippingAddress.name
-    }
-  }
-
-  // Initialize payment
-  useEffect(() => {
-    async function initializePayment() {
-      try {
-        if (!cart.length) {
-          setError('Cart is empty')
-          setLoading(false)
-          return
-        }
-
-        // Check if address is complete
-        if (!addressComplete) {
-          console.log('⏳ Waiting for shipping address...')
-          return
-        }
-
-        console.log('🛒 Creating payment intent with PHP backend')
-        console.log('Totals:', orderTotals)
-        console.log('Shipping address:', shippingAddress)
-
-        const cockpitOrder = buildCockpit3DOrder()
-        const orderNumber = `CK-${Date.now()}`
-
-        console.log('🏗️ [CHECKOUT] Building Cockpit3D Order')
-        console.log('🏗️ [CHECKOUT] Cockpit3D Order:', JSON.stringify(cockpitOrder, null, 2))
-
-        // Store pending order data for order confirmation page
-        const pendingOrder = {
-          orderNumber,
-          cartItems: cart,
-          customer: {
-            firstName: shippingAddress.name.split(' ')[0] || '',
-            lastName: shippingAddress.name.split(' ').slice(1).join(' ') || '',
-            email: shippingAddress.email,
-            phone: shippingAddress.phone,
-            shippingAddress: {
-              street1: shippingAddress.line1,
-              street2: shippingAddress.line2,
-              city: shippingAddress.city,
-              state: shippingAddress.state,
-              zipCode: shippingAddress.postal_code,
-              country: shippingAddress.country
-            }
-          },
-          shippingInfo: shippingAddress,
-          receipt_email: shippingAddress.email,
-          cockpitOrderData: cockpitOrder
-        }
-        
-        console.log('💾 [CHECKOUT] Storing Pending Order:', {
-          orderNumber,
-          itemCount: cart.length,
-          customer: pendingOrder.customer,
-          shippingInfo: pendingOrder.shippingInfo
-        })
-        
-        sessionStorage.setItem('pendingOrder', JSON.stringify(pendingOrder))
-        console.log('✅ [CHECKOUT] Pending order stored successfully')
-
-        // This calls PHP: create-payment-intent.php
-        const result = await createPaymentIntent(
-          cart, 
-          shippingMethod,
-          cart,
-          orderNumber,
-          cockpitOrder
-        )
-        
-        console.log('✅ Payment intent created:', result.orderNumber)
-        setClientSecret(result.clientSecret)
-        setLoading(false)
-
-      } catch (err: any) {
-        console.error('❌ Payment setup failed:', err)
-        setError(err.message || 'Failed to initialize payment')
-        setLoading(false)
-      }
-    }
-
-    if (cart.length > 0 && orderTotals.total > 0 && addressComplete) {
-      initializePayment()
-    }
-  }, [cart, orderTotals, addressComplete])
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-md mx-auto p-6 bg-red-50 rounded">
-          <p className="text-red-800">❌ {error}</p>
-          <a href="/cart" className="text-blue-600 underline mt-4 block">
-            Return to cart
-          </a>
-        </div>
-      </div>
-    )
-  }
-
-  if (loading || !clientSecret) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12 text-slate-900">
-        <div className="max-w-3xl mx-auto">
-          
-          {/* Shipping Address Form */}
-          <div className="bg-white p-6 rounded shadow mb-6 ">
-            <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Address</h2>
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  value={shippingAddress.name}
-                  onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
+          {error && (
+            <>
+              <div className="text-red-500 mb-4">
+                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Checkout Error
+              </h2>
+              <p className="text-gray-600 mb-4">{error}</p>
               
-              <div>
-                <label className="block text-sm font-medium mb-1">Email *</label>
-                <input
-                  type="email"
-                  value={shippingAddress.email}
-                  onChange={(e) => setShippingAddress({...shippingAddress, email: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone *</label>
-                <input
-                  type="tel"
-                  value={shippingAddress.phone}
-                  onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Address Line 1 *</label>
-                <input
-                  type="text"
-                  value={shippingAddress.line1}
-                  onChange={(e) => setShippingAddress({...shippingAddress, line1: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Address Line 2</label>
-                <input
-                  type="text"
-                  value={shippingAddress.line2}
-                  onChange={(e) => setShippingAddress({...shippingAddress, line2: e.target.value})}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">City *</label>
-                <input
-                  type="text"
-                  value={shippingAddress.city}
-                  onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">State *</label>
-                <input
-                  type="text"
-                  value={shippingAddress.state}
-                  onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Zip Code *</label>
-                <input
-                  type="text"
-                  value={shippingAddress.postal_code}
-                  onChange={(e) => setShippingAddress({...shippingAddress, postal_code: e.target.value})}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-            </div>
-            
-            <button
-              onClick={() => {
-                // Validate required fields
-                if (shippingAddress.name && shippingAddress.email && shippingAddress.phone &&
-                    shippingAddress.line1 && shippingAddress.city && shippingAddress.state && 
-                    shippingAddress.postal_code) {
-                  setAddressComplete(true)
-                  console.log('✅ Shipping address complete')
-                } else {
-                  alert('Please fill in all required fields')
-                }
-              }}
-              className="mt-4 w-full bg-[#8ac644] text-black py-3 rounded font-bold hover:bg-[#7ab534]"
-            >
-              Continue to Payment
-            </button>
-          </div>
-
-          {/* Shipping Selection */}
-          {addressComplete && (
-            <div className="bg-white p-6 rounded shadow mb-6">
-              <h2 className="text-xl font-bold mb-4 text-slate-900">Shipping Method</h2>
-            
-            <div className="space-y-3">
-              <label className="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="shipping"
-                  value="standard"
-                  checked={shippingMethod === 'standard'}
-                  onChange={(e) => setShippingMethod(e.target.value)}
-                  className="mr-3"
-                />
-                <div className="flex-1">
-                  <div className="font-medium">Standard Shipping</div>
-                  <div className="text-sm text-gray-600">5-7 business days</div>
+              {isDevelopment && debugInfo && (
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-xs max-h-60 overflow-auto">
+                  <h3 className="font-bold mb-2 text-gray-900">🔍 Debug Information:</h3>
+                  <pre className="whitespace-pre-wrap text-gray-700">
+                    {JSON.stringify(debugInfo, null, 2)}
+                  </pre>
                 </div>
-                <div className="font-bold">
-                  {orderTotals.subtotal >= 100 ? 'FREE' : '$5.00'}
-                </div>
-              </label>
-
-              <label className="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="shipping"
-                  value="priority"
-                  checked={shippingMethod === 'priority'}
-                  onChange={(e) => setShippingMethod(e.target.value)}
-                  className="mr-3"
-                />
-                <div className="flex-1">
-                  <div className="font-medium">Priority Shipping</div>
-                  <div className="text-sm text-gray-600">2-3 business days</div>
-                </div>
-                <div className="font-bold">$10.00</div>
-              </label>
-
-              <label className="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="shipping"
-                  value="express"
-                  checked={shippingMethod === 'express'}
-                  onChange={(e) => setShippingMethod(e.target.value)}
-                  className="mr-3"
-                />
-                <div className="flex-1">
-                  <div className="font-medium">Express Shipping</div>
-                  <div className="text-sm text-gray-600">1-2 business days</div>
-                </div>
-                <div className="font-bold">$15.00</div>
-              </label>
-            </div>
-
-            {orderTotals.subtotal >= 100 && (
-              <div className="mt-4 p-3 bg-green-50 text-green-800 rounded text-sm">
-                🎉 You qualify for free standard shipping!
-              </div>
-            )}
-            </div>
-          )}
-
-          {/* Loading Payment */}
-          {addressComplete && (
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <p className="mt-4">Setting up payment...</p>
-            </div>
+              )}
+              
+              <button
+                onClick={() => router.push('/cart')}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Return to Cart
+              </button>
+            </>
           )}
         </div>
       </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-slate-800">
-      {/* Hero Section */}      
-      <section className="hero px-8 py-16 text-center">
-        <div className="hero-content max-w-xl mx-auto">
-          <h1 className="primary-header mb-4">Checkout</h1>
-          <p className="lead">Complete your order</p>
-        </div>
-      </section>
-
-      <Elements stripe={getStripe()} options={{ clientSecret }}>
-        <CheckoutForm clientSecret={clientSecret} orderTotals={orderTotals} />
-      </Elements>
     </div>
   )
 }

@@ -5,9 +5,15 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/fetch-cockpit3d-products.js",
-    "build": "next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production",
-    "build:test": "env-cmd -f .env.production.test next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.test",
-    "build:prod": "env-cmd -f .env.production.root next build && node scripts/copy-api.js && node scripts/copy-env.js .env.production.root",
+    "fetch-products": "node scripts/fetch-cockpit3d-products.js",
+    "copy-products": "node scripts/copy-products.js",
+    "build": "next build && node scripts/copy-api.js && node scripts/remove-admin-from-build.js",
+    "build:test": "node scripts/safe-build.js test",
+    "build:prod": "node scripts/safe-build.js prod",
+    "build:local": "node scripts/safe-build.js local",
+    "build:test:old": "cross-env BUILD_MODE=test NEXT_PUBLIC_BASE_PATH=/test NEXT_PUBLIC_ENV_MODE=testing next build && node scripts/prepare-build.js test && node scripts/remove-admin-from-build.js",
+    "build:prod:old": "cross-env BUILD_MODE=prod NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_ENV_MODE=production next build && node scripts/prepare-build.js prod && node scripts/remove-admin-from-build.js",
+    "clean": "rimraf out out-test out-prod .next",
     "start": "next start",
     "lint": "next lint"
   },
@@ -17,7 +23,7 @@
     "@types/gsap": "^1.20.2",
     "browser-image-compression": "^2.0.2",
     "gsap": "^3.13.0",
-    "next": "15.4.6",
+    "next": "^16.0.3",
     "nodemailer": "^7.0.10",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -34,6 +40,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",
     "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
     "env-cmd": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
@@ -41,6 +48,7 @@
     "lucide-react": "^0.552.0",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",
+    "rimraf": "^5.0.5",
     "tailwindcss": "^4.1.16",
     "typescript": "^5"
   }

@@ -56,15 +56,16 @@ export interface CartItem {
 }
 
 /**
- * Compress image to TINY thumbnail for cart display
- * Reduces base64 size by ~97% (e.g., 2MB -> 60KB)
+ * Compress image to thumbnail for cart display
+ * ✅ ENHANCED: Higher quality for cart preview (400px @ 0.9 quality)
+ * Larger size and better quality = clearer cart images
  */
 async function compressImageToThumbnail(dataUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
-      const MAX_SIZE = 100 // Small thumbnail size
+      const MAX_SIZE = 400 // ✅ Doubled size for better cart display
       let width = img.width
       let height = img.height
       
@@ -84,10 +85,15 @@ async function compressImageToThumbnail(dataUrl: string): Promise<string> {
       canvas.width = width
       canvas.height = height
       const ctx = canvas.getContext('2d')!
+      
+      // ✅ Enable image smoothing for better quality
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
+      
       ctx.drawImage(img, 0, 0, width, height)
       
-      // Lower quality JPEG for minimal size
-      resolve(canvas.toDataURL('image/jpeg', 0.5))
+      // ✅ Much higher quality (0.9 instead of 0.7)
+      resolve(canvas.toDataURL('image/jpeg', 0.9))
     }
     img.onerror = () => reject(new Error('Image compression failed'))
     img.src = dataUrl
@@ -232,7 +238,11 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       lineItemId: item.lineItemId
     }
     
+    // ✅ BUSINESS DECISION: NEVER combine cart items - always add as separate line items
+    // This ensures customers see each item distinctly, making it clear they're ordering multiple units
+    // Even if items are identical, they remain separate for clarity and easier order management
     cart.push(cartItem)
+    
     saveCart(cart)
     
     // Clean up old images periodically
@@ -317,7 +327,20 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
  */
 export function saveCart(cart: CartItem[]): void {
   try {
-    const cartJson = JSON.stringify(cart)
+    // Strip large image data URLs before saving to localStorage
+    const cartForStorage = cart.map(item => {
+      const cleaned = { ...item }
+      // Remove image data URLs - only keep imageId references
+      delete cleaned.rawImageUrl
+      delete cleaned.maskedImageUrl
+      // Clean options object too
+      if (cleaned.options) {
+        cleaned.options = cleanOptions(cleaned.options)
+      }
+      return cleaned
+    })
+    
+    const cartJson = JSON.stringify(cartForStorage)
     const sizeKB = (cartJson.length / 1024).toFixed(2)
     
     logger.info('Saving cart to localStorage', { 
@@ -345,7 +368,17 @@ export function saveCart(cart: CartItem[]): void {
       // Try clearing some old data
       try {
         cleanupLocalStorage()
-        localStorage.setItem('cart', JSON.stringify(cart))
+        // Strip images and try again
+        const cartForStorage = cart.map(item => {
+          const cleaned = { ...item }
+          delete cleaned.rawImageUrl
+          delete cleaned.maskedImageUrl
+          if (cleaned.options) {
+            cleaned.options = cleanOptions(cleaned.options)
+          }
+          return cleaned
+        })
+        localStorage.setItem('cart', JSON.stringify(cartForStorage))
         logger.warn('Cart saved after cleanup')
       } catch (fallbackError) {
         throw new Error('Unable to save cart. Please clear browser data.')

@@ -98,12 +98,28 @@ function OrderConfirmationContent() {
         }
       }
 
+      // Get debug info from Stripe session
+      let debugInfo: any = null
+      try {
+        const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
+        const debugResponse = await fetch(`${phpBackendUrl}/api/stripe/verify-session-debug.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        })
+        debugInfo = await debugResponse.json()
+        console.log('🐛 [DEBUG] Complete order info:', debugInfo)
+      } catch (e) {
+        console.warn('Could not fetch debug info:', e)
+      }
+
       // Set order details for display
       setOrderDetails({
         orderNumber,
         sessionId: sessionId,
         status: 'complete',
-        message: 'Your order has been confirmed!'
+        message: 'Your order has been confirmed!',
+        debug: debugInfo // Include debug info for display
       })
       
       // Clear the cart and sessionStorage after successful order
@@ -186,17 +202,75 @@ function OrderConfirmationContent() {
           {/* Order Details */}
           {orderDetails && (
             <div className="border-t border-gray-200 pt-6 mb-6">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500 mb-1">Order Number</p>
-                  <p className="font-semibold text-gray-900">{orderDetails.orderNumber}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500 mb-1">Session ID</p>
-                  <p className="font-mono text-xs text-gray-600">{orderDetails.sessionId}</p>
-                </div>
+                  <p className="text-gray-500 text-lg mb-1">Order Number</p>
+                  <p className="font-semibold tex-12 text-lg text-gray-900">{orderDetails.orderNumber}</p>
+                  <hr className="my-3 text-[var(--brand-200)]/65"/>
+                  <p className="text-gray-500 text-lg mb-1">Session ID</p>
+                  <p className="font-mono text-xs text-gray-600 truncate">{orderDetails.sessionId}</p>
+                </div> 
               </div>
             </div>
+          )}
+
+          {/* Debug Info (Only in development) */}
+          {orderDetails?.debug && process.env.NODE_ENV === 'development' && (
+            <details className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-6">
+              <summary className="font-bold text-gray-900 cursor-pointer hover:text-blue-600">
+                🐛 Debug Info (Development Only)
+              </summary>
+              <div className="mt-4 space-y-4">
+                {/* Order Info */}
+                <div className="bg-white p-4 rounded border">
+                  <h4 className="font-semibold mb-2">Order Details</h4>
+                  <div className="text-sm space-y-1 font-mono">
+                    <p><span className="text-gray-600">Order Number:</span> <strong>{orderDetails.debug.order?.order_number}</strong></p>
+                    <p><span className="text-gray-600">Timestamp:</span> {orderDetails.debug.order?.order_timestamp}</p>
+                    <p><span className="text-gray-600">Date:</span> {orderDetails.debug.order?.order_date}</p>
+                    <p><span className="text-gray-600">Status:</span> <span className="text-green-600">● {orderDetails.debug.order?.payment_status}</span></p>
+                  </div>
+                </div>
+
+                {/* Stripe Info */}
+                {orderDetails.debug.stripe && (
+                  <div className="bg-white p-4 rounded border">
+                    <h4 className="font-semibold mb-2">Stripe Info</h4>
+                    <div className="text-sm space-y-1 font-mono">
+                      <p><span className="text-gray-600">Session ID:</span> {orderDetails.debug.stripe.session_id}</p>
+                      <p><span className="text-gray-600">Payment Intent:</span> {orderDetails.debug.stripe.payment_intent_id}</p>
+                      <p><span className="text-gray-600">Customer ID:</span> {orderDetails.debug.stripe.customer_id}</p>
+                      <p><span className="text-gray-600">Amount:</span> ${(orderDetails.debug.stripe.amount_total / 100).toFixed(2)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Cockpit3D Payload */}
+                {orderDetails.debug.cockpit3d_payload && (
+                  <div className="bg-white p-4 rounded border">
+                    <h4 className="font-semibold mb-2">Cockpit3D Payload (To Be Sent)</h4>
+                    <pre className="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">
+                      {JSON.stringify(orderDetails.debug.cockpit3d_payload, null, 2)}
+                    </pre>
+                    <p className="text-xs text-gray-600 mt-2">
+                      Status: <span className="font-semibold">{orderDetails.debug.cockpit3d_status}</span>
+                    </p>
+                  </div>
+                )}
+
+                {/* Customer Info */}
+                {orderDetails.debug.customer && (
+                  <div className="bg-white p-4 rounded border">
+                    <h4 className="font-semibold mb-2">Customer Info</h4>
+                    <div className="text-sm space-y-1">
+                      <p><span className="text-gray-600">Email:</span> {orderDetails.debug.customer.email}</p>
+                      <p><span className="text-gray-600">Name:</span> {orderDetails.debug.customer.name}</p>
+                      <p><span className="text-gray-600">Address:</span> {orderDetails.debug.customer.address?.line1}, {orderDetails.debug.customer.address?.city}, {orderDetails.debug.customer.address?.state} {orderDetails.debug.customer.address?.postal_code}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </details>
           )}
 
           {/* What's Next */}
@@ -221,6 +295,12 @@ function OrderConfirmationContent() {
                 </svg>
                 <span>We'll send shipping updates to your email</span>
               </li>
+              <li className="flex items-start">
+                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Any problems or need help with your order contact: orders@crystalkeepsakes.com</span>
+              </li>
             </ul>
           </div>
 
@@ -228,7 +308,7 @@ function OrderConfirmationContent() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/products"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
+              className="px-8 py-3 bg-[var(--brand-500)] text-white rounded-lg hover:bg-[var(--brand-400)] transition-colors text-center font-medium"
             >
               Continue Shopping
             </Link>

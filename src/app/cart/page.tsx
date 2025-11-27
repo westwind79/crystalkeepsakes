@@ -53,6 +53,12 @@ interface CartItem {
   }
   productImage?: string
   cockpit3d_id?: string
+  // Sale information
+  onSale?: boolean
+  salePrice?: number
+  salePercent?: number
+  originalPrice?: number
+  discountAmount?: number
   dateAdded: string
 }
 
@@ -63,7 +69,6 @@ export default function CartPage() {
   const [storageStats, setStorageStats] = useState<any>(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [total, setTotal] = useState(0)
-  const [showDebug, setShowDebug] = useState(false)
 
   const loadCart = async () => {
     try {
@@ -175,6 +180,22 @@ export default function CartPage() {
     return options
   }
 
+  /**
+   * Hero Component - Single source of truth
+   */
+  const ContinueShoppingBtn = () => (
+    <div className="text-center mt-10">
+      {/* Continue Shopping */}
+      <Link 
+        href="/products" 
+        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
+      >
+        <span>←</span>
+        <span>Continue Shopping</span>
+      </Link>
+    </div>
+  )
+
   const getCustomTextDetails = (item: CartItem) => {
     if (item.customText) {
       const line1 = item.customText.line1 || ''
@@ -206,7 +227,8 @@ export default function CartPage() {
     
     try {
       // Redirect to Stripe Hosted Checkout
-      window.location.href = '/checkout-hosted'
+      // OLD window.location.href = '/checkout-hosted'
+      window.location.href = '/checkout'
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
@@ -263,6 +285,7 @@ export default function CartPage() {
           </button>
         </div>
 
+
         {/* Storage Stats Banner (Dev Mode) */}
         {process.env.NODE_ENV === 'development' && storageStats && (
           <div className="bg-green-900 text-white rounded-lg p-4 mb-6 shadow-md">
@@ -301,39 +324,32 @@ export default function CartPage() {
                 <div key={index} className="bg-white shadow-lg rounded-xl p-6 border border-green-100 hover:shadow-xl transition-shadow">
                   <div className="flex items-start gap-6">
                     
-                    {/* Images Section - LARGER THUMBNAILS */}
-                    <div className="flex-shrink-0">
-                      {item.customImage ? (
-                        <div className="space-y-4">
-                          {/* Original Uploaded Image */}
-                          {item.customImage.rawImageThumbnail && (
-                            <div className="text-center">
-                              <img 
-                                src={item.customImage.rawImageThumbnail}
-                                alt="Your Original"
-                                className="w-48 h-48 object-cover rounded-lg border-4 border-blue-400 shadow-md"
-                              />
-                              <p className="text-xs text-blue-600 font-semibold mt-2 bg-blue-50 py-1 px-2 rounded">📷 Your Original</p>
-                            </div>
-                          )}
-                          
-                          {/* Final Masked Image */}
-                          <div className="text-center">
-                            <img 
-                              src={item.customImage.thumbnail}
-                              alt="Final Engraved Version"
-                              className="w-48 h-48 object-contain rounded-lg border-4 border-[#8DC63F] shadow-md bg-gray-50"
-                            />
-                            <p className="text-xs text-[#8DC63F] font-semibold mt-2 bg-green-50 py-1 px-2 rounded">✨ Final Engraving</p>
-                          </div>
-                        </div>
-                      ) : (
-                        // Product image fallback
+                    {/* Images Section - ENHANCED SIZE & QUALITY */}
+                    <div className="flex-shrink-0 space-y-3">
+                      {/* Product Image */}
+                      <div className="text-center">
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
-                          className="w-48 h-48 object-contain rounded-lg border-2 border-gray-200"
+                          className="w-40 h-40 object-contain rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => window.open(item.productImage, '_blank')}
+                          title="Click to view full size"
                         />
+                        <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
+                      </div>
+                      
+                      {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
+                      {item.customImage?.thumbnail && (
+                        <div className="text-center">
+                          <img 
+                            src={item.customImage.thumbnail}
+                            alt="Final Engraved Version"
+                            className="w-40 h-40 object-contain rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            onClick={() => window.open(item.customImage?.dataUrl, '_blank')}
+                            title="Click to view full size"
+                          />
+                          <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
+                        </div>
                       )}
                     </div>
 
@@ -402,6 +418,29 @@ export default function CartPage() {
                           )}
                         </div>
                         
+                        {/* Sale/Discount Information */}
+                        {item.onSale && (item.discountAmount ?? 0) > 0 && (
+                          <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-red-700 font-semibold">
+                                {item.salePercent 
+                                  ? `💰 Sale (${item.salePercent}% OFF)` 
+                                  : item.salePrice 
+                                    ? `💰 Sale ($${item.salePrice.toFixed(2)} discount)` 
+                                    : '💰 On Sale'}
+                              </span>
+                              <span className="text-red-700 font-bold">
+                                -${item.discountAmount.toFixed(2)}
+                              </span>
+                            </div>
+                            {item.originalPrice && (
+                              <div className="text-xs text-red-600 mt-1">
+                                Original: <span className="line-through">${item.originalPrice.toFixed(2)}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Total Item Price */}
                         <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
                           <span className="text-base font-bold text-gray-900">Item Total:</span>
@@ -411,37 +450,53 @@ export default function CartPage() {
                         </div>
                       </div>
 
-                      {/* Image Metadata Badge */}
+                      {/* Image Metadata - Clickable Link */}
                       {item.customImageMetadata?.hasImage && (
-                        <div className="inline-flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 rounded-full px-4 py-2 mb-3 border border-emerald-200">
-                          <span className="text-lg">✓</span>
-                          <span className="font-medium">Custom Image: {item.customImageMetadata.filename}</span>
+                        <div className="text-sm bg-emerald-50 rounded px-3 py-2 mb-3">
+                          <span className="text-emerald-700 font-medium">Custom Image: </span>
+                          {item.customImage?.rawImageDataUrl ? (
+                            <a 
+                              href={item.customImage.rawImageDataUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                            >
+                              {item.customImageMetadata.filename || 'View Image'}
+                            </a>
+                          ) : (
+                            <span className="text-emerald-600">{item.customImageMetadata.filename}</span>
+                          )}
                         </div>
                       )}
 
-                      {/* Quantity Controls and Line Total */}
+                      {/* Quantity Controls and Line Total - ENHANCED VISIBILITY */}
                       <div className="flex items-center justify-between flex-wrap gap-4 pt-3">
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-semibold text-gray-700">Quantity:</span>
-                          <div className="flex items-center gap-2 border-2 border-[#8DC63F] rounded-lg overflow-hidden">
+                          <div className="flex items-center gap-2 border-3 border-[#8DC63F] rounded-lg overflow-hidden shadow-md">
                             <button 
                               type="button"
                               onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold transition-colors"
+                              className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold text-xl transition-colors"
                             >
                               −
                             </button>
-                            <span className="text-lg font-bold text-gray-900 min-w-[3rem] text-center">
+                            <span className="text-2xl font-black text-gray-900 min-w-[4rem] text-center px-4 bg-white">
                               {item.quantity}
                             </span>
                             <button 
                               type="button"
                               onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className="cursor-pointer w-10 h-10 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold transition-colors"
+                              className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#8DC63F] hover:bg-[#7AB82F] text-white font-bold text-xl transition-colors"
                             >
                               +
                             </button>
                           </div>
+                          {item.quantity > 1 && (
+                            <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded">
+                              × {item.quantity} items
+                            </span>
+                          )}
                         </div>
                         
                         <div className="text-right">
@@ -449,26 +504,13 @@ export default function CartPage() {
                           <p className="text-2xl font-bold text-gray-900">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
+                          {item.quantity > 1 && (
+                            <p className="text-xs text-gray-500">
+                              ${item.price.toFixed(2)} each
+                            </p>
+                          )}
                         </div>
                       </div>
-
-                      {/* Compact Debug Info */}
-                      {process.env.NODE_ENV === 'development' && (
-                        <details className="mt-4">
-                          <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-700 font-medium">🔧 Debug Info</summary>
-                          <div className="mt-2 p-3 rounded-lg border border-green-200 bg-green-50">
-                            <div className="text-xs space-y-1 text-gray-700">
-                              <div><strong>SKU:</strong> {item.sku}</div>
-                              <div><strong>Cockpit3D ID:</strong> {item.cockpit3d_id || 'N/A'}</div>
-                              <div><strong>Base Price:</strong> ${item.basePrice?.toFixed(2)}</div>
-                              <div><strong>Options Price:</strong> ${item.optionsPrice?.toFixed(2)}</div>
-                              <div><strong>Has Raw Image:</strong> {item.customImage?.rawImageDataUrl ? '✅ Yes' : '❌ No'}</div>
-                              <div><strong>Has Masked Image:</strong> {item.customImage?.dataUrl ? '✅ Yes' : '❌ No'}</div>
-                              <div><strong>Options Array:</strong> {item.options ? `${item.options.length} options` : 'None'}</div>
-                            </div>
-                          </div>
-                        </details>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -531,79 +573,8 @@ export default function CartPage() {
         </div>
 
         {/* Continue Shopping */}
-        <div className="text-center mt-10">
-          <Link 
-            href="/products" 
-            className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
-          >
-            <span>←</span>
-            <span>Continue Shopping</span>
-          </Link>
-        </div>
+        <ContinueShoppingBtn />
 
-        {/* Organized Debug Section (Collapsible) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-12 pt-8 border-t-2 border-gray-300">
-            <button
-              onClick={() => setShowDebug(!showDebug)}
-              className="cursor-pointer flex items-center gap-3 text-lg font-bold text-amber-600 hover:text-amber-700 mb-4 transition-colors"
-            >
-              <span className="text-2xl">{showDebug ? '▼' : '▶'}</span>
-              <span>🔧 Developer Debug Panel</span>
-            </button>
-            
-            {showDebug && (
-              <div className="space-y-4">
-                {/* Cart Summary */}
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-5 rounded-lg border-2 border-amber-200">
-                  <h4 className="font-bold text-amber-900 mb-3">📊 Cart Summary</h4>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="text-amber-700 font-semibold">Total Items:</span>
-                      <span className="ml-2 text-amber-900 font-bold">{cart.length}</span>
-                    </div>
-                    <div>
-                      <span className="text-amber-700 font-semibold">With Images:</span>
-                      <span className="ml-2 text-amber-900 font-bold">{cart.filter(i => i.customImage).length}</span>
-                    </div>
-                    <div>
-                      <span className="text-amber-700 font-semibold">Cart Total:</span>
-                      <span className="ml-2 text-amber-900 font-bold">${total.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Full JSON */}
-                <div className="bg-slate-900 p-4 rounded-lg overflow-auto max-h-96 border-2 border-slate-700">
-                  <h4 className="text-amber-400 font-bold mb-2">📋 Full Cart JSON</h4>
-                  <pre className="text-green-300 text-xs font-mono">
-                    {JSON.stringify(cart, null, 2)}
-                  </pre>
-                </div>
-
-                {/* Cockpit3D Validation */}
-                <div className="bg-blue-50 p-5 rounded-lg border-2 border-blue-200">
-                  <h4 className="font-bold text-blue-900 mb-3">🚀 Cockpit3D Readiness Check</h4>
-                  <div className="space-y-2 text-sm">
-                    {cart.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <span className={item.cockpit3d_id ? 'text-green-600' : 'text-red-600'}>●</span>
-                        <span className="text-gray-700">
-                          <strong>{item.name}:</strong> 
-                          {item.cockpit3d_id ? (
-                            <span className="text-green-700 ml-2">✓ Has Cockpit3D ID ({item.cockpit3d_id})</span>
-                          ) : (
-                            <span className="text-red-700 ml-2">✗ Missing Cockpit3D ID</span>
-                          )}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )

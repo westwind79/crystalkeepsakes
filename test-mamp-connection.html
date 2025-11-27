@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAMP Connection Test</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Courier New', monospace;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #4ec9b0;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        button.success {
+            background: #4ec9b0;
+        }
+        button.error {
+            background: #f48771;
+        }
+        pre {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.loading {
+            background: #dcdcaa;
+            color: #1e1e1e;
+        }
+        .status.success {
+            background: #4ec9b0;
+            color: #1e1e1e;
+        }
+        .status.error {
+            background: #f48771;
+            color: #1e1e1e;
+        }
+        .log {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .step {
+            color: #569cd6;
+            font-weight: bold;
+        }
+        .success-text {
+            color: #4ec9b0;
+        }
+        .error-text {
+            color: #f48771;
+        }
+        .warning-text {
+            color: #dcdcaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 MAMP Connection Diagnostics</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic Connectivity <span id="status1" class="status"></span></h2>
+        <p>Tests if MAMP server is running and reachable</p>
+        <button onclick="testBasicConnection()">Run Test 1</button>
+        <pre id="result1" class="log"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: CORS Configuration <span id="status2" class="status"></span></h2>
+        <p>Tests if PHP backend allows requests from localhost:3000</p>
+        <button onclick="testCORS()">Run Test 2</button>
+        <pre id="result2" class="log"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Checkout Session Endpoint <span id="status3" class="status"></span></h2>
+        <p>Tests the actual create-checkout-session.php endpoint</p>
+        <button onclick="testCheckoutEndpoint()">Run Test 3</button>
+        <pre id="result3" class="log"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Full Checkout Flow <span id="status4" class="status"></span></h2>
+        <p>Simulates actual checkout with test cart data</p>
+        <button onclick="testFullCheckout()">Run Test 4</button>
+        <pre id="result4" class="log"></pre>
+    </div>
+
+    <div class="test-section">
+        <button onclick="runAllTests()" style="background: #4ec9b0; font-size: 18px;">▶️ Run All Tests</button>
+        <button onclick="clearResults()" style="background: #6c6c6c;">Clear Results</button>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:8888/crystalkeepsakes';
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            const className = type === 'success' ? 'success-text' : type === 'error' ? 'error-text' : type === 'warning' ? 'warning-text' : '';
+            element.innerHTML += `<span class="${className}">${prefix} [${timestamp}] ${message}</span>\n`;
+        }
+
+        function setStatus(statusId, status) {
+            const element = document.getElementById(statusId);
+            element.className = `status ${status}`;
+            element.textContent = status.toUpperCase();
+        }
+
+        function clearResult(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        async function testBasicConnection() {
+            const resultId = 'result1';
+            const statusId = 'status1';
+            clearResult(resultId);
+            setStatus(statusId, 'loading');
+            
+            log(resultId, '<span class="step">STEP 1: Testing basic connectivity...</span>');
+            
+            try {
+                const testUrl = `${BACKEND_URL}/`;
+                log(resultId, `Attempting to reach: ${testUrl}`);
+                
+                const response = await fetch(testUrl, { method: 'GET', mode: 'no-cors' });
+                log(resultId, 'MAMP server is REACHABLE! ✓', 'success');
+                setStatus(statusId, 'success');
+                
+            } catch (error) {
+                log(resultId, `MAMP server NOT reachable: ${error.message}`, 'error');
+                log(resultId, 'Possible causes:', 'warning');
+                log(resultId, '  - MAMP not started', 'warning');
+                log(resultId, '  - Wrong port (check MAMP preferences)', 'warning');
+                log(resultId, '  - Document root not set to crystalkeepsakes', 'warning');
+                setStatus(statusId, 'error');
+            }
+        }
+
+        async function testCORS() {
+            const resultId = 'result2';
+            const statusId = 'status2';
+            clearResult(resultId);
+            setStatus(statusId, 'loading');
+            
+            log(resultId, '<span class="step">STEP 2: Testing CORS configuration...</span>');
+            
+            try {
+                const testUrl = `${BACKEND_URL}/api/contact.php`;
+                log(resultId, `Testing CORS at: ${testUrl}`);
+                
+                const response = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ test: true })
+                });
+                
+                const corsHeader = response.headers.get('Access-Control-Allow-Origin');
+                
+                if (corsHeader) {
+                    log(resultId, `✓ CORS header present: ${corsHeader}`, 'success');
+                    log(resultId, `✓ Status: ${response.status} ${response.statusText}`, 'success');
+                    setStatus(statusId, 'success');
+                } else {
+                    log(resultId, 'CORS header missing!', 'error');
+                    log(resultId, 'PHP needs to set: Access-Control-Allow-Origin', 'warning');
+                    setStatus(statusId, 'error');
+                }
+                
+            } catch (error) {
+                log(resultId, `CORS test failed: ${error.message}`, 'error');
+                log(resultId, 'This means PHP is not allowing requests from this origin', 'warning');
+                setStatus(statusId, 'error');
+            }
+        }
+
+        async function testCheckoutEndpoint() {
+            const resultId = 'result3';
+            const statusId = 'status3';
+            clearResult(resultId);
+            setStatus(statusId, 'loading');
+            
+            log(resultId, '<span class="step">STEP 3: Testing checkout endpoint...</span>');
+            
+            try {
+                const testUrl = `${BACKEND_URL}/api/stripe/create-checkout-session.php`;
+                log(resultId, `POST request to: ${testUrl}`);
+                
+                // Empty cart should return an error, but endpoint should respond
+                const response = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cartItems: [],
+                        subtotal: 0,
+                        orderNumber: 'TEST'
+                    })
+                });
+                
+                log(resultId, `Response status: ${response.status} ${response.statusText}`);
+                
+                const text = await response.text();
+                log(resultId, `Response body: ${text.substring(0, 200)}${text.length > 200 ? '...' : ''}`);
+                
+                if (response.ok || response.status === 500) {
+                    log(resultId, '✓ Endpoint is responding!', 'success');
+                    log(resultId, '  (Error response is expected with empty cart)', 'info');
+                    setStatus(statusId, 'success');
+                } else if (response.status === 405) {
+                    log(resultId, 'Method not allowed - check PHP file', 'error');
+                    setStatus(statusId, 'error');
+                } else {
+                    log(resultId, 'Unexpected response from endpoint', 'warning');
+                    setStatus(statusId, 'warning');
+                }
+                
+            } catch (error) {
+                log(resultId, `Request failed: ${error.message}`, 'error');
+                log(resultId, 'Common causes:', 'warning');
+                log(resultId, '  - composer vendor/ missing (run: composer install)', 'warning');
+                log(resultId, '  - PHP syntax error in the file', 'warning');
+                log(resultId, '  - Missing Stripe library', 'warning');
+                setStatus(statusId, 'error');
+            }
+        }
+
+        async function testFullCheckout() {
+            const resultId = 'result4';
+            const statusId = 'status4';
+            clearResult(resultId);
+            setStatus(statusId, 'loading');
+            
+            log(resultId, '<span class="step">STEP 4: Testing full checkout flow...</span>');
+            
+            try {
+                const testUrl = `${BACKEND_URL}/api/stripe/create-checkout-session.php`;
+                
+                // Create a realistic test cart
+                const testCart = {
+                    cartItems: [
+                        {
+                            name: 'Test Crystal Heart 3x3',
+                            sku: 'CH-3X3-TEST',
+                            price: 49.99,
+                            quantity: 1
+                        }
+                    ],
+                    subtotal: 49.99,
+                    orderNumber: `TEST-${Date.now()}`
+                };
+                
+                log(resultId, 'Sending test cart:');
+                log(resultId, JSON.stringify(testCart, null, 2));
+                
+                const response = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testCart)
+                });
+                
+                log(resultId, `Response: ${response.status} ${response.statusText}`);
+                
+                const data = await response.json();
+                log(resultId, 'Response data:');
+                log(resultId, JSON.stringify(data, null, 2));
+                
+                if (data.success && data.url) {
+                    log(resultId, '✓ Checkout session created successfully!', 'success');
+                    log(resultId, `✓ Stripe URL: ${data.url}`, 'success');
+                    log(resultId, `✓ Order Number: ${data.order_number}`, 'success');
+                    setStatus(statusId, 'success');
+                } else if (data.error) {
+                    log(resultId, `API returned error: ${data.error}`, 'error');
+                    log(resultId, 'Check:', 'warning');
+                    log(resultId, '  - Stripe API keys in .env', 'warning');
+                    log(resultId, '  - composer dependencies installed', 'warning');
+                    setStatus(statusId, 'error');
+                } else {
+                    log(resultId, 'Unexpected response format', 'warning');
+                    setStatus(statusId, 'warning');
+                }
+                
+            } catch (error) {
+                log(resultId, `Full checkout test failed: ${error.message}`, 'error');
+                setStatus(statusId, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            await testBasicConnection();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testCORS();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testCheckoutEndpoint();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testFullCheckout();
+        }
+
+        function clearResults() {
+            ['result1', 'result2', 'result3', 'result4'].forEach(clearResult);
+            ['status1', 'status2', 'status3', 'status4'].forEach(id => {
+                document.getElementById(id).className = 'status';
+                document.getElementById(id).textContent = '';
+            });
+        }
+    </script>
+</body>
+</html>

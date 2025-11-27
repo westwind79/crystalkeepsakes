@@ -1,4 +1,4 @@
-// Homepage - Original dark hero + light content + GSAP animations
+// Homepage - Enhanced with beautiful GSAP animations and colorful sections
 'use client'
 
 import React, { useRef, useEffect } from 'react'
@@ -19,24 +19,6 @@ import './css/swiper.css'
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
-
-// Inline styles to ensure visibility on mobile (fallback if animations fail)
-const ensureVisibilityStyles = `
-  .hero-content,
-  .hero-cta a,
-  .hero-swiper,
-  .process-step {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation: none !important;
-      transition: none !important;
-    }
-  }
-`
 
 const heroSwiperSlides = [
   {
@@ -69,35 +51,17 @@ export default function HomePage() {
   const heroRef = useRef<HTMLElement>(null)
   const featuredRef = useRef<HTMLElement>(null)
   const processRef = useRef<HTMLElement>(null)
+  const aboutRef = useRef<HTMLElement>(null)
+  const ctaRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    // Ensure elements are visible by default (fallback if animations fail)
-    const elements = ['.hero-content', '.hero-cta a', '.hero-swiper']
-    elements.forEach(el => {
-      const element = document.querySelector(el)
-      if (element) {
-        (element as HTMLElement).style.opacity = '1'
-      }
-    })
-
     const ctx = gsap.context(() => {
-      // Hero animations - use set to ensure visibility first
-      gsap.set('.hero-content', { opacity: 1 })
-      gsap.set('.hero-cta a', { opacity: 1 })
-      gsap.set('.hero-swiper', { opacity: 1 })
-
-      // Only animate on devices that support it well
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (prefersReducedMotion) {
-        return // Skip animations if user prefers reduced motion
-      }
-
+      // Hero animations - NO DELAYS
       gsap.from('.hero-content', {
         opacity: 0,
-        y: 40,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.2
+        y: 50,
+        duration: 1,
+        ease: 'power3.out'
       })
 
       gsap.from('.hero-cta a', {
@@ -105,63 +69,79 @@ export default function HomePage() {
         y: 20,
         duration: 0.6,
         stagger: 0.15,
-        ease: 'power2.out',
-        delay: 0.6
+        ease: 'power2.out'
       })
 
       gsap.from('.hero-swiper', {
         opacity: 0,
-        scale: 0.95,
-        duration: 0.8,
-        ease: 'power2.out',
-        delay: 0.4
+        scale: 0.9,
+        rotation: -5,
+        duration: 1,
+        ease: 'back.out(1.2)'
       })
 
-      // ScrollTrigger animations with fallback
-      if (featuredRef.current) {
-        gsap.set(featuredRef.current, { opacity: 1 })
-        gsap.from(featuredRef.current, {
-          scrollTrigger: {
-            trigger: featuredRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 50,
-          duration: 0.8,
-          ease: 'power2.out'
-        })
-      }
+      // Process cards - FIXED: Set initial state, then animate from 0
+      gsap.set('.process-step', { y: 0, opacity: 1 })
+      gsap.from('.process-step', {
+        scrollTrigger: {
+          trigger: processRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        },
+        y: 50,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: 'power2.out'
+      })
 
-      if (processRef.current) {
-        gsap.set('.process-step', { opacity: 1 })
-        gsap.from('.process-step', {
-          scrollTrigger: {
-            trigger: processRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: 'power2.out'
-        })
-      }
+      // About section slide from left
+      gsap.from('.about-content', {
+        scrollTrigger: {
+          trigger: aboutRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        },
+        x: -60,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+
+      gsap.from('.about-image', {
+        scrollTrigger: {
+          trigger: aboutRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        },
+        x: 60,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+
+      // CTA zoom in
+      gsap.from('.cta-content', {
+        scrollTrigger: {
+          trigger: ctaRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none'
+        },
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      })
     })
 
     return () => ctx.revert()
   }, [])
 
   return (
-    <>
-      {/* Inline styles for mobile fallback */}
-      <style dangerouslySetInnerHTML={{ __html: ensureVisibilityStyles }} />
+    <div className="home">
       
-      <div className="home">
-        
-        {/* ORIGINAL Dark Hero */}
-        <section 
+      {/* Hero - Dark with Green Accent */}
+      <section 
         ref={heroRef} 
         className="hero relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
         style={{
@@ -188,7 +168,7 @@ export default function HomePage() {
               </p>
  
               <div className="hero-cta grid sm:grid-cols-1 md:grid-cols-2 gap-4">
-                <Link href="/products" className="btn-primary inline-flex px-3 py-2 text-centeralign-center justify-center rounded-lg">
+                <Link href="/products" className="btn-primary inline-flex px-3 py-2 text-center align-center justify-center rounded-lg">
                   Browse Designs
                 </Link>
                 <Link href="/about" className="btn btn-outline-light inline-flex px-3 py-2 align-center justify-center rounded-lg"> 
@@ -237,41 +217,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products - Light Theme */}
-      <section ref={featuredRef}>
+      {/* Featured Products - White Background */}
+      <section ref={featuredRef} className="bg-white">
         <FeaturedProducts limit={6} title="Featured Designs" />
       </section>
 
-      {/* Testimonials - Alternating Background */}
+      {/* Testimonials - Beautiful Gradient */}
       <Testimonials />
 
-      {/* Process Section - Alternating Background */}
-      <section ref={processRef} className="bg-gray-100 py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 xl:max-w-7xl">
+      {/* Process Section - Blue Gradient */}
+      <section ref={processRef} className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 xl:max-w-7xl relative z-10">
           <h2 className="text-center text-3xl sm:text-4xl font-light text-gray-900 mb-12">
             How We Create Your Crystal
           </h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="process-step text-center bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="process-step text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-blue-200">
               <div className="text-6xl mb-4">📸</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Upload Photo</h3>
               <p className="text-gray-600 leading-relaxed">Choose your favorite high-quality photo</p>
             </div>
             
-            <div className="process-step text-center bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="process-step text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-cyan-200">
               <div className="text-6xl mb-4">🎨</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Customize Design</h3>
               <p className="text-gray-600 leading-relaxed">Select your crystal shape and options</p>
             </div>
             
-            <div className="process-step text-center bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="process-step text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-teal-200">
               <div className="text-6xl mb-4">⚡</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Laser Engraving</h3>
               <p className="text-gray-600 leading-relaxed">Precision green lasers create your 3D crystal</p>
             </div>
             
-            <div className="process-step text-center bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="process-step text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-blue-300">
               <div className="text-6xl mb-4">🚚</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Safe Delivery</h3>
               <p className="text-gray-600 leading-relaxed">Receive your crystal art safely packaged</p>
@@ -280,11 +266,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About Preview - Light Background */}
-      <section className="bg-[var(--surface-200)] py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 xl:max-w-7xl">
+      {/* About Preview - Warm Orange/Peach Gradient */}
+      <section ref={aboutRef} className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-1/4 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 xl:max-w-7xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 about-content">
               <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-6">
                 Crafted with Precision
               </h2>
@@ -300,8 +292,8 @@ export default function HomePage() {
                 {' '}or reach out to us directly.
               </p>
             </div>
-            <div className="lg:col-span-5">
-              <div className="relative w-full max-w-md h-96 mx-auto lg:ml-auto lg:mr-0 rounded-2xl overflow-hidden shadow-lg">
+            <div className="lg:col-span-5 about-image">
+              <div className="relative w-full max-w-md h-96 mx-auto lg:ml-auto lg:mr-0 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
                 <Image 
                   src={assetPath("/img/noahs-keepsake-1.png")}
                   alt="CrystalKeepsakes Example"
@@ -314,9 +306,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section - Green Gradient */}
-      <section className="bg-gradient-to-br from-[#72B01D] to-[#5A8E17] py-16 sm:py-20 text-center text-white">
-        <div className="container mx-auto px-4 xl:max-w-4xl">
+      {/* CTA Section - Vibrant Green Gradient */}
+      <section ref={ctaRef} className="bg-gradient-to-br from-[#72B01D] via-[#5A8E17] to-[#8DC63F] py-16 sm:py-20 text-center text-white relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+        </div>
+
+        <div className="container mx-auto px-4 xl:max-w-4xl relative z-10 cta-content">
           <h2 className="text-3xl sm:text-4xl font-light mb-6">
             Ready to Create Your Crystal?
           </h2>
@@ -325,7 +322,7 @@ export default function HomePage() {
           </p>
           <Link 
             href="/contact" 
-            className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#72B01D] font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+            className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#72B01D] font-semibold rounded-lg shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300"
           >
             Get Started Today
           </Link>
@@ -333,6 +330,5 @@ export default function HomePage() {
       </section>
       
     </div>
-    </>
   )
 }

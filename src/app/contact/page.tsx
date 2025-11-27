@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, FormEvent, ChangeEvent } from 'react'
 import Breadcrumbs from '@/components/BreadCrumbs'
 import { assetPath } from '@/lib/assetPath'
+import { getEmailEndpoint, isUsingMailhog } from '@/lib/emailConfig'
 
 interface FormData {
   name: string
@@ -71,7 +72,11 @@ export default function ContactPage() {
     setSubmitStatus(null)
     
     try {
-      const response = await fetch(assetPath('/api/contact.php'), {
+      // Use hybrid approach: Next.js API for dev/Mailhog, PHP for production
+      const endpoint = getEmailEndpoint('contact')
+      console.log(`📧 Sending to ${isUsingMailhog() ? 'Mailhog (dev)' : 'PHP (production)'}: ${endpoint}`)
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

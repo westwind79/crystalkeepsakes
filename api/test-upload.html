@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Upload</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        button { padding: 10px 20px; margin: 10px 0; background: #0e639c; color: white; border: none; cursor: pointer; }
+        button:hover { background: #1177bb; }
+        pre { background: #252526; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        img { max-width: 300px; border: 2px solid #3e3e42; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Customer Image Upload</h1>
+    
+    <div>
+        <h2>Step 1: Select an image</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <div id="preview"></div>
+    </div>
+    
+    <div>
+        <h2>Step 2: Upload to server</h2>
+        <button onclick="uploadImage()">Upload to Server</button>
+    </div>
+    
+    <div>
+        <h2>Result:</h2>
+        <pre id="result"></pre>
+        <div id="uploadedImage"></div>
+    </div>
+
+    <script>
+        const backendUrl = 'http://localhost:8888/crystalkeepsakes';
+        let base64Image = null;
+
+        // Preview selected image
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                base64Image = event.target.result;
+                
+                document.getElementById('preview').innerHTML = `
+                    <h3>Preview:</h3>
+                    <img src="${base64Image}" alt="Preview">
+                    <p>Size: ${(base64Image.length / 1024).toFixed(2)} KB</p>
+                    <p>Format: ${base64Image.substring(0, 30)}...</p>
+                `;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        async function uploadImage() {
+            if (!base64Image) {
+                alert('Please select an image first!');
+                return;
+            }
+
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = '⏳ Uploading...';
+
+            try {
+                console.log('📤 Uploading image...');
+                console.log('Base64 length:', base64Image.length);
+                console.log('Base64 starts with:', base64Image.substring(0, 50));
+
+                const response = await fetch(`${backendUrl}/api/customer-image-upload.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        imageData: base64Image,
+                        productId: 'test-product-' + Date.now(),
+                        imageType: 'raw'
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                if (result.success) {
+                    resultEl.innerHTML = `<span class="success">✅ SUCCESS!</span>\n${JSON.stringify(result, null, 2)}`;
+                    
+                    // Try to display the uploaded image
+                    const imgUrl = result.url;
+                    document.getElementById('uploadedImage').innerHTML = `
+                        <h3>Uploaded Image:</h3>
+                        <img src="${imgUrl}" alt="Uploaded" onerror="this.style.border='2px solid red'; this.alt='Failed to load'">
+                        <p>URL: <a href="${imgUrl}" target="_blank">${imgUrl}</a></p>
+                        <p>File: ${result.filename}</p>
+                        <p>Size: ${(result.size / 1024).toFixed(2)} KB</p>
+                    `;
+                } else {
+                    resultEl.innerHTML = `<span class="error">❌ FAILED</span>\n${JSON.stringify(result, null, 2)}`;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                resultEl.innerHTML = `<span class="error">❌ ERROR</span>\n${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

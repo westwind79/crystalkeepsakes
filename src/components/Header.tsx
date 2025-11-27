@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER - Sticky with proper z-index */}
-      <header className="sticky top-0 z-10 bg-[var(--brand-900)]/95 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
+      <header className="sticky top-0 z-20 bg-[var(--brand-900)]/99 backdrop-blur-md shadow-[0_5px_10px_-5px_rgba(0,0,0,0.75)]">
         <nav className="h-20 px-4 lg:px-8 overflow-visible">
           <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
             
@@ -76,7 +76,7 @@ export default function Header() {
                 </svg>
               </div>
               <div className="">
-                <div className="text-white hover:text-none text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
+                <div className="text-white hover:text-none text-xl md:text-xl lg:text-2xl font-bold tracking-wider dark:text-white dark:text-shadow-2xs">
                   CRYSTALKEEPSAKES
                 </div>
                 <div className="text-[var(--brand-400)] text-xs lg:text-lg font-medium tracking-[2px] text-shadow-xs">
@@ -93,12 +93,10 @@ export default function Header() {
                     <Link
                       href={item.href}
                       className={`overflow-hidden
-                        group relative block px-6 py-2 
+                        group relative block px-6 pt-2 pb-3 
                         uppercase text-sm font-medium tracking-wide 
                         transition-colors duration-200 no-underline
-                        ${isActive(item.href) 
-                          ? 'text-[var(--surface-300)]' 
-                          : 'text-[var(--brand-400)] hover:text-[var(--brand-100)]'
+                        ${isActive(item.href) ? 'text-[var(--surface-50)] cursor-default disable' : 'text-[var(--brand-350)] hover:text-[var(--brand-100)]'
                         }
                       `}
                     >
@@ -194,7 +192,7 @@ export default function Header() {
           >
             Menu
           </p>
-          {/*<button 
+          <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="
               w-10 h-10 flex items-center justify-center 
@@ -218,11 +216,11 @@ export default function Header() {
                 d="M6 18L18 6M6 6l12 12" 
               />
             </svg>
-          </button>*/}
+          </button>
         </div>
 
         {/* Mobile Menu Body */}
-        <div className="p-6">
+        <div className="p-3 sm:p-4">
           <nav>
             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
               {navItems.map((item) => (
@@ -249,7 +247,7 @@ export default function Header() {
           </nav>
 
           {/* Cart Section in Mobile Menu */}
-          <div className="mt-8 pt-6 border-t border-gray-700">
+          <div className="mt-2 pt-3 border-t border-gray-700">
             <div className="px-4">
               <CartIcon />
             </div>
