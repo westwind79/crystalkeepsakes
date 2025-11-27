@@ -44,7 +44,24 @@ require_once dirname(__DIR__) . '/env-loader.php';
 try {
     error_log("=== CHECKOUT SESSION REQUEST ===");
     
+    // Detect environment mode
+    // Priority: 1) ENV variable 2) URL-based detection
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    
+    // Override: If accessing via /test subdirectory, force test mode
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $referer = $_SERVER['HTTP_REFERER'] ?? '';
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    
+    if (
+        strpos($requestUri, '/test/') !== false || 
+        strpos($referer, '/test/') !== false ||
+        strpos($origin, '/test') !== false
+    ) {
+        $mode = 'test';
+        error_log("⚠️  Detected /test subdirectory - forcing TEST mode");
+    }
+    
     error_log("Mode: $mode");
     
     // Get Stripe key
