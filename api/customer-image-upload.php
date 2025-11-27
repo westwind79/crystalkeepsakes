@@ -114,25 +114,31 @@ try {
     // Ensure directory has trailing slash
     $uploadDir = rtrim($uploadDir, '/') . '/';
     
+    // Create subfolder structure: YYYY-MM/DD/
+    $datePath = date('Y-m') . '/' . date('d') . '/';
+    $fullUploadDir = $uploadDir . $datePath;
+    
+    error_log("Creating date-based subfolder: $fullUploadDir");
+    
     // Create directory if doesn't exist
-    if (!file_exists($uploadDir)) {
-        error_log("Creating directory: $uploadDir");
-        if (!mkdir($uploadDir, 0755, true)) {
-            throw new Exception("Failed to create upload directory: $uploadDir");
+    if (!file_exists($fullUploadDir)) {
+        error_log("Creating directory: $fullUploadDir");
+        if (!mkdir($fullUploadDir, 0755, true)) {
+            throw new Exception("Failed to create upload directory: $fullUploadDir");
         }
         error_log("✓ Directory created successfully");
     }
     
     // Verify writable
-    if (!is_writable($uploadDir)) {
-        throw new Exception("Upload directory not writable: $uploadDir");
+    if (!is_writable($fullUploadDir)) {
+        throw new Exception("Upload directory not writable: $fullUploadDir");
     }
     
     // Generate unique filename
     $timestamp = round(microtime(true) * 1000);
     $uniqueId = uniqid();
     $filename = "customer_{$productId}_{$imageType}_{$timestamp}_{$uniqueId}.{$imageExtension}";
-    $filePath = $uploadDir . $filename;
+    $filePath = $fullUploadDir . $filename;
     
     error_log("Saving image to: $filePath");
     
