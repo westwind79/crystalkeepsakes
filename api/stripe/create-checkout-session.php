@@ -231,14 +231,13 @@ try {
         'allow_promotion_codes' => true,
     ];
     
-    // Add shipping for TRUE production only (requires Stripe Dashboard configuration)
-    // DO NOT enable shipping for test/development modes - requires live shipping rates
+    // ALWAYS collect shipping address (needed for Cockpit3D fulfillment)
+    $sessionParams['shipping_address_collection'] = [
+        'allowed_countries' => ['US', 'CA'],
+    ];
+    
+    // Add shipping RATES and TAX only for production
     if ($mode === 'production') {
-        // Only add shipping if we're in REAL production (not /test subdirectory)
-        $sessionParams['shipping_address_collection'] = [
-            'allowed_countries' => ['US', 'CA'],
-        ];
-        
         // Shipping options - Use your LIVE Stripe Dashboard shipping rates
         // NOTE: These shipping_rate IDs only work in LIVE mode
         $sessionParams['shipping_options'] = [
@@ -252,12 +251,12 @@ try {
         // Enable tax if configured in Stripe Dashboard
         $sessionParams['automatic_tax'] = ['enabled' => true];
         
-        error_log('✅ Production mode: Shipping and tax ENABLED');
+        error_log('✅ Production mode: Shipping ADDRESS + RATES + TAX enabled');
     } else {
-        // Test/Development mode: NO shipping, NO tax
-        // This prevents "No such shipping rate" errors in test environments
-        error_log('⚠️  Test/Development mode: Shipping and tax DISABLED for testing');
-        error_log('    To enable shipping in test: Create test shipping rates in Stripe Dashboard');
+        // Test/Development mode: Collect address but NO shipping rates or tax
+        // This allows Cockpit3D data collection without requiring test shipping rate setup
+        error_log('⚠️  Test mode: Shipping ADDRESS collected (for Cockpit3D), but NO rates/tax');
+        error_log('    Customer will enter address but won\'t be charged for shipping');
     }
     
     $checkoutSession = \Stripe\Checkout\Session::create($sessionParams);
