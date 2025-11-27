@@ -139,6 +139,19 @@ try {
             ]
         ],
         
+        // Shipping Info (separate from billing)
+        'shipping' => [
+            'name' => $shippingName,
+            'address' => [
+                'line1' => $shippingAddress->line1 ?? null,
+                'line2' => $shippingAddress->line2 ?? null,
+                'city' => $shippingAddress->city ?? null,
+                'state' => $shippingAddress->state ?? null,
+                'postal_code' => $shippingAddress->postal_code ?? null,
+                'country' => $shippingAddress->country ?? null,
+            ]
+        ],
+        
         // Line Items
         'line_items' => [],
         
