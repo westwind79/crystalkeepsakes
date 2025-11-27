@@ -62,20 +62,35 @@ try {
         $orderDate = date('Y-m-d H:i:s', $orderTimestamp);
     }
     
+    // Get shipping address (Stripe can store it in shipping_details OR customer_details)
+    $shippingAddress = null;
+    $shippingName = null;
+    
+    // Priority: shipping_details (when using shipping_address_collection)
+    if (isset($session->shipping_details) && $session->shipping_details->address) {
+        $shippingAddress = $session->shipping_details->address;
+        $shippingName = $session->shipping_details->name ?? $session->customer_details->name ?? '';
+    } 
+    // Fallback: customer billing address
+    elseif (isset($session->customer_details->address)) {
+        $shippingAddress = $session->customer_details->address;
+        $shippingName = $session->customer_details->name ?? '';
+    }
+    
     // Build Cockpit3D payload (for debugging)
     $cockpit3dPayload = [
         'retailer_id' => getEnvVar('COCKPIT3D_RETAIL_ID') ?? '256568874',
         'order_id' => $orderNumber,
         'address' => [
             'email' => $session->customer_details->email ?? '',
-            'firstname' => explode(' ', $session->customer_details->name ?? '')[0] ?? '',
-            'lastname' => explode(' ', $session->customer_details->name ?? '', 2)[1] ?? '',
+            'firstname' => explode(' ', $shippingName)[0] ?? '',
+            'lastname' => explode(' ', $shippingName, 2)[1] ?? '',
             'telephone' => $session->customer_details->phone ?? '',
-            'region' => $session->customer_details->address->state ?? '',
-            'country' => $session->customer_details->address->country ?? 'US',
-            'street' => $session->customer_details->address->line1 ?? '',
-            'city' => $session->customer_details->address->city ?? '',
-            'postcode' => $session->customer_details->address->postal_code ?? '',
+            'region' => $shippingAddress->state ?? '',
+            'country' => $shippingAddress->country ?? 'US',
+            'street' => $shippingAddress->line1 ?? '',
+            'city' => $shippingAddress->city ?? '',
+            'postcode' => $shippingAddress->postal_code ?? '',
             'shipping_method' => 'standard',
             'destination' => 'customer_home',
         ],
