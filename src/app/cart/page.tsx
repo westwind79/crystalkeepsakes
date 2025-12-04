@@ -331,7 +331,7 @@ export default function CartPage() {
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
-                          className="w-40 h-40 object-contain rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          className="w-65 h-65 object-cover rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                           onClick={() => window.open(item.productImage, '_blank')}
                           title="Click to view full size"
                         />
@@ -344,7 +344,7 @@ export default function CartPage() {
                           <img 
                             src={item.customImage.thumbnail}
                             alt="Final Engraved Version"
-                            className="w-40 h-40 object-contain rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            className="w-65 h-65 object-cover rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                             onClick={() => window.open(item.customImage?.dataUrl, '_blank')}
                             title="Click to view full size"
                           />
