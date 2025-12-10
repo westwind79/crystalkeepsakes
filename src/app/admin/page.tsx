@@ -1503,6 +1503,18 @@ export default finalProductList;
                     {/* Images Tab */}
                     {activeTab === 'images' && (
                       <div>
+                        {/* Debug Info */}
+                        {editedProducts[selectedProduct.id]?.images && (
+                          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+                            <p className="font-semibold text-yellow-800 mb-1">⚠️ Unsaved Changes</p>
+                            <p className="text-yellow-700">You have modified this product's images. Click "Save Products" to persist changes.</p>
+                            <p className="text-yellow-600 mt-1">
+                              Changed images: {editedProducts[selectedProduct.id].images.length} 
+                              {' vs Original: '}{sourceProducts.find(p => p.id === selectedProduct.id)?.images?.length || 0}
+                            </p>
+                          </div>
+                        )}
+                        
                         <ImageUpload
                           productId={selectedProduct.id}
                           images={selectedProductData.images || []}
