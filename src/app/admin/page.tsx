@@ -364,11 +364,21 @@ export default finalProductList;
         const result = await response.json();
 
         if (result.success) {
-          alert(`✅ Products saved to project!\n\n📁 Files updated:\n• ${result.jsPath}\n• /public/data/final-products.json\n\n🔄 Refresh browser to see changes!`);
+          alert(`✅ Products saved to project!\n\n📁 Files updated:\n• ${result.jsPath}\n• /public/data/final-products.json\n\n🔄 Reloading products...`);
           
           // Clear localStorage since changes are now saved
           localStorage.removeItem('productCustomizations');
           setEditedProducts({});
+          
+          // Reload products from JSON to sync with saved data
+          try {
+            const products = await getProducts();
+            setSourceProducts(products as Product[]);
+            console.log('✅ Products reloaded from JSON');
+          } catch (error) {
+            console.error('Failed to reload products:', error);
+            alert('⚠️ Products saved but failed to reload. Please refresh the page manually.');
+          }
           
           return;
         }
