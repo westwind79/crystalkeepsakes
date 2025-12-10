@@ -98,5 +98,4 @@ export async function POST(request: NextRequest) {
 }
 
 // Route segment config for Next.js App Router
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+// Note: dynamic routes don't work with static export, so this is dev-only
