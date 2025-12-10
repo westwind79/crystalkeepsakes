@@ -41,9 +41,8 @@ export default function ImageUpload({ productId, images, onImagesUpdated }: Imag
         formData.append('productId', productId);
         formData.append('image', file);  // ✅ PHP expects 'image' field name
 
-        // ✅ FIX: Use backend URL for PHP API (MAMP or production)
-        const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || '';
-        const apiUrl = backendUrl ? `${backendUrl}/api/upload-image.php` : '/api/upload-image.php';
+        // ✅ Use Next.js API route for image upload (works in development)
+        const apiUrl = '/api/admin/upload-image';
         
         console.log('📤 Uploading to:', apiUrl);
         
