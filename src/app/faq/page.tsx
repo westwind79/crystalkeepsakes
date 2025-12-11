@@ -50,7 +50,7 @@ export default function FAQPage() {
       <Breadcrumbs items={[{ label: 'Frequently Asked Questions' }]} />
 
       {/* FAQ Content - Light Background */}
-      <section className="bg-white py-8">
+      <section className="bg-slate-100 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             

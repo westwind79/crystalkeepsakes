@@ -149,7 +149,22 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
-        "isMain": true
+        "isMain": false
+      },
+      {
+        "src": "/img/products/cockpit3d/104/product_104_1765407871405.jpg",
+        "isMain": false,
+        "alt": "3dc_cutcornerdiamond.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/104/product_104_1765407875041.jpg",
+        "isMain": false,
+        "alt": "Crystal on Rotating.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/104/product_104_1765407878879.png",
+        "isMain": true,
+        "alt": "noahs-keepsake-1.png"
       }
     ],
     "options": [],
@@ -240,7 +255,8 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
-    "sale": false
+    "sale": true,
+    "salePercent": 10
   },
   {
     "id": "105",
@@ -261,7 +277,9 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
+    "sale": true,
+    "salePercent": 5
   },
   {
     "id": "106",
@@ -282,7 +300,9 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null
+    "maskImageUrl": null,
+    "sale": true,
+    "salePercent": 5
   },
   {
     "id": "107",
@@ -689,7 +709,22 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/148/cockpit3d_148_Rectangle_Horizontal_Crystals.jpg",
-        "isMain": true
+        "isMain": false
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765407960837.jpg",
+        "isMain": true,
+        "alt": "3d-rectangle-wide.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765407962450.jpg",
+        "isMain": false,
+        "alt": "lalena-gift.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765407962471.jpg",
+        "isMain": false,
+        "alt": "lalena-gift-square.jpg"
       }
     ],
     "options": [],
@@ -1243,6 +1278,21 @@
       {
         "src": "/img/products/cockpit3d/248/cockpit3d_248_3D_Crystal_Candle.png",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/248/product_248_1765402871193.jpg",
+        "isMain": false,
+        "alt": "3dc_candle_urn_small.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/248/product_248_1765402880024.jpg",
+        "isMain": false,
+        "alt": "brooks-memorial.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/248/product_248_1765402880059.png",
+        "isMain": false,
+        "alt": "brooks-promo-1.png"
       }
     ],
     "options": [],

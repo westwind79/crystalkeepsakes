@@ -39,6 +39,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",
+    "baseline-browser-mapping": "^2.9.5",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "env-cmd": "^11.0.0",

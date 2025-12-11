@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import ProductDetailClient from '@/components/ProductDetailClient'
 import NextImage from 'next/image'
-
+import '../../css/gallery.css'
 /**
  * CRITICAL: Force static rendering for output: 'export'
  * This prevents the "dynamic routes cannot coexist with static export" error

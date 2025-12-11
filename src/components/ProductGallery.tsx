@@ -102,35 +102,35 @@ export default function ProductGallery({ images = [] }) {
       {/* Thumbnails */}
       {images.length > 1 && (
         <div className="thumbnails">
-          <div className="row g-2">
+          <div className="grid grid-cols-5 gap-4 align-center justify-center g-2">
             
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
               const thumbDisplaySrc = assetPath(thumbSrc || '')
               
               return (
-                <div key={idx} className="col-3">
-                  <div 
-                    className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
-                    style={{ 
-                      position: 'relative',
-                      height: '80px',
-                      cursor: 'pointer',
-                      border: idx === activeIndex ? '2px solid var(--brand-500)' : '1px solid #dee2e6',
-                      overflow: 'hidden'
+                <div  
+                  key={idx}
+                  className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
+                  style={{ 
+                    position: 'relative',
+                    height: '80px',
+                    cursor: 'pointer',
+                    border: idx === activeIndex ? '2px solid var(--brand-400)' : '2px solid var(--surface-300)',
+                    overflow: 'hidden'
+                  }}
+                  onClick={() => setActiveIndex(idx)}
+                >
+                  <img
+                    src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="p-2"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                     }}
-                    onClick={() => setActiveIndex(idx)}
-                  >
-                    <img
-                      src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
-                      alt={`Thumbnail ${idx + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
-                      }}
-                    />
-                  </div>
-                </div>
+                  />
+                </div> 
               )
             })}
           </div>

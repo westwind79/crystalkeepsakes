@@ -64,7 +64,7 @@ export default function AboutPageClient() {
       <Breadcrumbs items={[{ label: 'About' }]} />
 
       {/* Main About Content */}
-      <section className="bg-white py-8">
+      <section className="bg-slate-100 py-8">
           <div className="mx-auto max-w-3xl">
             
 

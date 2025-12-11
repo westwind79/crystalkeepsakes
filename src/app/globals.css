@@ -2,6 +2,7 @@
 @import './css/variables.css';
 
 @import "tailwindcss";
+
 @import './css/buttons.css';
 @import './css/hero.css';
 @import './css/breadcrumbs.css';
