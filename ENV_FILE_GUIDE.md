@@ -136,6 +136,7 @@ yarn build:test
 - Base Path: `/test`
 - Stripe: Test keys
 - Output: `out-test/`
+- **Includes**: `out-test/.env` (copied from `.env.production.test`)
 - Deploy to: `https://crystalkeepsakes.com/test/`
 
 ### Production Build
@@ -147,6 +148,7 @@ yarn build:prod
 - Base Path: `/` (root)
 - Stripe: **LIVE** keys ⚠️
 - Output: `out-prod/`
+- **Includes**: `out-prod/.env` (copied from `.env.production`)
 - Deploy to: `https://crystalkeepsakes.com/`
 
 ---
