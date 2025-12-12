@@ -57,7 +57,7 @@ export default function ProductGallery({ images = [] }) {
   return (
     <div className="product-gallery">
       {/* Main Image - Use regular img tag to avoid Next.js optimization issues */}
-      <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
+      <div className="main-image mb-3">
         <img
           src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
           alt={`Product image ${activeIndex + 1}`}

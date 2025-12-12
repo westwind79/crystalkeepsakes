@@ -22,6 +22,8 @@ import ProductBadges from '@/components/ProductBadges'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
+import '../app/css/gallery.css'
+
 import { getProducts } from '@/lib/products'
 
 // Environment
@@ -595,10 +597,10 @@ export default function ProductDetailClient() {
                 </div>
               </div>
 
-              <div className="w-full overflow-hidden rounded-lg relative">
+              <div className="w-full overflow-hidden">
                 {finalMaskedImage ? (
                   <div className="space-y-4">
-                    <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
                       <Image
                         src={finalMaskedImage} 
                         alt="Customer Preview" 
@@ -648,10 +650,10 @@ export default function ProductDetailClient() {
           </div>
 
           {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0 col-span-2">
 
             <div className="flex items-start flex-wrap">
-              <h1 className="text-8xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
+              <h1 className="text-6xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
             </div>
 
             <div className="mt-3">

@@ -145,7 +145,7 @@
     "sku": "Cut_Corner_Diamond",
     "basePrice": 59,
     "description": "Elegant cut corner diamond 3D crystal keepsake perfect for honoring veterans, memorial tributes, and Christmas gifts. Personalized laser engraving preserves cherished memories forever.",
-    "longDescription": "Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.\n<br/>\nEach crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.\n<br/><br/>\n**Perfect For:**\n- Veteran memorial gifts and military tributes\n- Christmas ornaments with family photos\n- Memorial keepsakes for loved ones\n- Anniversary and wedding memories\n- Baby's first Christmas or milestone celebrations\n<br/><br/>\n**Customization Options:**\n- Optional custom text engraving ($9.50)\n- 2D or 3D backdrop enhancement\n- Multiple light base options for elegant display\n- Background removal service available\n\nThis personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.\n\n**Dimensions**: Available in 5x5cm, 6x6cm, and 8x8cm",
+    "longDescription": "<p class=\"mb-4\">Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.</p>\n\n<p class=\"mb-4\">Each crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.</p>\n\n<h3 class=\"mb-2 text-md\"><strong>Perfect For</strong></h3>\n<ul class=\"mb-4\">\n<li>- Veteran memorial gifts and military tributes</li>\n<li>- Christmas ornaments with family photos</li>\n<li>- Memorial keepsakes for loved ones</li>\n<li>- Anniversary and wedding memories</li>\n<li>- Baby's first Christmas or milestone celebrations</li>\n</ul>\n<h3 class=\"mb-2 text-md\">Customization Options:</h3>\n<ul class=\"mb-4\">\n<li>- Optional custom text engraving ($9.50)</li>\n<li>- 2D or 3D backdrop enhancement</li>\n<li>- Multiple light base options for elegant display</li>\n<li>- Background removal service available</li>\n</ul>\n<p class=\"mb-4\">This personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.</p>\n\n<h4 class=\"mb-2\">Dimensions:</h4>\n<p class=\"mb-4\">Available in 5x5cm, 6x6cm, and 8x8cm</p>",
     "images": [
       {
         "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
@@ -255,8 +255,8 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
-    "sale": true,
-    "salePercent": 10
+    "sale": false,
+    "featured": true
   },
   {
     "id": "105",
@@ -278,8 +278,7 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "sale": true,
-    "salePercent": 5
+    "sale": false
   },
   {
     "id": "106",
@@ -301,8 +300,7 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "sale": true,
-    "salePercent": 5
+    "sale": false
   },
   {
     "id": "107",

@@ -34,19 +34,19 @@ export default function ProductBadges({ product, position = 'card', className = 
   const getContainerClass = () => {
     switch (position) {
       case 'card':
-        return 'productcard absolute left-4 top-0 inset-0 pointer-events-none z-10'
+        return 'productcard'
       case 'detail':
-        return 'detail absolute left-100 top-0 inset-0 pointer-events-none z-10'
+        return 'detail'
       case 'gallery':
-        return 'gallery absolute left-0 top-0 inset-0 pointer-events-none z-10'
+        return 'gallery'
       default:
-        return 'default absolute left-99 top-0 inset-0 pointer-events-none z-10'
+        return 'default'
     }
   }
 
   // Featured badge styling - consistent across all views
   const featuredBadge = isFeatured && (
-    <>
+    <div className="absolute z-6 right-4 top-4">
       <div className="bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide">
         <svg 
           className="w-4 h-4" 
@@ -58,19 +58,21 @@ export default function ProductBadges({ product, position = 'card', className = 
         </svg>
         <span>Featured</span>
       </div>
-    </>
+    </div>
   )
 
   // Sale badge styling - consistent across all views
-  const saleBadge = onSale && (    
+  const saleBadge = onSale && (
+    <div className="absolute z-6 left-4 top-0">
     <span className="labelSale shadow-lg text-white bg-gradient-to-b leading-none text-sm from-amber-800 to-[#ce0000] tracking-wide uppercase">
       Sale
-    </span> 
+    </span>
+    </div> 
   )
 
   // Light Base badge - only for detail/gallery views
   const lightbaseBadge = isLightbase && (position === 'detail' || position === 'gallery' || position === 'card') && (
-    <>
+    <div className="lightbase-tag absolute z-6 right-4 bottom-4">
       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full shadow-sm text-sm font-semibold">
         <svg 
           className="w-4 h-4" 
@@ -82,12 +84,12 @@ export default function ProductBadges({ product, position = 'card', className = 
         </svg>
         Light Base
       </span>
-    </>
+    </div>
   )
 
   // Return container with all badges
   return (
-    <div className={`${getContainerClass()} ${className} here`}>
+    <div className={`${getContainerClass()} ${className}`}>
       {featuredBadge}
       {saleBadge}
       {lightbaseBadge}
