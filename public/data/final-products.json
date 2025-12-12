@@ -1786,6 +1786,21 @@
       {
         "src": "/img/products/cockpit3d/279/cockpit3d_279_Ornament_Stand.png",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1765571544070.webp",
+        "isMain": false,
+        "alt": "product_279_1764053153883.webp"
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1765571544089.png",
+        "isMain": false,
+        "alt": "product_279_1764053165147.png"
+      },
+      {
+        "src": "/img/products/cockpit3d/279/product_279_1765571544107.png",
+        "isMain": false,
+        "alt": "product_279_1764053165164.png"
       }
     ],
     "options": [],
