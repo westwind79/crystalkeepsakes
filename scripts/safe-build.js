@@ -168,6 +168,45 @@ try {
   
   console.log('\n✅ Build completed successfully!\n');
   
+  // Step 4: Run post-build cleanup scripts
+  console.log('📋 Step 4: Running post-build cleanup...\n');
+  
+  // 4a. Remove admin panel (security)
+  try {
+    console.log('   🔒 Removing admin panel...');
+    execSync('node scripts/remove-admin-from-build.js', {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } catch (err) {
+    console.error('   ⚠️  Admin removal failed:', err.message);
+  }
+  
+  // 4b. Clean up Next.js internal artifacts
+  try {
+    console.log('   🧹 Cleaning build artifacts...');
+    execSync('node scripts/cleanup-build-artifacts.js', {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } catch (err) {
+    console.error('   ⚠️  Artifact cleanup failed:', err.message);
+  }
+  
+  // 4c. Prepare final deployment
+  try {
+    console.log('   📦 Preparing deployment files...');
+    execSync(`node scripts/prepare-build.js ${mode}`, {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } catch (err) {
+    console.error('   ⚠️  Deployment prep failed:', err.message);
+  }
+  
 } catch (err) {
   console.error('\n❌ Build failed!\n');
   
