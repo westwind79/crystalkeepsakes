@@ -256,7 +256,7 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
     "sale": false,
-    "featured": true
+    "featured": false
   },
   {
     "id": "105",
@@ -2024,6 +2024,11 @@
       {
         "src": "/img/products/cockpit3d/440/cockpit3d_440_2D_Crystal_Heart_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/440/product_440_1765572243797.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
       }
     ],
     "options": [],
@@ -2078,6 +2083,11 @@
       {
         "src": "/img/products/cockpit3d/441/cockpit3d_441_2D_Crystal_Flower_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/441/product_441_1765572235985.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
       }
     ],
     "options": [],
@@ -2132,6 +2142,11 @@
       {
         "src": "/img/products/cockpit3d/442/cockpit3d_442_2D_Crystal_Cat_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/442/product_442_1765572221559.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
       }
     ],
     "options": [],
@@ -2186,6 +2201,11 @@
       {
         "src": "/img/products/cockpit3d/443/cockpit3d_443_2D_Crystal_Dog_Bone_Ornament.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/443/product_443_1765572230207.webp",
+        "isMain": false,
+        "alt": "xmas.webp"
       }
     ],
     "options": [],
@@ -2280,7 +2300,7 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": true
+    "featured": false
   },
   {
     "id": "445",
