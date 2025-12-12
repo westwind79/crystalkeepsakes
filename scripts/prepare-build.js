@@ -101,11 +101,20 @@ try {
     console.log(`  ⚠️  vendor/ folder not found - run 'composer install' if using Stripe`);
   }
 
-  // Step 5: Create .env.example (reference, DON'T upload the actual .env)
+  // Step 5: Copy .env file to build output
+  // This .env will be used by the PHP backend on the server
   if (fs.existsSync(config.env)) {
+    // Copy as .env (the actual file the server will use)
+    const envDest = path.join(config.targetOut, '.env');
+    fs.copyFileSync(config.env, envDest);
+    console.log(`  ✅ Copied ${config.env} → ${config.targetOut}/.env`);
+    
+    // Also create .env.example for reference
     const envExample = path.join(config.targetOut, '.env.example');
     fs.copyFileSync(config.env, envExample);
-    console.log(`  ✅ Created .env.example (reference only - DO NOT upload)`);
+    console.log(`  ✅ Created .env.example (backup reference)`);
+  } else {
+    console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
   }
 
   // Step 6: Create deployment instructions
@@ -125,31 +134,27 @@ try {
    1. Upload ALL files from ${config.targetOut}/ to:
       ${config.uploadTo}
 
-   2. DO NOT UPLOAD:
-      - .env.example (this is just a reference)
+   2. .env file is INCLUDED in build:
+      - ${config.targetOut}/.env will be uploaded
+      - This contains your ${config.stripeKeys} Stripe keys
+      - .env.example is a backup copy
 
-   3. CREATE .env on server manually with:
-      ${config.stripeKeys} Stripe keys
+   3. Verify .env has correct keys after upload
 
 🔐 ENVIRONMENT VARIABLES:
-   Create this file on server: ${config.uploadTo}.env
-
-   Required contents:
-   ┌─────────────────────────────────────────────────────────┐
-   │ NEXT_PUBLIC_ENV_MODE=${mode === 'prod' ? 'production' : 'testing'}                      │
-   │ NEXT_PUBLIC_BASE_PATH=${config.basePath}                            │
-   │ NEXT_PUBLIC_PHP_BACKEND_URL=${config.url}  │
-   │                                                           │
-   │ # Stripe Keys - ${config.stripeKeys}             │
-   ${mode === 'prod' ? '│ STRIPE_SECRET_KEY=sk_live_YOUR_KEY                    │' : '│ STRIPE_DEVELOPMENT_SECRET_KEY=sk_test_YOUR_KEY       │'}
-   ${mode === 'prod' ? '│ NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY=pk_live_... │' : '│ NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY=...  │'}
-   │                                                           │
-   │ # Database (if using)                                    │
-   │ DB_HOST=localhost                                        │
-   │ DB_NAME=your_database                                    │
-   │ DB_USER=your_user                                        │
-   │ DB_PASS=your_password                                    │
-   └─────────────────────────────────────────────────────────┘
+   ✅ .env file is INCLUDED in build (from ${config.env})
+   
+   Location: ${config.targetOut}/.env
+   
+   This file contains:
+   - ${config.stripeKeys} Stripe keys
+   - Database credentials
+   - All environment-specific settings
+   
+   ⚠️  IMPORTANT: Verify after upload that .env has:
+   ${mode === 'prod' ? '   - LIVE Stripe keys (sk_live_* and pk_live_*)' : '   - TEST Stripe keys (sk_test_* and pk_test_*)'}
+   - Correct backend URL: ${config.url}
+   - Proper database credentials
 
 🧪 TESTING CHECKLIST:
    ${mode === 'test' ? '☐ Test checkout with Stripe test card: 4242 4242 4242 4242' : '☐ Test with REAL payment (small amount)'}
@@ -165,9 +170,10 @@ try {
    ${mode === 'prod' ? '• BACKUP production before uploading!' : '• Test thoroughly before moving to production'}
 
 📋 DEPLOYMENT CHECKLIST:
-   ☐ Uploaded all files from ${config.targetOut}/
-   ☐ Created .env on server with ${config.stripeKeys} keys
-   ☐ Set file permissions: chmod 644 .env
+   ☐ Uploaded all files from ${config.targetOut}/ (including .env)
+   ☐ Verified .env exists on server at ${config.uploadTo}.env
+   ☐ Confirmed .env has ${config.stripeKeys} keys
+   ☐ Set file permissions: chmod 644 .env (readable by PHP)
    ☐ Verified ${config.url} loads correctly
    ☐ Tested complete checkout flow
    ${mode === 'prod' ? '☐ Monitored for errors after deployment' : '☐ Ready to deploy to production'}
@@ -212,13 +218,14 @@ Next Steps: Upload ${config.targetOut}/ to ${config.uploadTo}
   if (mode !== 'local') {
     console.log(`⚡ NEXT STEPS:`);
     console.log(`   1. Review: cat ${config.targetOut}/DEPLOY.txt`);
-    console.log(`   2. Upload: ${config.targetOut}/ → ${config.uploadTo}`);
-    console.log(`   3. Create .env on server with ${config.stripeKeys} keys`);
+    console.log(`   2. Upload: ${config.targetOut}/ → ${config.uploadTo} (includes .env)`);
+    console.log(`   3. Verify .env uploaded: ls -la ${config.uploadTo}.env`);
     console.log(`   4. Test: ${config.url}\n`);
   } else {
     console.log(`⚡ NEXT STEPS:`);
     console.log(`   1. MAMP will serve from: ${config.targetOut}/`);
-    console.log(`   2. Visit: ${config.url}\n`);
+    console.log(`   2. .env included in build`);
+    console.log(`   3. Visit: ${config.url}\n`);
   }
 
 } catch (error) {
