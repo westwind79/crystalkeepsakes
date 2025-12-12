@@ -149,15 +149,21 @@ console.log('');
 console.log('📋 Step 3: Running Next.js build...\n');
 
 try {
-  // Build command with environment variables
-  const buildCmd = `cross-env ${Object.entries(envVars).map(([k, v]) => `${k}="${v}"`).join(' ')} next build`;
+  // Build command - Next.js will automatically load the correct .env file
+  // For test mode: .env.production.test
+  // For prod mode: .env.production
+  // For local mode: .env.local
   
-  console.log(`   Command: ${buildCmd}\n`);
+  const buildCmd = 'next build';
+  
+  console.log(`   Command: ${buildCmd}`);
+  console.log(`   Environment: ${process.env.NODE_ENV}`);
+  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
   
   execSync(buildCmd, {
     stdio: 'inherit',
     shell: true,
-    env: { ...process.env, ...envVars }
+    env: process.env  // Pass current environment with loaded vars
   });
   
   console.log('\n✅ Build completed successfully!\n');
