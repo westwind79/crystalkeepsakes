@@ -525,6 +525,13 @@ export default finalProductList;
   }
 
   return (
+    <>
+    <style>
+      {`
+        footer,
+        header {display:none !important;}
+      `}
+    </style>
     <div className="min-h-screen bg-gray-50">
       {/* Development-Only Warning Banner */}
       <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
@@ -557,7 +564,7 @@ export default finalProductList;
       )}
 
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
+      <div className="bg-white shadow-sm border-b z-10">
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
@@ -1614,5 +1621,6 @@ export default finalProductList;
         </div>
       </div>
     </div>
+    </>
   );
 }
