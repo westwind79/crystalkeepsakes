@@ -142,24 +142,19 @@ try {
    3. Verify .env has correct keys after upload
 
 🔐 ENVIRONMENT VARIABLES:
-   Create this file on server: ${config.uploadTo}.env
-
-   Required contents:
-   ┌─────────────────────────────────────────────────────────┐
-   │ NEXT_PUBLIC_ENV_MODE=${mode === 'prod' ? 'production' : 'testing'}                      │
-   │ NEXT_PUBLIC_BASE_PATH=${config.basePath}                            │
-   │ NEXT_PUBLIC_PHP_BACKEND_URL=${config.url}  │
-   │                                                           │
-   │ # Stripe Keys - ${config.stripeKeys}             │
-   ${mode === 'prod' ? '│ STRIPE_SECRET_KEY=sk_live_YOUR_KEY                    │' : '│ STRIPE_DEVELOPMENT_SECRET_KEY=sk_test_YOUR_KEY       │'}
-   ${mode === 'prod' ? '│ NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY=pk_live_... │' : '│ NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY=...  │'}
-   │                                                           │
-   │ # Database (if using)                                    │
-   │ DB_HOST=localhost                                        │
-   │ DB_NAME=your_database                                    │
-   │ DB_USER=your_user                                        │
-   │ DB_PASS=your_password                                    │
-   └─────────────────────────────────────────────────────────┘
+   ✅ .env file is INCLUDED in build (from ${config.env})
+   
+   Location: ${config.targetOut}/.env
+   
+   This file contains:
+   - ${config.stripeKeys} Stripe keys
+   - Database credentials
+   - All environment-specific settings
+   
+   ⚠️  IMPORTANT: Verify after upload that .env has:
+   ${mode === 'prod' ? '   - LIVE Stripe keys (sk_live_* and pk_live_*)' : '   - TEST Stripe keys (sk_test_* and pk_test_*)'}
+   - Correct backend URL: ${config.url}
+   - Proper database credentials
 
 🧪 TESTING CHECKLIST:
    ${mode === 'test' ? '☐ Test checkout with Stripe test card: 4242 4242 4242 4242' : '☐ Test with REAL payment (small amount)'}
