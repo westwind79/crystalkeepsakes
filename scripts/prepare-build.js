@@ -134,11 +134,12 @@ try {
    1. Upload ALL files from ${config.targetOut}/ to:
       ${config.uploadTo}
 
-   2. DO NOT UPLOAD:
-      - .env.example (this is just a reference)
+   2. .env file is INCLUDED in build:
+      - ${config.targetOut}/.env will be uploaded
+      - This contains your ${config.stripeKeys} Stripe keys
+      - .env.example is a backup copy
 
-   3. CREATE .env on server manually with:
-      ${config.stripeKeys} Stripe keys
+   3. Verify .env has correct keys after upload
 
 🔐 ENVIRONMENT VARIABLES:
    Create this file on server: ${config.uploadTo}.env
