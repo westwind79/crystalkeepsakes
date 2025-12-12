@@ -76,7 +76,8 @@ desktop.ini
 *.bak
 *.old
 
-# PHP
+# PHP / Composer
+vendor/
 composer.lock
 
 # Testing
