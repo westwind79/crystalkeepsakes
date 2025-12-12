@@ -69,33 +69,78 @@ console.log('📋 Step 2: Setting build environment...\n');
 
 const buildModes = {
   test: {
+    envFile: '.env.production.test',
     BUILD_MODE: 'test',
     NEXT_PUBLIC_BASE_PATH: '/test',
-    NEXT_PUBLIC_ENV_MODE: 'testing'
+    NEXT_PUBLIC_ENV_MODE: 'testing',
+    NODE_ENV: 'production'  // Next.js needs this set to 'production' for builds
   },
   prod: {
+    envFile: '.env.production',
     BUILD_MODE: 'prod',
     NEXT_PUBLIC_BASE_PATH: '',
-    NEXT_PUBLIC_ENV_MODE: 'production'
+    NEXT_PUBLIC_ENV_MODE: 'production',
+    NODE_ENV: 'production'
   },
   local: {
+    envFile: '.env.local',
     BUILD_MODE: 'local',
     NEXT_PUBLIC_BASE_PATH: '',
-    NEXT_PUBLIC_ENV_MODE: 'development'
+    NEXT_PUBLIC_ENV_MODE: 'development',
+    NODE_ENV: 'development'
   }
 };
 
-const envVars = buildModes[mode];
+const config = buildModes[mode];
 
-if (!envVars) {
+if (!config) {
   console.error('❌ Invalid mode. Use: test, prod, or local\n');
   process.exit(1);
 }
 
-// Apply environment variables
-Object.keys(envVars).forEach(key => {
-  process.env[key] = envVars[key];
-  console.log(`   ${key}=${envVars[key]}`);
+// Check if the required env file exists
+const envFilePath = path.join(__dirname, '..', config.envFile);
+if (!fs.existsSync(envFilePath)) {
+  console.error(`❌ Error: ${config.envFile} not found!\n`);
+  console.error(`   Expected at: ${envFilePath}\n`);
+  console.error(`   Please create this file with your environment variables.\n`);
+  console.error(`   You can copy from .env.example and customize.\n`);
+  process.exit(1);
+}
+
+console.log(`   ✅ Using env file: ${config.envFile}`);
+console.log(`   📍 Location: ${envFilePath}\n`);
+
+// Load environment variables from the specific file
+const envContent = fs.readFileSync(envFilePath, 'utf8');
+const envLines = envContent.split('\n');
+let loadedVars = 0;
+
+envLines.forEach(line => {
+  // Skip comments and empty lines
+  if (line.trim().startsWith('#') || !line.trim()) return;
+  
+  const match = line.match(/^([^=]+)=(.*)$/);
+  if (match) {
+    const key = match[1].trim();
+    const value = match[2].trim().replace(/^["']|["']$/g, ''); // Remove quotes
+    process.env[key] = value;
+    loadedVars++;
+    
+    // Only show NEXT_PUBLIC_ variables for security
+    if (key.startsWith('NEXT_PUBLIC_')) {
+      console.log(`   ${key}=${value}`);
+    }
+  }
+});
+
+console.log(`\n   Loaded ${loadedVars} environment variables from ${config.envFile}\n`);
+
+// Apply additional build-specific variables
+const { envFile, ...buildVars } = config;
+Object.keys(buildVars).forEach(key => {
+  process.env[key] = buildVars[key];
+  console.log(`   ${key}=${buildVars[key]}`);
 });
 
 console.log('');
@@ -104,15 +149,21 @@ console.log('');
 console.log('📋 Step 3: Running Next.js build...\n');
 
 try {
-  // Build command with environment variables
-  const buildCmd = `cross-env ${Object.entries(envVars).map(([k, v]) => `${k}="${v}"`).join(' ')} next build`;
+  // Build command - Next.js will automatically load the correct .env file
+  // For test mode: .env.production.test
+  // For prod mode: .env.production
+  // For local mode: .env.local
   
-  console.log(`   Command: ${buildCmd}\n`);
+  const buildCmd = 'next build';
+  
+  console.log(`   Command: ${buildCmd}`);
+  console.log(`   Environment: ${process.env.NODE_ENV}`);
+  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
   
   execSync(buildCmd, {
     stdio: 'inherit',
     shell: true,
-    env: { ...process.env, ...envVars }
+    env: process.env  // Pass current environment with loaded vars
   });
   
   console.log('\n✅ Build completed successfully!\n');
