@@ -170,9 +170,10 @@ try {
    ${mode === 'prod' ? '• BACKUP production before uploading!' : '• Test thoroughly before moving to production'}
 
 📋 DEPLOYMENT CHECKLIST:
-   ☐ Uploaded all files from ${config.targetOut}/
-   ☐ Created .env on server with ${config.stripeKeys} keys
-   ☐ Set file permissions: chmod 644 .env
+   ☐ Uploaded all files from ${config.targetOut}/ (including .env)
+   ☐ Verified .env exists on server at ${config.uploadTo}.env
+   ☐ Confirmed .env has ${config.stripeKeys} keys
+   ☐ Set file permissions: chmod 644 .env (readable by PHP)
    ☐ Verified ${config.url} loads correctly
    ☐ Tested complete checkout flow
    ${mode === 'prod' ? '☐ Monitored for errors after deployment' : '☐ Ready to deploy to production'}
