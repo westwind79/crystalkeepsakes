@@ -153,6 +153,27 @@ yarn build:prod
 
 ---
 
+## Build Output - .env File Included
+
+**IMPORTANT**: When you run a build, the `.env` file is automatically copied to the output directory:
+
+- `yarn build:test` → Creates `out-test/.env` (from `.env.production.test`)
+- `yarn build:prod` → Creates `out-prod/.env` (from `.env.production`)
+
+This means:
+- ✅ You upload the entire `out-test/` or `out-prod/` folder
+- ✅ The `.env` file is included automatically
+- ✅ No need to manually create `.env` on the server
+- ⚠️ Make sure your source `.env.production.test` and `.env.production` have real credentials!
+
+**Workflow**:
+1. Edit `.env.production.test` with your test credentials
+2. Run `yarn build:test`
+3. Upload `out-test/` to server → `.env` is included
+4. Done! The server has the correct `.env` file
+
+---
+
 ## Verification
 
 ### Check Which File Is Being Used
