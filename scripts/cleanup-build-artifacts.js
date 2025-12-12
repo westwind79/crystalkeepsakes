@@ -66,10 +66,22 @@ function removeNextJsArtifacts(dir) {
 
 const removedCount = removeNextJsArtifacts(distPath);
 
+// Also remove vendor/ folder if it exists (Composer dependencies should be on server only)
+const vendorPath = path.join(distPath, 'vendor');
+if (fs.existsSync(vendorPath)) {
+  try {
+    fs.rmSync(vendorPath, { recursive: true, force: true });
+    console.log(`   ✅ Removed: vendor/ (Composer dependencies - install on server)`);
+    removedCount++;
+  } catch (error) {
+    console.log(`   ⚠️  Could not remove vendor/: ${error.message}`);
+  }
+}
+
 if (removedCount === 0) {
   console.log('   ✅ No artifacts to clean (already clean)');
 } else {
-  console.log(`\n   Removed ${removedCount} artifact file(s)`);
+  console.log(`\n   Total: Removed ${removedCount} artifact(s)`);
 }
 
 console.log('');
