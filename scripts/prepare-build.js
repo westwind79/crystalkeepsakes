@@ -101,11 +101,20 @@ try {
     console.log(`  ⚠️  vendor/ folder not found - run 'composer install' if using Stripe`);
   }
 
-  // Step 5: Create .env.example (reference, DON'T upload the actual .env)
+  // Step 5: Copy .env file to build output
+  // This .env will be used by the PHP backend on the server
   if (fs.existsSync(config.env)) {
+    // Copy as .env (the actual file the server will use)
+    const envDest = path.join(config.targetOut, '.env');
+    fs.copyFileSync(config.env, envDest);
+    console.log(`  ✅ Copied ${config.env} → ${config.targetOut}/.env`);
+    
+    // Also create .env.example for reference
     const envExample = path.join(config.targetOut, '.env.example');
     fs.copyFileSync(config.env, envExample);
-    console.log(`  ✅ Created .env.example (reference only - DO NOT upload)`);
+    console.log(`  ✅ Created .env.example (backup reference)`);
+  } else {
+    console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
   }
 
   // Step 6: Create deployment instructions
