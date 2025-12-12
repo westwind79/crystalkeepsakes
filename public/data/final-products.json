@@ -1100,7 +1100,10 @@
       }
     ],
     "maskImageUrl": "/img/masks/ornament-mask.png",
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "holiday"
+    ]
   },
   {
     "id": "171",
@@ -1361,7 +1364,11 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-urn-small-mask.png",
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "memorial",
+      "holiday"
+    ]
   },
   {
     "id": "251",
@@ -1421,7 +1428,11 @@
       }
     ],
     "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "memorial",
+      "holiday"
+    ]
   },
   {
     "id": "252",
@@ -1551,7 +1562,14 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/notched-vertical-mask.png"
+    "maskImageUrl": "/img/masks/notched-vertical-mask.png",
+    "occasions": [
+      "anniversary",
+      "wedding",
+      "birthday",
+      "baby",
+      "holiday"
+    ]
   },
   {
     "id": "266",
@@ -1654,7 +1672,10 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/notched-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/notched-horizontal-mask.png",
+    "occasions": [
+      "anniversary"
+    ]
   },
   {
     "id": "276",
@@ -1809,7 +1830,10 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "holiday"
+    ]
   },
   {
     "id": "286",
@@ -1880,7 +1904,10 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/dogbone-vertical-mask.png"
+    "maskImageUrl": "/img/masks/dogbone-vertical-mask.png",
+    "occasions": [
+      "memorial"
+    ]
   },
   {
     "id": "288",
@@ -1951,7 +1978,10 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
+    "occasions": [
+      "memorial"
+    ]
   },
   {
     "id": "290",
@@ -2698,7 +2728,12 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
+    "occasions": [
+      "wedding",
+      "birthday",
+      "holiday"
+    ]
   },
   {
     "id": "454",
@@ -3020,7 +3055,16 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-monument_o.png"
+    "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
+    "occasions": [
+      "holiday",
+      "birthday",
+      "wedding",
+      "memorial",
+      "anniversary",
+      "graduation",
+      "retirement"
+    ]
   },
   {
     "id": "468",
