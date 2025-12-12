@@ -218,13 +218,14 @@ Next Steps: Upload ${config.targetOut}/ to ${config.uploadTo}
   if (mode !== 'local') {
     console.log(`⚡ NEXT STEPS:`);
     console.log(`   1. Review: cat ${config.targetOut}/DEPLOY.txt`);
-    console.log(`   2. Upload: ${config.targetOut}/ → ${config.uploadTo}`);
-    console.log(`   3. Create .env on server with ${config.stripeKeys} keys`);
+    console.log(`   2. Upload: ${config.targetOut}/ → ${config.uploadTo} (includes .env)`);
+    console.log(`   3. Verify .env uploaded: ls -la ${config.uploadTo}.env`);
     console.log(`   4. Test: ${config.url}\n`);
   } else {
     console.log(`⚡ NEXT STEPS:`);
     console.log(`   1. MAMP will serve from: ${config.targetOut}/`);
-    console.log(`   2. Visit: ${config.url}\n`);
+    console.log(`   2. .env included in build`);
+    console.log(`   3. Visit: ${config.url}\n`);
   }
 
 } catch (error) {
