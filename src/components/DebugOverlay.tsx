@@ -68,6 +68,56 @@ export default function DebugOverlay() {
     return () => window.removeEventListener('debug-step' as any, handleDebugEvent)
   }, [])
 
+  // Load order preview when Order tab is selected
+  const loadOrderPreview = useCallback(async () => {
+    setIsLoadingOrder(true)
+    try {
+      const cart = await getCartWithImages()
+      setCartItems(cart || [])
+      
+      if (cart && cart.length > 0) {
+        // Generate test order number
+        const testOrderNumber = `TEST-${Date.now()}`
+        
+        // Mock customer info for preview
+        const mockCustomer = {
+          email: 'test@example.com',
+          firstName: 'Test',
+          lastName: 'Customer',
+          phone: '555-0123',
+          shippingAddress: {
+            street1: '123 Test Street',
+            city: 'Test City',
+            state: 'CA',
+            zipCode: '90210',
+            country: 'US'
+          }
+        }
+        
+        // Build preview order
+        const order = buildCockpit3DOrder(testOrderNumber, cart, mockCustomer)
+        setOrderPreview(order)
+        
+        // Validate
+        const validation = validateCockpit3DOrder(order)
+        setOrderValidation(validation)
+      } else {
+        setOrderPreview(null)
+        setOrderValidation(null)
+      }
+    } catch (err) {
+      console.error('Failed to load order preview:', err)
+    } finally {
+      setIsLoadingOrder(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isOpen && activeTab === 'order') {
+      loadOrderPreview()
+    }
+  }, [isOpen, activeTab, loadOrderPreview])
+
   // Don't render at all if debug is not enabled
   if (!mounted || !shouldShowDebug) return null
 
