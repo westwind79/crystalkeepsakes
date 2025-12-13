@@ -143,7 +143,7 @@
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
     "sku": "Cut_Corner_Diamond",
-    "basePrice": 59,
+    "basePrice": 39.75,
     "description": "Elegant cut corner diamond 3D crystal keepsake perfect for honoring veterans, memorial tributes, and Christmas gifts. Personalized laser engraving preserves cherished memories forever.",
     "longDescription": "Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.\n<br/>\nEach crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.\n<br/><br/>\n**Perfect For:**\n- Veteran memorial gifts and military tributes\n- Christmas ornaments with family photos\n- Memorial keepsakes for loved ones\n- Anniversary and wedding memories\n- Baby's first Christmas or milestone celebrations\n<br/><br/>\n**Customization Options:**\n- Optional custom text engraving ($9.50)\n- 2D or 3D backdrop enhancement\n- Multiple light base options for elegant display\n- Background removal service available\n\nThis personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.\n\n**Dimensions**: Available in 5x5cm, 6x6cm, and 8x8cm",
     "images": [
@@ -243,7 +243,8 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
-    "sale": false
+    "sale": false,
+    "cost": 39.75
   },
   {
     "id": "105",
@@ -336,7 +337,7 @@
     "name": "Rectangle Vertical Crystals",
     "slug": "rectangle-vertical-crystals",
     "sku": "Rectangle_Vertical_Crystals",
-    "basePrice": 85,
+    "basePrice": 79,
     "description": "Premium vertical rectangle 3D photo crystal - ideal memorial gift for veterans and loved ones. 8 sizes available. Personalized laser engraving with custom text options.",
     "longDescription": "<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Create a lasting tribute with our <span class=\"font-semibold\">Rectangle Vertical Crystal</span>, a sophisticated 3D laser-engraved keepsake that honors veterans, celebrates memories, and makes the perfect Christmas gift. Available in 8 sizes ranging from small (6x4cm) to presidential (27x18cm), this elegant crystal transforms your treasured photographs into stunning works of art.\n</p>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Our advanced 3D laser engraving technology captures incredible depth and detail, making every memory vivid and lifelike. Whether you're commemorating a fallen soldier, celebrating a milestone, or creating a meaningful Christmas ornament, this vertical rectangle crystal provides a timeless way to preserve life's most precious moments.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Ideal Memorial Gift:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Veteran and military tribute displays</li>\n  <li>Memorial keepsakes for family members</li>\n  <li>Retirement and service recognition awards</li>\n  <li>Christmas photo ornaments and decorations</li>\n  <li>Wedding anniversary and milestone celebrations</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Size Options:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Small: 6x4cm – Perfect desk size</li>\n  <li>Medium: 8x5cm – Popular choice</li>\n  <li>Large: 9x6cm – Impressive detail</li>\n  <li>XLarge: 12x8cm – Statement piece</li>\n  <li>Mini Mantel: 15x10cm – Mantel display</li>\n  <li>Mantel: 18x12cm – Family showcase</li>\n  <li>Mini Presidential: 22x16cm – Executive display</li>\n  <li>Presidential: 27x18cm – Premium memorial</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Customization Features:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Custom text engraving for names, dates, and messages</li>\n  <li>2D or 3D backdrop options for enhanced depth</li>\n  <li>Multiple premium light base selections</li>\n  <li>Professional background removal service</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Each crystal is crafted with precision and care, ensuring your memorial gift or Christmas keepsake becomes a cherished family heirloom. The vertical orientation is perfect for portrait photos and creates an elegant display on any mantel, desk, or memorial shelf.</p>",
     "images": [
@@ -494,14 +495,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png"
+    "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
+    "cost": 24.75
   },
   {
     "id": "118",
     "name": "Prestige Crystal",
     "slug": "prestige-crystal",
     "sku": "Prestige_Crystal",
-    "basePrice": 235,
+    "basePrice": 199,
     "description": "Premium Prestige 3D crystal - elegant memorial gift for distinguished veterans and VIP tributes. Three sizes available. Museum-quality engraving.",
     "longDescription": "<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Present the ultimate tribute with our <span class=\"font-semibold\">Prestige Crystal</span>, a distinguished memorial piece designed for honoring high-ranking veterans, significant life achievements, and VIP commemorations. This premium crystal represents our finest craftsmanship, combining elegant design with museum-quality 3D laser engraving that befits prestigious occasions and important memorial tributes.\n</p>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The Prestige Crystal features a sophisticated architectural design that commands respect and attention. Available in three substantial sizes, this crystal is perfect for executive gifts, military retirement ceremonies, memorial services for distinguished individuals, and occasions where only the finest tribute will do.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Prestigious Memorial Occasions:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>High-ranking military veteran tributes</li>\n  <li>Executive retirement gifts</li>\n  <li>Distinguished service awards</li>\n  <li>Memorial services for VIPs</li>\n  <li>Presidential and congressional gifts</li>\n  <li>Significant lifetime achievement recognition</li>\n  <li>Museum and institution memorials</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Prestige Features:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Elegant architectural design</li>\n  <li>Three substantial sizes (13x9cm, 16x13cm, 19x15cm)</li>\n  <li>Museum-quality 3D laser engraving</li>\n  <li>Premium crystal clarity and weight</li>\n  <li>Sophisticated presentation</li>\n  <li>Multiple luxury light base options</li>\n  <li>Suitable for formal displays</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The larger size options make this crystal ideal for prominent display in corporate offices, memorial halls, military installations, or home libraries where significant tributes deserve prominent placement. The weight and clarity of the crystal immediately communicate quality and importance.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Ideal For:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>General and Admiral retirements</li>\n  <li>Congressional Medal of Honor recipients</li>\n  <li>Presidential tributes</li>\n  <li>CEO and executive memorials</li>\n  <li>University and institution honors</li>\n  <li>Significant anniversary celebrations</li>\n  <li>High-profile memorial services</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Customization for Prestige:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Formal portraits and official photos</li>\n  <li>Military rank, awards, and insignia</li>\n  <li>Service records and achievements</li>\n  <li>Formal epitaphs and citations</li>\n  <li>2D or 3D backdrop enhancement</li>\n  <li>Premium custom text placement</li>\n  <li>Background removal service</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  This Prestige Crystal is frequently chosen for military change-of-command ceremonies, retirement celebrations for senior officers, and memorial services where the individual's significance merits exceptional recognition. The crystal's substantial presence and elegant design communicate respect, honor, and lasting appreciation.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Investment in Honor:</h4>\n<p class=\"text-lg leading-relaxed text-gray-800\">\n  Starting at $235, the Prestige Crystal represents a significant investment appropriate for significant individuals and occasions. This is not a casual gift—it's a statement of profound respect and lasting tribute that reflects the importance of the person being honored.\n</p>\n",
     "images": [
@@ -618,7 +620,8 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/prestige-mask.png"
+    "maskImageUrl": "/img/masks/prestige-mask.png",
+    "cost": 99.75
   },
   {
     "id": "119",
@@ -647,7 +650,7 @@
     "name": "Keychains Vertical",
     "slug": "keychains-vertical",
     "sku": "Keychains_Vertical",
-    "basePrice": 35,
+    "basePrice": 25,
     "description": "3D crystal photo keychains - carry memorial photos of veterans, loved ones, and pets everywhere. Vertical, horizontal, heart, cat, and dog bone shapes available.",
     "longDescription": "Keep precious memories within reach every single day with our collection of 3D Crystal Photo Keychains. These miniature masterpieces allow you to carry memorial photos of veterans, loved ones, pets, and cherished moments wherever life takes you—transforming ordinary keychains into meaningful connections that travel through your daily routine.\n\nDespite their compact size, our crystal keychains feature the same professional-quality laser engraving found in our larger display pieces. Your photographs, whether vertical portraits, horizontal scenes, or shaped designs, are captured with stunning clarity and preserved forever in durable, scratch-resistant crystal.\n\n**Keychain Shape Options:**\n\n**Vertical Rectangle Keychain (ID: 122) - $35**\nTraditional portrait orientation perfect for individual photos, military headshots, and formal portraits. The vertical format suits official military photos, graduation pictures, and single-person memorial keepsakes.\n\n**Horizontal Rectangle Keychain (ID: 151) - $35**\nLandscape orientation ideal for couples, small groups, or scenic photos. Perfect for military buddies, married couples, and horizontal photo compositions.\n\n**Heart-Shaped Keychain (ID: 156) - $25**\nThe universal symbol of love makes this heart keychain perfect for romantic relationships, parent-child bonds, and \"love transcends loss\" memorial keepsakes. Most affordable option for meaningful gifts.\n\n**Cat-Shaped Keychain (ID: 445) - $55**\nCelebrate feline companions with this adorable cat-shaped crystal featuring 3D engraving. Perfect for cat lovers, pet memorial keepsakes, and rainbow bridge tributes.\n\n**Dog Bone Keychain (ID: 446) - $45**\nClassic bone shape perfect for dog lovers, military K9 remembrance, and pet memorial tributes. Universally recognized by dog enthusiasts everywhere.\n\n**Memorial Keychain Applications:**\n- Veteran photo keychains\n- Fallen soldier remembrance\n- Pet memorial keychains (cats and dogs)\n- Loved one memorial gifts\n- Military deployment keepsakes\n- Christmas stocking stuffers with meaning\n- Sympathy and bereavement gifts\n\n**Crystal Keychain Features:**\n- Durable, scratch-resistant crystal\n- Professional 2D or 3D laser engraving\n- Sturdy keychain attachment included\n- Won't fade or deteriorate over time\n- Compact, portable memorial\n- Optional custom text engraving\n- Multiple shape options available\n\nThese memorial keychains are particularly meaningful for those who want constant physical connection to loved ones. Many customers attach them to car keys, making every drive a shared journey. Others keep them on purses, backpacks, or work ID lanyards—ensuring memorial photos are present throughout daily activities.",
     "images": [
@@ -693,14 +696,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-vertical-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-keychain-vertical-mask.png",
+    "cost": 9.75
   },
   {
     "id": "148",
     "name": "Rectangle Horizontal Crystals",
     "slug": "rectangle-horizontal-crystals",
     "sku": "Rectangle_Horizontal_Crystals",
-    "basePrice": 85,
+    "basePrice": 100,
     "description": "Horizontal rectangle 3D photo crystal in 8 sizes. Landscape orientation ideal for family photos, military groups, and veteran tributes. Premium memorial gift.",
     "longDescription": "<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Capture life's most important moments in landscape orientation with our <span class=\"font-semibold\">Rectangle Horizontal Crystal</span>, designed specifically for family groups, military units, and wide-format photographs. Available in 8 sizes from small (6x4cm) to presidential (27x18cm), this horizontal crystal orientation is perfect for commemorating group photos, military formations, family gatherings, and scenic memorial tributes.\n</p>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The landscape format makes this crystal ideal for photographs that tell broader stories—military units standing together, families gathered for holidays, veterans with their brothers-in-arms, or scenic locations that held special meaning. Our 3D laser engraving captures every person, every detail, creating memorial pieces that honor not just individuals but the relationships and bonds that defined their lives.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Ideal for Landscape Photos:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Military unit and platoon photos</li>\n  <li>Family gathering and reunion photos</li>\n  <li>Veteran brothers-in-arms tributes</li>\n  <li>Scenic memorial locations</li>\n  <li>Horizontal portrait compositions</li>\n  <li>Christmas family traditions</li>\n  <li>Wide-format memorial displays</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Size Options <span class=\"text-base font-normal\">(all at $85 base):</span></h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Small: 6x4cm - Desk size</li>\n  <li>Medium: 8x5cm - Popular choice</li>\n  <li>Large: 9x6cm - Enhanced detail</li>\n  <li>XLarge: 12x8cm - Statement size</li>\n  <li>Mini Mantel: 15x10cm - Mantel perfect</li>\n  <li>Mantel: 18x12cm - Family showcase</li>\n  <li>Mini Presidential: 22x16cm - Executive display</li>\n  <li>Presidential: 27x18cm - Premium memorial</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Rectangle Horizontal Features:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Landscape orientation for wide photos</li>\n  <li>3D laser engraving with depth</li>\n  <li>8 size options for any budget</li>\n  <li>Perfect for group photographs</li>\n  <li>Military formation appropriate</li>\n  <li>Multiple light base options</li>\n  <li>Professional display quality</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Perfect For:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Veteran unit reunion tributes</li>\n  <li>Family Christmas traditions</li>\n  <li>Military change-of-command gifts</li>\n  <li>Retirement ceremony displays</li>\n  <li>Memorial service group photos</li>\n  <li>Anniversary celebration gifts</li>\n  <li>Christmas family keepsakes</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The horizontal format is particularly effective for military formations, showing entire units or squads together—honoring not just individual service but the bonds of brotherhood forged in service. Many veteran organizations use these crystals for reunion gifts, retirement presents, and memorial tributes to fallen comrades.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Customization Options:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Unit designation and service dates</li>\n  <li>Military insignia and branch</li>\n  <li>\"Never Forget\" memorial text</li>\n  <li>Family names and occasions</li>\n  <li>2D or 3D backdrop enhancement</li>\n  <li>Background removal service</li>\n  <li>Custom memorial inscriptions</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  This crystal is also perfect for Christmas family traditions—many families create annual crystals featuring their holiday gatherings, building collections that document family growth and celebrate togetherness across generations.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Display Versatility:</h4>\n<p class=\"text-lg leading-relaxed text-gray-800\">\n  The horizontal orientation suits modern design aesthetics and fits beautifully on mantel displays, horizontal shelving, and contemporary memorial arrangements. The wide format draws the eye across the composition, inviting viewers to study details and remember stories.</p>\n",
     "images": [
@@ -851,14 +855,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 24.75
   },
   {
     "id": "151",
     "name": "Keychain Horizontal",
     "slug": "keychain-horizontal",
     "sku": "Keychain_Horizontal",
-    "basePrice": 35,
+    "basePrice": 25,
     "description": "Landscape orientation ideal for couples, small groups, or scenic photos. Perfect for military buddies, married couples, and horizontal photo compositions.",
     "longDescription": "Keep precious memories within reach every single day with our collection of 3D Crystal Photo Keychains. These miniature masterpieces allow you to carry memorial photos of veterans, loved ones, pets, and cherished moments wherever life takes you—transforming ordinary keychains into meaningful connections that travel through your daily routine.\n\nDespite their compact size, our crystal keychains feature the same professional-quality laser engraving found in our larger display pieces. Your photographs, whether vertical portraits, horizontal scenes, or shaped designs, are captured with stunning clarity and preserved forever in durable, scratch-resistant crystal.",
     "images": [
@@ -904,14 +909,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-keychain-horizontal-mask.png",
+    "cost": 9.75
   },
   {
     "id": "156",
     "name": "Heart Keychain",
     "slug": "heart-keychain",
     "sku": "Heart_Keychain",
-    "basePrice": 55,
+    "basePrice": 30,
     "description": "Heart-shaped 3D crystal photo keychain - carry memorial photos of veterans and loved ones everywhere. Personalized engraving, perfect remembrance gift.",
     "longDescription": "Keep your loved ones close to your heart—literally—with our Heart-Shaped 3D Crystal Photo Keychain. This miniature memorial masterpiece allows you to carry cherished memories of veterans, family members, or special moments wherever you go. Perfect as a remembrance gift, veteran tribute, or meaningful Christmas stocking stuffer.\n\nDespite its compact size, this heart crystal keychain features the same professional-quality 3D laser engraving found in our larger pieces. Your photograph is captured with stunning clarity and depth, creating a portable memorial or keepsake that travels with you through every day.\n\n**Meaningful Memorial Keychain:**\n- Veteran and military photo keepsakes\n- Memorial gifts for remembering loved ones\n- Pet memorial keepsakes\n- Anniversary and relationship gifts\n- Stocking stuffer with meaning\n- Daily reminder of loved ones\n\n**Features:**\n- Heart-shaped design symbolizes love and remembrance\n- Durable crystal construction (won't scratch or fade)\n- 3D laser engraving for depth and clarity\n- Optional custom text (names, dates, messages)\n- 2D or 3D backdrop options\n- Sturdy keychain attachment included\n- Compact and portable\n\nThis heart crystal keychain makes an incredibly thoughtful gift for those grieving, celebrating a memory, or simply wanting to keep someone special close. Many of our customers purchase these as memorial gifts for funeral services, veteran commemorations, or as Christmas gifts that carry deep personal meaning.\n\nThe heart shape is universally recognized as a symbol of love, making this the perfect way to show someone you care while honoring a cherished memory. Whether attached to car keys, a purse, or displayed on a small stand, this crystal keychain serves as a constant reminder of love that transcends time and distance.",
     "images": [
@@ -957,14 +963,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-keychain-mask.png"
+    "maskImageUrl": "/img/masks/heart-keychain-mask.png",
+    "cost": 14.75
   },
   {
     "id": "158",
     "name": "Heart Necklace 2D",
     "slug": "heart-necklace-2d",
     "sku": "Heart_Necklace_2D",
-    "basePrice": 75,
+    "basePrice": 25,
     "description": "The universal symbol of love makes this heart keychain perfect for romantic relationships, parent-child bonds, and \"love transcends loss\" memorial keepsakes. Most affordable option for meaningful gifts.",
     "longDescription": "Keep precious memories within reach every single day with our collection of 3D Crystal Photo Keychains. These miniature masterpieces allow you to carry memorial photos of veterans, loved ones, pets, and cherished moments wherever life takes you—transforming ordinary keychains into meaningful connections that travel through your daily routine.\n\nDespite their compact size, our crystal keychains feature the same professional-quality laser engraving found in our larger display pieces. Your photographs, whether vertical portraits, horizontal scenes, or shaped designs, are captured with stunning clarity and preserved forever in durable, scratch-resistant crystal.",
     "images": [
@@ -1010,7 +1017,8 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-necklace-mask.png"
+    "maskImageUrl": "/img/masks/heart-necklace-mask.png",
+    "cost": 17.75
   },
   {
     "id": "160",
@@ -1039,7 +1047,7 @@
     "name": "Ornament Crystal",
     "slug": "ornament-crystal",
     "sku": "Ornament_Crystal",
-    "basePrice": 99,
+    "basePrice": 35,
     "description": "3D crystal Christmas ornament with personalized photo engraving. Perfect memorial gift for veterans and loved ones. Beautiful holiday keepsake that lasts forever.",
     "longDescription": "<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Transform your Christmas tree into a gallery of cherished memories with our <span class=\"font-semibold\">3D Crystal Christmas Ornament</span>. This personalized photo ornament is more than decoration—it's a heartfelt memorial gift that honors veterans, celebrates family, and preserves your most treasured moments in stunning laser-engraved crystal.\n</p>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Each ornament is carefully crafted using state-of-the-art 3D laser engraving technology, capturing your photograph with remarkable depth and clarity. Whether you're commemorating a loved one who served, celebrating baby's first Christmas, or creating a memorial tribute, this crystal ornament becomes a meaningful tradition that grows more precious with each passing year.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Perfect Christmas & Memorial Gift:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Veteran and military memorial ornaments</li>\n  <li>Family photo Christmas decorations</li>\n  <li>Memorial tribute for loved ones passed</li>\n  <li>Baby's first Christmas keepsake</li>\n  <li>Pet memorial ornaments</li>\n  <li>Wedding and anniversary commemorations</li>\n</ul>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Why Choose Our Crystal Ornaments:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Unbreakable memories: Unlike glass, crystal is durable and long-lasting</li>\n  <li>Professional 3D engraving captures incredible detail</li>\n  <li>Optional custom text for personalization</li>\n  <li>2D or 3D backdrop options available</li>\n  <li>Comes ready to hang with premium ribbon</li>\n  <li>Makes a thoughtful sympathy or memorial gift</li>\n</ul>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Our crystal ornaments are designed to be displayed year-round, not just during holidays. Many families create memorial displays featuring loved ones or military service members, making these ornaments a centerpiece of remembrance and celebration.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Customization Options:</h4>\n<ul class=\"list-disc list-inside mb-6 text-gray-700 space-y-1\">\n  <li>Add names, dates, or special messages</li>\n  <li>Background removal for clean, professional look</li>\n  <li>2D or 3D backdrop enhancement</li>\n  <li>Custom text engraving</li>\n</ul>\n",
     "images": [
@@ -1086,14 +1094,15 @@
       }
     ],
     "maskImageUrl": "/img/masks/ornament-mask.png",
-    "featured": true
+    "featured": true,
+    "cost": 19.75
   },
   {
     "id": "171",
     "name": "New Wide Heart",
     "slug": "new-wide-heart",
     "sku": "New_Wide_Heart",
-    "basePrice": 180,
+    "basePrice": 119,
     "description": "New Wide Heart",
     "longDescription": "",
     "images": [
@@ -1195,7 +1204,8 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-mask.png"
+    "maskImageUrl": "/img/masks/heart-mask.png",
+    "cost": 69.75
   },
   {
     "id": "173",
