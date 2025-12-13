@@ -39,8 +39,11 @@ export default function EnhancedDebugOverlay() {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null)
   const [mounted, setMounted] = useState(false)
   const [shouldShowDebug, setShouldShowDebug] = useState(false)
-  const [activeTab, setActiveTab] = useState<'steps' | 'system' | 'storage' | 'cart'>('steps')
+  const [activeTab, setActiveTab] = useState<'steps' | 'system' | 'storage' | 'cart' | 'order'>('steps')
   const [autoRefresh, setAutoRefresh] = useState(false)
+  const [orderPreview, setOrderPreview] = useState<Cockpit3DOrder | null>(null)
+  const [orderValidation, setOrderValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
+  const [isLoadingOrder, setIsLoadingOrder] = useState(false)
 
   const gatherSystemInfo = async (): Promise<SystemInfo> => {
     const storageHealth = checkStorageHealth()
