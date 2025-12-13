@@ -599,6 +599,165 @@ export default function EnhancedDebugOverlay() {
               </div>
             )}
 
+            {/* ORDER TAB - Cockpit3D Order Structure Preview */}
+            {activeTab === 'order' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-orange-400">📦 Cockpit3D Order Structure</h3>
+                  <button
+                    onClick={loadOrderPreview}
+                    disabled={isLoadingOrder}
+                    className="text-xs bg-orange-600 px-2 py-1 rounded hover:bg-orange-700 disabled:opacity-50"
+                  >
+                    {isLoadingOrder ? '⟳ Loading...' : '🔄 Refresh'}
+                  </button>
+                </div>
+
+                {/* Validation Status */}
+                {orderValidation && (
+                  <div className={`p-3 rounded text-xs ${
+                    orderValidation.isValid 
+                      ? 'bg-green-900/30 border border-green-500' 
+                      : 'bg-red-900/30 border border-red-500'
+                  }`}>
+                    <div className="font-bold mb-1">
+                      {orderValidation.isValid ? '✅ Order Valid - Ready to Submit' : '❌ Validation Errors'}
+                    </div>
+                    {orderValidation.errors.length > 0 && (
+                      <ul className="list-disc list-inside text-red-400">
+                        {orderValidation.errors.map((err, i) => (
+                          <li key={i}>{err}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
+                {/* Order Preview */}
+                {orderPreview ? (
+                  <div className="space-y-4">
+                    {/* Order Header */}
+                    <div className="p-3 bg-orange-900/20 border border-orange-700 rounded-lg text-xs space-y-2">
+                      <div className="font-bold text-orange-400 mb-2">📋 Order Info</div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Order ID:</span>
+                        <span className="text-white font-mono">{orderPreview.order_id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Retailer ID:</span>
+                        <span className="text-white font-mono">{orderPreview.retailer_id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Total:</span>
+                        <span className="text-green-400 font-bold">${orderPreview.total?.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    {/* Shipping Address */}
+                    <div className="p-3 bg-gray-800 rounded-lg text-xs space-y-1">
+                      <div className="font-bold text-blue-400 mb-2">📍 Shipping Address (Test Data)</div>
+                      <div className="text-gray-300">{orderPreview.address.firstname} {orderPreview.address.lastname}</div>
+                      <div className="text-gray-300">{orderPreview.address.street}</div>
+                      <div className="text-gray-300">{orderPreview.address.city}, {orderPreview.address.region} {orderPreview.address.postcode}</div>
+                      <div className="text-gray-400">{orderPreview.address.email}</div>
+                    </div>
+
+                    {/* Line Items */}
+                    <div className="p-3 bg-gray-800 rounded-lg text-xs">
+                      <div className="font-bold text-purple-400 mb-2">🛒 Line Items ({orderPreview.items.length})</div>
+                      {orderPreview.items.map((item, idx) => (
+                        <div key={idx} className="border-t border-gray-700 pt-2 mt-2 first:border-0 first:pt-0 first:mt-0">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-bold text-white">{item.sku}</div>
+                              <div className="text-gray-400">Qty: {item.qty}</div>
+                              <div className="text-gray-500 font-mono text-[10px]">ID: {item.client_item_id}</div>
+                            </div>
+                            <div className="text-green-400 font-bold">${item.price.toFixed(2)}</div>
+                          </div>
+                          
+                          {/* Item Options */}
+                          {item.options.length > 0 && (
+                            <div className="mt-2 pl-2 border-l-2 border-gray-600">
+                              <div className="text-gray-500 text-[10px] mb-1">Cockpit3D Options:</div>
+                              {item.options.map((opt, optIdx) => (
+                                <div key={optIdx} className="text-[10px] text-gray-400">
+                                  • Option ID: <span className="text-orange-400">{opt.id}</span>
+                                  {opt.qty && <span className="text-gray-500"> (qty: {opt.qty})</span>}
+                                  {opt.value && <span className="text-blue-400"> = {JSON.stringify(opt.value)}</span>}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Special Instructions */}
+                          {item.special_instructions && (
+                            <div className="mt-2 p-2 bg-yellow-900/20 border border-yellow-700/50 rounded text-[10px] text-yellow-400">
+                              📝 {item.special_instructions}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Raw JSON Export */}
+                    <details className="text-xs">
+                      <summary className="cursor-pointer text-orange-400 hover:text-orange-300 font-bold p-2 bg-gray-800 rounded">
+                        📄 View Raw Cockpit3D JSON
+                      </summary>
+                      <div className="mt-2 relative">
+                        <button
+                          onClick={() => navigator.clipboard.writeText(JSON.stringify(orderPreview, null, 2))}
+                          className="absolute top-2 right-2 text-[10px] bg-orange-600 px-2 py-0.5 rounded hover:bg-orange-700 z-10"
+                        >
+                          Copy JSON
+                        </button>
+                        <pre className="bg-black/50 p-3 rounded overflow-x-auto text-[10px] max-h-[300px] overflow-y-auto text-gray-300">
+                          {JSON.stringify(orderPreview, null, 2)}
+                        </pre>
+                      </div>
+                    </details>
+
+                    {/* Test Order Button */}
+                    <div className="p-3 bg-yellow-900/20 border border-yellow-600 rounded-lg">
+                      <div className="font-bold text-yellow-400 text-xs mb-2">⚡ Test Actions</div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            console.log('📦 Cockpit3D Order Preview:', orderPreview)
+                            alert('Order logged to browser console (F12)')
+                          }}
+                          className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-xs py-1.5 px-3 rounded font-semibold"
+                        >
+                          Log to Console
+                        </button>
+                        <button
+                          onClick={() => {
+                            const blob = new Blob([JSON.stringify(orderPreview, null, 2)], { type: 'application/json' })
+                            const url = URL.createObjectURL(blob)
+                            const a = document.createElement('a')
+                            a.href = url
+                            a.download = `cockpit3d-order-${orderPreview.order_id}.json`
+                            a.click()
+                            URL.revokeObjectURL(url)
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-xs py-1.5 px-3 rounded font-semibold"
+                        >
+                          Download JSON
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-2">🛒</div>
+                    <p className="text-gray-400 text-sm">Add items to your cart to preview the Cockpit3D order structure</p>
+                    <p className="text-gray-500 text-xs mt-2">This shows exactly what will be sent to Cockpit3D API</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="mt-6 pt-4 border-t border-gray-700">
               <button
                 onClick={() => {
