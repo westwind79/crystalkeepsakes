@@ -568,9 +568,8 @@ export default finalProductList;
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Complete control over products, prices, and options
+               
+              <p className="text-sm text-gray-600 mt-1">              
                 {hasUnsavedChanges && (
                   <span className="ml-2 text-yellow-600 font-semibold">• Unsaved Edits Active</span>
                 )}
