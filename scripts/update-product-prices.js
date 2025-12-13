@@ -218,7 +218,7 @@ const SKU_MAPPING = {
 
 // Size name mapping: Maps size names in products to pricing SKUs
 const SIZE_NAME_TO_SKU = {
-  // Rectangle sizes
+  // Rectangle sizes (Vertical)
   'Rectangle Small (6x4cm)': 'Rectangle_Small_(6x4cm)',
   'Rectangle Medium (8x5cm)': 'Rectangle_Medium_(8x5cm)',
   'Rectangle Large (9x6cm)': 'Rectangle_Large_(9x6cm)',
@@ -228,18 +228,30 @@ const SIZE_NAME_TO_SKU = {
   'Rectangle Mini Presidential (22x16cm)': 'Rectangle_Mini_Presidential_(22x16cm)',
   'Rectangle Presidential (27x18cm)': 'Rectangle_Presidential_(27x18cm)',
   
+  // Rectangle sizes (Wide/Horizontal)
+  'Rectangle Wide Medium (8x5cm)': 'RectangleWideMedium_(8x5cm)',
+  'Rectangle Wide Large (9x6cm)': 'RectangleWideLarge_(9x6cm)',
+  'Rectangle Wide XLarge (12x8cm)': 'RectangleWideXLarge_(12x8cm)',
+  'Rectangle Wide Mini Mantel (15x10cm)': 'RectangleWideMini_Mantel_(15x10cm)',
+  'Rectangle Wide Mantel (18x12cm)': 'RectangleWideMantel_(18x12cm)',
+  'Rectangle Wide Mini Presidential (22x16cm)': 'RectangleWideMini_Presidential_(22x16cm)',
+  'Rectangle Wide Presidential (27x18cm)': 'RectangleWidePresidential_(27x18cm)',
+  
   // Cut Corner Diamond sizes
   'Cut Corner Diamond (5x5cm)': 'Cut_Corner_Diamond_(5x5cm)',
   'Cut Corner Diamond (6x6cm)': 'Cut_Corner_Diamond_(6x6cm)',
   'Cut Corner Diamond (8x8cm)': 'Cut_Corner_Diamond_(8x8cm)',
   
-  // Wide Heart sizes
+  // Wide Heart sizes (multiple naming variations)
   'Wide Heart Small (80x70x40mm)': 'Wide_Heart_small_(80x70x40)',
   'Wide Heart Small 80x70x40mm': 'Wide_Heart_small_(80x70x40)',
+  'Wide Heart small (80x70x40)': 'Wide_Heart_small_(80x70x40)',
   'Wide Heart Medium (100x90x50mm)': 'Wide_Heart_Medium_(100x90x50)',
   'Wide Heart Medium 100x90x50mm': 'Wide_Heart_Medium_(100x90x50)',
+  'Wide Heart Medium (100x90x50)': 'Wide_Heart_Medium_(100x90x50)',
   'Wide Heart Large (125x110x60mm)': 'Wide_Heart_Large_(125x110x60)',
   'Wide Heart Large 125x110x60mm': 'Wide_Heart_Large_(125x110x60)',
+  'Wide Heart Large (125x110x60)': 'Wide_Heart_Large_(125x110x60)',
   
   // Prestige sizes
   'Prestige Small (13x9cm)': 'Prestige_Small_(13x9cm)',
@@ -259,6 +271,28 @@ const SIZE_NAME_TO_SKU = {
   // Ornament types
   'Circle Ornament': 'Ornament',
   'Circle Ornament with Stand': 'Ornament_with_Stand',
+  
+  // Notched Crystal sizes
+  '2D Notched Small Crystal Tall 6x4x1.2\" / 15x10x3cm': '2d_notched_small_crystal_tall',
+  '3D Notched Small Crystal Tall 6x4x1.2\" / 15x10x3cm': '3d_notched_small_crystal_tall',
+  '2D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm': '2d_notched_crystal_tall',
+  '3D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm': '3d_notched_crystal_tall',
+  '2D Notched Small Crystal Wide 6x4x1.2\" / 15x10x3cm': '2d_notched_small_crystal_wide',
+  '3D Notched Small Crystal Wide 6x4x1.2\" / 15x10x3cm': '3d_notched_small_crystal_wide',
+  '2D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm': '2d_notched_crystal_wide',
+  '3D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm': '3d_notched_crystal_wide',
+  
+  // Ball Crystal sizes
+  'Ball Crystal Small 8cm': 'ball_small_8cm',
+  'Ball Crystal Medium 10cm': 'ball_small_8cm', // Use same pricing as small (no medium in pricing)
+  
+  // Dome sizes
+  '3D Small Crystal Dome': 'Small_Crystal_Dome',
+  '3D Crystal Dome Medium': 'Dome_Medium',
+  
+  // Circle sizes
+  '3D Crystal Circle Small l  4.75\" x 5 x 1.25 / 12 x 12.5 x 3cm': '3D_Crystal_Circle_Small_size',
+  '3D Crystal Circle Medium  6\" x 5.75 x 1.25 / 15 x 14.5 x 3cm': '3D_Crystal_Circle_Medium_size',
 };
 
 // ============================================
