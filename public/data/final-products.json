@@ -726,44 +726,51 @@
       {
         "id": "690",
         "name": "Rectangle Wide Medium (8x5cm)",
-        "price": 85,
-        "cockpit3d_id": "690"
+        "price": 100,
+        "cockpit3d_id": "690",
+        "cost": 24.75
       },
       {
         "id": "691",
         "name": "Rectangle Wide Large (9x6cm)",
-        "price": 85,
-        "cockpit3d_id": "691"
+        "price": 170,
+        "cockpit3d_id": "691",
+        "cost": 39.75
       },
       {
         "id": "692",
         "name": "Rectangle Wide XLarge (12x8cm)",
-        "price": 85,
-        "cockpit3d_id": "692"
+        "price": 285,
+        "cockpit3d_id": "692",
+        "cost": 59.75
       },
       {
         "id": "746",
         "name": "Rectangle Wide Mini Mantel (15x10cm)",
-        "price": 85,
-        "cockpit3d_id": "746"
+        "price": 325,
+        "cockpit3d_id": "746",
+        "cost": 89.75
       },
       {
         "id": "750",
         "name": "Rectangle Wide Mantel (18x12cm)",
-        "price": 85,
-        "cockpit3d_id": "750"
+        "price": 375,
+        "cockpit3d_id": "750",
+        "cost": 109.75
       },
       {
         "id": "751",
         "name": "Rectangle Wide Mini Presidential (22x16cm)",
-        "price": 85,
-        "cockpit3d_id": "751"
+        "price": 595,
+        "cockpit3d_id": "751",
+        "cost": 149.75
       },
       {
         "id": "752",
         "name": "Rectangle Wide Presidential (27x18cm)",
-        "price": 85,
-        "cockpit3d_id": "752"
+        "price": 1000,
+        "cockpit3d_id": "752",
+        "cost": 349.75
       }
     ],
     "lightBases": [
@@ -1117,20 +1124,23 @@
       {
         "id": "717",
         "name": "Wide Heart small (80x70x40)",
-        "price": 180,
-        "cockpit3d_id": "717"
+        "price": 89,
+        "cockpit3d_id": "717",
+        "cost": 39.75
       },
       {
         "id": "527",
         "name": "Wide Heart Medium (100x90x50)",
-        "price": 180,
-        "cockpit3d_id": "527"
+        "price": 119,
+        "cockpit3d_id": "527",
+        "cost": 69.75
       },
       {
         "id": "528",
         "name": "Wide Heart Large (125x110x60)",
-        "price": 180,
-        "cockpit3d_id": "528"
+        "price": 149,
+        "cockpit3d_id": "528",
+        "cost": 89.75
       }
     ],
     "lightBases": [
@@ -1459,14 +1469,16 @@
       {
         "id": "727",
         "name": "2D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
-        "price": 169,
-        "cockpit3d_id": "727"
+        "price": 259,
+        "cockpit3d_id": "727",
+        "cost": 95
       },
       {
         "id": "726",
         "name": "3D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
-        "price": 169,
-        "cockpit3d_id": "726"
+        "price": 259,
+        "cockpit3d_id": "726",
+        "cost": 95
       }
     ],
     "lightBases": [
@@ -1569,14 +1581,16 @@
       {
         "id": "744",
         "name": "2D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
-        "price": 169,
-        "cockpit3d_id": "744"
+        "price": 259,
+        "cockpit3d_id": "744",
+        "cost": 95
       },
       {
         "id": "743",
         "name": "3D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
-        "price": 169,
-        "cockpit3d_id": "743"
+        "price": 259,
+        "cockpit3d_id": "743",
+        "cost": 95
       }
     ],
     "lightBases": [
@@ -1682,14 +1696,16 @@
       {
         "id": "793",
         "name": "Ball Crystal Medium 10cm",
-        "price": 159,
-        "cockpit3d_id": "793"
+        "price": 169,
+        "cockpit3d_id": "793",
+        "cost": 59.75
       },
       {
         "id": "792",
         "name": "Ball Crystal Small 8cm",
-        "price": 129,
-        "cockpit3d_id": "792"
+        "price": 169,
+        "cockpit3d_id": "792",
+        "cost": 59.75
       }
     ],
     "lightBases": [
@@ -2560,14 +2576,16 @@
       {
         "id": "1882",
         "name": "3D Small Crystal Dome",
-        "price": 259,
-        "cockpit3d_id": "1882"
+        "price": 249,
+        "cockpit3d_id": "1882",
+        "cost": 79.75
       },
       {
         "id": "1883",
         "name": "3D Crystal Dome Medium",
-        "price": 259,
-        "cockpit3d_id": "1883"
+        "price": 329,
+        "cockpit3d_id": "1883",
+        "cost": 134.75
       }
     ],
     "lightBases": [
