@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { getImageStorageStats, checkStorageHealth } from '@/lib/cartUtils'
+import { useState, useEffect, useCallback } from 'react'
+import { getImageStorageStats, checkStorageHealth, getCartWithImages } from '@/lib/cartUtils'
+import { buildCockpit3DOrder, validateCockpit3DOrder, type Cockpit3DOrder } from '@/lib/cockpit3d-order-builder'
 
 interface DebugStep {
   id: string
