@@ -76,7 +76,8 @@ desktop.ini
 *.bak
 *.old
 
-# PHP
+# PHP / Composer
+vendor/
 composer.lock
 
 # Testing
@@ -99,3 +100,30 @@ coverage/
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+
+# Next.js auto-generated (changes between dev/build)
+next-env.d.ts

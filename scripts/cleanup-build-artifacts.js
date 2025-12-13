@@ -32,34 +32,56 @@ if (!fs.existsSync(distPath)) {
   process.exit(0);
 }
 
-// Files to remove (these are Next.js internals that shouldn't be deployed)
-const filesToRemove = [
-  '__next.__PAGE__.txt',
-  '__next._full.txt',
-  '__next._head.txt',
-  '__next._index.txt',
-  '__next._tree.txt',
-];
-
-let removedCount = 0;
-
-filesToRemove.forEach(file => {
-  const filePath = path.join(distPath, file);
-  if (fs.existsSync(filePath)) {
-    try {
-      fs.unlinkSync(filePath);
-      console.log(`   ✅ Removed: ${file}`);
-      removedCount++;
-    } catch (error) {
-      console.log(`   ⚠️  Could not remove ${file}: ${error.message}`);
-    }
+// Recursively find and remove ALL __next.* files
+function removeNextJsArtifacts(dir) {
+  let count = 0;
+  
+  function walk(directory) {
+    const files = fs.readdirSync(directory);
+    
+    files.forEach(file => {
+      const filePath = path.join(directory, file);
+      const stat = fs.statSync(filePath);
+      
+      if (stat.isDirectory()) {
+        // Recurse into subdirectories
+        walk(filePath);
+      } else if (file.startsWith('__next.') || file.startsWith('__next_')) {
+        // Remove any __next.* or __next_* file
+        try {
+          fs.unlinkSync(filePath);
+          const relativePath = path.relative(distPath, filePath);
+          console.log(`   ✅ Removed: ${relativePath}`);
+          count++;
+        } catch (error) {
+          console.log(`   ⚠️  Could not remove ${file}: ${error.message}`);
+        }
+      }
+    });
   }
-});
+  
+  walk(dir);
+  return count;
+}
+
+const removedCount = removeNextJsArtifacts(distPath);
+
+// Also remove vendor/ folder if it exists (Composer dependencies should be on server only)
+const vendorPath = path.join(distPath, 'vendor');
+if (fs.existsSync(vendorPath)) {
+  try {
+    fs.rmSync(vendorPath, { recursive: true, force: true });
+    console.log(`   ✅ Removed: vendor/ (Composer dependencies - install on server)`);
+    removedCount++;
+  } catch (error) {
+    console.log(`   ⚠️  Could not remove vendor/: ${error.message}`);
+  }
+}
 
 if (removedCount === 0) {
   console.log('   ✅ No artifacts to clean (already clean)');
 } else {
-  console.log(`\n   Removed ${removedCount} artifact file(s)`);
+  console.log(`\n   Total: Removed ${removedCount} artifact(s)`);
 }
 
 console.log('');

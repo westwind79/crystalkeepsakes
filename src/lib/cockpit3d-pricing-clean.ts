@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // /lib/cockpit3d-pricing-clean.ts
+=======
+// /app/src/lib/cockpit3d-pricing-clean.ts
+>>>>>>> development
 /**
  * Crystal Keepsakes - Clean Pricing Data
  * Generated: 2024-12-12
@@ -1205,11 +1209,27 @@ export const PRODUCT_PRICING: ProductPricing[] = [
   }
 ];
 
+<<<<<<< HEAD
 // Helper functions
+=======
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Get pricing data by SKU
+ */
+>>>>>>> development
 export function getPricingBySKU(sku: string): ProductPricing | undefined {
   return PRODUCT_PRICING.find(p => p.sku === sku);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Get price for a specific quantity (1-4)
+ */
+>>>>>>> development
 export function getPriceForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1218,6 +1238,12 @@ export function getPriceForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numbe
   return product.pricing[qtyKey]?.price ?? null;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Get cost for a specific quantity (1-4)
+ */
+>>>>>>> development
 export function getCostForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1226,6 +1252,12 @@ export function getCostForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number
   return product.pricing[qtyKey]?.cost ?? null;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Get margin for a specific quantity (1-4)
+ */
+>>>>>>> development
 export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1234,5 +1266,97 @@ export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numb
   return product.pricing[qtyKey]?.margin ?? null;
 }
 
+<<<<<<< HEAD
 // Export total count
 console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
+=======
+/**
+ * Get the best price based on quantity (returns discounted price if available)
+ */
+export function getBestPriceForQuantity(sku: string, quantity: number): number | null {
+  const product = getPricingBySKU(sku);
+  if (!product) return null;
+  
+  // Clamp quantity to 1-4 range
+  const qty = Math.min(Math.max(quantity, 1), 4) as 1 | 2 | 3 | 4;
+  
+  // Find highest available quantity tier <= requested quantity
+  for (let q = qty; q >= 1; q--) {
+    const qtyKey = `qty${q}` as keyof typeof product.pricing;
+    if (product.pricing[qtyKey]) {
+      return product.pricing[qtyKey]!.price;
+    }
+  }
+  
+  return product.pricing.qty1.price;
+}
+
+/**
+ * Calculate total price for an item with quantity
+ */
+export function calculateItemTotal(sku: string, quantity: number): number {
+  const unitPrice = getBestPriceForQuantity(sku, quantity);
+  if (unitPrice === null) return 0;
+  return unitPrice * quantity;
+}
+
+/**
+ * Check if a product has quantity discounts
+ */
+export function hasQuantityDiscounts(sku: string): boolean {
+  const product = getPricingBySKU(sku);
+  if (!product) return false;
+  return !!product.pricing.qty2 || !!product.pricing.qty3 || !!product.pricing.qty4;
+}
+
+/**
+ * Get all quantity tiers for a product
+ */
+export function getQuantityTiers(sku: string): Array<{ qty: number; price: number; savings?: number }> {
+  const product = getPricingBySKU(sku);
+  if (!product) return [];
+  
+  const tiers: Array<{ qty: number; price: number; savings?: number }> = [];
+  const basePrice = product.pricing.qty1.price;
+  
+  for (let q = 1; q <= 4; q++) {
+    const qtyKey = `qty${q}` as keyof typeof product.pricing;
+    const tier = product.pricing[qtyKey];
+    if (tier) {
+      tiers.push({
+        qty: q,
+        price: tier.price,
+        savings: q > 1 ? basePrice - tier.price : undefined
+      });
+    }
+  }
+  
+  return tiers;
+}
+
+/**
+ * Get pricing by category
+ */
+export function getPricingByCategory(category: string): ProductPricing[] {
+  return PRODUCT_PRICING.filter(p => p.category === category);
+}
+
+/**
+ * Search pricing by name (partial match)
+ */
+export function searchPricingByName(searchTerm: string): ProductPricing[] {
+  const term = searchTerm.toLowerCase();
+  return PRODUCT_PRICING.filter(p => 
+    p.name.toLowerCase().includes(term) || 
+    p.sku.toLowerCase().includes(term)
+  );
+}
+
+// Export total count for verification
+export const TOTAL_PRODUCTS = PRODUCT_PRICING.length;
+
+// Log on import (for debugging)
+if (typeof window !== 'undefined') {
+  console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
+}
+>>>>>>> development
