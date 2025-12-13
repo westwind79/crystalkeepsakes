@@ -124,3 +124,6 @@ coverage/
 # Environment files
 *.env
 *.env.*
+
+# Next.js auto-generated (changes between dev/build)
+next-env.d.ts
