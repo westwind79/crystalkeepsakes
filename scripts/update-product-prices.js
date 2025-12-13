@@ -201,6 +201,19 @@ const SKU_MAPPING = {
   // Candles/Urns
   '3D_Crystal_Candle': '3D-crystal-candle10x6x6cm',
   'Urn_candles': 'Urn_12x12x6',
+  
+  // Additional product mappings
+  'Cut_Corner_Diamond': 'Cut_Corner_Diamond_(6x6cm)', // Default to medium size
+  'Rectangle_Vertical_Crystals': 'Rectangle_Medium_(8x5cm)', // Default to medium
+  'Rectangle_Horizontal_Crystals': 'RectangleWideMedium_(8x5cm)', // Default to medium
+  'Prestige_Crystal': 'Prestige_Medium_(16x13cm)', // Default to medium
+  'Keychains_Vertical': 'Keychain_2D_Rectangle',
+  'Keychain_Horizontal': 'Keychain_2D_Rectangle',
+  'Heart_Keychain': 'Keychain_2D_Heart',
+  'Heart_Necklace_2D': 'Necklace_Heart_2D',
+  'Rectangle_Necklace_2D': 'Necklace_Rectangle_2D',
+  'Ornament_Crystal': 'Ornament',
+  'New_Wide_Heart': 'Wide_Heart_Medium_(100x90x50)',
 };
 
 // Size name mapping: Maps size names in products to pricing SKUs
