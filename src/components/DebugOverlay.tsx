@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { buildCockpit3DOrder, validateCockpit3DOrder, type Cockpit3DOrder } from '@/lib/cockpit3d-order-builder'
+import { getCartWithImages } from '@/lib/cartUtils'
 
 interface DebugStep {
   id: string
@@ -11,11 +13,18 @@ interface DebugStep {
   error?: string
 }
 
+type TabType = 'activity' | 'order' | 'env'
+
 export default function DebugOverlay() {
   const [isOpen, setIsOpen] = useState(false)
   const [steps, setSteps] = useState<DebugStep[]>([])
   const [mounted, setMounted] = useState(false)
   const [shouldShowDebug, setShouldShowDebug] = useState(false)
+  const [activeTab, setActiveTab] = useState<TabType>('activity')
+  const [orderPreview, setOrderPreview] = useState<Cockpit3DOrder | null>(null)
+  const [orderValidation, setOrderValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
+  const [cartItems, setCartItems] = useState<any[]>([])
+  const [isLoadingOrder, setIsLoadingOrder] = useState(false)
 
   useEffect(() => {
     setMounted(true)
