@@ -2,12 +2,15 @@
 
 /**
  * Enhanced Product Admin Panel
- * Version: 3.0.0 - JSON-ONLY SYSTEM
+ * Version: 3.1.0 - Persistent Edited Stats
+ * Date: 2025-12-14
  * Features:
  * - Complete price control (base + all options)
  * - Option configuration (enable/disable per product)
  * - Size, lightbase, background, text option management
  * - Saves directly to final-products.json (single source of truth)
+ * - Persistent edited count (tracks editedAt timestamps)
+ * - Display editedAt in product list
  * 
  * NOTE: This page is for DEVELOPMENT ONLY
  * Do NOT upload the /admin directory to production server
@@ -85,6 +88,8 @@ interface Product {
   maskImageUrl?: string | null;
   occasions?: string[];
   fulfillment?: 'cockpit3d' | 'custom';  // NEW: Who fulfills this product
+  edited?: boolean;  // Flag indicating product has been edited
+  editedAt?: string;  // ISO timestamp of last edit
 }
 
 interface ProductCustomizations {
@@ -228,6 +233,9 @@ export default function EnhancedProductAdminPage() {
       return { ...product, ...customizations };
     });
     
+    const editedCount = sourceProducts.filter(p => p.editedAt).length;
+    console.log('📊 Stats - Total Edited Products:', editedCount, 'products with editedAt timestamp');
+    
     return {
       total: finalProducts.length,
       visible: finalProducts.filter(p => p.visible !== false).length,
@@ -235,6 +243,7 @@ export default function EnhancedProductAdminPage() {
       featured: finalProducts.filter(p => p.featured === true).length,
       onSale: finalProducts.filter(p => p.sale === true || p.salePrice || p.salePercent).length,
       requiresImage: finalProducts.filter(p => p.requiresImage === true).length,
+      edited: editedCount, // Count products with editedAt timestamp
     };
   };
 
@@ -610,7 +619,7 @@ export default function EnhancedProductAdminPage() {
 
           <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
             <div className="text-xs font-medium text-blue-600 uppercase">✏️ Edited</div>
-            <div className="text-3xl font-bold text-blue-900 mt-1">{Object.keys(editedProducts).length}</div>
+            <div className="text-3xl font-bold text-blue-900 mt-1">{getStats().edited}</div>
           </div>
 
         </div>
@@ -683,10 +692,15 @@ export default function EnhancedProductAdminPage() {
                         </h3>
                         <p className="text-xs text-gray-600">SKU: {product.sku}</p>
                         <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
-                        {hasCustomizations(product.id) && (
+                        {(hasCustomizations(product.id) || product.edited) && (
                           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
                             Edited
                           </span>
+                        )}
+                        {product.editedAt && (
+                          <p className="text-xs text-blue-600 mt-1" title={`Last edited: ${new Date(product.editedAt).toLocaleString()}`}>
+                            ✏️ {new Date(product.editedAt).toLocaleDateString()}
+                          </p>
                         )}
                       </div>
                     </div>

@@ -152,14 +152,19 @@
         "isMain": false
       },
       {
-        "src": "/img/products/cockpit3d/104/product_104_1765696828237.jpg",
-        "isMain": false,
-        "alt": "Crystal on Rotating.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1765696828291.png",
+        "src": "/img/products/cockpit3d/104/product_104_1765702293537.png",
         "isMain": true,
         "alt": "noahs-keepsake-1.png"
+      },
+      {
+        "src": "/img/products/cockpit3d/104/product_104_1765702333519.jpg",
+        "isMain": false,
+        "alt": "product_104_1764053586512.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/104/product_104_1765702333550.jpg",
+        "isMain": false,
+        "alt": "product_104_1764053586543.jpg"
       }
     ],
     "options": [],
@@ -256,7 +261,7 @@
     "sale": false,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2025-12-14T07:20:30.485Z"
+    "editedAt": "2025-12-14T08:52:23.607Z"
   },
   {
     "id": "105",
@@ -356,6 +361,16 @@
       {
         "src": "/img/products/cockpit3d/114/cockpit3d_114_Rectangle_Vertical_Crystals.png",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/114/product_114_1765702222843.jpg",
+        "isMain": false,
+        "alt": "3d-rectangle-tall.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/114/product_114_1765702222901.jpg",
+        "isMain": false,
+        "alt": "Rectangle-Tall.jpg"
       }
     ],
     "options": [],
@@ -508,7 +523,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
-    "cost": 24.75
+    "cost": 24.75,
+    "edited": true,
+    "editedAt": "2025-12-14T08:50:23.959Z"
   },
   {
     "id": "118",
@@ -522,6 +539,11 @@
       {
         "src": "/img/products/cockpit3d/118/cockpit3d_118_Prestige_Crystal.png",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/118/product_118_1765702190393.jpg",
+        "isMain": false,
+        "alt": "Prestige.jpg"
       }
     ],
     "options": [],
@@ -633,7 +655,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/prestige-mask.png",
-    "cost": 99.75
+    "cost": 99.75,
+    "edited": true,
+    "editedAt": "2025-12-14T08:49:52.444Z"
   },
   {
     "id": "119",
@@ -722,7 +746,22 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/148/cockpit3d_148_Rectangle_Horizontal_Crystals.jpg",
-        "isMain": true
+        "isMain": false
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765702197575.png",
+        "isMain": false,
+        "alt": "180x120-horizondal-people-copy_8.png"
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765702201206.jpg",
+        "isMain": false,
+        "alt": "3d-rectangle-wide.jpg"
+      },
+      {
+        "src": "/img/products/cockpit3d/148/product_148_1765702207317.jpg",
+        "isMain": true,
+        "alt": "lalena-gift.jpg"
       }
     ],
     "options": [],
@@ -875,7 +914,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
-    "cost": 24.75
+    "cost": 24.75,
+    "edited": true,
+    "editedAt": "2025-12-14T08:50:10.665Z"
   },
   {
     "id": "151",
@@ -1128,6 +1169,11 @@
       {
         "src": "/img/products/cockpit3d/171/cockpit3d_171_New_Wide_Heart.jpg",
         "isMain": true
+      },
+      {
+        "src": "/img/products/cockpit3d/171/product_171_1765702175885.jpg",
+        "isMain": false,
+        "alt": "3d_heart.jpg"
       }
     ],
     "options": [],
@@ -1227,7 +1273,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/heart-mask.png",
-    "cost": 69.75
+    "cost": 69.75,
+    "edited": true,
+    "editedAt": "2025-12-14T08:49:36.426Z"
   },
   {
     "id": "173",
@@ -1293,17 +1341,22 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/248/cockpit3d_248_3D_Crystal_Candle.png",
-        "isMain": true
+        "isMain": false
       },
       {
         "src": "/img/products/cockpit3d/248/product_248_1765696809365.jpg",
-        "isMain": false,
+        "isMain": true,
         "alt": "brooks-memorial.jpg"
       },
       {
         "src": "/img/products/cockpit3d/248/product_248_1765696809396.png",
         "isMain": false,
         "alt": "brooks-promo-1.png"
+      },
+      {
+        "src": "/img/products/cockpit3d/248/product_248_1765702381196.jpg",
+        "isMain": false,
+        "alt": "3dc_candle_urn_small.jpg"
       }
     ],
     "options": [],
@@ -1313,12 +1366,6 @@
         "id": "none",
         "name": "No Base",
         "price": null
-      },
-      {
-        "id": "876",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "876"
       },
       {
         "id": "877",
@@ -1364,7 +1411,8 @@
         "id": "none",
         "name": "No Text",
         "price": 0,
-        "cockpit3d_option_id": null
+        "cockpit3d_option_id": null,
+        "enabled": true
       },
       {
         "id": "customText",
@@ -1377,7 +1425,7 @@
     "featured": true,
     "cost": 49.75,
     "edited": true,
-    "editedAt": "2025-12-14T07:20:10.392Z"
+    "editedAt": "2025-12-14T08:59:53.885Z"
   },
   {
     "id": "251",
@@ -1447,7 +1495,7 @@
     "name": "Wooden Premium Base Mini",
     "slug": "wooden-premium-base-mini",
     "sku": "wooden_base_mini",
-    "basePrice": 60,
+    "basePrice": 45,
     "description": "Compact premium wooden base with high-quality finish and integrated LED. Perfect for smaller crystals, desk displays, and situations where space is limited but quality cannot be compromised.",
     "longDescription": "<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Why Light Bases Matter:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Choosing Your Base:</h4>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Traditional/Classic Decor:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Modern/Contemporary Decor:</h5>\n<p class=\"mb-4 text-gray-800\">\n  LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Dynamic Displays:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Ball Crystals:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Light Colors & Moods:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Professional Presentation:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Gift Considerations:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>\n",
     "images": [
@@ -1461,7 +1509,9 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null
+    "maskImageUrl": null,
+    "edited": true,
+    "editedAt": "2025-12-14T08:58:50.307Z"
   },
   {
     "id": "262",
@@ -2145,10 +2195,10 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/2d-ornament-mask.png",
+    "maskImageUrl": "/img/masks/flower-ornament-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T07:20:10.392Z"
+    "editedAt": "2025-12-14T09:05:04.528Z"
   },
   {
     "id": "442",

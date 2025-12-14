@@ -143,7 +143,7 @@ export default function HomePage() {
       {/* Hero - Dark with Green Accent */}
       <section 
         ref={heroRef} 
-        className="hero flex items-center relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
+        className="hero flex items-center relative overflow-hidden bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
         style={{
           background: `linear-gradient(
             45deg, 
