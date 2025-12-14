@@ -356,7 +356,7 @@ export default finalProductList;
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            jsContent,
+            products: finalProducts,
             isBackup: false 
           })
         });
@@ -364,7 +364,7 @@ export default finalProductList;
         const result = await response.json();
 
         if (result.success) {
-          alert(`✅ Products saved to project!\n\n📁 Files updated:\n• ${result.jsPath}\n• /public/data/final-products.json\n\n🔄 Reloading products...`);
+          alert(`✅ Products saved!\n\n📁 File updated:\n• /public/data/final-products.json\n\n🔄 Reloading products...`);
           
           // Clear localStorage since changes are now saved
           localStorage.removeItem('productCustomizations');
