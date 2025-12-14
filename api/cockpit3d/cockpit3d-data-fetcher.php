@@ -30,7 +30,8 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
 
 // Function to get .env variables
 function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '/.env';
+    // Go up two levels: cockpit3d -> api -> root
+    $envFile = dirname(dirname(__DIR__)) . '/.env';
     if (!file_exists($envFile)) {
         error_log(".env file not found at: $envFile");
         return null;
