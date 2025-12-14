@@ -388,17 +388,17 @@ export default finalProductList;
     }
     
     // Fallback: Download file (for production/static export or if server save fails)
-    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
-    const jsUrl = URL.createObjectURL(jsBlob);
-    const jsLink = document.createElement('a');
-    jsLink.href = jsUrl;
-    jsLink.download = 'final-product-list.js';
-    document.body.appendChild(jsLink);
-    jsLink.click();
-    document.body.removeChild(jsLink);
-    URL.revokeObjectURL(jsUrl);
+    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = 'final-products.json';
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
     
-    alert(`✅ Products saved!\n\n📥 Downloaded: final-product-list.js\n\n📤 FTP to your server:\n/crystalkeepsakes/src/data/final-product-list.js\n\n✨ Upload via FTP and refresh site!`);
+    alert(`✅ Products saved!\n\n📥 Downloaded: final-products.json\n\n📤 FTP to your server:\n/public/data/final-products.json\n\n✨ Upload via FTP and refresh site!`);
   };
 
   // Backup Products (with timestamp) - ONE FILE ONLY
