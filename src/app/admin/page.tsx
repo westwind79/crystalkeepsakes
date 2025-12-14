@@ -435,17 +435,17 @@ export default finalProductList;
     }
     
     // Fallback: Download backup file
-    const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
-    const jsUrl = URL.createObjectURL(jsBlob);
-    const jsLink = document.createElement('a');
-    jsLink.href = jsUrl;
-    jsLink.download = `final-product-list-${timestamp}.js`;
-    document.body.appendChild(jsLink);
-    jsLink.click();
-    document.body.removeChild(jsLink);
-    URL.revokeObjectURL(jsUrl);
+    const jsonBlob = new Blob([JSON.stringify(finalProducts, null, 2)], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = `final-products-${timestamp}.json`;
+    document.body.appendChild(jsonLink);
+    jsonLink.click();
+    document.body.removeChild(jsonLink);
+    URL.revokeObjectURL(jsonUrl);
     
-    alert(`✅ Backup created!\n\n📥 Downloaded: final-product-list-${timestamp}.js\n\nKeep this as a restore point.`);
+    alert(`✅ Backup created!\n\n📥 Downloaded: final-products-${timestamp}.json\n\nKeep this as a restore point.`);
   };
 
   // Upload JSON to production
