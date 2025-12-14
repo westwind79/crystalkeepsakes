@@ -298,6 +298,7 @@ export default function EnhancedProductAdminPage() {
     if (!validateProducts()) return;
     
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
+    const finalProducts = getFinalProducts();
     
     // Try to save to server (works in dev mode with Node.js)
     const isDev = process.env.NODE_ENV === 'development';
