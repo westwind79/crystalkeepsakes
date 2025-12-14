@@ -145,24 +145,19 @@
     "sku": "Cut_Corner_Diamond",
     "basePrice": 39.75,
     "description": "Elegant cut corner diamond 3D crystal keepsake perfect for honoring veterans, memorial tributes, and Christmas gifts. Personalized laser engraving preserves cherished memories forever.",
-    "longDescription": "<p class=\"text-gray-700 mb-4\">\n  Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.\n</p>\n\n<p class=\"text-gray-700 mb-4\">\n  Each crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.\n</p>\n\n<h3 class=\"text-lg font-semibold text-gray-800 mb-1\">Perfect For:</h3>\n<p class=\"text-gray-700 mb-4\">- Veteran memorial gifts and military tributes</p>\n<p class=\"text-gray-700 mb-4\">- Christmas ornaments with family photos</p>\n<p class=\"text-gray-700 mb-4\">- Memorial keepsakes for loved ones</p>\n<p class=\"text-gray-700 mb-4\">- Anniversary and wedding memories</p>\n<p class=\"text-gray-700 mb-4\">- Baby's first Christmas or milestone celebrations</p>\n\n<h3 class=\"text-lg font-semibold text-gray-800 mb-1\">Customization Options:</h3>\n<p class=\"text-gray-700 mb-4\">- Optional custom text engraving ($9.50)</p>\n<p class=\"text-gray-700 mb-4\">- 2D or 3D backdrop enhancement</p>\n<p class=\"text-gray-700 mb-4\">- Multiple light base options for elegant display</p>\n<p class=\"text-gray-700 mb-4\">- Background removal service available</p>\n\n<p class=\"text-gray-700 mb-4\">\n  This personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.\n</p>\n\n<p class=\"text-gray-700 mb-4\"><strong>Dimensions</strong>: Available in 5x5cm, 6x6cm, and 8x8cm</p>",
+    "longDescription": "Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.\n<br/>\nEach crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.\n<br/><br/>\n**Perfect For:**\n- Veteran memorial gifts and military tributes\n- Christmas ornaments with family photos\n- Memorial keepsakes for loved ones\n- Anniversary and wedding memories\n- Baby's first Christmas or milestone celebrations\n<br/><br/>\n**Customization Options:**\n- Optional custom text engraving ($9.50)\n- 2D or 3D backdrop enhancement\n- Multiple light base options for elegant display\n- Background removal service available\n\nThis personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.\n\n**Dimensions**: Available in 5x5cm, 6x6cm, and 8x8cm",
     "images": [
       {
         "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
         "isMain": false
       },
       {
-        "src": "/img/products/cockpit3d/104/product_104_1765407871405.jpg",
-        "isMain": false,
-        "alt": "3dc_cutcornerdiamond.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1765407875041.jpg",
+        "src": "/img/products/cockpit3d/104/product_104_1765696828237.jpg",
         "isMain": false,
         "alt": "Crystal on Rotating.jpg"
       },
       {
-        "src": "/img/products/cockpit3d/104/product_104_1765407878879.png",
+        "src": "/img/products/cockpit3d/104/product_104_1765696828291.png",
         "isMain": true,
         "alt": "noahs-keepsake-1.png"
       }
@@ -259,15 +254,16 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
     "sale": false,
-    "featured": false,
-    "cost": 39.75
+    "cost": 39.75,
+    "edited": true,
+    "editedAt": "2025-12-14T07:20:30.485Z"
   },
   {
     "id": "105",
     "name": "Lightbase Rectangle",
     "slug": "lightbase-rectangle",
     "sku": "Lightbase_Rectangle",
-    "basePrice": 35,
+    "basePrice": 25,
     "description": "Classic rectangular LED base with multi-color lighting options. Perfect for rectangular crystals in both vertical and horizontal orientations. Modern, sleek design suits contemporary decor.",
     "longDescription": " <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Why Light Bases Matter:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Choosing Your Base:</h2>\n    \n    <div class=\"space-y-6 mb-8\">\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Traditional/Classic Decor:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Modern/Contemporary Decor:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Dynamic Displays:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.\n        </p>\n      </div>\n\n      <div>\n        <h3 class=\"text-xl font-semibold text-gray-800\">For Ball Crystals:</h3>\n        <p class=\"text-gray-700 mt-1\">\n          Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.\n        </p>\n      </div>\n    </div>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Light Colors & Moods:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Professional Presentation:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed mb-8\">\n      Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.\n    </p>\n\n    <h2 class=\"text-2xl sm:text-3xl font-bold text-gray-800 mb-6\">Gift Considerations:</h2>\n    <p class=\"text-gray-700 text-lg leading-relaxed\">\n      When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.\n    </p> \n",
     "images": [
@@ -281,8 +277,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "sale": false
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
   },
   {
     "id": "106",
@@ -303,8 +298,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "sale": false
+    "maskImageUrl": null
   },
   {
     "id": "107",
@@ -728,22 +722,7 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/148/cockpit3d_148_Rectangle_Horizontal_Crystals.jpg",
-        "isMain": false
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765407960837.jpg",
-        "isMain": true,
-        "alt": "3d-rectangle-wide.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765407962450.jpg",
-        "isMain": false,
-        "alt": "lalena-gift.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765407962471.jpg",
-        "isMain": false,
-        "alt": "lalena-gift-square.jpg"
+        "isMain": true
       }
     ],
     "options": [],
@@ -1135,9 +1114,6 @@
     ],
     "maskImageUrl": "/img/masks/ornament-mask.png",
     "featured": true,
-    "occasions": [
-      "holiday"
-    ],
     "cost": 19.75
   },
   {
@@ -1320,17 +1296,12 @@
         "isMain": true
       },
       {
-        "src": "/img/products/cockpit3d/248/product_248_1765402871193.jpg",
-        "isMain": false,
-        "alt": "3dc_candle_urn_small.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/248/product_248_1765402880024.jpg",
+        "src": "/img/products/cockpit3d/248/product_248_1765696809365.jpg",
         "isMain": false,
         "alt": "brooks-memorial.jpg"
       },
       {
-        "src": "/img/products/cockpit3d/248/product_248_1765402880059.png",
+        "src": "/img/products/cockpit3d/248/product_248_1765696809396.png",
         "isMain": false,
         "alt": "brooks-promo-1.png"
       }
@@ -1404,11 +1375,9 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-urn-small-mask.png",
     "featured": true,
-    "occasions": [
-      "memorial",
-      "holiday"
-    ],
-    "cost": 49.75
+    "cost": 49.75,
+    "edited": true,
+    "editedAt": "2025-12-14T07:20:10.392Z"
   },
   {
     "id": "251",
@@ -1469,10 +1438,6 @@
     ],
     "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
     "featured": true,
-    "occasions": [
-      "memorial",
-      "holiday"
-    ],
     "cost": 109.75
   },
   {
@@ -1480,7 +1445,7 @@
     "name": "Wooden Premium Base Mini",
     "slug": "wooden-premium-base-mini",
     "sku": "wooden_base_mini",
-    "basePrice": 50,
+    "basePrice": 60,
     "description": "Compact premium wooden base with high-quality finish and integrated LED. Perfect for smaller crystals, desk displays, and situations where space is limited but quality cannot be compromised.",
     "longDescription": "<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Why Light Bases Matter:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Choosing Your Base:</h4>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Traditional/Classic Decor:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Modern/Contemporary Decor:</h5>\n<p class=\"mb-4 text-gray-800\">\n  LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Dynamic Displays:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.\n</p>\n\n<h5 class=\"text-lg font-semibold text-gray-700 mb-1\">For Ball Crystals:</h5>\n<p class=\"mb-4 text-gray-800\">\n  Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Light Colors & Moods:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Professional Presentation:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.\n</p>\n\n<h4 class=\"text-xl font-semibold text-rose-600 mb-2\">Gift Considerations:</h4>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n  When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>\n",
     "images": [
@@ -1606,13 +1571,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/notched-vertical-mask.png",
-    "occasions": [
-      "anniversary",
-      "wedding",
-      "birthday",
-      "baby",
-      "holiday"
-    ],
     "cost": 95
   },
   {
@@ -1719,9 +1677,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/notched-horizontal-mask.png",
-    "occasions": [
-      "anniversary"
-    ],
     "cost": 95
   },
   {
@@ -1857,21 +1812,6 @@
       {
         "src": "/img/products/cockpit3d/279/cockpit3d_279_Ornament_Stand.png",
         "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/279/product_279_1765571544070.webp",
-        "isMain": false,
-        "alt": "product_279_1764053153883.webp"
-      },
-      {
-        "src": "/img/products/cockpit3d/279/product_279_1765571544089.png",
-        "isMain": false,
-        "alt": "product_279_1764053165147.png"
-      },
-      {
-        "src": "/img/products/cockpit3d/279/product_279_1765571544107.png",
-        "isMain": false,
-        "alt": "product_279_1764053165164.png"
       }
     ],
     "options": [],
@@ -1880,10 +1820,7 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "featured": true,
-    "occasions": [
-      "holiday"
-    ]
+    "featured": true
   },
   {
     "id": "286",
@@ -1955,9 +1892,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-vertical-mask.png",
-    "occasions": [
-      "memorial"
-    ],
     "cost": 89.75
   },
   {
@@ -2030,9 +1964,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "occasions": [
-      "memorial"
-    ],
     "cost": 89.75
   },
   {
@@ -2109,7 +2040,7 @@
         "isMain": true
       },
       {
-        "src": "/img/products/cockpit3d/440/product_440_1765572243797.webp",
+        "src": "/img/products/cockpit3d/440/product_440_1765696797206.webp",
         "isMain": false,
         "alt": "xmas.webp"
       }
@@ -2152,7 +2083,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
-    "featured": true
+    "featured": true,
+    "edited": true,
+    "editedAt": "2025-12-14T07:20:10.392Z"
   },
   {
     "id": "441",
@@ -2168,7 +2101,7 @@
         "isMain": true
       },
       {
-        "src": "/img/products/cockpit3d/441/product_441_1765572235985.webp",
+        "src": "/img/products/cockpit3d/441/product_441_1765696789664.webp",
         "isMain": false,
         "alt": "xmas.webp"
       }
@@ -2211,7 +2144,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/2d-ornament-mask.png",
-    "featured": true
+    "featured": true,
+    "edited": true,
+    "editedAt": "2025-12-14T07:20:10.392Z"
   },
   {
     "id": "442",
@@ -2227,7 +2162,7 @@
         "isMain": true
       },
       {
-        "src": "/img/products/cockpit3d/442/product_442_1765572221559.webp",
+        "src": "/img/products/cockpit3d/442/product_442_1765696720046.webp",
         "isMain": false,
         "alt": "xmas.webp"
       }
@@ -2270,7 +2205,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": true
+    "featured": true,
+    "edited": true,
+    "editedAt": "2025-12-14T07:18:41.220Z"
   },
   {
     "id": "443",
@@ -2284,11 +2221,6 @@
       {
         "src": "/img/products/cockpit3d/443/cockpit3d_443_2D_Crystal_Dog_Bone_Ornament.jpg",
         "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/443/product_443_1765572230207.webp",
-        "isMain": false,
-        "alt": "xmas.webp"
       }
     ],
     "options": [],
@@ -2785,11 +2717,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "occasions": [
-      "wedding",
-      "birthday",
-      "holiday"
-    ],
     "cost": 79.75
   },
   {
@@ -3115,15 +3042,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
-    "occasions": [
-      "holiday",
-      "birthday",
-      "wedding",
-      "memorial",
-      "anniversary",
-      "graduation",
-      "retirement"
-    ],
     "cost": 99.75
   },
   {

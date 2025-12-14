@@ -239,7 +239,7 @@ export default function ProductsPage() {
       <ProductsHero />
       <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
-      <div className="container-full mx-auto bg-slate-100 p-4 relative">       
+      <div className="container-full bg-slate-100 px-4 py-6 relative">       
         
         <div className="flex flex-row gap-2 sm:gap-4">
         {/*<div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">*/}
@@ -369,7 +369,7 @@ export default function ProductsPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
