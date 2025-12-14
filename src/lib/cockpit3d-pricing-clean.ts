@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-// /lib/cockpit3d-pricing-clean.ts
-=======
 // /app/src/lib/cockpit3d-pricing-clean.ts
->>>>>>> development
+
 /**
  * Crystal Keepsakes - Clean Pricing Data
  * Generated: 2024-12-12
@@ -1209,9 +1206,6 @@ export const PRODUCT_PRICING: ProductPricing[] = [
   }
 ];
 
-<<<<<<< HEAD
-// Helper functions
-=======
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
@@ -1219,17 +1213,14 @@ export const PRODUCT_PRICING: ProductPricing[] = [
 /**
  * Get pricing data by SKU
  */
->>>>>>> development
 export function getPricingBySKU(sku: string): ProductPricing | undefined {
   return PRODUCT_PRICING.find(p => p.sku === sku);
 }
 
-<<<<<<< HEAD
-=======
 /**
  * Get price for a specific quantity (1-4)
  */
->>>>>>> development
+
 export function getPriceForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1238,12 +1229,9 @@ export function getPriceForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numbe
   return product.pricing[qtyKey]?.price ?? null;
 }
 
-<<<<<<< HEAD
-=======
 /**
  * Get cost for a specific quantity (1-4)
  */
->>>>>>> development
 export function getCostForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1252,12 +1240,9 @@ export function getCostForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number
   return product.pricing[qtyKey]?.cost ?? null;
 }
 
-<<<<<<< HEAD
-=======
 /**
  * Get margin for a specific quantity (1-4)
  */
->>>>>>> development
 export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1266,10 +1251,8 @@ export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numb
   return product.pricing[qtyKey]?.margin ?? null;
 }
 
-<<<<<<< HEAD
 // Export total count
 console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
-=======
 /**
  * Get the best price based on quantity (returns discounted price if available)
  */

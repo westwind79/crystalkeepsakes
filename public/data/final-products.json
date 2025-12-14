@@ -259,11 +259,8 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
     "sale": false,
-<<<<<<< HEAD
-    "featured": false
-=======
+    "featured": false,
     "cost": 39.75
->>>>>>> development
   },
   {
     "id": "105",
@@ -1138,13 +1135,10 @@
     ],
     "maskImageUrl": "/img/masks/ornament-mask.png",
     "featured": true,
-<<<<<<< HEAD
     "occasions": [
       "holiday"
-    ]
-=======
+    ],
     "cost": 19.75
->>>>>>> development
   },
   {
     "id": "171",
@@ -1410,14 +1404,11 @@
     ],
     "maskImageUrl": "/img/masks/3d-crystal-urn-small-mask.png",
     "featured": true,
-<<<<<<< HEAD
     "occasions": [
       "memorial",
       "holiday"
-    ]
-=======
+    ],
     "cost": 49.75
->>>>>>> development
   },
   {
     "id": "251",
@@ -1478,14 +1469,11 @@
     ],
     "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
     "featured": true,
-<<<<<<< HEAD
     "occasions": [
       "memorial",
       "holiday"
-    ]
-=======
+    ],
     "cost": 109.75
->>>>>>> development
   },
   {
     "id": "252",
@@ -1618,17 +1606,14 @@
       }
     ],
     "maskImageUrl": "/img/masks/notched-vertical-mask.png",
-<<<<<<< HEAD
     "occasions": [
       "anniversary",
       "wedding",
       "birthday",
       "baby",
       "holiday"
-    ]
-=======
+    ],
     "cost": 95
->>>>>>> development
   },
   {
     "id": "266",
@@ -1734,13 +1719,10 @@
       }
     ],
     "maskImageUrl": "/img/masks/notched-horizontal-mask.png",
-<<<<<<< HEAD
     "occasions": [
       "anniversary"
-    ]
-=======
+    ],
     "cost": 95
->>>>>>> development
   },
   {
     "id": "276",
@@ -1973,13 +1955,10 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-vertical-mask.png",
-<<<<<<< HEAD
     "occasions": [
       "memorial"
-    ]
-=======
+    ],
     "cost": 89.75
->>>>>>> development
   },
   {
     "id": "288",
@@ -2051,13 +2030,10 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-<<<<<<< HEAD
     "occasions": [
       "memorial"
-    ]
-=======
+    ],
     "cost": 89.75
->>>>>>> development
   },
   {
     "id": "290",
@@ -2809,15 +2785,12 @@
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-<<<<<<< HEAD
     "occasions": [
       "wedding",
       "birthday",
       "holiday"
-    ]
-=======
+    ],
     "cost": 79.75
->>>>>>> development
   },
   {
     "id": "454",
@@ -3142,7 +3115,6 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
-<<<<<<< HEAD
     "occasions": [
       "holiday",
       "birthday",
@@ -3151,10 +3123,8 @@
       "anniversary",
       "graduation",
       "retirement"
-    ]
-=======
+    ],
     "cost": 99.75
->>>>>>> development
   },
   {
     "id": "468",
