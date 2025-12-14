@@ -677,7 +677,7 @@ export default function EnhancedProductAdminPage() {
                         </h3>
                         <p className="text-xs text-gray-600">SKU: {product.sku}</p>
                         <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
-                        {hasCustomizations(product.id) && (
+                        {(hasCustomizations(product.id) || product.edited) && (
                           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
                             Edited
                           </span>
