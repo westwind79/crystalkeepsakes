@@ -405,7 +405,6 @@ export default finalProductList;
     if (!validateProducts()) return;
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const jsContent = generateFinalProducts();
     
     // Try to save to server (works in dev mode)
     const isDev = process.env.NODE_ENV === 'development';
