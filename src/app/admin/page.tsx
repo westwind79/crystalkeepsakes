@@ -285,10 +285,10 @@ export default function EnhancedProductAdminPage() {
       const hasEdits = Object.keys(customizations).length > 0;
       const merged = { ...product, ...customizations };
       
-      // Mark as edited if there are customizations
-      if (hasEdits) {
+      // Preserve existing edited flag OR set new one if edited now
+      if (hasEdits || product.edited) {
         merged.edited = true;
-        merged.editedAt = new Date().toISOString();
+        merged.editedAt = hasEdits ? new Date().toISOString() : (product.editedAt || new Date().toISOString());
       }
       
       if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
