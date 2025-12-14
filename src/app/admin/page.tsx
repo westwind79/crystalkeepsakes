@@ -282,7 +282,14 @@ export default function EnhancedProductAdminPage() {
   const getFinalProductsArray = () => {
     return sourceProducts.map((product) => {
       const customizations = editedProducts[product.id] || {};
+      const hasEdits = Object.keys(customizations).length > 0;
       const merged = { ...product, ...customizations };
+      
+      // Mark as edited if there are customizations
+      if (hasEdits) {
+        merged.edited = true;
+        merged.editedAt = new Date().toISOString();
+      }
       
       if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
       if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
