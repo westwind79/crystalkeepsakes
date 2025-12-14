@@ -298,7 +298,7 @@ export default function EnhancedProductAdminPage() {
     if (!validateProducts()) return;
     
     localStorage.setItem('productCustomizations', JSON.stringify(editedProducts));
-    const finalProducts = getFinalProducts();
+    const finalProducts = getFinalProductsArray();
     
     // Try to save to server (works in dev mode with Node.js)
     const isDev = process.env.NODE_ENV === 'development';
@@ -359,7 +359,7 @@ export default function EnhancedProductAdminPage() {
     if (!validateProducts()) return;
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const finalProducts = getFinalProducts();
+    const finalProducts = getFinalProductsArray();
     
     // Try to save to server (works in dev mode)
     const isDev = process.env.NODE_ENV === 'development';
