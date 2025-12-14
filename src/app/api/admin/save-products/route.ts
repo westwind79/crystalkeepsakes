@@ -14,48 +14,38 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { jsContent, isBackup, timestamp } = await request.json()
+    const { products, isBackup, timestamp } = await request.json()
 
-    if (!jsContent) {
-      return NextResponse.json({ error: 'Missing content' }, { status: 400 })
+    if (!products) {
+      return NextResponse.json({ error: 'Missing products data' }, { status: 400 })
     }
 
     const appRoot = process.cwd()
+    const jsonContent = JSON.stringify(products, null, 2)
     
     if (isBackup) {
-      // Save timestamped backup - JS file
-      const jsPath = join(appRoot, 'src', 'data', `final-product-list-${timestamp}.js`)
+      // Save timestamped backup
+      const jsonPath = join(appRoot, 'public', 'data', `final-products-${timestamp}.json`)
+      writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      writeFileSync(jsPath, jsContent, 'utf-8')
-      
-      console.log('✅ Backup created:', jsPath)
+      console.log('✅ Backup created:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: `Backup created: final-product-list-${timestamp}.js`,
-        jsPath
+        message: `Backup created: final-products-${timestamp}.json`,
+        jsonPath
       })
     } else {
-      // Save current working file - JS file
-      const jsPath = join(appRoot, 'src', 'data', 'final-product-list.js')
+      // Save to main file
+      const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
+      writeFileSync(jsonPath, jsonContent, 'utf-8')
       
-      // Also save JSON version for static export
-      const match = jsContent.match(/export const finalProductList = (\[[\s\S]*?\]);/)
-      if (match) {
-        const jsonContent = match[1]
-        const jsonPath = join(appRoot, 'public', 'data', 'final-products.json')
-        writeFileSync(jsonPath, jsonContent, 'utf-8')
-        console.log('✅ JSON saved:', jsonPath)
-      }
-      
-      writeFileSync(jsPath, jsContent, 'utf-8')
-      
-      console.log('✅ Products saved:', jsPath)
+      console.log('✅ Products saved:', jsonPath)
       
       return NextResponse.json({ 
         success: true, 
-        message: 'Products saved to project (JS + JSON)',
-        jsPath
+        message: 'Products saved to final-products.json',
+        jsonPath
       })
     }
 
