@@ -417,7 +417,7 @@ export default finalProductList;
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            jsContent,
+            products: finalProducts,
             isBackup: true,
             timestamp
           })
@@ -426,7 +426,7 @@ export default finalProductList;
         const result = await response.json();
 
         if (result.success) {
-          alert(`✅ Backup created!\n\n📁 File: ${result.jsPath}\n\nKeep this as a restore point.`);
+          alert(`✅ Backup created!\n\n📁 File: ${result.jsonPath}\n\nKeep this as a restore point.`);
           return;
         }
       } catch (error) {
