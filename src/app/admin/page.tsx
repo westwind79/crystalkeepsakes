@@ -167,7 +167,12 @@ export default function EnhancedProductAdminPage() {
   const updateProduct = (productId: string, updates: Partial<Product>) => {
     setEditedProducts((prev) => ({
       ...prev,
-      [productId]: { ...prev[productId], ...updates },
+      [productId]: { 
+        ...prev[productId], 
+        ...updates,
+        edited: true,
+        editedAt: new Date().toISOString()
+      },
     }));
   };
 
