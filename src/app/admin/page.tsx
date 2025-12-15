@@ -217,17 +217,55 @@ export default function EnhancedProductAdminPage() {
     updateProduct(productId, { lightBases });
   };
 
-  // Handle background updates
+  // Handle background updates - GLOBAL sync
   const updateBackground = (productId: string, bgIndex: number, updates: Partial<BackgroundOption>) => {
     const product = getProductData(productId);
     const backgroundOptions = [...(product.backgroundOptions || [])];
-    backgroundOptions[bgIndex] = { ...backgroundOptions[bgIndex], ...updates };
+    const updatedBG = { ...backgroundOptions[bgIndex], ...updates };
+    backgroundOptions[bgIndex] = updatedBG;
+    
+    // If price changed, sync to ALL products
+    if (updates.price !== undefined) {
+      const bgId = updatedBG.id;
+      sourceProducts.forEach((p) => {
+        if (p.id !== productId && p.backgroundOptions) {
+          const matchIdx = p.backgroundOptions.findIndex((bg: BackgroundOption) => bg.id === bgId);
+          if (matchIdx >= 0) {
+            const pBgOptions = [...(getProductData(p.id).backgroundOptions || [])];
+            pBgOptions[matchIdx] = { ...pBgOptions[matchIdx], price: updates.price };
+            updateProduct(p.id, { backgroundOptions: pBgOptions });
+          }
+        }
+      });
+    }
+    
     updateProduct(productId, { backgroundOptions });
   };
 
-  // Handle text option updates
+  // Handle text option updates - GLOBAL sync
   const updateTextOption = (productId: string, textIndex: number, updates: Partial<TextOption>) => {
     const product = getProductData(productId);
+    const textOptions = [...(product.textOptions || [])];
+    const updatedText = { ...textOptions[textIndex], ...updates };
+    textOptions[textIndex] = updatedText;
+    
+    // If price changed, sync to ALL products
+    if (updates.price !== undefined) {
+      const textId = updatedText.id;
+      sourceProducts.forEach((p) => {
+        if (p.id !== productId && p.textOptions) {
+          const matchIdx = p.textOptions.findIndex((t: TextOption) => t.id === textId);
+          if (matchIdx >= 0) {
+            const pTextOptions = [...(getProductData(p.id).textOptions || [])];
+            pTextOptions[matchIdx] = { ...pTextOptions[matchIdx], price: updates.price };
+            updateProduct(p.id, { textOptions: pTextOptions });
+          }
+        }
+      });
+    }
+    
+    updateProduct(productId, { textOptions });
+  };
     const textOptions = [...(product.textOptions || [])];
     textOptions[textIndex] = { ...textOptions[textIndex], ...updates };
     updateProduct(productId, { textOptions });
