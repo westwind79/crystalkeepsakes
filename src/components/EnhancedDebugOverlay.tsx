@@ -44,6 +44,8 @@ export default function EnhancedDebugOverlay() {
   const [orderPreview, setOrderPreview] = useState<Cockpit3DOrder | null>(null)
   const [orderValidation, setOrderValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
   const [isLoadingOrder, setIsLoadingOrder] = useState(false)
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false)
+  const [orderSubmitResult, setOrderSubmitResult] = useState<any>(null)
 
   const gatherSystemInfo = async (): Promise<SystemInfo> => {
     const storageHealth = checkStorageHealth()
