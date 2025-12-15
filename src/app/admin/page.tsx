@@ -192,11 +192,28 @@ export default function EnhancedProductAdminPage() {
     }
   };
 
-  // Handle lightbase updates
+  // Handle lightbase updates - GLOBAL sync across all products
   const updateLightBase = (productId: string, lbIndex: number, updates: Partial<LightBase>) => {
     const product = getProductData(productId);
     const lightBases = [...(product.lightBases || [])];
-    lightBases[lbIndex] = { ...lightBases[lbIndex], ...updates };
+    const updatedLB = { ...lightBases[lbIndex], ...updates };
+    lightBases[lbIndex] = updatedLB;
+    
+    // If price changed, sync to ALL products with this lightbase
+    if (updates.price !== undefined) {
+      const lbId = updatedLB.id;
+      sourceProducts.forEach((p) => {
+        if (p.id !== productId && p.lightBases) {
+          const matchIdx = p.lightBases.findIndex((lb: LightBase) => lb.id === lbId);
+          if (matchIdx >= 0) {
+            const pLightBases = [...(getProductData(p.id).lightBases || [])];
+            pLightBases[matchIdx] = { ...pLightBases[matchIdx], price: updates.price };
+            updateProduct(p.id, { lightBases: pLightBases });
+          }
+        }
+      });
+    }
+    
     updateProduct(productId, { lightBases });
   };
 
