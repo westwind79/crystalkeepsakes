@@ -266,10 +266,6 @@ export default function EnhancedProductAdminPage() {
     
     updateProduct(productId, { textOptions });
   };
-    const textOptions = [...(product.textOptions || [])];
-    textOptions[textIndex] = { ...textOptions[textIndex], ...updates };
-    updateProduct(productId, { textOptions });
-  };
 
   // Handle images update
   const handleImagesUpdated = (productId: string, updatedImages: ProductImage[]) => {
