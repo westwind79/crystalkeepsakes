@@ -559,7 +559,7 @@ export default function EnhancedProductAdminPage() {
     </style>
     <div className="min-h-screen bg-gray-50">
       {/* Development-Only Warning Banner */}
-      <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
+      <div className="bg-red-500 text-xs text-white px-4 py-2 text-center font-semibold">
         🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
       </div>
       
