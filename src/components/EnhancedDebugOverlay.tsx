@@ -44,6 +44,8 @@ export default function EnhancedDebugOverlay() {
   const [orderPreview, setOrderPreview] = useState<Cockpit3DOrder | null>(null)
   const [orderValidation, setOrderValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
   const [isLoadingOrder, setIsLoadingOrder] = useState(false)
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false)
+  const [orderSubmitResult, setOrderSubmitResult] = useState<any>(null)
 
   const gatherSystemInfo = async (): Promise<SystemInfo> => {
     const storageHealth = checkStorageHealth()
@@ -721,32 +723,165 @@ export default function EnhancedDebugOverlay() {
                     {/* Test Order Button */}
                     <div className="p-3 bg-yellow-900/20 border border-yellow-600 rounded-lg">
                       <div className="font-bold text-yellow-400 text-xs mb-2">⚡ Test Actions</div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              console.log('📦 Cockpit3D Order Preview:', orderPreview)
+                              alert('Order logged to browser console (F12)')
+                            }}
+                            className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-xs py-1.5 px-3 rounded font-semibold"
+                          >
+                            Log to Console
+                          </button>
+                          <button
+                            onClick={() => {
+                              const blob = new Blob([JSON.stringify(orderPreview, null, 2)], { type: 'application/json' })
+                              const url = URL.createObjectURL(blob)
+                              const a = document.createElement('a')
+                              a.href = url
+                              a.download = `cockpit3d-order-${orderPreview.order_id}.json`
+                              a.click()
+                              URL.revokeObjectURL(url)
+                            }}
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-xs py-1.5 px-3 rounded font-semibold"
+                          >
+                            Download JSON
+                          </button>
+                        </div>
+                        
+                        {/* Send Test Order to PHP Endpoint */}
                         <button
-                          onClick={() => {
-                            console.log('📦 Cockpit3D Order Preview:', orderPreview)
-                            alert('Order logged to browser console (F12)')
+                          onClick={async () => {
+                            if (!orderPreview) return
+                            setIsSubmittingOrder(true)
+                            setOrderSubmitResult(null)
+                            
+                            try {
+                              // Get cart data for the order
+                              const cart = await getCartWithImages()
+                              
+                              // Build payload matching PHP endpoint expectations
+                              const payload = {
+                                orderNumber: orderPreview.order_id,
+                                cartItems: cart.map((item: any) => ({
+                                  ...item,
+                                  cockpit3d_id: item.cockpit3d_id || item.productId,
+                                  options: {
+                                    size: item.sizeDetails?.name || item.size?.name,
+                                    lightBase: item.options?.find((o: any) => o.category === 'lightBase')?.name || 'none',
+                                    background: item.options?.find((o: any) => o.category === 'background')?.name,
+                                    customText: item.customText || item.options?.find((o: any) => o.category === 'customText')
+                                  }
+                                })),
+                                customer: {
+                                  firstName: 'Test',
+                                  lastName: 'Customer',
+                                  email: 'test@example.com',
+                                  phone: '555-0123'
+                                },
+                                shippingInfo: {
+                                  address: '123 Test Street',
+                                  city: 'Test City',
+                                  state: 'CA',
+                                  zipCode: '90210',
+                                  country: 'US'
+                                },
+                                testMode: true // Flag to prevent actual submission
+                              }
+                              
+                              console.log('📤 Sending test order to PHP endpoint:', payload)
+                              
+                              // Call the PHP endpoint
+                              const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
+                              const response = await fetch(`${phpBackendUrl}/api/cockpit3d/submit-order.php`, {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(payload)
+                              })
+                              
+                              const result = await response.json()
+                              console.log('📥 PHP endpoint response:', result)
+                              setOrderSubmitResult(result)
+                              
+                            } catch (err) {
+                              console.error('❌ Failed to submit test order:', err)
+                              setOrderSubmitResult({ 
+                                success: false, 
+                                error: err instanceof Error ? err.message : 'Unknown error' 
+                              })
+                            } finally {
+                              setIsSubmittingOrder(false)
+                            }
                           }}
-                          className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-xs py-1.5 px-3 rounded font-semibold"
+                          disabled={isSubmittingOrder || !orderValidation?.isValid}
+                          className={`w-full py-2 px-3 rounded font-bold text-sm transition-all ${
+                            isSubmittingOrder 
+                              ? 'bg-gray-600 cursor-wait' 
+                              : orderValidation?.isValid 
+                                ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer' 
+                                : 'bg-gray-600 cursor-not-allowed opacity-50'
+                          }`}
                         >
-                          Log to Console
+                          {isSubmittingOrder ? '⏳ Sending Test Order...' : '🚀 Send Test Order to PHP'}
                         </button>
-                        <button
-                          onClick={() => {
-                            const blob = new Blob([JSON.stringify(orderPreview, null, 2)], { type: 'application/json' })
-                            const url = URL.createObjectURL(blob)
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.download = `cockpit3d-order-${orderPreview.order_id}.json`
-                            a.click()
-                            URL.revokeObjectURL(url)
-                          }}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-xs py-1.5 px-3 rounded font-semibold"
-                        >
-                          Download JSON
-                        </button>
+                        
+                        {!orderValidation?.isValid && (
+                          <p className="text-[10px] text-red-400 text-center">Fix validation errors above before sending</p>
+                        )}
                       </div>
                     </div>
+
+                    {/* Order Submit Result */}
+                    {orderSubmitResult && (
+                      <div className={`p-3 rounded-lg text-xs ${
+                        orderSubmitResult.success 
+                          ? 'bg-green-900/30 border border-green-500' 
+                          : 'bg-red-900/30 border border-red-500'
+                      }`}>
+                        <div className="font-bold mb-2">
+                          {orderSubmitResult.success ? '✅ Test Order Result' : '❌ Test Order Failed'}
+                        </div>
+                        
+                        {orderSubmitResult.error && (
+                          <p className="text-red-400 mb-2">{orderSubmitResult.error}</p>
+                        )}
+                        
+                        {orderSubmitResult.orderNumber && (
+                          <div className="flex justify-between mb-1">
+                            <span className="text-gray-400">Order Number:</span>
+                            <span className="text-white font-mono">{orderSubmitResult.orderNumber}</span>
+                          </div>
+                        )}
+                        
+                        {orderSubmitResult.cockpit3d && (
+                          <>
+                            <div className="flex justify-between mb-1">
+                              <span className="text-gray-400">Submitted:</span>
+                              <span className={orderSubmitResult.cockpit3d.submission?.submitted ? 'text-green-400' : 'text-yellow-400'}>
+                                {orderSubmitResult.cockpit3d.submission?.submitted ? 'Yes' : 'Test Mode (Not Sent)'}
+                              </span>
+                            </div>
+                            
+                            {orderSubmitResult.cockpit3d.submission?.http_code && (
+                              <div className="flex justify-between mb-1">
+                                <span className="text-gray-400">HTTP Code:</span>
+                                <span className="text-white">{orderSubmitResult.cockpit3d.submission.http_code}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        
+                        <details className="mt-2">
+                          <summary className="cursor-pointer text-blue-400 hover:text-blue-300">View Full Response</summary>
+                          <pre className="bg-black/50 p-2 rounded mt-1 overflow-x-auto text-[10px] max-h-40">
+                            {JSON.stringify(orderSubmitResult, null, 2)}
+                          </pre>
+                        </details>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-8">
