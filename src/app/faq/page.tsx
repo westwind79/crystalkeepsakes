@@ -51,55 +51,74 @@ export default function FAQPage() {
 
       {/* FAQ Content - Light Background */}
       <section className="bg-slate-100 py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            
-            {/* FAQ Item 1 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                What's a 3D Photo Crystal?
-              </h2>
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                We're thrilled you asked! A 3D Photo Crystal is the most innovative way to preserve and showcase a physical representation of your favorite photo. At CrystalKeepsakes, we blend cutting-edge digital technology with expert craftsmanship to create intricate 2D or 3D laser engravings within durable crystal keepsakes.
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                We didn't invent crystal art; we perfected it.
-              </p>
-            </div>
+        
+        <div className="max-w-4xl p-6 rounded-xl shadow-xl bg-white mx-auto">
+          
+          {/* FAQ Item */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">
+              What's a 3D Photo Crystal?
+            </h2>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              We're thrilled you asked! A 3D Photo Crystal is the most innovative way to preserve and showcase a physical representation of your favorite photo. At CrystalKeepsakes, we blend cutting-edge digital technology with expert craftsmanship to create intricate 2D or 3D laser engravings within durable crystal keepsakes.
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              We didn't invent crystal art; we perfected it.
+            </p>
+          </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-8"></div>
+          {/* Divider */}
+          <div className="border-t border-gray-200 my-8"></div>
 
-            {/* FAQ Item 2 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                Why Choose CrystalKeepsakes?
-              </h2>
-              <p className="text-gray-700 leading-relaxed">
-                What sets us apart is our meticulous creative process. We don't just place a photo in an engraving machine and call it a day. Each custom crystal is a product of collaboration between top designers, advanced technology, and innovative thinking. Are we perfectionists? Absolutely. Passionate? Without a doubt.
-              </p>
-            </div>
+          {/* FAQ Item */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">
+              What photo quality do you need for the best results?
+            </h2>
+            <p className="text-gray-700 mb-4 leading-relaxed">You may be surprised to hear that we are able to make our magic work with almost any photo provided.  We optimize every image, enhance for clarity, and apply our Pro HD technique to every crystal made.  If the image looks blurry to you and you feel uncertain, simply upload it on our live chat and a real artist will give you a direct response after evaluating it.  Unlike our competitors we will even provide a free digital preview BEFORE your purchase.  Most competitors only provide previews after you purchase your 3D Crystal from them.</p>
+          </div>
+          {/* Divider */}
+          <div className="border-t border-gray-200 my-8"></div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-8"></div>
+          {/* FAQ Item */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">
+              What photo quality do you need for the best results?
+            </h2>
+            <p className="text-gray-700 mb-4 leading-relaxed">You may be surprised to hear that we are able to make our magic work with almost any photo provided.  We optimize every image, enhance for clarity, and apply our Pro HD technique to every crystal made.  If the image looks blurry to you and you feel uncertain, simply upload it on our live chat and a real artist will give you a direct response after evaluating it.  Unlike our competitors we will even provide a free digital preview BEFORE your purchase.  Most competitors only provide previews after you purchase your 3D Crystal from them.</p>
+          </div>
 
-            {/* FAQ Item 3 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                Looking for Unique Gift Ideas?
-              </h2>
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                You've come to the right place. At CrystalKeepsakes, we specialize in helping you create unforgettable gifts for every occasion, from birthdays and graduations to anniversaries.
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                Need inspiration? Visit our{' '}
-                <Link href="/about" className="text-[#72B01D] hover:text-[#5A8E17] underline">
-                  about page
-                </Link>
-                {' '}for more information.
-              </p>
-            </div>
+          {/* Divider */}
+          <div className="border-t border-gray-200 my-8"></div>
 
+          {/* FAQ Item */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">
+              Why Choose CrystalKeepsakes?
+            </h2>
+            <p className="text-gray-700 leading-relaxed">
+              What sets us apart is our meticulous creative process. We don't just place a photo in an engraving machine and call it a day. Each custom crystal is a product of collaboration between top designers, advanced technology, and innovative thinking. Are we perfectionists? Absolutely. Passionate? Without a doubt.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200 my-8"></div>
+
+          {/* FAQ Item  */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-light text-gray-900 mb-4">
+              Looking for Unique Gift Ideas?
+            </h2>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              You've come to the right place. At CrystalKeepsakes, we specialize in helping you create unforgettable gifts for every occasion, from birthdays and graduations to anniversaries.
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              Need inspiration? Visit our{' '}
+              <Link href="/about" className="text-[#72B01D] hover:text-[#5A8E17] underline">
+                about page
+              </Link>
+              {' '}for more information.
+            </p>
           </div>
         </div>
       </section>

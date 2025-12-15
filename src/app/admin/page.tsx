@@ -305,10 +305,10 @@ export default function EnhancedProductAdminPage() {
         merged.editedAt = hasEdits ? new Date().toISOString() : (product.editedAt || new Date().toISOString());
       }
       
-      if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
-      if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
-      if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
-      if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
+      // if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
+      // if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
+      // if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
+      // if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
       
       return merged;
     });

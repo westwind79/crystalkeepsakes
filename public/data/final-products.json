@@ -525,7 +525,13 @@
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:50:23.959Z"
+    "editedAt": "2025-12-14T18:52:09.371Z",
+    "occasions": [
+      "graduation",
+      "wedding",
+      "baby",
+      "holiday"
+    ]
   },
   {
     "id": "118",
@@ -916,7 +922,13 @@
     "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:50:10.665Z"
+    "editedAt": "2025-12-14T18:51:54.024Z",
+    "occasions": [
+      "anniversary",
+      "wedding",
+      "birthday",
+      "baby"
+    ]
   },
   {
     "id": "151",
@@ -1024,7 +1036,14 @@
       }
     ],
     "maskImageUrl": "/img/masks/heart-keychain-mask.png",
-    "cost": 14.75
+    "cost": 14.75,
+    "occasions": [
+      "graduation",
+      "anniversary",
+      "memorial"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:50:50.294Z"
   },
   {
     "id": "158",
@@ -1155,7 +1174,13 @@
     ],
     "maskImageUrl": "/img/masks/ornament-mask.png",
     "featured": true,
-    "cost": 19.75
+    "cost": 19.75,
+    "occasions": [
+      "holiday",
+      "memorial"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:51:42.138Z"
   },
   {
     "id": "171",
@@ -1275,7 +1300,12 @@
     "maskImageUrl": "/img/masks/heart-mask.png",
     "cost": 69.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:49:36.426Z"
+    "editedAt": "2025-12-14T18:51:24.031Z",
+    "occasions": [
+      "anniversary",
+      "wedding",
+      "baby"
+    ]
   },
   {
     "id": "173",
@@ -1328,7 +1358,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png",
+    "occasions": [
+      "memorial",
+      "wedding",
+      "birthday",
+      "graduation"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:52:01.840Z"
   },
   {
     "id": "248",
@@ -1377,7 +1415,8 @@
         "id": "878",
         "name": "Lightbase Square",
         "price": 25,
-        "cockpit3d_id": "878"
+        "cockpit3d_id": "878",
+        "enabled": true
       },
       {
         "id": "666",
@@ -1425,7 +1464,12 @@
     "featured": true,
     "cost": 49.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:59:53.885Z"
+    "editedAt": "2025-12-15T01:09:20.524Z",
+    "occasions": [
+      "holiday",
+      "pet",
+      "memorial"
+    ]
   },
   {
     "id": "251",
@@ -1488,7 +1532,12 @@
     "featured": true,
     "cost": 109.75,
     "edited": true,
-    "editedAt": "2025-12-14T07:26:02.048Z"
+    "editedAt": "2025-12-14T18:52:30.882Z",
+    "occasions": [
+      "pet",
+      "memorial",
+      "holiday"
+    ]
   },
   {
     "id": "252",
@@ -1729,7 +1778,16 @@
       }
     ],
     "maskImageUrl": "/img/masks/notched-horizontal-mask.png",
-    "cost": 95
+    "cost": 95,
+    "occasions": [
+      "anniversary",
+      "graduation",
+      "retirement",
+      "wedding",
+      "birthday"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:51:34.159Z"
   },
   {
     "id": "276",
@@ -1850,7 +1908,15 @@
       }
     ],
     "maskImageUrl": "/img/masks/globe-mask.png",
-    "cost": 59.75
+    "cost": 59.75,
+    "occasions": [
+      "memorial",
+      "anniversary",
+      "baby",
+      "wedding"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:53:33.395Z"
   },
   {
     "id": "279",
@@ -1872,7 +1938,13 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "holiday",
+      "memorial"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:51:47.214Z"
   },
   {
     "id": "286",
@@ -1944,7 +2016,13 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-vertical-mask.png",
-    "cost": 89.75
+    "cost": 89.75,
+    "occasions": [
+      "pet",
+      "memorial"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:51:11.213Z"
   },
   {
     "id": "288",
@@ -2016,7 +2094,13 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "cost": 89.75
+    "cost": 89.75,
+    "occasions": [
+      "pet",
+      "memorial"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:51:03.323Z"
   },
   {
     "id": "290",
@@ -2076,7 +2160,13 @@
       }
     ],
     "maskImageUrl": "/img/masks/desk-lamp-mask.png",
-    "cost": 175
+    "cost": 175,
+    "occasions": [
+      "graduation",
+      "retirement"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:52:58.374Z"
   },
   {
     "id": "440",
@@ -2137,7 +2227,12 @@
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T07:20:10.392Z"
+    "editedAt": "2025-12-14T18:54:09.353Z",
+    "occasions": [
+      "holiday",
+      "memorial",
+      "pet"
+    ]
   },
   {
     "id": "441",
@@ -2198,7 +2293,11 @@
     "maskImageUrl": "/img/masks/flower-ornament-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T09:05:04.528Z"
+    "editedAt": "2025-12-14T18:54:22.766Z",
+    "occasions": [
+      "holiday",
+      "anniversary"
+    ]
   },
   {
     "id": "442",
@@ -2259,7 +2358,11 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T07:18:41.220Z"
+    "editedAt": "2025-12-14T18:54:40.820Z",
+    "occasions": [
+      "holiday",
+      "memorial"
+    ]
   },
   {
     "id": "443",
@@ -2313,7 +2416,14 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "featured": true
+    "featured": true,
+    "occasions": [
+      "holiday",
+      "anniversary",
+      "graduation"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:54:31.097Z"
   },
   {
     "id": "444",
@@ -2369,7 +2479,14 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T08:01:48.722Z"
+    "editedAt": "2025-12-14T18:54:49.222Z",
+    "occasions": [
+      "memorial",
+      "holiday",
+      "graduation",
+      "retirement",
+      "birthday"
+    ]
   },
   {
     "id": "445",
@@ -2423,7 +2540,14 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "cost": 15.75
+    "cost": 15.75,
+    "occasions": [
+      "pet",
+      "memorial",
+      "anniversary"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:53:15.009Z"
   },
   {
     "id": "446",
@@ -2476,7 +2600,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
+    "occasions": [
+      "anniversary",
+      "graduation",
+      "birthday",
+      "wedding"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:54:36.236Z"
   },
   {
     "id": "447",
@@ -2535,7 +2667,15 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-necklace-mask.png"
+    "maskImageUrl": "/img/masks/heart-necklace-mask.png",
+    "occasions": [
+      "anniversary",
+      "graduation",
+      "birthday",
+      "baby"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:54:18.486Z"
   },
   {
     "id": "448",
@@ -2594,7 +2734,17 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
+    "occasions": [
+      "anniversary",
+      "graduation",
+      "retirement",
+      "baby",
+      "birthday",
+      "wedding"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:53:50.030Z"
   },
   {
     "id": "449",
@@ -2653,7 +2803,19 @@
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png",
+    "occasions": [
+      "graduation",
+      "pet",
+      "wedding",
+      "birthday",
+      "baby",
+      "anniversary",
+      "memorial",
+      "retirement"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:54:03.262Z"
   },
   {
     "id": "453",
@@ -3160,7 +3322,8 @@
         "id": "2036",
         "name": "Concave Lightbase",
         "price": 39,
-        "cockpit3d_id": "2036"
+        "cockpit3d_id": "2036",
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3198,7 +3361,19 @@
       }
     ],
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
-    "cost": 74.75
+    "cost": 74.75,
+    "occasions": [
+      "memorial",
+      "anniversary",
+      "graduation",
+      "retirement",
+      "wedding",
+      "pet",
+      "baby",
+      "holiday"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-15T01:09:20.524Z"
   },
   {
     "id": "469",
@@ -3320,7 +3495,15 @@
       }
     ],
     "maskImageUrl": "/img/masks/globe-mask.png",
-    "cost": 49.75
+    "cost": 49.75,
+    "occasions": [
+      "anniversary",
+      "retirement",
+      "pet",
+      "birthday"
+    ],
+    "edited": true,
+    "editedAt": "2025-12-14T18:53:05.030Z"
   },
   {
     "id": "472",
