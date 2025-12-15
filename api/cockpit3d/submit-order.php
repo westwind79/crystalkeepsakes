@@ -284,6 +284,7 @@ try {
     $cartItems = $data['cartItems'] ?? [];
     $customer = $data['customer'] ?? [];
     $shippingInfo = $data['shippingInfo'] ?? [];
+    $testMode = $data['testMode'] ?? false;
     
     if (empty($cartItems)) {
         http_response_code(400);
@@ -295,7 +296,35 @@ try {
     $cockpit3DOrder = buildCockpit3DOrder($orderNumber, $cartItems, $customer, $shippingInfo);
     logOrder('📋 Built Cockpit3D order', $cockpit3DOrder);
     
-    // Submit to Cockpit3D
+    // In test mode, skip actual submission
+    if ($testMode) {
+        logOrder('🧪 TEST MODE - Order built but NOT submitted to Cockpit3D');
+        
+        $response = [
+            'success' => true,
+            'testMode' => true,
+            'orderNumber' => $orderNumber,
+            'message' => 'Test order processed successfully (not submitted to Cockpit3D)',
+            'cockpit3d' => [
+                'order' => $cockpit3DOrder,
+                'submission' => [
+                    'success' => true,
+                    'submitted' => false,
+                    'testMode' => true,
+                    'message' => 'Order validation passed - ready for production submission'
+                ]
+            ],
+            'config' => [
+                'cockpit3d_configured' => !empty(COCKPIT3D_USERNAME) && !empty(COCKPIT3D_PASSWORD),
+                'retailer_id' => COCKPIT3D_RETAILER_ID ?: 'NOT SET'
+            ]
+        ];
+        
+        echo json_encode($response, JSON_PRETTY_PRINT);
+        exit;
+    }
+    
+    // Submit to Cockpit3D (production mode)
     $submitResult = submitToCockpit3D($cockpit3DOrder);
     logOrder('📤 Cockpit3D submission result', $submitResult);
     
