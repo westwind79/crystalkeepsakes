@@ -21,9 +21,12 @@ export interface Cockpit3DOrderItem {
   price: number
 }
 
+/**
+ * Cockpit3D Retailer API Order Structure
+ * POST https://api.cockpit3d.com/rest/V2/orders
+ */
 export interface Cockpit3DOrder {
-  retailer_id: string
-  order_id: string
+  retailer_id: number
   address: {
     email: string
     firstname: string
@@ -37,6 +40,8 @@ export interface Cockpit3DOrder {
     shipping_method: string
     destination: string
     staff_user?: string
+    order_id: string      // Order ID is inside address per API spec
+    voyage_code?: string  // Optional voyage/cruise code
   }
   billing_address?: {
     email: string
@@ -50,8 +55,12 @@ export interface Cockpit3DOrder {
     postcode: string
   }
   items: Cockpit3DOrderItem[]
-  total?: number
-  subtotal?: number
+  // These are NOT sent to API, just for local display
+  _meta?: {
+    total?: number
+    subtotal?: number
+    created_at?: string
+  }
 }
 
 /**
