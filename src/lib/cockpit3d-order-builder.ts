@@ -21,9 +21,12 @@ export interface Cockpit3DOrderItem {
   price: number
 }
 
+/**
+ * Cockpit3D Retailer API Order Structure
+ * POST https://api.cockpit3d.com/rest/V2/orders
+ */
 export interface Cockpit3DOrder {
-  retailer_id: string
-  order_id: string
+  retailer_id: number
   address: {
     email: string
     firstname: string
@@ -37,6 +40,8 @@ export interface Cockpit3DOrder {
     shipping_method: string
     destination: string
     staff_user?: string
+    order_id: string      // Order ID is inside address per API spec
+    voyage_code?: string  // Optional voyage/cruise code
   }
   billing_address?: {
     email: string
@@ -50,8 +55,12 @@ export interface Cockpit3DOrder {
     postcode: string
   }
   items: Cockpit3DOrderItem[]
-  total?: number
-  subtotal?: number
+  // These are NOT sent to API, just for local display
+  _meta?: {
+    total?: number
+    subtotal?: number
+    created_at?: string
+  }
 }
 
 /**
@@ -128,8 +137,7 @@ export function buildCockpit3DOrder(
   const billingAddress = customer?.billingAddress || customer?.shippingAddress
 
   const order: Cockpit3DOrder = {
-    retailer_id: retailerId || process.env.COCKPIT3D_RETAIL_ID || process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID || '256568874',
-    order_id: orderNumber,
+    retailer_id: parseInt(retailerId || process.env.COCKPIT3D_RETAIL_ID || process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID || '256568874'),
     address: {
       email: customer?.email || '',
       firstname: customer?.firstName || '',
@@ -142,11 +150,15 @@ export function buildCockpit3DOrder(
       postcode: shippingAddress.zipCode,
       shipping_method: 'air',
       destination: 'customer_home',
-      staff_user: 'Web Order'
+      staff_user: 'Web Order',
+      order_id: orderNumber  // Order ID goes in address per API spec
     },
     items,
-    subtotal,
-    total: subtotal
+    _meta: {
+      subtotal,
+      total: subtotal,
+      created_at: new Date().toISOString()
+    }
   }
 
   // Add billing address if different from shipping
@@ -368,8 +380,8 @@ export function validateCockpit3DOrder(order: Cockpit3DOrder): {
   const errors: string[] = []
 
   if (!order.retailer_id) errors.push('Missing retailer_id')
-  if (!order.order_id) errors.push('Missing order_id')
   if (!order.address) errors.push('Missing address')
+  if (!order.address?.order_id) errors.push('Missing order_id in address')
   if (!order.items || order.items.length === 0) errors.push('No items in order')
 
   // Validate address
