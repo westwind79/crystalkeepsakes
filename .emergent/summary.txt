@@ -1,72 +1,87 @@
 <analysis>**original_problem_statement:**
-The user's initial request was to fix a non-working product photo gallery. This quickly expanded into a major project overhaul, including:
-1.  **Pricing System:** Integrate a new, comprehensive pricing file () into the existing product data ().
-2.  **Payment/Order Process:** Overhaul the entire checkout flow. This includes cleaning up the UI, moving debug information, integrating a database for orders, and replacing a placeholder email function. A key part is submitting the final order to the Cockpit3D service.
-3.  **Build Process:** Fix numerous bugs related to build artifacts, environment variable handling, and static export cleanliness.
-4.  **Admin Panel UX:**
-    *   Fix HTML formatting for product long descriptions.
-    *   Resolve confusion between  and a phantom , making the JSON file the single source of truth.
-    *   Add a persistent edited flag to products that indicates when they've been modified.
-    *   Ensure that editing a shared option (e.g., a lightbase) updates its price across all products that use it.
-5.  **Environment Issues:** The user has faced persistent issues with their local environment, including JSON errors from unresolved merge conflicts and incorrect paths in PHP scripts causing  files not to be found.
+The user's primary goal is to implement a fully functional order submission process to a service called Cockpit3D. The initial implementation was incorrect because it targeted the wrong API.
+
+The main requirements are:
+1.  **Correct the API Integration:** Refactor the order submission logic to match the correct **Cockpit3D Retailer Order API** documentation provided by the user.
+2.  **Collect Customer Data:** Modify the Stripe checkout process to collect the customer's shipping address and phone number, as these are required fields for the Cockpit3D order payload.
+3.  **Implement Order Submission:** The order should be automatically sent to the Cockpit3D API after a successful Stripe payment. This should be handled via a Stripe webhook.
+4.  **Testing:** The entire flow should target a specific development/test API endpoint provided by the user ().
+5.  **Fix Git Issue:** The user reported a merge conflict in a project metadata file and asked for it to be resolved and untracked.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a Next.js project configured for static export (), which means it does not support runtime Next.js API routes. It uses a PHP backend for dynamic functionality. Product data is sourced from .
-
-The agent successfully integrated the new pricing data into . The admin panel has been significantly refactored to use only this JSON file, add a persistent edited flag, and sync prices of shared options globally. A PHP endpoint () has been created to handle order submissions, acknowledging the limitations of the static Next.js setup. An Order tab was also added to the  to preview the order structure.
+The application is a static Next.js project with a PHP backend. The agent has successfully refactored the order submission logic. The Stripe checkout session creation () is now configured to collect shipping address and phone number. The Stripe webhook handler () has been rewritten to receive this data after a successful payment, build a correctly formatted payload, and send it to the user's specified Cockpit3D development API endpoint. The corresponding TypeScript builder () and environment files have also been updated.
 
 **Last working item**:
-*   **Last item agent was working:** The agent implemented logic to globally sync prices for shared options. When a lightbase, background, or text option is edited on one product in the admin panel, the change should propagate to all other products that use the same option. This was done by updating the , , and  functions in .
+*   **Last item agent was working:** The agent finished updating the entire order submission pipeline, from Stripe data collection to the final API call via the webhook. This also included advising the user on how to resolve a merge conflict in  and ignore the directory.
 *   **Status:** USER VERIFICATION PENDING
 *   **Agent Testing Done:** N
-*   **Which testing method agent to use?** Manual testing. The agent or user needs to go to the  page, edit the price of a shared option (e.g., a lightbase) on one product, save the products (which downloads the JSON file), and then verify that the price for that same lightbase has been updated on other products within the downloaded .
+*   **Which testing method agent to use?** Manual testing by the user. The user needs to perform a full, end-to-end test: add a product to the cart, complete the Stripe checkout (entering address and phone), and then verify in their Cockpit3D dev environment that the order was created successfully.
 *   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1 (P0): Admin Save does not write to server.**
-    *   **Description:** The Save Products button in the admin panel downloads a  file instead of saving it directly to the server. This is because the Next.js API route originally used for this is disabled by the  configuration. The user finds this manual process confusing and frustrating.
+*   **Issue 1 (P0): Cockpit3D Order Submission Verification.**
+*   **Issue 2 (P1): Fix  merge conflict and add to .**
+*   **Issue 3 (P2): Admin Save does not write to server.**
+*   **Issue 4 (P3): Edited flag UI does not persist on refresh.**
+
+**Issues Detail:**
+*   **Issue 1: Cockpit3D Order Submission Verification**
+    *   **Attempted fixes:** The entire flow was rewritten to match the correct API spec and data requirements. The logic now resides in the Stripe webhook.
+    *   **Next debug checklist:** The user needs to perform a test purchase. If it fails, the agent should examine the Stripe webhook logs and PHP error logs for any issues during the  event. The agent must also ensure the user has set the  and  credentials.
+    *   **Why fix this issue and what will be achieved with the fix?** This is the core feature the user requested and will complete the primary business logic of the application.
+    *   **Status:** USER VERIFICATION PENDING
+    *   **Is recurring issue?** N
+    *   **Should Test frontend/backend/both after fix?** Both (User-led e2e test).
+    *   **Blocked on other issue:** None.
+*   **Issue 2: Fix  merge conflict and add to .**
+    *   **Attempted fixes:** The agent provided verbal instructions to the user.
+    *   **Next debug checklist:** The agent should add  to the  file to prevent the file from being tracked in the future. The user was already instructed on how to manually fix the local merge conflict.
+    *   **Why fix this issue and what will be achieved with the fix?** To resolve git conflicts and prevent non-essential, environment-specific metadata from being version-controlled.
     *   **Status:** NOT STARTED
-    *   **Next debug checklist:** A PHP-based save endpoint needs to be created (e.g., ) and the admin panel's fetch call must be re-wired to use it. This will allow direct saving on the server, matching the user's expectation.
-*   **Issue 2 (P1): Edited flag UI does not persist on refresh.**
-    *   **Description:** The user reported that while the  flag is saved in the JSON file, the admin UI's Edited badge only appears for changes made in the current session. On a page refresh, it doesn't read the persisted flag from the loaded product data.
+    *   **Is recurring issue?** Y
+    *   **Should Test frontend/backend/both after fix?** NA
+    *   **Blocked on other issue:** None.
+*   **Issue 3: Admin Save does not write to server.**
+    *   **Attempted fixes:** None.
+    *   **Next debug checklist:** Create a new PHP endpoint (e.g., ) that accepts a JSON payload and writes it to . Then, modify the  call in  to use this new endpoint.
+    *   **Why fix this issue and what will be achieved with the fix?** This is a critical workflow issue for the user, as the current Save button only triggers a file download, forcing a manual update process.
+    *   **Status:** NOT STARTED
+    *   **Is recurring issue?** Y
+    *   **Should Test frontend/backend/both after fix?** Both.
+    *   **Blocked on other issue:** None.
+*   **Issue 4: Edited flag UI does not persist on refresh.**
+    *   **Attempted fixes:** The previous agent added UI logic, but it seems insufficient.
+    *   **Next debug checklist:** In , debug the initial state of the products loaded from JSON to ensure the  flag is present, and verify the component's JSX correctly renders the Edited badge based on this flag during the initial render.
+    *   **Why fix this issue and what will be achieved with the fix?** Provides correct visual feedback to the user in the admin panel.
     *   **Status:** IN PROGRESS
-    *   **Attempted fixes:** The agent added logic to the product card JSX in  to read , but this seems to be insufficient or incorrect.
-    *   **Next debug checklist:**
-        1.  Verify that the  state, when initialized, correctly contains the  flag from the loaded .
-        2.  Check the component rendering logic in  to ensure the  boolean is correctly used to display the badge for each product on initial load.
-*   **Issue 3 (P2): User's local branch has merge conflicts.**
-    *   **Description:** The user's  branch contains multiple unresolved Git merge conflicts within , which is causing JSON parsing errors on their end.
-    *   **Status:** BLOCKED (on user action)
-    *   **Next debug checklist:** The agent has already advised the user on how to fix this locally. The next agent should re-iterate the fix if the user is still stuck: search for  in  and manually resolve the conflicts, then commit the fixed file.
+    *   **Is recurring issue?** Y
+    *   **Should Test frontend/backend/both after fix?** Frontend.
+    *   **Blocked on other issue:** None.
 
 **In progress Task List**:
-*   **Task 1 (P0): Implement Cockpit3D Order Submission.**
-    *   **Where to resume:** The agent created a PHP endpoint . The next step is to call this endpoint from the frontend. This should happen on the order confirmation page () after a successful payment.
-    *   **What will be achieved with this?** A functioning order pipeline where processed payments trigger an order submission to the Cockpit3D service via the PHP backend.
-    *   **Status:** IN PROGRESS
-    *   **Should Test frontend/backend/both after fix?** Both.
-    *   **Blocked on something:** The user needs to provide valid Cockpit3D credentials in the  files. The current ones are placeholders.
+None. The main task is implemented and pending verification.
 
 **Upcoming and Future Tasks**
-*   **Upcoming Tasks (P0):**
-    *   **Database Integration:** Implement the database schema from  to store order and customer data. This will require creating new PHP API endpoints for CRUD operations.
-    *   **Email Integration:** Replace the placeholder email functionality by integrating  into the order processing flow to send confirmation emails.
-*   **Future Tasks (P1):**
-    *   **Image Background Removal:** User expressed interest in this. Plan and implement a solution, likely using a Python script () called from the PHP backend.
-    *   **Privacy Policy Page:** Create a static page and route for the Privacy Policy.
+*   **Upcoming Tasks:**
+    *   **P0: Database Integration:** Implement the MySQL schema from  to store orders and customers, creating necessary PHP CRUD endpoints.
+    *   **P1: Email Integration:** Integrate  into the order flow to send confirmation emails.
+*   **Future Tasks:**
+    *   **P1: Image Background Removal:** Plan and implement a service for automatic background removal from user-uploaded images.
+    *   **P2: Privacy Policy Page:** Create a static page for the privacy policy.
 
 **Completed work in this session**
-- **Pricing Integration:** Successfully merged the user-provided pricing data from  into the main  file.
-- **Admin Data Consolidation:** Refactored the admin panel to exclusively use , eliminating the confusing  file.
-- **Debug Panel Enhancement:** Added a new Order tab to the  to show a preview of the Cockpit3D order structure.
-- **Edited Flag Persistence:** Added logic to the admin panel () to insert  and  fields into the product data upon modification.
-- **Environment Fixes:** Resolved a critical PHP error by correcting the  file path in . Also added  to  to prevent spurious commits.
-- **Order Endpoint Creation:** Correctly identified that Next.js API routes are incompatible with static export and created a placeholder PHP endpoint () as the right architectural approach.
+- **Cockpit3D Order Submission Refactored:** Rewrote the entire order submission logic in the Stripe webhook () to use the correct Cockpit3D Retailer Order API structure.
+- **Stripe Checkout Enhanced:** Modified  to collect shipping address and phone number.
+- **Test Environment Configured:** Updated all relevant files and environment variables to point to the user's provided test API URL ().
+- **TypeScript Definitions Updated:** Aligned the order interfaces in  with the new API specification.
+- **Gitignore Guidance Provided:** Instructed the user on how to resolve a merge conflict and untrack the  directory.
 
 **Earlier issues found/mentioned but not fixed**
-*   **Issue 1:** The user's local branch () contains unresolved Git merge conflicts in , which is breaking their local environment. The agent identified this but the user has not yet fixed it. This is a recurring source of JSON errors.
+*   **Issue 1: Admin Save functionality.** The admin panel save button still triggers a file download instead of saving directly to the server. This is a high-priority workflow issue for the user.
+*   **Issue 2: Edited flag UI persistence.** The admin UI does not show the Edited status of a product on page load, even when it's saved in the data file.
+*   **Issue 3: User's local branch merge conflicts.** The user has been advised on how to fix this, but it may persist as a source of local errors if not resolved.
 
 **Known issue recurrence from previous fork**
 N/A
@@ -75,71 +90,64 @@ N/A
 
 
 **Key Technical Concepts**
-*   **Hybrid Architecture:** The project uses Next.js for statically exported frontend pages and a separate PHP backend for API calls and server-side logic.
-*   **Static Site Generation (SSG):** The  setting in  is a critical constraint, disabling all server-side runtime features of Next.js like API routes.
-*   **JSON as a Database:** Product data is managed entirely within . The admin panel reads from and generates an updated version of this file.
+*   **Stripe Webhooks:** The order submission logic has been correctly moved to the  webhook. This is a robust, asynchronous pattern for handling actions after a successful payment.
+*   **Hybrid Architecture:** The separation between the Next.js static frontend and the PHP backend remains. The frontend initiates payment, and the backend handles fulfillment securely via the webhook.
 
 **key DB schema**
-A  file exists for a future MySQL database implementation. It defines tables for , , , and . This has not been integrated yet.
+- A  file exists for a future MySQL database implementation, but it has not been integrated.
 
 **changes in tech stack**
-No changes to the stack itself, but a clearer separation of concerns has been established: Next.js is for UI only, and all dynamic/API logic must be handled by the PHP backend.
+- None.
 
 **All files of reference**
-*   **/app/src/app/admin/page.tsx**: Heavily modified to add the edited flag, its UI indicator, and global price syncing for shared options.
-*   **/app/public/data/final-products.json**: The single source of truth for all product data. Prices have been updated.
-*   **/app/src/components/EnhancedDebugOverlay.tsx**: Updated to include an Order tab for previewing the Cockpit3D order.
-*   **/app/api/cockpit3d/submit-order.php**: New PHP endpoint created to handle order submissions to Cockpit3D.
-*   **/app/src/app/order-confirmation/OrderConfirmationClient.tsx**: The component that will need to be modified to call the new PHP order submission endpoint.
-*   **/app/api/cockpit3d/cockpit3d-data-fetcher.php**: Updated to fix a critical  path issue.
-*   **/app/.gitignore**: Updated to exclude the auto-generated  file.
+*   **/app/api/stripe/stripe-webhook.php**: Core file for the new order submission logic.
+*   **/app/api/stripe/create-checkout-session.php**: Modified to collect required customer data.
+*   **/app/api/cockpit3d/submit-order.php**: Rewritten to serve as a valid manual test endpoint.
+*   **/app/src/lib/cockpit3d-order-builder.ts**: Interfaces updated to match the API.
+*   **/app/.env.production** & **.env.production.test**: Updated with .
+*   **/app/src/app/admin/page.tsx**: Location of the broken Save functionality.
 
 **Areas that need refactoring**:
-*   The admin panel save mechanism is a major pain point. It currently relies on the user downloading a file and manually replacing it on the server via FTP. This should be replaced with a direct server-side save using a new PHP endpoint.
+*   The admin panel's Save Products feature is the most critical area needing a rewrite. It should use a PHP endpoint for a direct server-side save instead of forcing a file download.
 
 **key api endpoints**
-*   : The new PHP endpoint for submitting an order to Cockpit3D. (Needs to be called from the frontend).
-*   : This Next.js route is **non-functional** due to static export. It's the root cause of the admin save issue.
+*   : Listens for the  event to trigger the Cockpit3D order submission.
+*   : Initiates the Stripe payment flow.
 
 **Critical Info for New Agent**
-*   **The biggest constraint is .** Do not attempt to use or create Next.js API routes. All server-side logic MUST be implemented in the  PHP directory.
-*   The user is frustrated with issues that break their workflow and waste credits. Prioritize stability and clear, concise communication. Double-check your understanding before making changes.
-*   The user's local  file is likely broken due to unresolved merge conflicts. This might continue to cause errors on their end until they fix it.
-*   The admin Save functionality is broken from a UX perspective. It doesn't save to the server, it triggers a download. This is a high-priority issue to fix for the user's workflow.
+*   **Verification is the next step.** The main task is implemented but unverified. Guide the user through a test purchase and be prepared to debug the webhook.
+*   **Credentials Needed:** The user must provide  and  in the  files for the submission to authenticate.  is also required.
+*   **Test Endpoint:** All submissions are directed to .
+*   **Prioritize User Workflow:** The broken admin Save function is a major pain point and should be addressed after the order submission is verified.
+*   **Be Concise:** The user is mindful of token usage.
 
 **documents created in this job**
-None.
+- None.
 
 **Last 10 User Messages and any pending user messages**
-1.  **User:** Reports edited flag isn't persisting on refresh. (IN PROGRESS)
-2.  **Agent:** Explains the API route is disabled and offers a PHP fix.
-3.  **User:** Expresses frustration, reiterates the requirement for the edited flag to persist when saved. Asks for shorter answers. (HIGH FRUSTRATION)
-4.  **Agent:** Identifies the root cause (state not reading from file on load) and implements a fix.
-5.  **User:** Confirms the flag saves to JSON, but the UI doesn't show it on refresh. Asks for a quick fix but prioritizes the order process. (DE-PRIORITIZED a bit)
-6.  **Agent:** Adds UI logic to the product card to read the  flag.
-7.  **User:** Asks for lightbase prices to sync globally across all products. (NEW REQUIREMENT)
-8.  **Agent:** Implements the global sync for lightbases.
-9.  **Agent:** Implements the global sync for background options as well.
-10. **Agent:** Informs the user that the global price sync for shared options is complete and ready for testing. (PENDING USER VERIFICATION)
+1.  **User:** Provided detailed Cockpit3D API documentation, pointing out that the agent's current implementation was targeting the wrong API. (COMPLETED - Agent has now fixed this).
+2.  **User:** Specified a dev URL for testing, confirmed that shipping address and phone are required, and asked the agent to be mindful of token limits. (COMPLETED - Agent has implemented these requirements).
+3.  **User:** Sent a snippet of a file with a Git merge conflict () and asked how to resolve it and stop tracking the file. (PENDING - Agent has provided instructions but not executed the  change).
 
 **Project Health Check:**
 *   **Broken:**
-    *   The admin panel's Save Products feature does not save to the server; it forces a file download. This is a critical workflow issue.
-    *   The order submission process is not implemented.
+    *   Admin panel's Save Products feature forces a file download instead of saving to the server.
 *   **Mocked:** None.
+*   **In Verification:**
+    *   The entire checkout-to-order-submission pipeline via the Stripe webhook is complete but needs end-to-end testing by the user.
 
 **3rd Party Integrations**
-*   **Stripe:** Used for payments in the checkout flow.
-*   **Cockpit3D:** Used for product data and requires integration for order submission. Credentials need to be provided by the user in the  files (currently placeholders).
+*   **Stripe:** Used for payments. The checkout is now configured to collect shipping address and phone number. The webhook is used to trigger order submission.
+*   **Cockpit3D:** Integrated for order submission. It targets the user's dev API endpoint. Requires , , and  credentials.
 
 **Testing status**
 *   **Testing agent used after significant changes:** NO
 *   **Troubleshoot agent used after agent stuck in loop:** NO
 *   **Test files created:** None.
-*   **Known regressions:** The admin panel save functionality was broken when the architecture was clarified (moving from a non-working Next.js API route to a planned PHP one).
+*   **Known regressions:** None.
 
 **Credentials to test flow:**
-The  files (, ) require valid Cockpit3D credentials to be filled in for order submission to work. The keys are: , , .
+*   User must provide , , and  in the  files for the order submission to authenticate successfully.
 
 **What agent forgot to execute**
-The agent correctly identified that a PHP endpoint was needed for saving products from the admin panel but did not create it, leaving the save functionality in a broken state (file download only). This is a top-priority fix needed to restore the user's workflow.</analysis>
+*   The agent provided instructions to add the  directory to  but did not perform the file edit. This should be done to prevent future merge conflicts for the user.</analysis>
