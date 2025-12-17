@@ -184,8 +184,31 @@ function handleCheckoutCompleted($session) {
 }
 
 /**
+ * Load full cart data from server storage
+ * This contains image URLs and all options needed for Cockpit3D
+ */
+function loadFullCartData($orderNumber) {
+    $cartDataFile = dirname(__DIR__) . '/order-data/' . $orderNumber . '.json';
+    
+    if (!file_exists($cartDataFile)) {
+        error_log("⚠️  No cart data file found: $cartDataFile");
+        return null;
+    }
+    
+    $content = file_get_contents($cartDataFile);
+    $data = json_decode($content, true);
+    
+    if ($data) {
+        error_log("✓ Loaded full cart data for order: $orderNumber");
+        error_log("  Items: " . count($data['items'] ?? []));
+    }
+    
+    return $data;
+}
+
+/**
  * Build Cockpit3D order payload from Stripe session
- * Matches: POST https://api.cockpit3d.com/rest/V2/orders
+ * POST https://profit.cockpit3d.com/rest/V2/orders (or dev URL)
  */
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
@@ -223,27 +246,62 @@ function buildCockpit3DOrder($session, $orderNumber) {
         'items' => []
     ];
     
-    // Parse cart items from metadata
-    $cartItems = [];
+    // LOAD FULL CART DATA from server storage (includes image URLs)
+    $fullCartData = loadFullCartData($orderNumber);
+    $fullCartItems = $fullCartData['items'] ?? [];
+    
+    // Fallback to Stripe metadata if no full data available
+    $metaCartItems = [];
     if (isset($session->metadata->cart_items)) {
-        $cartItems = json_decode($session->metadata->cart_items, true) ?: [];
+        $metaCartItems = json_decode($session->metadata->cart_items, true) ?: [];
     }
     
-    // Build items array
+    // Build items array from Stripe line items
     foreach ($session->line_items->data as $index => $lineItem) {
-        // Get SKU from cart metadata
-        $sku = isset($cartItems[$index]['sku']) ? $cartItems[$index]['sku'] : 'PRODUCT-' . $lineItem->price->product;
+        // Get full item data (with image URLs) if available
+        $fullItem = $fullCartItems[$index] ?? null;
+        $metaItem = $metaCartItems[$index] ?? [];
+        
+        // Get SKU - prefer full data, then metadata, then fallback
+        $sku = $fullItem['sku'] ?? $metaItem['sku'] ?? 'PRODUCT-' . $lineItem->price->product;
         
         $item = [
             'sku' => $sku,
             'qty' => (string) $lineItem->quantity,
             'client_item_id' => $orderNumber . '-' . ($index + 1),
-            'options' => []
         ];
         
-        // Add options from cart metadata if available
-        if (isset($cartItems[$index]['options'])) {
-            $item['options'] = $cartItems[$index]['options'];
+        // ADD IMAGE URLs for Cockpit3D (critical for custom products!)
+        // These were uploaded during checkout and stored in cart data
+        if (!empty($fullItem['rawImageUrl'])) {
+            $item['original_photo'] = $fullItem['rawImageUrl'];
+            error_log("📸 Item $index original_photo: " . $fullItem['rawImageUrl']);
+        }
+        if (!empty($fullItem['maskedImageUrl'])) {
+            $item['cropped_photo'] = $fullItem['maskedImageUrl'];
+            error_log("📸 Item $index cropped_photo: " . $fullItem['maskedImageUrl']);
+        }
+        
+        // Build options array for Cockpit3D
+        $item['options'] = buildCockpit3DItemOptions($fullItem);
+        
+        // Add special instructions if custom text is present
+        $specialInstructions = [];
+        if (!empty($fullItem['customText'])) {
+            $text = $fullItem['customText'];
+            if (is_string($text)) {
+                $specialInstructions[] = "Custom Text: $text";
+            } elseif (is_array($text)) {
+                $textLines = [];
+                if (!empty($text['line1'])) $textLines[] = $text['line1'];
+                if (!empty($text['line2'])) $textLines[] = $text['line2'];
+                if (!empty($textLines)) {
+                    $specialInstructions[] = "Custom Text: " . implode(' / ', $textLines);
+                }
+            }
+        }
+        if (!empty($specialInstructions)) {
+            $item['special_instructions'] = implode('. ', $specialInstructions);
         }
         
         $order['items'][] = $item;
@@ -252,6 +310,65 @@ function buildCockpit3DOrder($session, $orderNumber) {
     error_log('📦 Cockpit3D order payload: ' . json_encode($order, JSON_PRETTY_PRINT));
     
     return $order;
+}
+
+/**
+ * Build Cockpit3D options array from cart item
+ */
+function buildCockpit3DItemOptions($item) {
+    if (!$item) return [];
+    
+    $options = [];
+    
+    // Size option - use cockpit3d_id from the size
+    if (!empty($item['sizeDetails']['cockpit3d_id'])) {
+        $options[] = [
+            'id' => (string) $item['sizeDetails']['cockpit3d_id'],
+            'qty' => '1'
+        ];
+    }
+    
+    // Process options array from cart item
+    if (!empty($item['options']) && is_array($item['options'])) {
+        foreach ($item['options'] as $opt) {
+            $category = $opt['category'] ?? '';
+            
+            // Light base option
+            if ($category === 'lightBase' && !empty($opt['cockpit3d_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Background option
+            if ($category === 'background' && !empty($opt['cockpit3d_option_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_option_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Custom text option - ID 199 for customer_text
+            if ($category === 'customText') {
+                $textLines = [];
+                if (!empty($opt['line1'])) $textLines[] = $opt['line1'];
+                if (!empty($opt['line2'])) $textLines[] = $opt['line2'];
+                if (!empty($opt['value'])) {
+                    $textLines = is_array($opt['value']) ? $opt['value'] : [$opt['value']];
+                }
+                
+                if (!empty($textLines)) {
+                    $options[] = [
+                        'id' => '199', // customer_text option ID
+                        'value' => $textLines
+                    ];
+                }
+            }
+        }
+    }
+    
+    return $options;
 }
 
 /**
