@@ -307,37 +307,6 @@ function sendToCockpit3D($orderData) {
         'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
     ];
 }
-        return ['success' => false, 'error' => 'Authentication failed'];
-    }
-    
-    $token = trim($response, '"');
-    error_log('✓ Authenticated');
-    
-    // Step 2: Create Order
-    error_log('📦 Creating order...');
-    
-    $ch = curl_init($baseUrl . '/rest/V2/orders');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $token
-    ]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($orderData));
-    
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if ($httpCode === 201 || $httpCode === 200) {
-        error_log('✅ Order created in Cockpit3D');
-        $responseData = json_decode($response, true);
-        return ['success' => true, 'data' => $responseData];
-    } else {
-        error_log('❌ Order creation failed (HTTP ' . $httpCode . '): ' . $response);
-        return ['success' => false, 'error' => 'Order creation failed', 'response' => $response];
-    }
-}
 
 /**
  * Save order to local database
