@@ -1,9 +1,12 @@
 <?php
 /**
- * Cockpit3D Order Submission API
- * @version 1.0.0
- * @date 2025-12-14
- * @description Builds and submits orders to Cockpit3D API
+ * Cockpit3D Retailer Order Submission API
+ * @version 2.0.0
+ * @date 2025-12-15
+ * @description Builds and submits orders to Cockpit3D Retailer API
+ * 
+ * API Endpoint: POST https://api.cockpit3d.com/rest/V2/orders
+ * Auth: Basic Auth (email:password)
  */
 
 header('Content-Type: application/json');
@@ -24,7 +27,7 @@ ini_set('error_log', __DIR__ . '/cockpit3d_orders.log');
 // Load environment
 require_once __DIR__ . '/../env-loader.php';
 
-// Constants
+// Constants - Cockpit3D Retailer API
 define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://api.cockpit3d.com');
 define('COCKPIT3D_USERNAME', getenv('COCKPIT3D_USERNAME') ?: '');
 define('COCKPIT3D_PASSWORD', getenv('COCKPIT3D_PASSWORD') ?: '');
@@ -43,178 +46,222 @@ function logOrder($message, $data = null) {
 }
 
 /**
- * Build Cockpit3D order item options
+ * Build options array for a cart item
+ * Format: [{ "id": "198", "qty": "1" }, { "id": "199", "value": ["Text Line 1", "Text Line 2"] }]
  */
 function buildItemOptions($item) {
     $options = [];
     
-    // Size option
-    if (!empty($item['options']['size'])) {
-        $sizeId = mapSizeToCockpit3DId($item['options']['size']);
-        if ($sizeId) {
-            $options[] = ['id' => $sizeId, 'qty' => 1];
-        }
-    }
-    
-    // Light base
-    if (!empty($item['options']['lightBase']) && $item['options']['lightBase'] !== 'none') {
-        $lightbaseId = mapLightbaseToCockpit3DId($item['options']['lightBase']);
-        if ($lightbaseId) {
-            $options[] = ['id' => $lightbaseId, 'qty' => 1];
-        }
-    }
-    
-    // Background
-    if (!empty($item['options']['background'])) {
-        $bgId = mapBackgroundToCockpit3DId($item['options']['background']);
-        if ($bgId) {
-            $options[] = ['id' => $bgId, 'qty' => 1];
-        }
-    }
-    
-    // Custom text
-    if (!empty($item['options']['customText'])) {
-        $text = $item['options']['customText'];
-        if (!empty($text['line1']) || !empty($text['line2'])) {
-            $options[] = [
-                'id' => 'customer_text',
-                'qty' => 1,
-                'value' => [
-                    'line1' => $text['line1'] ?? '',
-                    'line2' => $text['line2'] ?? ''
-                ]
-            ];
-        }
-    }
-    
-    // Image URL
-    if (!empty($item['options']['imageUrl'])) {
+    // Size option - use cockpit3d_id from the size
+    if (!empty($item['sizeDetails']['cockpit3d_id'])) {
         $options[] = [
-            'id' => 'image_url',
-            'value' => $item['options']['imageUrl']
+            'id' => (string) $item['sizeDetails']['cockpit3d_id'],
+            'qty' => '1'
         ];
+    } elseif (!empty($item['size']['cockpit3d_id'])) {
+        $options[] = [
+            'id' => (string) $item['size']['cockpit3d_id'],
+            'qty' => '1'
+        ];
+    }
+    
+    // Process options array from cart item
+    if (!empty($item['options']) && is_array($item['options'])) {
+        foreach ($item['options'] as $opt) {
+            $category = $opt['category'] ?? '';
+            
+            // Light base option
+            if ($category === 'lightBase' && !empty($opt['cockpit3d_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Background option
+            if ($category === 'background' && !empty($opt['cockpit3d_option_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_option_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Custom text option - ID 199 for customer_text
+            if ($category === 'customText') {
+                $textLines = [];
+                if (!empty($opt['line1'])) $textLines[] = $opt['line1'];
+                if (!empty($opt['line2'])) $textLines[] = $opt['line2'];
+                if (!empty($opt['value'])) {
+                    $textLines = is_array($opt['value']) ? $opt['value'] : [$opt['value']];
+                }
+                
+                if (!empty($textLines)) {
+                    $options[] = [
+                        'id' => '199', // customer_text option ID
+                        'value' => $textLines
+                    ];
+                }
+            }
+        }
+    }
+    
+    // Handle flat options object (legacy format)
+    if (!empty($item['options']) && !is_array($item['options'][0] ?? null)) {
+        $flatOpts = $item['options'];
+        
+        // Light base from flat options
+        if (!empty($flatOpts['lightBase']) && is_array($flatOpts['lightBase'])) {
+            if (!empty($flatOpts['lightBase']['cockpit3d_id'])) {
+                $options[] = [
+                    'id' => (string) $flatOpts['lightBase']['cockpit3d_id'],
+                    'qty' => '1'
+                ];
+            }
+        }
+        
+        // Background from flat options  
+        if (!empty($flatOpts['background']) && is_array($flatOpts['background'])) {
+            if (!empty($flatOpts['background']['cockpit3d_option_id'])) {
+                $options[] = [
+                    'id' => (string) $flatOpts['background']['cockpit3d_option_id'],
+                    'qty' => '1'
+                ];
+            }
+        }
+        
+        // Custom text from flat options
+        if (!empty($flatOpts['customText'])) {
+            $textLines = [];
+            if (is_string($flatOpts['customText'])) {
+                $textLines = [$flatOpts['customText']];
+            } elseif (is_array($flatOpts['customText'])) {
+                if (!empty($flatOpts['customText']['line1'])) $textLines[] = $flatOpts['customText']['line1'];
+                if (!empty($flatOpts['customText']['line2'])) $textLines[] = $flatOpts['customText']['line2'];
+            }
+            
+            if (!empty($textLines)) {
+                $options[] = [
+                    'id' => '199',
+                    'value' => $textLines
+                ];
+            }
+        }
     }
     
     return $options;
 }
 
 /**
- * Map size name to Cockpit3D ID
+ * Build complete Cockpit3D Retailer Order structure
+ * Matches: https://api.cockpit3d.com/rest/V2/orders
  */
-function mapSizeToCockpit3DId($sizeName) {
-    $sizeMap = [
-        'Rectangle Small (6x4cm)' => 'Rectangle_Small_(6x4cm)',
-        'Rectangle Medium (8x5cm)' => 'Rectangle_Medium_(8x5cm)',
-        'Rectangle Large (9x6cm)' => 'Rectangle_Large_(9x6cm)',
-        'Rectangle XLarge (12x8cm)' => 'Rectangle_XLarge_(12x8cm)',
-        'Rectangle Mini Mantel (15x10cm)' => 'Rectangle_Mini_Mantel_(15x10cm)',
-        'Rectangle Mantel (18x12cm)' => 'Rectangle_Mantel_(18x12cm)',
-        'Rectangle Mini Presidential (22x16cm)' => 'Rectangle_Mini_Presidential_(22x16cm)',
-        'Rectangle Presidential (27x18cm)' => 'Rectangle_Presidential_(27x18cm)',
-        'Cut Corner Diamond (5x5cm)' => 'Cut_Corner_Diamond_(5x5cm)',
-        'Cut Corner Diamond (6x6cm)' => 'Cut_Corner_Diamond_(6x6cm)',
-        'Cut Corner Diamond (8x8cm)' => 'Cut_Corner_Diamond_(8x8cm)',
-        'Wide Heart Small' => 'Wide_Heart_small_(80x70x40)',
-        'Wide Heart Medium' => 'Wide_Heart_Medium_(100x90x50)',
-        'Wide Heart Large' => 'Wide_Heart_Large_(125x110x60)',
-        'Prestige Small (13x9cm)' => 'Prestige_Small_(13x9cm)',
-        'Prestige Medium (16x13cm)' => 'Prestige_Medium_(16x13cm)',
-        'Prestige Large (19x15cm)' => 'Prestige_Large_(19x15cm)',
+function buildCockpit3DOrder($orderId, $cartItems, $customer, $shippingInfo, $billingInfo = null) {
+    $retailerId = COCKPIT3D_RETAILER_ID;
+    
+    // Build address object (includes order_id per their API)
+    $address = [
+        'email' => $customer['email'] ?? '',
+        'firstname' => $customer['firstName'] ?? $customer['firstname'] ?? '',
+        'lastname' => $customer['lastName'] ?? $customer['lastname'] ?? '',
+        'telephone' => $customer['phone'] ?? $customer['telephone'] ?? '',
+        'region' => $shippingInfo['state'] ?? $shippingInfo['region'] ?? '',
+        'country' => $shippingInfo['country'] ?? 'US',
+        'street' => $shippingInfo['address'] ?? $shippingInfo['street'] ?? '',
+        'city' => $shippingInfo['city'] ?? '',
+        'postcode' => $shippingInfo['zipCode'] ?? $shippingInfo['postcode'] ?? '',
+        'shipping_method' => $shippingInfo['shippingMethod'] ?? 'air',
+        'destination' => $shippingInfo['destination'] ?? 'customer_home',
+        'order_id' => $orderId,
+        'staff_user' => 'Web Order'
     ];
     
-    return $sizeMap[$sizeName] ?? $sizeName;
-}
-
-/**
- * Map lightbase name to Cockpit3D ID
- */
-function mapLightbaseToCockpit3DId($lightbaseName) {
-    $lightbaseMap = [
-        'Lightbase Rectangle' => 'Lightbase_Rectangle',
-        'Lightbase Square' => 'Lightbase_Square',
-        'Lightbase Wood Small' => 'Lightbase_Wood_Small',
-        'Lightbase Wood Medium' => 'Lightbase_Wood_Medium',
-        'Lightbase Wood Long' => 'Lightbase_Wood_Long',
-        'Rotating LED Lightbase' => 'Rotating_LED_Lightbase',
-        'Concave Lightbase' => 'concave_lightbase',
-    ];
-    
-    return $lightbaseMap[$lightbaseName] ?? $lightbaseName;
-}
-
-/**
- * Map background to Cockpit3D ID
- */
-function mapBackgroundToCockpit3DId($bgName) {
-    $bgMap = [
-        '2D Backdrop' => '2d_backdrop',
-        '3D Backdrop' => '3d_backdrop',
-        'Remove Background' => 'rm',
-    ];
-    
-    return $bgMap[$bgName] ?? $bgName;
-}
-
-/**
- * Build complete Cockpit3D order structure
- */
-function buildCockpit3DOrder($orderNumber, $cartItems, $customer, $shippingInfo) {
-    $order = [
-        'retailer_id' => COCKPIT3D_RETAILER_ID,
-        'order_id' => $orderNumber,
-        'address' => [
-            'firstname' => $customer['firstName'] ?? 'Customer',
-            'lastname' => $customer['lastName'] ?? '',
-            'email' => $customer['email'] ?? '',
-            'telephone' => $customer['phone'] ?? '',
-            'street' => $shippingInfo['address'] ?? '',
-            'city' => $shippingInfo['city'] ?? '',
-            'region' => $shippingInfo['state'] ?? '',
-            'postcode' => $shippingInfo['zipCode'] ?? '',
-            'country' => $shippingInfo['country'] ?? 'US',
-        ],
-        'items' => [],
-        'total' => 0
-    ];
-    
-    $total = 0;
-    
+    // Build items array
+    $items = [];
     foreach ($cartItems as $index => $item) {
-        $itemPrice = floatval($item['price'] ?? 0);
-        $itemQty = intval($item['quantity'] ?? 1);
-        
         $lineItem = [
             'sku' => $item['sku'] ?? $item['cockpit3d_id'] ?? 'unknown',
+            'qty' => (string) ($item['quantity'] ?? 1),
             'client_item_id' => ($item['productId'] ?? $item['id'] ?? 'item') . '-' . ($index + 1),
-            'qty' => $itemQty,
-            'price' => $itemPrice,
-            'options' => buildItemOptions($item),
-            'special_instructions' => $item['specialInstructions'] ?? ''
+            'options' => buildItemOptions($item)
         ];
         
-        $order['items'][] = $lineItem;
-        $total += $itemPrice * $itemQty;
+        // Add photo URLs if available
+        if (!empty($item['originalPhotoUrl'])) {
+            $lineItem['original_photo'] = $item['originalPhotoUrl'];
+        }
+        if (!empty($item['croppedPhotoUrl'])) {
+            $lineItem['cropped_photo'] = $item['croppedPhotoUrl'];
+        }
+        
+        // Special instructions
+        $instructions = [];
+        if (!empty($item['specialInstructions'])) {
+            $instructions[] = $item['specialInstructions'];
+        }
+        if (!empty($item['customImageId'])) {
+            $instructions[] = "Custom image ID: " . $item['customImageId'];
+        }
+        if (!empty($instructions)) {
+            $lineItem['special_instructions'] = implode('. ', $instructions);
+        }
+        
+        $items[] = $lineItem;
     }
     
-    $order['total'] = $total;
+    // Build final order structure
+    $order = [
+        'retailer_id' => (int) $retailerId,
+        'address' => $address,
+        'items' => $items
+    ];
+    
+    // Add billing address if different
+    if ($billingInfo && $billingInfo !== $shippingInfo) {
+        $order['billing_address'] = [
+            'email' => $customer['email'] ?? '',
+            'firstname' => $customer['firstName'] ?? '',
+            'lastname' => $customer['lastName'] ?? '',
+            'telephone' => $customer['phone'] ?? '',
+            'region' => $billingInfo['state'] ?? '',
+            'country' => $billingInfo['country'] ?? 'US',
+            'street' => $billingInfo['address'] ?? '',
+            'city' => $billingInfo['city'] ?? '',
+            'postcode' => $billingInfo['zipCode'] ?? ''
+        ];
+    }
     
     return $order;
 }
 
 /**
- * Submit order to Cockpit3D API
+ * Submit order to Cockpit3D Retailer API
+ * POST https://api.cockpit3d.com/rest/V2/orders
  */
 function submitToCockpit3D($order) {
     if (empty(COCKPIT3D_USERNAME) || empty(COCKPIT3D_PASSWORD)) {
         return [
             'success' => false,
             'submitted' => false,
-            'error' => 'Cockpit3D credentials not configured'
+            'error' => 'Cockpit3D credentials not configured (COCKPIT3D_USERNAME, COCKPIT3D_PASSWORD)'
         ];
     }
     
-    $url = COCKPIT3D_API_URL . '/orders';
+    if (empty(COCKPIT3D_RETAILER_ID)) {
+        return [
+            'success' => false,
+            'submitted' => false,
+            'error' => 'COCKPIT3D_RETAILER_ID not configured'
+        ];
+    }
+    
+    $url = COCKPIT3D_API_URL . '/rest/V2/orders';
     $auth = base64_encode(COCKPIT3D_USERNAME . ':' . COCKPIT3D_PASSWORD);
+    
+    logOrder('📤 Submitting to Cockpit3D', [
+        'url' => $url,
+        'retailer_id' => $order['retailer_id'],
+        'items_count' => count($order['items'])
+    ]);
     
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -243,6 +290,11 @@ function submitToCockpit3D($order) {
     
     $result = json_decode($response, true);
     
+    logOrder('📥 Cockpit3D Response', [
+        'http_code' => $httpCode,
+        'response' => $result
+    ]);
+    
     return [
         'success' => $httpCode >= 200 && $httpCode < 300,
         'submitted' => true,
@@ -262,7 +314,8 @@ try {
             'error' => 'Method not allowed. Use POST.',
             'config' => [
                 'cockpit3d_configured' => !empty(COCKPIT3D_USERNAME) && !empty(COCKPIT3D_PASSWORD),
-                'retailer_id' => COCKPIT3D_RETAILER_ID ?: 'NOT SET'
+                'retailer_id' => COCKPIT3D_RETAILER_ID ?: 'NOT SET',
+                'api_url' => COCKPIT3D_API_URL
             ]
         ]);
         exit;
@@ -280,10 +333,11 @@ try {
     }
     
     // Extract data
-    $orderNumber = $data['orderNumber'] ?? ('ORD-' . time());
-    $cartItems = $data['cartItems'] ?? [];
+    $orderId = $data['orderNumber'] ?? $data['orderId'] ?? ('ORD-' . time());
+    $cartItems = $data['cartItems'] ?? $data['items'] ?? [];
     $customer = $data['customer'] ?? [];
-    $shippingInfo = $data['shippingInfo'] ?? [];
+    $shippingInfo = $data['shippingInfo'] ?? $data['shipping'] ?? [];
+    $billingInfo = $data['billingInfo'] ?? $data['billing'] ?? null;
     $testMode = $data['testMode'] ?? false;
     
     if (empty($cartItems)) {
@@ -293,7 +347,7 @@ try {
     }
     
     // Build Cockpit3D order
-    $cockpit3DOrder = buildCockpit3DOrder($orderNumber, $cartItems, $customer, $shippingInfo);
+    $cockpit3DOrder = buildCockpit3DOrder($orderId, $cartItems, $customer, $shippingInfo, $billingInfo);
     logOrder('📋 Built Cockpit3D order', $cockpit3DOrder);
     
     // In test mode, skip actual submission
@@ -303,7 +357,7 @@ try {
         $response = [
             'success' => true,
             'testMode' => true,
-            'orderNumber' => $orderNumber,
+            'orderNumber' => $orderId,
             'message' => 'Test order processed successfully (not submitted to Cockpit3D)',
             'cockpit3d' => [
                 'order' => $cockpit3DOrder,
@@ -311,12 +365,13 @@ try {
                     'success' => true,
                     'submitted' => false,
                     'testMode' => true,
-                    'message' => 'Order validation passed - ready for production submission'
+                    'message' => 'Order structure validated - ready for production submission'
                 ]
             ],
             'config' => [
                 'cockpit3d_configured' => !empty(COCKPIT3D_USERNAME) && !empty(COCKPIT3D_PASSWORD),
-                'retailer_id' => COCKPIT3D_RETAILER_ID ?: 'NOT SET'
+                'retailer_id' => COCKPIT3D_RETAILER_ID ?: 'NOT SET',
+                'api_endpoint' => COCKPIT3D_API_URL . '/rest/V2/orders'
             ]
         ];
         
@@ -330,13 +385,17 @@ try {
     
     // Prepare response
     $response = [
-        'success' => true,
-        'orderNumber' => $orderNumber,
+        'success' => $submitResult['success'],
+        'orderNumber' => $orderId,
         'cockpit3d' => [
             'order' => $cockpit3DOrder,
             'submission' => $submitResult
         ]
     ];
+    
+    if (!$submitResult['success']) {
+        http_response_code(502); // Bad Gateway - upstream error
+    }
     
     echo json_encode($response, JSON_PRETTY_PRINT);
     
