@@ -22,8 +22,11 @@ import ProductBadges from '@/components/ProductBadges'
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
+<<<<<<< HEAD
 import '../app/css/gallery.css'
 
+=======
+>>>>>>> development
 import { getProducts } from '@/lib/products'
 
 // Environment
@@ -582,7 +585,11 @@ export default function ProductDetailClient() {
 
       {/* Product */}
       <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+<<<<<<< HEAD
         <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:items-start lg:gap-x-12">
+=======
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
+>>>>>>> development
           
           <div className="relative lg:sticky lg:top-[85px]">
             {/* Image gallery */}
@@ -597,7 +604,11 @@ export default function ProductDetailClient() {
                 </div>
               </div>
 
+<<<<<<< HEAD
               <div className="w-full overflow-hidden">
+=======
+              <div className="w-full overflow-hidden rounded-lg relative">
+>>>>>>> development
                 {finalMaskedImage ? (
                   <div className="space-y-4">
                     <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
@@ -627,11 +638,19 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
+<<<<<<< HEAD
                   <>
                     <ProductGallery images={product.images} />
                     {/* Centralized Badges Component */}
                     <ProductBadges product={product} position="gallery" />
                   </>
+=======
+                  <div className="relative">
+                    <ProductGallery images={product.images} />
+                    {/* Centralized Badges Component */}
+                    <ProductBadges product={product} position="gallery" />
+                  </div>
+>>>>>>> development
                 ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
                     <Image
@@ -650,10 +669,16 @@ export default function ProductDetailClient() {
           </div>
 
           {/* Product info */}
+<<<<<<< HEAD
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0 col-span-2">
 
             <div className="flex items-start flex-wrap">
               <h1 className="text-6xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
+=======
+          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+            <div className="flex items-start gap-3 flex-wrap">
+              <h1 className="text-8xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
+>>>>>>> development
             </div>
 
             <div className="mt-3">

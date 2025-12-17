@@ -2,15 +2,22 @@
 
 /**
  * Enhanced Product Admin Panel
+<<<<<<< HEAD
  * Version: 3.1.0 - Persistent Edited Stats
  * Date: 2025-12-14
+=======
+ * Version: 3.0.0 - JSON-ONLY SYSTEM
+>>>>>>> development
  * Features:
  * - Complete price control (base + all options)
  * - Option configuration (enable/disable per product)
  * - Size, lightbase, background, text option management
  * - Saves directly to final-products.json (single source of truth)
+<<<<<<< HEAD
  * - Persistent edited count (tracks editedAt timestamps)
  * - Display editedAt in product list
+=======
+>>>>>>> development
  * 
  * NOTE: This page is for DEVELOPMENT ONLY
  * Do NOT upload the /admin directory to production server
@@ -88,8 +95,11 @@ interface Product {
   maskImageUrl?: string | null;
   occasions?: string[];
   fulfillment?: 'cockpit3d' | 'custom';  // NEW: Who fulfills this product
+<<<<<<< HEAD
   edited?: boolean;  // Flag indicating product has been edited
   editedAt?: string;  // ISO timestamp of last edit
+=======
+>>>>>>> development
 }
 
 interface ProductCustomizations {
@@ -284,9 +294,12 @@ export default function EnhancedProductAdminPage() {
       return { ...product, ...customizations };
     });
     
+<<<<<<< HEAD
     const editedCount = sourceProducts.filter(p => p.editedAt).length;
     console.log('📊 Stats - Total Edited Products:', editedCount, 'products with editedAt timestamp');
     
+=======
+>>>>>>> development
     return {
       total: finalProducts.length,
       visible: finalProducts.filter(p => p.visible !== false).length,
@@ -294,7 +307,10 @@ export default function EnhancedProductAdminPage() {
       featured: finalProducts.filter(p => p.featured === true).length,
       onSale: finalProducts.filter(p => p.sale === true || p.salePrice || p.salePercent).length,
       requiresImage: finalProducts.filter(p => p.requiresImage === true).length,
+<<<<<<< HEAD
       edited: editedCount, // Count products with editedAt timestamp
+=======
+>>>>>>> development
     };
   };
 
@@ -356,10 +372,17 @@ export default function EnhancedProductAdminPage() {
         merged.editedAt = hasEdits ? new Date().toISOString() : (product.editedAt || new Date().toISOString());
       }
       
+<<<<<<< HEAD
       // if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
       // if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
       // if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
       // if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
+=======
+      if (merged.sizes) merged.sizes = merged.sizes.filter(s => s.enabled !== false);
+      if (merged.lightBases) merged.lightBases = merged.lightBases.filter(lb => lb.enabled !== false);
+      if (merged.backgroundOptions) merged.backgroundOptions = merged.backgroundOptions.filter(bg => bg.enabled !== false);
+      if (merged.textOptions) merged.textOptions = merged.textOptions.filter(t => t.enabled !== false);
+>>>>>>> development
       
       return merged;
     });
@@ -550,6 +573,7 @@ export default function EnhancedProductAdminPage() {
   }
 
   return (
+<<<<<<< HEAD
     <>
     <style>
       {`
@@ -560,6 +584,11 @@ export default function EnhancedProductAdminPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Development-Only Warning Banner */}
       <div className="bg-red-500 text-xs text-white px-4 py-2 text-center font-semibold">
+=======
+    <div className="min-h-screen bg-gray-50">
+      {/* Development-Only Warning Banner */}
+      <div className="bg-red-600 text-white px-4 py-3 text-center font-semibold">
+>>>>>>> development
         🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
       </div>
       
@@ -589,12 +618,22 @@ export default function EnhancedProductAdminPage() {
       )}
 
       {/* Header */}
+<<<<<<< HEAD
       <div className="bg-white shadow-sm border-b z-10">
         <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
                
               <p className="text-sm text-gray-600 mt-1">              
+=======
+      <div className="bg-white shadow-sm border-b sticky top-[var(--header-height)] z-10">
+        <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-3xl font-bold text-gray-900">Enhanced Product Admin</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Complete control over products, prices, and options
+>>>>>>> development
                 {hasUnsavedChanges && (
                   <span className="ml-2 text-yellow-600 font-semibold">• Unsaved Edits Active</span>
                 )}
@@ -670,7 +709,11 @@ export default function EnhancedProductAdminPage() {
 
           <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
             <div className="text-xs font-medium text-blue-600 uppercase">✏️ Edited</div>
+<<<<<<< HEAD
             <div className="text-3xl font-bold text-blue-900 mt-1">{getStats().edited}</div>
+=======
+            <div className="text-3xl font-bold text-blue-900 mt-1">{Object.keys(editedProducts).length}</div>
+>>>>>>> development
           </div>
 
         </div>
@@ -748,11 +791,14 @@ export default function EnhancedProductAdminPage() {
                             Edited
                           </span>
                         )}
+<<<<<<< HEAD
                         {product.editedAt && (
                           <p className="text-xs text-blue-600 mt-1" title={`Last edited: ${new Date(product.editedAt).toLocaleString()}`}>
                             ✏️ {new Date(product.editedAt).toLocaleDateString()}
                           </p>
                         )}
+=======
+>>>>>>> development
                       </div>
                     </div>
                   </button>
@@ -1650,6 +1696,11 @@ export default function EnhancedProductAdminPage() {
         </div>
       </div>
     </div>
+<<<<<<< HEAD
     </>
   );
 }
+=======
+  );
+}
+>>>>>>> development

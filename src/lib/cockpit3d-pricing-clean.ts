@@ -1,5 +1,8 @@
 // /app/src/lib/cockpit3d-pricing-clean.ts
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
 /**
  * Crystal Keepsakes - Clean Pricing Data
  * Generated: 2024-12-12
@@ -1220,7 +1223,10 @@ export function getPricingBySKU(sku: string): ProductPricing | undefined {
 /**
  * Get price for a specific quantity (1-4)
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
 export function getPriceForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): number | null {
   const product = getPricingBySKU(sku);
   if (!product) return null;
@@ -1251,8 +1257,11 @@ export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numb
   return product.pricing[qtyKey]?.margin ?? null;
 }
 
+<<<<<<< HEAD
 // Export total count
 console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
+=======
+>>>>>>> development
 /**
  * Get the best price based on quantity (returns discounted price if available)
  */
@@ -1342,4 +1351,7 @@ export const TOTAL_PRODUCTS = PRODUCT_PRICING.length;
 if (typeof window !== 'undefined') {
   console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
 }
+<<<<<<< HEAD
+>>>>>>> development
+=======
 >>>>>>> development

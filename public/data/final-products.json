@@ -1408,10 +1408,18 @@
         "price": null
       },
       {
+        "id": "876",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "cockpit3d_id": "876",
+        "enabled": true
+      },
+      {
         "id": "877",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "877"
+        "cockpit3d_id": "877",
+        "enabled": true
       },
       {
         "id": "878",
@@ -1424,7 +1432,8 @@
         "id": "666",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "666"
+        "cockpit3d_id": "666",
+        "enabled": true
       }
     ],
     "backgroundOptions": [
@@ -2183,12 +2192,13 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/440/cockpit3d_440_2D_Crystal_Heart_Ornament.jpg",
-        "isMain": true
+        "isMain": true,
+        "alt": "heart ornament image"
       },
       {
         "src": "/img/products/cockpit3d/440/product_440_1765696797206.webp",
         "isMain": false,
-        "alt": "xmas.webp"
+        "alt": "christam ornament graphic"
       }
     ],
     "options": [],
@@ -2249,12 +2259,13 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/441/cockpit3d_441_2D_Crystal_Flower_Ornament.jpg",
-        "isMain": true
+        "isMain": true,
+        "alt": "flower ornament image"
       },
       {
         "src": "/img/products/cockpit3d/441/product_441_1765696789664.webp",
         "isMain": false,
-        "alt": "xmas.webp"
+        "alt": "christmas ornament graphic"
       }
     ],
     "options": [],
@@ -2481,6 +2492,7 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
+<<<<<<< HEAD
     "featured": true,
     "edited": true,
     "editedAt": "2025-12-14T18:54:49.222Z",

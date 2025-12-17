@@ -239,16 +239,11 @@ export default function ProductsPage() {
       <ProductsHero />
       <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
-      <div className="container-full bg-slate-100 px-4 py-6 relative">       
-        
+      <div className="container-full bg-slate-100 px-4 py-6 relative">        
         <div className="flex flex-row gap-2 sm:gap-4">
-        {/*<div className="grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-7 gap-3">*/}
+          <div className="md:basis-1/3 lg:basis-1/4">
 
-
-          <div className="md:basis-1/3 lg:basis-1/4">            
-          {/*<div className="sm:col-span-2 md:col-span-3 lg:col-span-2">            */}
-            {/* Category Filter Section */}
-            
+            {/* Category Filter Section */}            
             <section className="relative">
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
 
@@ -304,16 +299,13 @@ export default function ProductsPage() {
                           </span>
                         </button>
                       )
-                    })}
-                  
-                  
+                    })}               
                 </div>
               </div>
             </section>
           </div>
 
-          <div className="md:basis-2/3 lg:basis-3/4">
-          {/*<div className="sm:col-span-3 md:col-span-4 lg:col-span-5">*/}
+          <div className="md:basis-2/3 lg:basis-3/4"> 
             {/* Products Grid Section */}
             <section className="product-grid">
               
@@ -378,7 +370,6 @@ export default function ProductsPage() {
 
             </section>
           </div>
-
         </div>
       </div>
     </div>

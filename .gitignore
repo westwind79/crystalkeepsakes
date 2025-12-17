@@ -1,10 +1,18 @@
+# ============================================
+# Crystal Keepsakes - Git Ignore
+# ============================================
+
 # Dependencies
 node_modules/
 vendor/
+# Keep yarn.lock for reproducible builds
+# But ignore package-lock.json since we use yarn
+package-lock.json
 
-# Next.js build outputs
+# Next.js Build Outputs
 .next/
 out/
+<<<<<<< HEAD
 out-prod/
 out-test/
 build/
@@ -14,16 +22,36 @@ dist/
 .env
 .env.local
 .env.production
+=======
+out-test/
+out-prod/
+.turbo/
+tsconfig.tsbuildinfo
+
+# Admin Panel (should NOT be in production builds)
+out-prod/admin/
+out-test/admin/
+
+# Environment Variables - CRITICAL: NEVER COMMIT
+.env
+.env.local
+.env.production
+.env.production.local
+>>>>>>> development
 .env.production.test
 .env.development
+.env.development.local
 .env.test
+.env.test.local
+*.env
 !.env.example
 
-# Stripe configuration
-stripe.json
-**/stripe*.json
-.stripe/
+# Product Data (Edited in Admin - Don't Commit)
+src/data/final-product-list.js
+public/data/products.json
+public/data/final-products*.json
 
+<<<<<<< HEAD
 # PHP configuration (for MAMP)
 config/*.php
 !config/*.example.php
@@ -31,6 +59,11 @@ config/*.php
 # Testing & Coverage
 coverage/
 .nyc_output/
+=======
+# Uploaded Images (Don't Commit User Uploads)
+public/uploads/
+public/img/products/cockpit3d/*/product_*
+>>>>>>> development
 
 # Logs
 *.log
@@ -38,15 +71,20 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+<<<<<<< HEAD
 .pnpm-debug.log*
 
 # OS files
+=======
+/var/log/
+
+# OS Files
+>>>>>>> development
 .DS_Store
 Thumbs.db
 desktop.ini
-$RECYCLE.BIN/
 
-# IDE/Editor files
+# IDE / Editors
 .vscode/
 .idea/
 *.swp
@@ -55,15 +93,10 @@ $RECYCLE.BIN/
 .project
 .classpath
 .settings/
-*.sublime-*
 
-# Debug
-debug/
-*.local
-.pnp.*
-
-# Cache
+# Cache & Temp Files
 .cache/
+<<<<<<< HEAD
 .parcel-cache/
 .turbo/
 .vercel/
@@ -125,9 +158,159 @@ cgi-bin/
 *.db
 
 # Backup files
+=======
+.temp/
+*.tmp
+
+# Backups
+>>>>>>> development
 *.backup
 *.bak
-backup/
+*.old
 
+<<<<<<< HEAD
 # Documentation build
 docs/_build/
+=======
+# PHP / Composer
+vendor/
+composer.lock
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+
+# Next.js auto-generated (changes between dev/build)
+next-env.d.ts
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+
+# Emergent platform metadata
+.emergent/
+
+# Order data (temporary cart storage)
+api/order-data/
+>>>>>>> development

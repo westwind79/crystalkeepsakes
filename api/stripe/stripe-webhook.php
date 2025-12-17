@@ -184,8 +184,35 @@ function handleCheckoutCompleted($session) {
 }
 
 /**
+ * Load full cart data from server storage
+ * This contains image URLs and all options needed for Cockpit3D
+ */
+function loadFullCartData($orderNumber) {
+    $cartDataFile = dirname(__DIR__) . '/order-data/' . $orderNumber . '.json';
+    
+    if (!file_exists($cartDataFile)) {
+        error_log("⚠️  No cart data file found: $cartDataFile");
+        return null;
+    }
+    
+    $content = file_get_contents($cartDataFile);
+    $data = json_decode($content, true);
+    
+    if ($data) {
+        error_log("✓ Loaded full cart data for order: $orderNumber");
+        error_log("  Items: " . count($data['items'] ?? []));
+    }
+    
+    return $data;
+}
+
+/**
  * Build Cockpit3D order payload from Stripe session
+<<<<<<< HEAD
  * Matches: POST https://api.cockpit3d.com/rest/V2/orders
+=======
+ * POST https://profit.cockpit3d.com/rest/V2/orders (or dev URL)
+>>>>>>> development
  */
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
@@ -223,6 +250,7 @@ function buildCockpit3DOrder($session, $orderNumber) {
         'items' => []
     ];
     
+<<<<<<< HEAD
     // Parse cart items from metadata
     $cartItems = [];
     if (isset($session->metadata->cart_items)) {
@@ -234,10 +262,32 @@ function buildCockpit3DOrder($session, $orderNumber) {
         // Get SKU from cart metadata
         $sku = isset($cartItems[$index]['sku']) ? $cartItems[$index]['sku'] : 'PRODUCT-' . $lineItem->price->product;
         
+=======
+    // LOAD FULL CART DATA from server storage (includes image URLs)
+    $fullCartData = loadFullCartData($orderNumber);
+    $fullCartItems = $fullCartData['items'] ?? [];
+    
+    // Fallback to Stripe metadata if no full data available
+    $metaCartItems = [];
+    if (isset($session->metadata->cart_items)) {
+        $metaCartItems = json_decode($session->metadata->cart_items, true) ?: [];
+    }
+    
+    // Build items array from Stripe line items
+    foreach ($session->line_items->data as $index => $lineItem) {
+        // Get full item data (with image URLs) if available
+        $fullItem = $fullCartItems[$index] ?? null;
+        $metaItem = $metaCartItems[$index] ?? [];
+        
+        // Get SKU - prefer full data, then metadata, then fallback
+        $sku = $fullItem['sku'] ?? $metaItem['sku'] ?? 'PRODUCT-' . $lineItem->price->product;
+        
+>>>>>>> development
         $item = [
             'sku' => $sku,
             'qty' => (string) $lineItem->quantity,
             'client_item_id' => $orderNumber . '-' . ($index + 1),
+<<<<<<< HEAD
             'options' => []
         ];
         
@@ -246,6 +296,43 @@ function buildCockpit3DOrder($session, $orderNumber) {
             $item['options'] = $cartItems[$index]['options'];
         }
         
+=======
+        ];
+        
+        // ADD IMAGE URLs for Cockpit3D (critical for custom products!)
+        // These were uploaded during checkout and stored in cart data
+        if (!empty($fullItem['rawImageUrl'])) {
+            $item['original_photo'] = $fullItem['rawImageUrl'];
+            error_log("📸 Item $index original_photo: " . $fullItem['rawImageUrl']);
+        }
+        if (!empty($fullItem['maskedImageUrl'])) {
+            $item['cropped_photo'] = $fullItem['maskedImageUrl'];
+            error_log("📸 Item $index cropped_photo: " . $fullItem['maskedImageUrl']);
+        }
+        
+        // Build options array for Cockpit3D
+        $item['options'] = buildCockpit3DItemOptions($fullItem);
+        
+        // Add special instructions if custom text is present
+        $specialInstructions = [];
+        if (!empty($fullItem['customText'])) {
+            $text = $fullItem['customText'];
+            if (is_string($text)) {
+                $specialInstructions[] = "Custom Text: $text";
+            } elseif (is_array($text)) {
+                $textLines = [];
+                if (!empty($text['line1'])) $textLines[] = $text['line1'];
+                if (!empty($text['line2'])) $textLines[] = $text['line2'];
+                if (!empty($textLines)) {
+                    $specialInstructions[] = "Custom Text: " . implode(' / ', $textLines);
+                }
+            }
+        }
+        if (!empty($specialInstructions)) {
+            $item['special_instructions'] = implode('. ', $specialInstructions);
+        }
+        
+>>>>>>> development
         $order['items'][] = $item;
     }
     
@@ -255,26 +342,120 @@ function buildCockpit3DOrder($session, $orderNumber) {
 }
 
 /**
+<<<<<<< HEAD
  * Send order to Cockpit3D API
  * POST https://api.cockpit3d.com/rest/V2/orders (or dev URL)
  */
 function sendToCockpit3D($orderData) {
     // Get API URL from environment (defaults to dev for testing)
     $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://c3d-profit-dev.host.alva.tools';
+=======
+ * Build Cockpit3D options array from cart item
+ */
+function buildCockpit3DItemOptions($item) {
+    if (!$item) return [];
+    
+    $options = [];
+    
+    // Size option - use cockpit3d_id from the size
+    if (!empty($item['sizeDetails']['cockpit3d_id'])) {
+        $options[] = [
+            'id' => (string) $item['sizeDetails']['cockpit3d_id'],
+            'qty' => '1'
+        ];
+    }
+    
+    // Process options array from cart item
+    if (!empty($item['options']) && is_array($item['options'])) {
+        foreach ($item['options'] as $opt) {
+            $category = $opt['category'] ?? '';
+            
+            // Light base option
+            if ($category === 'lightBase' && !empty($opt['cockpit3d_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Background option
+            if ($category === 'background' && !empty($opt['cockpit3d_option_id'])) {
+                $options[] = [
+                    'id' => (string) $opt['cockpit3d_option_id'],
+                    'qty' => '1'
+                ];
+            }
+            
+            // Custom text option - ID 199 for customer_text
+            if ($category === 'customText') {
+                $textLines = [];
+                if (!empty($opt['line1'])) $textLines[] = $opt['line1'];
+                if (!empty($opt['line2'])) $textLines[] = $opt['line2'];
+                if (!empty($opt['value'])) {
+                    $textLines = is_array($opt['value']) ? $opt['value'] : [$opt['value']];
+                }
+                
+                if (!empty($textLines)) {
+                    $options[] = [
+                        'id' => '199', // customer_text option ID
+                        'value' => $textLines
+                    ];
+                }
+            }
+        }
+    }
+    
+    return $options;
+}
+
+/**
+ * Send order to Cockpit3D Retailer API
+ * POST https://profit.cockpit3d.com/rest/V2/orders (production)
+ * POST https://c3d-profit-dev.host.alva.tools/rest/V2/orders (dev)
+ */
+function sendToCockpit3D($orderData) {
+    // Get API URL from environment
+    // Production: https://profit.cockpit3d.com
+    // Development: https://c3d-profit-dev.host.alva.tools
+    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://profit.cockpit3d.com';
+>>>>>>> development
     
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
     
     if (!$username || !$password) {
+        error_log('❌ Missing Cockpit3D credentials (COCKPIT3D_USERNAME, COCKPIT3D_PASSWORD)');
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
     }
     
+<<<<<<< HEAD
     error_log("🔐 Submitting to Cockpit3D: $baseUrl/rest/V2/orders");
     
     // Use Basic Auth per API docs
     $auth = base64_encode($username . ':' . $password);
     
     $ch = curl_init($baseUrl . '/rest/V2/orders');
+=======
+    $apiUrl = rtrim($baseUrl, '/') . '/rest/V2/orders';
+    error_log("🔐 Submitting to Cockpit3D: $apiUrl");
+    error_log("📋 Retailer ID: " . ($orderData['retailer_id'] ?? 'NOT SET'));
+    error_log("📦 Items count: " . count($orderData['items'] ?? []));
+    
+    // Log image URLs for debugging
+    foreach ($orderData['items'] as $idx => $item) {
+        if (!empty($item['original_photo'])) {
+            error_log("  Item $idx original_photo: " . $item['original_photo']);
+        }
+        if (!empty($item['cropped_photo'])) {
+            error_log("  Item $idx cropped_photo: " . $item['cropped_photo']);
+        }
+    }
+    
+    // Use Basic Auth per API docs (email:password)
+    $auth = base64_encode($username . ':' . $password);
+    
+    $ch = curl_init($apiUrl);
+>>>>>>> development
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
@@ -283,7 +464,12 @@ function sendToCockpit3D($orderData) {
             'Authorization: Basic ' . $auth
         ],
         CURLOPT_POSTFIELDS => json_encode($orderData),
+<<<<<<< HEAD
         CURLOPT_TIMEOUT => 30
+=======
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_SSL_VERIFYPEER => true
+>>>>>>> development
     ]);
     
     $response = curl_exec($ch);
@@ -300,11 +486,30 @@ function sendToCockpit3D($orderData) {
     
     $result = json_decode($response, true);
     
+<<<<<<< HEAD
     return [
         'success' => $httpCode >= 200 && $httpCode < 300,
         'http_code' => $httpCode,
         'data' => $result,
         'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
+=======
+    $isSuccess = $httpCode >= 200 && $httpCode < 300;
+    
+    if ($isSuccess) {
+        error_log('✅ Order successfully submitted to Cockpit3D');
+        if (!empty($result['id'])) {
+            error_log("   Cockpit3D Order ID: " . $result['id']);
+        }
+    } else {
+        error_log('❌ Cockpit3D API error: ' . ($result['message'] ?? $response));
+    }
+    
+    return [
+        'success' => $isSuccess,
+        'http_code' => $httpCode,
+        'data' => $result,
+        'error' => !$isSuccess ? ($result['message'] ?? 'API error') : null
+>>>>>>> development
     ];
 }
 

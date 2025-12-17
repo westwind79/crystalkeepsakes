@@ -57,7 +57,11 @@ export default function ProductGallery({ images = [] }) {
   return (
     <div className="product-gallery">
       {/* Main Image - Use regular img tag to avoid Next.js optimization issues */}
+<<<<<<< HEAD
       <div className="main-image mb-3">
+=======
+      <div className="main-image mb-3" style={{ position: 'relative', height: '500px' }}>
+>>>>>>> development
         <img
           src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
           alt={`Product image ${activeIndex + 1}`}
@@ -102,7 +106,11 @@ export default function ProductGallery({ images = [] }) {
       {/* Thumbnails */}
       {images.length > 1 && (
         <div className="thumbnails">
+<<<<<<< HEAD
           <div className="grid grid-cols-5 gap-4 align-center justify-center g-2">
+=======
+          <div className="row g-2">
+>>>>>>> development
             
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
@@ -129,8 +137,23 @@ export default function ProductGallery({ images = [] }) {
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                     }}
+<<<<<<< HEAD
                   />
                 </div> 
+=======
+                    onClick={() => setActiveIndex(idx)}
+                  >
+                    <img
+                      src={thumbDisplaySrc || 'https://placehold.co/800x800?text=No+Image'}
+                      alt={`Thumbnail ${idx + 1}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                      }}
+                    />
+                  </div>
+                </div>
+>>>>>>> development
               )
             })}
           </div>
