@@ -256,16 +256,11 @@ function buildCockpit3DOrder($session, $orderNumber) {
 
 /**
  * Send order to Cockpit3D API
+ * POST https://api.cockpit3d.com/rest/V2/orders (or dev URL)
  */
 function sendToCockpit3D($orderData) {
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
-    
-    // Use DEV URL for testing
-    if ($mode === 'development' || $mode === 'test') {
-        $baseUrl = 'https://c3d-profit-dev.host.alva.tools';
-    } else {
-        $baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?? 'https://api.cockpit3d.com';
-    }
+    // Get API URL from environment (defaults to dev for testing)
+    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://c3d-profit-dev.host.alva.tools';
     
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
@@ -274,24 +269,44 @@ function sendToCockpit3D($orderData) {
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
     }
     
-    // Step 1: Authenticate
-    error_log('🔐 Authenticating with Cockpit3D...');
+    error_log("🔐 Submitting to Cockpit3D: $baseUrl/rest/V2/orders");
     
-    $ch = curl_init($baseUrl . '/rest/V2/login');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'username' => $username,
-        'password' => $password
-    ]));
+    // Use Basic Auth per API docs
+    $auth = base64_encode($username . ':' . $password);
+    
+    $ch = curl_init($baseUrl . '/rest/V2/orders');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Basic ' . $auth
+        ],
+        CURLOPT_POSTFIELDS => json_encode($orderData),
+        CURLOPT_TIMEOUT => 30
+    ]);
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
     
-    if ($httpCode !== 200) {
-        error_log('❌ Authentication failed: ' . $response);
+    if ($curlError) {
+        error_log('❌ CURL error: ' . $curlError);
+        return ['success' => false, 'error' => $curlError];
+    }
+    
+    error_log("📥 Cockpit3D response ($httpCode): $response");
+    
+    $result = json_decode($response, true);
+    
+    return [
+        'success' => $httpCode >= 200 && $httpCode < 300,
+        'http_code' => $httpCode,
+        'data' => $result,
+        'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
+    ];
+}
         return ['success' => false, 'error' => 'Authentication failed'];
     }
     
