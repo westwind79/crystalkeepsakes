@@ -372,26 +372,43 @@ function buildCockpit3DItemOptions($item) {
 }
 
 /**
- * Send order to Cockpit3D API
- * POST https://api.cockpit3d.com/rest/V2/orders (or dev URL)
+ * Send order to Cockpit3D Retailer API
+ * POST https://profit.cockpit3d.com/rest/V2/orders (production)
+ * POST https://c3d-profit-dev.host.alva.tools/rest/V2/orders (dev)
  */
 function sendToCockpit3D($orderData) {
-    // Get API URL from environment (defaults to dev for testing)
-    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://c3d-profit-dev.host.alva.tools';
+    // Get API URL from environment
+    // Production: https://profit.cockpit3d.com
+    // Development: https://c3d-profit-dev.host.alva.tools
+    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://profit.cockpit3d.com';
     
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
     
     if (!$username || !$password) {
+        error_log('❌ Missing Cockpit3D credentials (COCKPIT3D_USERNAME, COCKPIT3D_PASSWORD)');
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
     }
     
-    error_log("🔐 Submitting to Cockpit3D: $baseUrl/rest/V2/orders");
+    $apiUrl = rtrim($baseUrl, '/') . '/rest/V2/orders';
+    error_log("🔐 Submitting to Cockpit3D: $apiUrl");
+    error_log("📋 Retailer ID: " . ($orderData['retailer_id'] ?? 'NOT SET'));
+    error_log("📦 Items count: " . count($orderData['items'] ?? []));
     
-    // Use Basic Auth per API docs
+    // Log image URLs for debugging
+    foreach ($orderData['items'] as $idx => $item) {
+        if (!empty($item['original_photo'])) {
+            error_log("  Item $idx original_photo: " . $item['original_photo']);
+        }
+        if (!empty($item['cropped_photo'])) {
+            error_log("  Item $idx cropped_photo: " . $item['cropped_photo']);
+        }
+    }
+    
+    // Use Basic Auth per API docs (email:password)
     $auth = base64_encode($username . ':' . $password);
     
-    $ch = curl_init($baseUrl . '/rest/V2/orders');
+    $ch = curl_init($apiUrl);
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
@@ -400,7 +417,8 @@ function sendToCockpit3D($orderData) {
             'Authorization: Basic ' . $auth
         ],
         CURLOPT_POSTFIELDS => json_encode($orderData),
-        CURLOPT_TIMEOUT => 30
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_SSL_VERIFYPEER => true
     ]);
     
     $response = curl_exec($ch);
@@ -417,11 +435,22 @@ function sendToCockpit3D($orderData) {
     
     $result = json_decode($response, true);
     
+    $isSuccess = $httpCode >= 200 && $httpCode < 300;
+    
+    if ($isSuccess) {
+        error_log('✅ Order successfully submitted to Cockpit3D');
+        if (!empty($result['id'])) {
+            error_log("   Cockpit3D Order ID: " . $result['id']);
+        }
+    } else {
+        error_log('❌ Cockpit3D API error: ' . ($result['message'] ?? $response));
+    }
+    
     return [
-        'success' => $httpCode >= 200 && $httpCode < 300,
+        'success' => $isSuccess,
         'http_code' => $httpCode,
         'data' => $result,
-        'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
+        'error' => !$isSuccess ? ($result['message'] ?? 'API error') : null
     ];
 }
 
