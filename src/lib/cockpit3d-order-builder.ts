@@ -380,8 +380,8 @@ export function validateCockpit3DOrder(order: Cockpit3DOrder): {
   const errors: string[] = []
 
   if (!order.retailer_id) errors.push('Missing retailer_id')
-  if (!order.order_id) errors.push('Missing order_id')
   if (!order.address) errors.push('Missing address')
+  if (!order.address?.order_id) errors.push('Missing order_id in address')
   if (!order.items || order.items.length === 0) errors.push('No items in order')
 
   // Validate address
