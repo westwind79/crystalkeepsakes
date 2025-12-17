@@ -214,3 +214,6 @@ next-env.d.ts
 
 # Emergent platform metadata
 .emergent/
+
+# Order data (temporary cart storage)
+api/order-data/
