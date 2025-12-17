@@ -185,54 +185,68 @@ function handleCheckoutCompleted($session) {
 
 /**
  * Build Cockpit3D order payload from Stripe session
+ * Matches: POST https://api.cockpit3d.com/rest/V2/orders
  */
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
     $shippingDetails = $session->shipping_details ?? $session->shipping;
     
-    // Parse name
+    // Parse name from shipping or customer details
     $fullName = $shippingDetails->name ?? $customerDetails->name ?? '';
     $nameParts = explode(' ', $fullName, 2);
     $firstName = $nameParts[0] ?? '';
     $lastName = $nameParts[1] ?? '';
     
-    $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
+    // Get phone - Stripe stores it in customer_details
+    $phone = $customerDetails->phone ?? '';
     
+    $retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?? getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '';
+    
+    // Address object includes order_id per Cockpit3D spec
     $order = [
-        'retailer_id' => $retailerId,
+        'retailer_id' => (int) $retailerId,
         'address' => [
+            'email' => $customerDetails->email ?? '',
             'firstname' => $firstName,
             'lastname' => $lastName,
-            'street' => $shippingDetails->address->line1 ?? '',
+            'telephone' => $phone,
+            'street' => $shippingDetails->address->line1 . ($shippingDetails->address->line2 ? "\n" . $shippingDetails->address->line2 : ''),
             'city' => $shippingDetails->address->city ?? '',
             'region' => $shippingDetails->address->state ?? '',
             'postcode' => $shippingDetails->address->postal_code ?? '',
             'country' => $shippingDetails->address->country ?? 'US',
-            'telephone' => $customerDetails->phone ?? '',
-            'email' => $customerDetails->email ?? '',
+            'shipping_method' => 'air',
+            'destination' => 'customer_home',
+            'order_id' => $orderNumber,
+            'staff_user' => 'Web Order'
         ],
         'items' => []
     ];
     
-    // Add line items
-    foreach ($session->line_items->data as $lineItem) {
-        // Extract SKU from description or use product metadata
-        $sku = 'PRODUCT-' . $lineItem->price->product;
+    // Parse cart items from metadata
+    $cartItems = [];
+    if (isset($session->metadata->cart_items)) {
+        $cartItems = json_decode($session->metadata->cart_items, true) ?: [];
+    }
+    
+    // Build items array
+    foreach ($session->line_items->data as $index => $lineItem) {
+        // Get SKU from cart metadata
+        $sku = isset($cartItems[$index]['sku']) ? $cartItems[$index]['sku'] : 'PRODUCT-' . $lineItem->price->product;
         
-        // Check metadata for cart details
-        if (isset($session->metadata->cart_items)) {
-            $cartItems = json_decode($session->metadata->cart_items, true);
-            if ($cartItems && isset($cartItems[0]['sku'])) {
-                $sku = $cartItems[0]['sku'];
-            }
+        $item = [
+            'sku' => $sku,
+            'qty' => (string) $lineItem->quantity,
+            'client_item_id' => $orderNumber . '-' . ($index + 1),
+            'options' => []
+        ];
+        
+        // Add options from cart metadata if available
+        if (isset($cartItems[$index]['options'])) {
+            $item['options'] = $cartItems[$index]['options'];
         }
         
-        $order['items'][] = [
-            'sku' => $sku,
-            'name' => $lineItem->description,
-            'qty' => $lineItem->quantity,
-            'price' => $lineItem->amount_total / 100, // Convert from cents
-        ];
+        $order['items'][] = $item;
     }
     
     error_log('📦 Cockpit3D order payload: ' . json_encode($order, JSON_PRETTY_PRINT));
