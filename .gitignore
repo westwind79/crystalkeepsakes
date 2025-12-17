@@ -1,47 +1,35 @@
-# ============================================
-# Crystal Keepsakes - Git Ignore
-# ============================================
-
 # Dependencies
 node_modules/
 vendor/
-# Keep yarn.lock for reproducible builds
-# But ignore package-lock.json since we use yarn
-package-lock.json
 
-# Next.js Build Outputs
+# Next.js build outputs
 .next/
 out/
-out-test/
 out-prod/
-.turbo/
-tsconfig.tsbuildinfo
-
-# Admin Panel (should NOT be in production builds)
-out-prod/admin/
-out-test/admin/
-
-# Environment Variables - CRITICAL: NEVER COMMIT
+out-test/
+build/
+dist/
+.emergent/
+# Environment variables
 .env
 .env.local
 .env.production
-.env.production.local
-.env.production.test
 .env.development
-.env.development.local
 .env.test
-.env.test.local
-*.env
 !.env.example
 
-# Product Data (Edited in Admin - Don't Commit)
-src/data/final-product-list.js
-public/data/products.json
-public/data/final-products*.json
+# Stripe configuration
+stripe.json
+**/stripe*.json
+.stripe/
 
-# Uploaded Images (Don't Commit User Uploads)
-public/uploads/
-public/img/products/cockpit3d/*/product_*
+# PHP configuration (for MAMP)
+config/*.php
+!config/*.example.php
+
+# Testing & Coverage
+coverage/
+.nyc_output/
 
 # Logs
 *.log
@@ -49,14 +37,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-/var/log/
+.pnpm-debug.log*
 
-# OS Files
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+$RECYCLE.BIN/
 
-# IDE / Editors
+# IDE/Editor files
 .vscode/
 .idea/
 *.swp
@@ -65,29 +54,79 @@ desktop.ini
 .project
 .classpath
 .settings/
+*.sublime-*
 
-# Cache & Temp Files
+# Debug
+debug/
+*.local
+.pnp.*
+
+# Cache
 .cache/
-.temp/
-*.tmp
+.parcel-cache/
+.turbo/
+.vercel/
+.vite/
+.eslintcache
+.stylelintcache
 
-# Backups
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# TypeScript
+*.tsbuildinfo
+.tsc-tmp/
+
+# Optional npm cache
+.npm/
+
+# Optional REPL history
+.node_repl_history
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# pnpm
+pnpm-lock.yaml
+emergent.yml
+
+# Windows specific
+*.lnk
+ehthumbs.db
+ehthumbs_vista.db
+
+# MAMP specific
+.htaccess.bak
+php_error.log
+
+# Production files (GoDaddy)
+public_html/
+cgi-bin/
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.cer
+!*.example.*
+
+# Database dumps
+*.sql
+*.sqlite
+*.db
+
+# Backup files
 *.backup
 *.bak
-*.old
+backup/
 
-# PHP / Composer
-vendor/
-composer.lock
-
-# Testing
-coverage/
-.nyc_output/
-
-# Misc
-*.pid
-*.seed
-*.pid.lock
--e 
-
-next-env.d.ts
+# Documentation build
+docs/_build/

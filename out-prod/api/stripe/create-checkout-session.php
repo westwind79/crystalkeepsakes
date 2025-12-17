@@ -195,25 +195,20 @@ try {
         'cancel_url' => $cancelUrl,
         'metadata' => $metadata,
         
+        // Collect shipping address
         // Customer email
         'customer_email' => $data->customerEmail ?? null,
         
         // Allow promo codes
         'allow_promotion_codes' => true,
-        
-        // ALWAYS collect shipping address - REQUIRED for Cockpit3D orders
-        'shipping_address_collection' => [
-            'allowed_countries' => ['US', 'CA'],
-        ],
-        
-        // ALWAYS collect phone number - REQUIRED for Cockpit3D orders
-        'phone_number_collection' => [
-            'enabled' => true,
-        ],
     ];
     
-    // Add shipping options for production (requires Stripe Dashboard configuration)
+    // Add shipping for production only (requires Stripe Dashboard configuration)
     if ($mode === 'production') {
+        $sessionParams['shipping_address_collection'] = [
+            'allowed_countries' => ['US', 'CA'],
+        ];
+        
         // Shipping options - Use your Stripe Dashboard shipping rates
         $sessionParams['shipping_options'] = [
             ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
@@ -226,21 +221,8 @@ try {
         // Enable tax if configured in Stripe Dashboard
         $sessionParams['automatic_tax'] = ['enabled' => true];
     } else {
-        // Development mode: Free shipping for testing
-        error_log('⚠️  Development mode: Using free shipping for testing');
-        $sessionParams['shipping_options'] = [
-            [
-                'shipping_rate_data' => [
-                    'type' => 'fixed_amount',
-                    'fixed_amount' => ['amount' => 0, 'currency' => 'usd'],
-                    'display_name' => 'Free Shipping (Test Mode)',
-                    'delivery_estimate' => [
-                        'minimum' => ['unit' => 'business_day', 'value' => 5],
-                        'maximum' => ['unit' => 'business_day', 'value' => 7],
-                    ],
-                ],
-            ],
-        ];
+        // Development mode: Use simple shipping
+        error_log('⚠️  Development mode: Shipping and tax disabled for testing');
     }
     
     $checkoutSession = \Stripe\Checkout\Session::create($sessionParams);

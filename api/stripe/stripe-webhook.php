@@ -185,54 +185,68 @@ function handleCheckoutCompleted($session) {
 
 /**
  * Build Cockpit3D order payload from Stripe session
+ * Matches: POST https://api.cockpit3d.com/rest/V2/orders
  */
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
     $shippingDetails = $session->shipping_details ?? $session->shipping;
     
-    // Parse name
+    // Parse name from shipping or customer details
     $fullName = $shippingDetails->name ?? $customerDetails->name ?? '';
     $nameParts = explode(' ', $fullName, 2);
     $firstName = $nameParts[0] ?? '';
     $lastName = $nameParts[1] ?? '';
     
-    $retailerId = getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '256568874';
+    // Get phone - Stripe stores it in customer_details
+    $phone = $customerDetails->phone ?? '';
     
+    $retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?? getEnvVariable('COCKPIT3D_RETAIL_ID') ?? '';
+    
+    // Address object includes order_id per Cockpit3D spec
     $order = [
-        'retailer_id' => $retailerId,
+        'retailer_id' => (int) $retailerId,
         'address' => [
+            'email' => $customerDetails->email ?? '',
             'firstname' => $firstName,
             'lastname' => $lastName,
-            'street' => $shippingDetails->address->line1 ?? '',
+            'telephone' => $phone,
+            'street' => $shippingDetails->address->line1 . ($shippingDetails->address->line2 ? "\n" . $shippingDetails->address->line2 : ''),
             'city' => $shippingDetails->address->city ?? '',
             'region' => $shippingDetails->address->state ?? '',
             'postcode' => $shippingDetails->address->postal_code ?? '',
             'country' => $shippingDetails->address->country ?? 'US',
-            'telephone' => $customerDetails->phone ?? '',
-            'email' => $customerDetails->email ?? '',
+            'shipping_method' => 'air',
+            'destination' => 'customer_home',
+            'order_id' => $orderNumber,
+            'staff_user' => 'Web Order'
         ],
         'items' => []
     ];
     
-    // Add line items
-    foreach ($session->line_items->data as $lineItem) {
-        // Extract SKU from description or use product metadata
-        $sku = 'PRODUCT-' . $lineItem->price->product;
+    // Parse cart items from metadata
+    $cartItems = [];
+    if (isset($session->metadata->cart_items)) {
+        $cartItems = json_decode($session->metadata->cart_items, true) ?: [];
+    }
+    
+    // Build items array
+    foreach ($session->line_items->data as $index => $lineItem) {
+        // Get SKU from cart metadata
+        $sku = isset($cartItems[$index]['sku']) ? $cartItems[$index]['sku'] : 'PRODUCT-' . $lineItem->price->product;
         
-        // Check metadata for cart details
-        if (isset($session->metadata->cart_items)) {
-            $cartItems = json_decode($session->metadata->cart_items, true);
-            if ($cartItems && isset($cartItems[0]['sku'])) {
-                $sku = $cartItems[0]['sku'];
-            }
+        $item = [
+            'sku' => $sku,
+            'qty' => (string) $lineItem->quantity,
+            'client_item_id' => $orderNumber . '-' . ($index + 1),
+            'options' => []
+        ];
+        
+        // Add options from cart metadata if available
+        if (isset($cartItems[$index]['options'])) {
+            $item['options'] = $cartItems[$index]['options'];
         }
         
-        $order['items'][] = [
-            'sku' => $sku,
-            'name' => $lineItem->description,
-            'qty' => $lineItem->quantity,
-            'price' => $lineItem->amount_total / 100, // Convert from cents
-        ];
+        $order['items'][] = $item;
     }
     
     error_log('📦 Cockpit3D order payload: ' . json_encode($order, JSON_PRETTY_PRINT));
@@ -242,16 +256,11 @@ function buildCockpit3DOrder($session, $orderNumber) {
 
 /**
  * Send order to Cockpit3D API
+ * POST https://api.cockpit3d.com/rest/V2/orders (or dev URL)
  */
 function sendToCockpit3D($orderData) {
-    $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
-    
-    // Use DEV URL for testing
-    if ($mode === 'development' || $mode === 'test') {
-        $baseUrl = 'https://c3d-profit-dev.host.alva.tools';
-    } else {
-        $baseUrl = getEnvVariable('COCKPIT3D_BASE_URL') ?? 'https://api.cockpit3d.com';
-    }
+    // Get API URL from environment (defaults to dev for testing)
+    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://c3d-profit-dev.host.alva.tools';
     
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
@@ -260,54 +269,43 @@ function sendToCockpit3D($orderData) {
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
     }
     
-    // Step 1: Authenticate
-    error_log('🔐 Authenticating with Cockpit3D...');
+    error_log("🔐 Submitting to Cockpit3D: $baseUrl/rest/V2/orders");
     
-    $ch = curl_init($baseUrl . '/rest/V2/login');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'username' => $username,
-        'password' => $password
-    ]));
-    
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if ($httpCode !== 200) {
-        error_log('❌ Authentication failed: ' . $response);
-        return ['success' => false, 'error' => 'Authentication failed'];
-    }
-    
-    $token = trim($response, '"');
-    error_log('✓ Authenticated');
-    
-    // Step 2: Create Order
-    error_log('📦 Creating order...');
+    // Use Basic Auth per API docs
+    $auth = base64_encode($username . ':' . $password);
     
     $ch = curl_init($baseUrl . '/rest/V2/orders');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $token
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Basic ' . $auth
+        ],
+        CURLOPT_POSTFIELDS => json_encode($orderData),
+        CURLOPT_TIMEOUT => 30
     ]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($orderData));
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
     
-    if ($httpCode === 201 || $httpCode === 200) {
-        error_log('✅ Order created in Cockpit3D');
-        $responseData = json_decode($response, true);
-        return ['success' => true, 'data' => $responseData];
-    } else {
-        error_log('❌ Order creation failed (HTTP ' . $httpCode . '): ' . $response);
-        return ['success' => false, 'error' => 'Order creation failed', 'response' => $response];
+    if ($curlError) {
+        error_log('❌ CURL error: ' . $curlError);
+        return ['success' => false, 'error' => $curlError];
     }
+    
+    error_log("📥 Cockpit3D response ($httpCode): $response");
+    
+    $result = json_decode($response, true);
+    
+    return [
+        'success' => $httpCode >= 200 && $httpCode < 300,
+        'http_code' => $httpCode,
+        'data' => $result,
+        'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
+    ];
 }
 
 /**

@@ -27,8 +27,8 @@ ini_set('error_log', __DIR__ . '/cockpit3d_orders.log');
 // Load environment
 require_once __DIR__ . '/../env-loader.php';
 
-// Constants - Cockpit3D Retailer API (dev URL for testing)
-define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://c3d-profit-dev.host.alva.tools');
+// Constants - Cockpit3D Retailer API
+define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://api.cockpit3d.com');
 define('COCKPIT3D_USERNAME', getenv('COCKPIT3D_USERNAME') ?: '');
 define('COCKPIT3D_PASSWORD', getenv('COCKPIT3D_PASSWORD') ?: '');
 define('COCKPIT3D_RETAILER_ID', getenv('COCKPIT3D_RETAILER_ID') ?: '');

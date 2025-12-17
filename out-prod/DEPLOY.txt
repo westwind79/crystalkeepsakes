@@ -1,0 +1,65 @@
+
+╔════════════════════════════════════════════════════════════════╗
+║                  DEPLOYMENT INSTRUCTIONS                        ║
+║                  PROD BUILD                                        ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 BUILD INFO:
+   Mode:        prod
+   Folder:      out-prod/
+   Base Path:   (root)
+   URL:         https://crystalkeepsakes.com
+
+📤 UPLOAD INSTRUCTIONS:
+   1. Upload ALL files from out-prod/ to:
+      /public_html/crystalkeepsakes.com/
+
+   2. .env file is INCLUDED in build:
+      - out-prod/.env will be uploaded
+      - This contains your LIVE (sk_live_...) Stripe keys
+      - .env.example is a backup copy
+
+   3. Verify .env has correct keys after upload
+
+🔐 ENVIRONMENT VARIABLES:
+   ✅ .env file is INCLUDED in build (from .env.production)
+   
+   Location: out-prod/.env
+   
+   This file contains:
+   - LIVE (sk_live_...) Stripe keys
+   - Database credentials
+   - All environment-specific settings
+   
+   ⚠️  IMPORTANT: Verify after upload that .env has:
+      - LIVE Stripe keys (sk_live_* and pk_live_*)
+   - Correct backend URL: https://crystalkeepsakes.com
+   - Proper database credentials
+
+🧪 TESTING CHECKLIST:
+   ☐ Test with REAL payment (small amount)
+   ☐ Verify images load correctly
+   ☐ Check contact form works
+   ☐ Verify order confirmation email
+   ☐ Check SSL certificate is valid
+
+⚠️  SAFETY REMINDERS:
+   • Using LIVE Stripe keys - real charges will occur!
+   • Double-check you're uploading to: /public_html/crystalkeepsakes.com/
+   • Create .env with LIVE (sk_live_...) keys
+   • BACKUP production before uploading!
+
+📋 DEPLOYMENT CHECKLIST:
+   ☐ Uploaded all files from out-prod/ (including .env)
+   ☐ Verified .env exists on server at /public_html/crystalkeepsakes.com/.env
+   ☐ Confirmed .env has LIVE (sk_live_...) keys
+   ☐ Set file permissions: chmod 644 .env (readable by PHP)
+   ☐ Verified https://crystalkeepsakes.com loads correctly
+   ☐ Tested complete checkout flow
+   ☐ Monitored for errors after deployment
+
+───────────────────────────────────────────────────────────────
+
+Generated: 2025-12-17T06:51:57.041Z
+Build Mode: prod
+Next Steps: Upload out-prod/ to /public_html/crystalkeepsakes.com/
