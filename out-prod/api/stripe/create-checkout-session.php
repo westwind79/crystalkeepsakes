@@ -170,7 +170,47 @@ try {
     
     error_log("Final URLs - Success: $successUrl | Cancel: $cancelUrl");
     
+
     // Store cart for webhook (limited to 500 chars per metadata field)
+    // Stripe metadata is limited to 500 chars, so we save full data to file
+    $cartDataDir = dirname(__DIR__) . '/order-data/';
+    if (!file_exists($cartDataDir)) {
+        mkdir($cartDataDir, 0755, true);
+    }
+    
+    // Build full cart items array with all data needed for Cockpit3D
+    $fullCartItems = [];
+    foreach ($data->cartItems as $item) {
+        $fullCartItems[] = [
+            'sku' => $item->sku ?? 'UNKNOWN',
+            'name' => $item->name ?? 'Product',
+            'qty' => $item->quantity ?? 1,
+            'price' => $item->price ?? 0,
+            'productId' => $item->productId ?? null,
+            'cockpit3d_id' => $item->cockpit3d_id ?? null,
+            // IMAGE URLs - critical for Cockpit3D
+            'maskedImageUrl' => $item->maskedImageUrl ?? null,
+            'rawImageUrl' => $item->rawImageUrl ?? null,
+            // Options for Cockpit3D
+            'options' => $item->options ?? [],
+            'sizeDetails' => $item->sizeDetails ?? null,
+            'customText' => $item->customText ?? null,
+            'customImageId' => $item->customImageId ?? null,
+        ];
+    }
+    
+    // Save full cart data to file for webhook retrieval
+    $cartDataFile = $cartDataDir . $orderNumber . '.json';
+    file_put_contents($cartDataFile, json_encode([
+        'orderNumber' => $orderNumber,
+        'items' => $fullCartItems,
+        'subtotal' => $data->subtotal ?? 0,
+        'customerEmail' => $data->customerEmail ?? null,
+        'created_at' => date('c')
+    ], JSON_PRETTY_PRINT));
+    error_log("✓ Saved full cart data to: $cartDataFile");
+    
+    // Store minimal summary in Stripe metadata (for reference only)
     $cartSummary = [];
     foreach ($data->cartItems as $item) {
         $cartSummary[] = [
@@ -185,6 +225,7 @@ try {
         'environment' => $mode,
         'items_count' => count($data->cartItems),
         'cart_items' => substr(json_encode($cartSummary), 0, 500),
+        'has_full_data' => 'true', // Flag that full data is stored server-side
     ];
     
     // Create Stripe Checkout Session

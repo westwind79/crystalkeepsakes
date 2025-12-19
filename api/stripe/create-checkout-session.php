@@ -211,7 +211,6 @@ try {
     error_log("✓ Saved full cart data to: $cartDataFile");
     
     // Store minimal summary in Stripe metadata (for reference only)
->>>>>>> development
     $cartSummary = [];
     foreach ($data->cartItems as $item) {
         $cartSummary[] = [

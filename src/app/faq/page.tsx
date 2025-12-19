@@ -50,7 +50,6 @@ export default function FAQPage() {
       <Breadcrumbs items={[{ label: 'Frequently Asked Questions' }]} />
 
       {/* FAQ Content - Light Background */}
-<<<<<<< HEAD
       <section className="bg-slate-100 py-8">
         
         <div className="max-w-4xl p-6 rounded-xl shadow-xl bg-white mx-auto">
@@ -120,58 +119,6 @@ export default function FAQPage() {
               </Link>
               {' '}for more information.
             </p>
-=======
-      <section className="bg-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            
-            {/* FAQ Item 1 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                What's a 3D Photo Crystal?
-              </h2>
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                We're thrilled you asked! A 3D Photo Crystal is the most innovative way to preserve and showcase a physical representation of your favorite photo. At CrystalKeepsakes, we blend cutting-edge digital technology with expert craftsmanship to create intricate 2D or 3D laser engravings within durable crystal keepsakes.
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                We didn't invent crystal art; we perfected it.
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-8"></div>
-
-            {/* FAQ Item 2 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                Why Choose CrystalKeepsakes?
-              </h2>
-              <p className="text-gray-700 leading-relaxed">
-                What sets us apart is our meticulous creative process. We don't just place a photo in an engraving machine and call it a day. Each custom crystal is a product of collaboration between top designers, advanced technology, and innovative thinking. Are we perfectionists? Absolutely. Passionate? Without a doubt.
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-8"></div>
-
-            {/* FAQ Item 3 */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
-                Looking for Unique Gift Ideas?
-              </h2>
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                You've come to the right place. At CrystalKeepsakes, we specialize in helping you create unforgettable gifts for every occasion, from birthdays and graduations to anniversaries.
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                Need inspiration? Visit our{' '}
-                <Link href="/about" className="text-[#72B01D] hover:text-[#5A8E17] underline">
-                  about page
-                </Link>
-                {' '}for more information.
-              </p>
-            </div>
-
->>>>>>> development
           </div>
         </div>
       </section>

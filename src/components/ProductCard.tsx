@@ -84,10 +84,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       {/* Image with Badges */}
       <div className="relative"> 
-<<<<<<< HEAD
-        {/* Image */}
-=======
->>>>>>> development
         <div className="aspect-square overflow-hidden bg-gray-50">
           <img
             src={assetPath(product.images?.find((img: any) => img.isMain)?.src || product.images?.[0]?.src || 'https://placehold.co/400x400?text=No+Image')}
@@ -101,19 +97,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Content */}
-<<<<<<< HEAD
       <div className="p-5 flex flex-col">
         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#72B01D] transition-colors">
           {product.name}
         </h3>
         <p className="text-sm text-gray-600 mb-2 line-clamp-6">
-=======
-      <div className="p-5">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#72B01D] transition-colors">
-          {product.name}
-        </h3>
-        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
->>>>>>> development
           {product.shortDescription || product.description}
         </p>
         

@@ -72,11 +72,10 @@ git push origin development
 git status
 
 # 2. Open conflicting files - look for:
-<<<<<<< HEAD
 (code from v9)
-=======
+
 (code from conflict_251125_0048)
->>>>>>> conflict_251125_0048
+
 
 # 3. Manually edit to keep the correct code
 

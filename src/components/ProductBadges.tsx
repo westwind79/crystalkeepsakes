@@ -34,7 +34,6 @@ export default function ProductBadges({ product, position = 'card', className = 
   const getContainerClass = () => {
     switch (position) {
       case 'card':
-<<<<<<< HEAD
         return 'productcard'
       case 'detail':
         return 'detail'
@@ -42,24 +41,12 @@ export default function ProductBadges({ product, position = 'card', className = 
         return 'gallery'
       default:
         return 'default'
-=======
-        return 'absolute inset-0 pointer-events-none z-10'
-      case 'detail':
-      case 'gallery':
-        return 'absolute inset-0 pointer-events-none z-10'
-      default:
-        return 'absolute inset-0 pointer-events-none z-10'
->>>>>>> development
     }
   }
 
   // Featured badge styling - consistent across all views
   const featuredBadge = isFeatured && (
-<<<<<<< HEAD
-    <div className="absolute z-6 right-4 top-4">
-=======
-    <div className="absolute right-2 bottom-2 pointer-events-auto">
->>>>>>> development
+    <div className="absolute z-6 right-4 top-4 pointer-events-auto">
       <div className="bg-gradient-to-br from-yellow-400 to-amber-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide">
         <svg 
           className="w-4 h-4" 
@@ -76,7 +63,6 @@ export default function ProductBadges({ product, position = 'card', className = 
 
   // Sale badge styling - consistent across all views
   const saleBadge = onSale && (
-<<<<<<< HEAD
     <div className="absolute z-6 left-4 top-0">
     <span className="labelSale shadow-lg text-white bg-gradient-to-b leading-none text-sm from-amber-800 to-[#ce0000] tracking-wide uppercase">
       Sale
@@ -85,20 +71,8 @@ export default function ProductBadges({ product, position = 'card', className = 
   )
 
   // Light Base badge - only for detail/gallery views
-  const lightbaseBadge = isLightbase && (position === 'detail' || position === 'gallery' || position === 'card') && (
-    <div className="lightbase-tag absolute z-6 right-4 bottom-4">
-=======
-    <div className="absolute top-2 right-2 pointer-events-auto">
-      <span className="labelSale shadow-lg text-white bg-gradient-to-b text-sm from-amber-800 to-[#ce0000] tracking-wide uppercase">
-        Sale
-      </span>
-    </div>
-  )
-
-  // Light Base badge - only for detail/gallery views
   const lightbaseBadge = isLightbase && (position === 'detail' || position === 'gallery') && (
     <div className="absolute top-4 left-4 pointer-events-auto">
->>>>>>> development
       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full shadow-sm text-sm font-semibold">
         <svg 
           className="w-4 h-4" 

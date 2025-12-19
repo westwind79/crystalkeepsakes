@@ -248,11 +248,11 @@ const distDirs = {
 const distDir = distDirs[mode];
 
 console.log('╔════════════════════════════════════════════════════╗');
-console.log('║              BUILD COMPLETE                         ║');
+console.log('║              BUILD COMPLETE                        ║');
 console.log('╠════════════════════════════════════════════════════╣');
-console.log(`║ Mode:         ${mode.toUpperCase().padEnd(38)} ║`);
-console.log(`║ Output Dir:   ${distDir.padEnd(38)} ║`);
-console.log(`║ Files Ready:  ✅${' '.repeat(37)}║`);
+console.log(`║ Mode:        ${mode.toUpperCase().padEnd(38)} ║`);
+console.log(`║ Output Dir:  ${distDir.padEnd(38)}  ║`);
+console.log(`║ Files Ready: ✅${' '.repeat(37)}║`);
 console.log('╚════════════════════════════════════════════════════╝');
 console.log('');
 

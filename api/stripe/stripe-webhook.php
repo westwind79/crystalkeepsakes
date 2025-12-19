@@ -208,11 +208,8 @@ function loadFullCartData($orderNumber) {
 
 /**
  * Build Cockpit3D order payload from Stripe session
-<<<<<<< HEAD
  * Matches: POST https://api.cockpit3d.com/rest/V2/orders
-=======
  * POST https://profit.cockpit3d.com/rest/V2/orders (or dev URL)
->>>>>>> development
  */
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
@@ -250,19 +247,6 @@ function buildCockpit3DOrder($session, $orderNumber) {
         'items' => []
     ];
     
-<<<<<<< HEAD
-    // Parse cart items from metadata
-    $cartItems = [];
-    if (isset($session->metadata->cart_items)) {
-        $cartItems = json_decode($session->metadata->cart_items, true) ?: [];
-    }
-    
-    // Build items array
-    foreach ($session->line_items->data as $index => $lineItem) {
-        // Get SKU from cart metadata
-        $sku = isset($cartItems[$index]['sku']) ? $cartItems[$index]['sku'] : 'PRODUCT-' . $lineItem->price->product;
-        
-=======
     // LOAD FULL CART DATA from server storage (includes image URLs)
     $fullCartData = loadFullCartData($orderNumber);
     $fullCartItems = $fullCartData['items'] ?? [];
@@ -281,22 +265,10 @@ function buildCockpit3DOrder($session, $orderNumber) {
         
         // Get SKU - prefer full data, then metadata, then fallback
         $sku = $fullItem['sku'] ?? $metaItem['sku'] ?? 'PRODUCT-' . $lineItem->price->product;
-        
->>>>>>> development
         $item = [
             'sku' => $sku,
             'qty' => (string) $lineItem->quantity,
             'client_item_id' => $orderNumber . '-' . ($index + 1),
-<<<<<<< HEAD
-            'options' => []
-        ];
-        
-        // Add options from cart metadata if available
-        if (isset($cartItems[$index]['options'])) {
-            $item['options'] = $cartItems[$index]['options'];
-        }
-        
-=======
         ];
         
         // ADD IMAGE URLs for Cockpit3D (critical for custom products!)
@@ -332,7 +304,6 @@ function buildCockpit3DOrder($session, $orderNumber) {
             $item['special_instructions'] = implode('. ', $specialInstructions);
         }
         
->>>>>>> development
         $order['items'][] = $item;
     }
     
@@ -342,14 +313,6 @@ function buildCockpit3DOrder($session, $orderNumber) {
 }
 
 /**
-<<<<<<< HEAD
- * Send order to Cockpit3D API
- * POST https://api.cockpit3d.com/rest/V2/orders (or dev URL)
- */
-function sendToCockpit3D($orderData) {
-    // Get API URL from environment (defaults to dev for testing)
-    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://c3d-profit-dev.host.alva.tools';
-=======
  * Build Cockpit3D options array from cart item
  */
 function buildCockpit3DItemOptions($item) {
@@ -418,8 +381,7 @@ function sendToCockpit3D($orderData) {
     // Production: https://profit.cockpit3d.com
     // Development: https://c3d-profit-dev.host.alva.tools
     $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://profit.cockpit3d.com';
->>>>>>> development
-    
+
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
     
@@ -428,14 +390,6 @@ function sendToCockpit3D($orderData) {
         return ['success' => false, 'error' => 'Missing Cockpit3D credentials'];
     }
     
-<<<<<<< HEAD
-    error_log("🔐 Submitting to Cockpit3D: $baseUrl/rest/V2/orders");
-    
-    // Use Basic Auth per API docs
-    $auth = base64_encode($username . ':' . $password);
-    
-    $ch = curl_init($baseUrl . '/rest/V2/orders');
-=======
     $apiUrl = rtrim($baseUrl, '/') . '/rest/V2/orders';
     error_log("🔐 Submitting to Cockpit3D: $apiUrl");
     error_log("📋 Retailer ID: " . ($orderData['retailer_id'] ?? 'NOT SET'));
@@ -455,7 +409,7 @@ function sendToCockpit3D($orderData) {
     $auth = base64_encode($username . ':' . $password);
     
     $ch = curl_init($apiUrl);
->>>>>>> development
+
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
@@ -464,12 +418,8 @@ function sendToCockpit3D($orderData) {
             'Authorization: Basic ' . $auth
         ],
         CURLOPT_POSTFIELDS => json_encode($orderData),
-<<<<<<< HEAD
-        CURLOPT_TIMEOUT => 30
-=======
         CURLOPT_TIMEOUT => 30,
         CURLOPT_SSL_VERIFYPEER => true
->>>>>>> development
     ]);
     
     $response = curl_exec($ch);
@@ -486,13 +436,6 @@ function sendToCockpit3D($orderData) {
     
     $result = json_decode($response, true);
     
-<<<<<<< HEAD
-    return [
-        'success' => $httpCode >= 200 && $httpCode < 300,
-        'http_code' => $httpCode,
-        'data' => $result,
-        'error' => $httpCode >= 400 ? ($result['message'] ?? 'API error') : null
-=======
     $isSuccess = $httpCode >= 200 && $httpCode < 300;
     
     if ($isSuccess) {
@@ -509,7 +452,6 @@ function sendToCockpit3D($orderData) {
         'http_code' => $httpCode,
         'data' => $result,
         'error' => !$isSuccess ? ($result['message'] ?? 'API error') : null
->>>>>>> development
     ];
 }
 

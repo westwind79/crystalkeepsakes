@@ -4,6 +4,7 @@
 // CHANGELOG: Removed all Bootstrap classes, replaced with Tailwind utilities
 
 import Link from 'next/link'
+import { navItems } from '@/lib/navigation'
 
 export default function Footer() {
   return (
@@ -39,18 +40,26 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href="/products/rectangles" 
+                  href="https://crystalkeepsakes.com/products/?category=3d-crystals" 
                   className="text-text-secondary hover:text-brand-400 transition-colors text-sm no-underline"
                 >
-                  Rectangles
+                  3D Crystals
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/products/hearts" 
+                  href="https://crystalkeepsakes.com/products/?category=3d-crystals" 
                   className="text-text-secondary hover:text-brand-400 transition-colors text-sm no-underline"
                 >
-                  Hearts
+                  2D Crystals
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="https://crystalkeepsakes.com/products/?category=lightbases" 
+                  className="text-text-secondary hover:text-brand-400 transition-colors text-sm no-underline"
+                >
+                  Lightbases
                 </Link>
               </li>
             </ul>
