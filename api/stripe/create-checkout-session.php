@@ -127,14 +127,10 @@ try {
     // ✅ FIX: Dynamic URL detection based on request origin
     // Supports localhost, /test subdirectory, and production
     $baseUrl = '';
+    $subDirectory = '';
     
-    // Check for origin header first (most reliable)
-    if (isset($_SERVER['HTTP_ORIGIN'])) {
-        $baseUrl = $_SERVER['HTTP_ORIGIN'];
-        error_log("Using HTTP_ORIGIN: $baseUrl");
-    } 
-    // Fallback to HTTP_REFERER
-    elseif (isset($_SERVER['HTTP_REFERER'])) {
+    // FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
+    if (isset($_SERVER['HTTP_REFERER'])) {
         $referer = $_SERVER['HTTP_REFERER'];
         $parsedUrl = parse_url($referer);
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
@@ -144,11 +140,17 @@ try {
             $pathParts = explode('/', trim($parsedUrl['path'], '/'));
             // If path starts with known subdirectory, include it
             if (!empty($pathParts[0]) && in_array($pathParts[0], ['test', 'crystalkeepsakes', 'staging'])) {
-                $baseUrl .= '/' . $pathParts[0];
+                $subDirectory = '/' . $pathParts[0];
+                $baseUrl .= $subDirectory;
             }
         }
-        error_log("Using HTTP_REFERER: $baseUrl");
+        error_log("Using HTTP_REFERER: $baseUrl (subdir: '$subDirectory')");
     }
+    // Fallback to HTTP_ORIGIN (doesn't include path)
+    elseif (isset($_SERVER['HTTP_ORIGIN'])) {
+        $baseUrl = $_SERVER['HTTP_ORIGIN'];
+        error_log("Using HTTP_ORIGIN: $baseUrl");
+    } 
     // Fallback to environment-based detection
     else {
         if ($mode === 'production') {
@@ -253,35 +255,59 @@ try {
         ],
     ];
     
-    // Add shipping options for production (requires Stripe Dashboard configuration)
-    if ($mode === 'production') {
-        // Shipping options - Use your Stripe Dashboard shipping rates
-        $sessionParams['shipping_options'] = [
-            ['shipping_rate' => 'shr_1RRRX82YE48VQlzYpcQsdaSE'], // 3-5 Business Days
-            ['shipping_rate' => 'shr_1RRRZF2YE48VQlzY3XrqHEPm'], // 5-7 Ground Ship
-            ['shipping_rate' => 'shr_1RRRZp2YE48VQlzYYqNzpUQj'], // 7-10 Ground Ship
-            ['shipping_rate' => 'shr_1RRRaI2YE48VQlzYUG3v8RPf'], // 10-14 Ground Ship
-            ['shipping_rate' => 'shr_1RRRbE2YE48VQlzYypBEVG4V'], // 3-4 Weeks Postal
-        ];
-        
-        // Enable tax if configured in Stripe Dashboard
-        $sessionParams['automatic_tax'] = ['enabled' => true];
-    } else {
-        // Development mode: Free shipping for testing
-        error_log('⚠️  Development mode: Using free shipping for testing');
-        $sessionParams['shipping_options'] = [
-            [
-                'shipping_rate_data' => [
-                    'type' => 'fixed_amount',
-                    'fixed_amount' => ['amount' => 0, 'currency' => 'usd'],
-                    'display_name' => 'Free Shipping (Test Mode)',
-                    'delivery_estimate' => [
-                        'minimum' => ['unit' => 'business_day', 'value' => 5],
-                        'maximum' => ['unit' => 'business_day', 'value' => 7],
-                    ],
+    // Shipping options - Use dynamic shipping_rate_data (works without pre-configured Stripe rates)
+    // This avoids hardcoded shipping rate IDs that may not exist in your Stripe account
+    $sessionParams['shipping_options'] = [
+        [
+            'shipping_rate_data' => [
+                'type' => 'fixed_amount',
+                'fixed_amount' => ['amount' => 1495, 'currency' => 'usd'], // $14.95
+                'display_name' => 'Priority (3-5 Business Days)',
+                'delivery_estimate' => [
+                    'minimum' => ['unit' => 'business_day', 'value' => 3],
+                    'maximum' => ['unit' => 'business_day', 'value' => 5],
                 ],
             ],
-        ];
+        ],
+        [
+            'shipping_rate_data' => [
+                'type' => 'fixed_amount',
+                'fixed_amount' => ['amount' => 995, 'currency' => 'usd'], // $9.95
+                'display_name' => 'Standard (5-7 Business Days)',
+                'delivery_estimate' => [
+                    'minimum' => ['unit' => 'business_day', 'value' => 5],
+                    'maximum' => ['unit' => 'business_day', 'value' => 7],
+                ],
+            ],
+        ],
+        [
+            'shipping_rate_data' => [
+                'type' => 'fixed_amount',
+                'fixed_amount' => ['amount' => 695, 'currency' => 'usd'], // $6.95
+                'display_name' => 'Economy (7-10 Business Days)',
+                'delivery_estimate' => [
+                    'minimum' => ['unit' => 'business_day', 'value' => 7],
+                    'maximum' => ['unit' => 'business_day', 'value' => 10],
+                ],
+            ],
+        ],
+        [
+            'shipping_rate_data' => [
+                'type' => 'fixed_amount',
+                'fixed_amount' => ['amount' => 495, 'currency' => 'usd'], // $4.95
+                'display_name' => 'Budget (10-14 Business Days)',
+                'delivery_estimate' => [
+                    'minimum' => ['unit' => 'business_day', 'value' => 10],
+                    'maximum' => ['unit' => 'business_day', 'value' => 14],
+                ],
+            ],
+        ],
+    ];
+    
+    // Enable automatic tax for production if configured in Stripe Dashboard
+    if ($mode === 'production') {
+        // Uncomment if you have automatic tax enabled in Stripe:
+        // $sessionParams['automatic_tax'] = ['enabled' => true];
     }
     
     $checkoutSession = \Stripe\Checkout\Session::create($sessionParams);
