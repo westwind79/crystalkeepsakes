@@ -217,3 +217,7 @@ next-env.d.ts
 
 # Order data (temporary cart storage)
 api/order-data/
+-e 
+# Environment files
+*.env
+*.env.*
