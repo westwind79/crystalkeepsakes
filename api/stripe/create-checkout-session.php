@@ -127,14 +127,10 @@ try {
     // ✅ FIX: Dynamic URL detection based on request origin
     // Supports localhost, /test subdirectory, and production
     $baseUrl = '';
+    $subDirectory = '';
     
-    // Check for origin header first (most reliable)
-    if (isset($_SERVER['HTTP_ORIGIN'])) {
-        $baseUrl = $_SERVER['HTTP_ORIGIN'];
-        error_log("Using HTTP_ORIGIN: $baseUrl");
-    } 
-    // Fallback to HTTP_REFERER
-    elseif (isset($_SERVER['HTTP_REFERER'])) {
+    // FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
+    if (isset($_SERVER['HTTP_REFERER'])) {
         $referer = $_SERVER['HTTP_REFERER'];
         $parsedUrl = parse_url($referer);
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
@@ -144,11 +140,17 @@ try {
             $pathParts = explode('/', trim($parsedUrl['path'], '/'));
             // If path starts with known subdirectory, include it
             if (!empty($pathParts[0]) && in_array($pathParts[0], ['test', 'crystalkeepsakes', 'staging'])) {
-                $baseUrl .= '/' . $pathParts[0];
+                $subDirectory = '/' . $pathParts[0];
+                $baseUrl .= $subDirectory;
             }
         }
-        error_log("Using HTTP_REFERER: $baseUrl");
+        error_log("Using HTTP_REFERER: $baseUrl (subdir: '$subDirectory')");
     }
+    // Fallback to HTTP_ORIGIN (doesn't include path)
+    elseif (isset($_SERVER['HTTP_ORIGIN'])) {
+        $baseUrl = $_SERVER['HTTP_ORIGIN'];
+        error_log("Using HTTP_ORIGIN: $baseUrl");
+    } 
     // Fallback to environment-based detection
     else {
         if ($mode === 'production') {
