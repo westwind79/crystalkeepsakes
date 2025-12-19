@@ -1,6 +1,0 @@
-1:"$Sreact.fragment"
-2:I[18143,["/_next/static/chunks/f6a2c34a302f4353.js","/_next/static/chunks/5add4354b1125cd4.js"],""]
-3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"OutletBoundary"]
-4:"$Sreact.suspense"
-0:{"buildId":"sabo1jHRHhiUW7k92KXtc","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-gray-50 flex items-center justify-center px-4","children":["$","div",null,{"className":"max-w-lg w-full text-center","children":[["$","h1",null,{"className":"text-6xl font-bold text-gray-900 mb-4","children":"404"}],["$","h2",null,{"className":"text-2xl font-semibold text-gray-700 mb-4","children":"Page Not Found"}],["$","p",null,{"className":"text-gray-600 mb-8","children":"Sorry, we couldn't find the page you're looking for."}],["$","$L2",null,{"href":"/","className":"inline-flex items-center justify-center px-6 py-3 bg-[#72B01D] text-white font-semibold rounded-lg hover:bg-[#5A8E17] transition-colors","children":"Return Home"}]]}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
-5:null

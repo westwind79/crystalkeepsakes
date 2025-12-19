@@ -1,9 +1,0 @@
-{
-  "buildMode": "prod",
-  "buildDate": "2025-12-19T05:24:35.169Z",
-  "uploadTo": "/public_html/crystalkeepsakes.com/",
-  "stripeKeysType": "LIVE (sk_live_...)",
-  "url": "https://crystalkeepsakes.com",
-  "htaccessUsed": "_htaccess.production",
-  "warning": "⚠️  PRODUCTION BUILD - Use LIVE Stripe keys!"
-}
