@@ -109,10 +109,6 @@ try {
     fs.copyFileSync(config.env, envDest);
     console.log(`  ✅ Copied ${config.env} → ${config.targetOut}/.env`);
     
-    // Also create .env.example for reference
-    const envExample = path.join(config.targetOut, '.env.example');
-    fs.copyFileSync(config.env, envExample);
-    console.log(`  ✅ Created .env.example (backup reference)`);
   } else {
     console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
   }

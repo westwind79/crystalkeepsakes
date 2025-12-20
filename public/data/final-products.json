@@ -26,7 +26,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5
+        "price": 9.5
       }
     ],
     "visible": false,
@@ -36,7 +36,9 @@
       "custom",
       "birthday"
     ],
-    "featured": false
+    "featured": false,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "002",
@@ -132,11 +134,13 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5
+        "price": 9.5
       }
     ],
     "visible": false,
-    "fulfillment": "custom"
+    "fulfillment": "custom",
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "104",
@@ -253,7 +257,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -261,7 +265,7 @@
     "sale": false,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:52:23.607Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "105",
@@ -474,7 +478,7 @@
       {
         "id": "765",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "765"
       },
       {
@@ -486,7 +490,7 @@
       {
         "id": "1435",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 55,
         "cockpit3d_id": "1435"
       }
     ],
@@ -520,14 +524,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-14T18:52:09.371Z",
+    "editedAt": "2025-12-20T21:54:59.111Z",
     "occasions": [
       "graduation",
       "wedding",
@@ -658,14 +662,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/prestige-mask.png",
     "cost": 99.75,
     "edited": true,
-    "editedAt": "2025-12-14T08:49:52.444Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "119",
@@ -736,12 +740,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-keychain-vertical-mask.png",
-    "cost": 9.75
+    "cost": 9.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "148",
@@ -871,7 +877,7 @@
       {
         "id": "864",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 45,
         "cockpit3d_id": "864"
       },
       {
@@ -883,7 +889,7 @@
       {
         "id": "1434",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
+        "price": 55,
         "cockpit3d_id": "1434"
       }
     ],
@@ -917,14 +923,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-14T18:51:54.024Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "anniversary",
       "wedding",
@@ -979,12 +985,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-keychain-horizontal-mask.png",
-    "cost": 9.75
+    "cost": 9.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "156",
@@ -1033,7 +1041,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1045,7 +1053,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:50:50.294Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "158",
@@ -1094,12 +1102,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
-    "cost": 17.75
+    "cost": 17.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "160",
@@ -1170,7 +1180,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1182,7 +1192,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:51:42.138Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "171",
@@ -1295,14 +1305,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/heart-mask.png",
     "cost": 69.75,
     "edited": true,
-    "editedAt": "2025-12-14T18:51:24.031Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "anniversary",
       "wedding",
@@ -1356,7 +1366,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1368,7 +1378,7 @@
       "graduation"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:52:01.840Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "248",
@@ -1467,7 +1477,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1475,7 +1485,7 @@
     "featured": true,
     "cost": 49.75,
     "edited": true,
-    "editedAt": "2025-12-15T01:09:20.524Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "holiday",
       "pet",
@@ -1535,7 +1545,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1543,7 +1553,7 @@
     "featured": true,
     "cost": 109.75,
     "edited": true,
-    "editedAt": "2025-12-14T18:52:30.882Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "pet",
       "memorial",
@@ -1678,12 +1688,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/notched-vertical-mask.png",
-    "cost": 95
+    "cost": 95,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "266",
@@ -1784,7 +1796,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1798,7 +1810,7 @@
       "birthday"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:51:34.159Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "276",
@@ -1916,7 +1928,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -1929,7 +1941,7 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:53:33.395Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "279",
@@ -2024,7 +2036,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2035,7 +2047,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:51:11.213Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "288",
@@ -2102,7 +2114,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2113,7 +2125,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:51:03.323Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "290",
@@ -2168,7 +2180,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2179,7 +2191,7 @@
       "retirement"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:52:58.374Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "440",
@@ -2234,14 +2246,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T18:54:09.353Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "holiday",
       "memorial",
@@ -2301,14 +2313,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/flower-ornament-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T18:54:22.766Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "holiday",
       "anniversary"
@@ -2366,14 +2378,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T18:54:40.820Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "holiday",
       "memorial"
@@ -2426,7 +2438,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2438,7 +2450,7 @@
       "graduation"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:54:31.097Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "444",
@@ -2487,14 +2499,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-14T18:54:49.222Z",
+    "editedAt": "2025-12-20T21:50:34.724Z",
     "occasions": [
       "memorial",
       "holiday",
@@ -2550,7 +2562,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2562,7 +2574,7 @@
       "anniversary"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:53:15.009Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "446",
@@ -2611,7 +2623,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2623,7 +2635,7 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:54:36.236Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "447",
@@ -2678,7 +2690,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2690,7 +2702,7 @@
       "baby"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:54:18.486Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "448",
@@ -2745,7 +2757,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2759,7 +2771,7 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:53:50.030Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "449",
@@ -2814,7 +2826,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -2830,7 +2842,7 @@
       "retirement"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:54:03.262Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "453",
@@ -2943,12 +2955,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "cost": 79.75
+    "cost": 79.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "454",
@@ -3045,12 +3059,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "cost": 89.75
+    "cost": 89.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "456",
@@ -3147,13 +3163,15 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3CRS-portrait-mask.png",
     "visible": false,
-    "cost": 89.75
+    "cost": 89.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "467",
@@ -3268,12 +3286,14 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
-    "cost": 99.75
+    "cost": 99.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "468",
@@ -3371,7 +3391,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -3388,7 +3408,7 @@
       "holiday"
     ],
     "edited": true,
-    "editedAt": "2025-12-15T01:09:20.524Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "469",
@@ -3505,7 +3525,7 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
@@ -3518,7 +3538,7 @@
       "birthday"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:53:05.030Z"
+    "editedAt": "2025-12-20T21:50:34.724Z"
   },
   {
     "id": "472",
@@ -3621,11 +3641,13 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 5,
+        "price": 9.5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-oval_mask.png",
-    "cost": 89.75
+    "cost": 89.75,
+    "edited": true,
+    "editedAt": "2025-12-20T21:50:34.724Z"
   }
 ]
