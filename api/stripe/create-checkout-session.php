@@ -129,6 +129,12 @@ try {
     $baseUrl = '';
     $subDirectory = '';
     
+    // Check if client explicitly sent base_path (most reliable)
+    if (!empty($data->basePath)) {
+        $subDirectory = '/' . trim($data->basePath, '/');
+        error_log("Using explicit basePath from client: $subDirectory");
+    }
+    
     // FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
     if (isset($_SERVER['HTTP_REFERER'])) {
         $referer = $_SERVER['HTTP_REFERER'];
@@ -136,25 +142,26 @@ try {
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
         
         // Handle subdirectory paths (e.g., /test, /crystalkeepsakes)
-        if (isset($parsedUrl['path'])) {
+        if (isset($parsedUrl['path']) && empty($subDirectory)) {
             $pathParts = explode('/', trim($parsedUrl['path'], '/'));
             // If path starts with known subdirectory, include it
             if (!empty($pathParts[0]) && in_array($pathParts[0], ['test', 'crystalkeepsakes', 'staging'])) {
                 $subDirectory = '/' . $pathParts[0];
-                $baseUrl .= $subDirectory;
             }
         }
+        
+        $baseUrl .= $subDirectory;
         error_log("Using HTTP_REFERER: $baseUrl (subdir: '$subDirectory')");
     }
     // Fallback to HTTP_ORIGIN (doesn't include path)
     elseif (isset($_SERVER['HTTP_ORIGIN'])) {
-        $baseUrl = $_SERVER['HTTP_ORIGIN'];
+        $baseUrl = $_SERVER['HTTP_ORIGIN'] . $subDirectory;
         error_log("Using HTTP_ORIGIN: $baseUrl");
     } 
     // Fallback to environment-based detection
     else {
         if ($mode === 'production') {
-            $baseUrl = 'https://crystalkeepsakes.com';
+            $baseUrl = 'https://crystalkeepsakes.com' . $subDirectory;
         } else {
             // Check if running in MAMP subdirectory
             $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
