@@ -1,4 +1,5 @@
 // /app/src/lib/cockpit3d-pricing-clean.ts
+
 /**
  * Crystal Keepsakes - Clean Pricing Data
  * Generated: 2024-12-12
@@ -1248,6 +1249,10 @@ export function getMarginForQuantity(sku: string, quantity: 1 | 2 | 3 | 4): numb
   const qtyKey = `qty${quantity}` as keyof typeof product.pricing;
   return product.pricing[qtyKey]?.margin ?? null;
 }
+
+
+// Export total count
+console.log(`✅ Loaded ${PRODUCT_PRICING.length} products with clean pricing data`);
 
 /**
  * Get the best price based on quantity (returns discounted price if available)

@@ -261,7 +261,7 @@ header {
   background-color: var(--brand-600);
 /*  transform: scale(1.05);*/
 }
-
+/*
 .product-gallery {
   overflow: hidden;
   border-radius: 3px;
@@ -296,7 +296,7 @@ header {
 }
 .product-gallery .nextImage {
   right:0;
-} 
+} */
 
 /* Custom Radio Button Styles */
 .custom-checkbox-label,
