@@ -131,10 +131,14 @@ export default function CheckoutHostedPage() {
       const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
       const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
+      // Get base path for proper redirect URLs (e.g., /test for test environment)
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+      
       const payload = {
         cartItems: cartForCheckout,
         subtotal: subtotal,
-        orderNumber: orderNumber // Use the same order number
+        orderNumber: orderNumber, // Use the same order number
+        basePath: basePath // Tell PHP which subdirectory we're in
       }
 
       logger.info('Making API call', { 

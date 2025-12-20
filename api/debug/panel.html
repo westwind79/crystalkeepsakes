@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrystalKeepsakes Integration Debug Panel</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card h2 { margin-top: 0; color: #555; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status.ok { background: #d4edda; color: #155724; }
+        .status.warn { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .key-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .key-name { font-weight: 500; color: #333; }
+        .key-value { font-family: monospace; color: #666; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px; margin-bottom: 10px; }
+        button:hover { background: #0056b3; }
+        button.secondary { background: #6c757d; }
+        button.secondary:hover { background: #545b62; }
+        button.success { background: #28a745; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 13px; }
+        .loading { color: #666; font-style: italic; }
+        #output { margin-top: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: #e9ecef; border: none; border-radius: 4px 4px 0 0; cursor: pointer; }
+        .tab.active { background: white; font-weight: bold; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .input-group input, .input-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .input-group textarea { height: 150px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 CrystalKeepsakes Debug Panel</h1>
+        
+        <div class="card">
+            <h2>Quick Actions</h2>
+            <button onclick="loadStatus()">📊 Check Configuration</button>
+            <button onclick="testCockpit()" class="secondary">🔗 Test Cockpit3D Connection</button>
+            <button onclick="listOrders()" class="secondary">📋 List Recent Orders</button>
+            <button onclick="showPayloadBuilder()" class="success">🏗️ Build Test Payload</button>
+        </div>
+        
+        <div class="card" id="config-card" style="display:none;">
+            <h2>Configuration Status</h2>
+            <div id="config-content"></div>
+        </div>
+        
+        <div class="card" id="payload-builder" style="display:none;">
+            <h2>Build & Test Cockpit3D Payload</h2>
+            <div class="input-group">
+                <label>Order Number:</label>
+                <input type="text" id="test-order-number" value="TEST-123" />
+            </div>
+            <div class="input-group">
+                <label>Customer Email:</label>
+                <input type="email" id="test-email" value="test@example.com" />
+            </div>
+            <div class="input-group">
+                <label>Customer Name:</label>
+                <input type="text" id="test-name" value="John Doe" />
+            </div>
+            <div class="input-group">
+                <label>Product SKU:</label>
+                <input type="text" id="test-sku" value="Cut_Corner_Diamond" />
+            </div>
+            <div class="input-group">
+                <label>Image URL (optional):</label>
+                <input type="text" id="test-image" placeholder="https://example.com/image.jpg" />
+            </div>
+            <button onclick="buildPayload()">Build Payload</button>
+            <button onclick="validatePayload()" class="secondary">Validate</button>
+            <button onclick="submitTestOrder()" class="success">🚀 Submit to Cockpit3D (REAL!)</button>
+        </div>
+        
+        <div class="card" id="output-card">
+            <h2>Output</h2>
+            <pre id="output">Click a button above to see results...</pre>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.pathname.includes('/test/') 
+            ? '/test/api/debug/integration-panel.php'
+            : '/api/debug/integration-panel.php';
+        
+        async function loadStatus() {
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '?action=status');
+                const data = await res.json();
+                showOutput(data);
+                showConfig(data.configuration);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        async function testCockpit() {
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '?action=test-cockpit');
+                const data = await res.json();
+                showOutput(data);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        async function listOrders() {
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '?action=list-orders');
+                const data = await res.json();
+                showOutput(data);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        function showPayloadBuilder() {
+            document.getElementById('payload-builder').style.display = 'block';
+        }
+        
+        function buildPayload() {
+            const retailerId = prompt('Enter your Cockpit3D Retailer ID:', '');
+            const payload = {
+                retailer_id: parseInt(retailerId) || 0,
+                address: {
+                    email: document.getElementById('test-email').value,
+                    firstname: document.getElementById('test-name').value.split(' ')[0],
+                    lastname: document.getElementById('test-name').value.split(' ').slice(1).join(' ') || 'Test',
+                    telephone: '555-0100',
+                    region: 'CA',
+                    country: 'US',
+                    street: '123 Test Street',
+                    city: 'Los Angeles',
+                    postcode: '90001',
+                    shipping_method: 'air',
+                    destination: 'customer_home',
+                    order_id: document.getElementById('test-order-number').value,
+                    staff_user: 'Debug Panel Test'
+                },
+                items: [{
+                    sku: document.getElementById('test-sku').value,
+                    qty: '1',
+                    client_item_id: document.getElementById('test-order-number').value + '-1',
+                    original_photo: document.getElementById('test-image').value || undefined,
+                    cropped_photo: document.getElementById('test-image').value || undefined,
+                    options: []
+                }]
+            };
+            
+            // Remove undefined values
+            if (!payload.items[0].original_photo) delete payload.items[0].original_photo;
+            if (!payload.items[0].cropped_photo) delete payload.items[0].cropped_photo;
+            
+            showOutput({ built_payload: payload, next_steps: ['Click "Validate" to check format', 'Click "Submit to Cockpit3D" to send (REAL!)'] });
+            window.currentPayload = payload;
+        }
+        
+        async function validatePayload() {
+            if (!window.currentPayload) {
+                alert('Build a payload first!');
+                return;
+            }
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '?action=validate-payload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(window.currentPayload)
+                });
+                const data = await res.json();
+                showOutput(data);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        async function submitTestOrder() {
+            if (!window.currentPayload) {
+                alert('Build a payload first!');
+                return;
+            }
+            if (!confirm('This will submit a REAL order to Cockpit3D! Continue?')) {
+                return;
+            }
+            showLoading();
+            try {
+                // Use the submit-order endpoint
+                const submitUrl = window.location.pathname.includes('/test/')
+                    ? '/test/api/cockpit3d/submit-order.php'
+                    : '/api/cockpit3d/submit-order.php';
+                    
+                const res = await fetch(submitUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderNumber: window.currentPayload.address.order_id,
+                        cartItems: window.currentPayload.items.map(item => ({
+                            sku: item.sku,
+                            quantity: parseInt(item.qty),
+                            originalPhotoUrl: item.original_photo,
+                            croppedPhotoUrl: item.cropped_photo
+                        })),
+                        customer: {
+                            email: window.currentPayload.address.email,
+                            firstName: window.currentPayload.address.firstname,
+                            lastName: window.currentPayload.address.lastname,
+                            phone: window.currentPayload.address.telephone
+                        },
+                        shippingInfo: {
+                            address: window.currentPayload.address.street,
+                            city: window.currentPayload.address.city,
+                            state: window.currentPayload.address.region,
+                            zipCode: window.currentPayload.address.postcode,
+                            country: window.currentPayload.address.country
+                        }
+                    })
+                });
+                const data = await res.json();
+                showOutput(data);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        function showConfig(config) {
+            if (!config) return;
+            const card = document.getElementById('config-card');
+            card.style.display = 'block';
+            
+            let html = '<div class="key-row"><span class="key-name">Environment Mode</span><span class="key-value">' + config.environment.mode + '</span></div>';
+            html += '<div class="key-row"><span class="key-name">Active Stripe Keys</span><span class="status ' + (config.stripe.active_mode.includes('LIVE') ? 'warn' : 'ok') + '">' + config.stripe.active_mode + '</span></div>';
+            
+            html += '<h3 style="margin-top:15px">Stripe Keys</h3>';
+            for (const [key, val] of Object.entries(config.stripe)) {
+                if (typeof val === 'object' && val.value) {
+                    const status = val.status.valid ? 'ok' : 'error';
+                    html += '<div class="key-row"><span class="key-name">' + key + '</span><span class="key-value">' + val.value + ' <span class="status ' + status + '">' + (val.status.mode || 'INVALID') + '</span></span></div>';
+                }
+            }
+            
+            html += '<h3 style="margin-top:15px">Cockpit3D</h3>';
+            html += '<div class="key-row"><span class="key-name">API URL</span><span class="key-value">' + config.cockpit3d.api_url + '</span></div>';
+            for (const [key, val] of Object.entries(config.cockpit3d)) {
+                if (typeof val === 'object' && val.value) {
+                    const status = val.status.valid ? 'ok' : 'error';
+                    html += '<div class="key-row"><span class="key-name">' + key + '</span><span class="key-value">' + val.value + ' <span class="status ' + status + '">' + (val.status.mode || 'INVALID') + '</span></span></div>';
+                }
+            }
+            
+            document.getElementById('config-content').innerHTML = html;
+        }
+        
+        function showLoading() {
+            document.getElementById('output').innerHTML = '<span class="loading">Loading...</span>';
+        }
+        
+        function showOutput(data) {
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // Auto-load status on page load
+        loadStatus();
+    </script>
+</body>
+</html>
