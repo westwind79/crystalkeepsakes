@@ -265,7 +265,11 @@
     "sale": false,
     "cost": 39.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T08:52:23.607Z"
+>>>>>>> development
   },
   {
     "id": "105",
@@ -531,7 +535,11 @@
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
     "cost": 24.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:54:59.111Z",
+=======
+    "editedAt": "2025-12-14T18:52:09.371Z",
+>>>>>>> development
     "occasions": [
       "graduation",
       "wedding",
@@ -669,7 +677,11 @@
     "maskImageUrl": "/img/masks/prestige-mask.png",
     "cost": 99.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T08:49:52.444Z"
+>>>>>>> development
   },
   {
     "id": "119",
@@ -930,7 +942,11 @@
     "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
     "cost": 24.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:51:54.024Z",
+>>>>>>> development
     "occasions": [
       "anniversary",
       "wedding",
@@ -1053,7 +1069,11 @@
       "memorial"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:50:50.294Z"
+>>>>>>> development
   },
   {
     "id": "158",
@@ -1192,7 +1212,11 @@
       "memorial"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:51:42.138Z"
+>>>>>>> development
   },
   {
     "id": "171",
@@ -1312,7 +1336,11 @@
     "maskImageUrl": "/img/masks/heart-mask.png",
     "cost": 69.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:51:24.031Z",
+>>>>>>> development
     "occasions": [
       "anniversary",
       "wedding",
@@ -1378,7 +1406,11 @@
       "graduation"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:52:01.840Z"
+>>>>>>> development
   },
   {
     "id": "248",
@@ -1485,7 +1517,11 @@
     "featured": true,
     "cost": 49.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-15T01:09:20.524Z",
+>>>>>>> development
     "occasions": [
       "holiday",
       "pet",
@@ -1553,7 +1589,11 @@
     "featured": true,
     "cost": 109.75,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:52:30.882Z",
+>>>>>>> development
     "occasions": [
       "pet",
       "memorial",
@@ -1810,7 +1850,11 @@
       "birthday"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:51:34.159Z"
+>>>>>>> development
   },
   {
     "id": "276",
@@ -1941,7 +1985,11 @@
       "wedding"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:53:33.395Z"
+>>>>>>> development
   },
   {
     "id": "279",
@@ -2047,7 +2095,11 @@
       "memorial"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:51:11.213Z"
+>>>>>>> development
   },
   {
     "id": "288",
@@ -2125,7 +2177,11 @@
       "memorial"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:51:03.323Z"
+>>>>>>> development
   },
   {
     "id": "290",
@@ -2191,7 +2247,11 @@
       "retirement"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:52:58.374Z"
+>>>>>>> development
   },
   {
     "id": "440",
@@ -2253,7 +2313,11 @@
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
     "featured": true,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:54:09.353Z",
+>>>>>>> development
     "occasions": [
       "holiday",
       "memorial",
@@ -2320,7 +2384,11 @@
     "maskImageUrl": "/img/masks/flower-ornament-mask.png",
     "featured": true,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:54:22.766Z",
+>>>>>>> development
     "occasions": [
       "holiday",
       "anniversary"
@@ -2385,7 +2453,11 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:54:40.820Z",
+>>>>>>> development
     "occasions": [
       "holiday",
       "memorial"
@@ -2450,7 +2522,11 @@
       "graduation"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:54:31.097Z"
+>>>>>>> development
   },
   {
     "id": "444",
@@ -2506,7 +2582,11 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": true,
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z",
+=======
+    "editedAt": "2025-12-14T18:54:49.222Z",
+>>>>>>> development
     "occasions": [
       "memorial",
       "holiday",
@@ -2574,7 +2654,11 @@
       "anniversary"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:53:15.009Z"
+>>>>>>> development
   },
   {
     "id": "446",
@@ -2635,7 +2719,11 @@
       "wedding"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:54:36.236Z"
+>>>>>>> development
   },
   {
     "id": "447",
@@ -2702,7 +2790,11 @@
       "baby"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:54:18.486Z"
+>>>>>>> development
   },
   {
     "id": "448",
@@ -2771,7 +2863,11 @@
       "wedding"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:53:50.030Z"
+>>>>>>> development
   },
   {
     "id": "449",
@@ -2842,7 +2938,11 @@
       "retirement"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:54:03.262Z"
+>>>>>>> development
   },
   {
     "id": "453",
@@ -3408,7 +3508,11 @@
       "holiday"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-15T01:09:20.524Z"
+>>>>>>> development
   },
   {
     "id": "469",
@@ -3538,7 +3642,11 @@
       "birthday"
     ],
     "edited": true,
+<<<<<<< HEAD
     "editedAt": "2025-12-20T21:50:34.724Z"
+=======
+    "editedAt": "2025-12-14T18:53:05.030Z"
+>>>>>>> development
   },
   {
     "id": "472",
