@@ -1,31 +1,29 @@
 # ============================================
 # Crystal Keepsakes - Git Ignore
+# Version: 1.0.1
+# Last Updated: 2024-12-17
 # ============================================
 
 # Dependencies
 node_modules/
 vendor/
-# Keep yarn.lock for reproducible builds
-# But ignore package-lock.json since we use yarn
+
+# Lock files - Keep yarn.lock, ignore npm
 package-lock.json
 
 # Next.js Build Outputs
 .next/
 out/
-out-test/
 out-prod/
-.turbo/
-tsconfig.tsbuildinfo
+out-test/
+build/
+dist/
+.emergent/
 
-# Admin Panel (should NOT be in production builds)
-out-prod/admin/
-out-test/admin/
-
-# Environment Variables - CRITICAL: NEVER COMMIT
+# Environment Variables (NEVER commit real credentials)
 .env
 .env.local
 .env.production
-.env.production.local
 .env.production.test
 .env.development
 .env.development.local
@@ -34,12 +32,16 @@ out-test/admin/
 *.env
 !.env.example
 
-# Product Data (Edited in Admin - Don't Commit)
+# Product Data (Generated/Edited - Don't Commit)
 src/data/final-product-list.js
 public/data/products.json
 public/data/final-products*.json
 
-# Uploaded Images (Don't Commit User Uploads)
+# PHP Configuration
+config/*.php
+!config/*.example.php
+
+# User Uploads (CRITICAL - Don't commit customer images)
 public/uploads/
 public/img/products/cockpit3d/*/product_*
 
@@ -49,12 +51,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+.pnpm-debug.log*
 /var/log/
+php_error.log
 
 # OS Files
 .DS_Store
 Thumbs.db
 desktop.ini
+*.lnk
+ehthumbs.db
+ehthumbs_vista.db
 
 # IDE / Editors
 .vscode/
@@ -68,168 +75,75 @@ desktop.ini
 
 # Cache & Temp Files
 .cache/
+.parcel-cache/
+.turbo/
+.vercel/
+.vite/
+.eslintcache
+.stylelintcache
+tmp/
+temp/
 .temp/
 *.tmp
+*.temp
+
+# TypeScript
+*.tsbuildinfo
+.tsc-tmp/
+next-env.d.ts
+
+# Node Package Managers
+.npm/
+.node_repl_history
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+pnpm-lock.yaml
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Production Files (GoDaddy)
+public_html/
+cgi-bin/
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.cer
+!*.example.*
+
+# Database
+*.sql
+*.sqlite
+*.db
 
 # Backups
 *.backup
 *.bak
 *.old
 
-# PHP / Composer
-vendor/
+# Documentation
+docs/_build/
+
+# PHP/Composer
 composer.lock
 
-# Testing
-coverage/
-.nyc_output/
+# Order Data (Temporary cart storage)
+api/order-data/
 
-# Misc
+# Misc Runtime
 *.pid
 *.seed
 *.pid.lock
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
 
-# Next.js auto-generated (changes between dev/build)
-next-env.d.ts
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+# MAMP Specific
+.htaccess.bak
 
-# Emergent platform metadata
-.emergent/
-
-# Order data (temporary cart storage)
-api/order-data/
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+# Emergent Platform
+emergent.yml
