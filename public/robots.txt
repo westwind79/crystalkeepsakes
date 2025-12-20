@@ -1,0 +1,22 @@
+// app/robots.ts
+// Version: 1.0.0 | Date: 2024-12-18
+// Auto-generates robots.txt for SEO
+// Next.js automatically serves this at /robots.txt
+
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: [
+        '/api/',
+        '/admin/',
+        '/_next/',
+        '/private/',
+      ],
+    },
+    sitemap: 'https://crystalkeepsakes.com/sitemap.xml',
+  }
+}

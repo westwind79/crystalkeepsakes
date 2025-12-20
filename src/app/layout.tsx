@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     description: 'Transform your cherished memories into stunning 3D laser-engraved crystal keepsakes. Custom personalized gifts for every occasion.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/img/social/crystalkeepsakes-social-img.png',
         width: 1200,
         height: 630,
         alt: 'CrystalKeepsakes - 3D Crystal Photo Gifts',
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'CrystalKeepsakes - Premium 3D Crystal Photo Gifts',
     description: 'Transform your cherished memories into stunning 3D laser-engraved crystal keepsakes.',
-    images: ['/og-image.jpg'],
+    images: ['/img/social/crystalkeepsakes-social-img.png'],
   },
   robots: {
     index: true,
@@ -90,6 +90,18 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href="https://crystalkeepsakes.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y365VZP1EL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-Y365VZP1EL');
+            `,
+          }}
+        />
       </head>
       <body className={`${openSans.variable} ${cinzel.variable} ${openSans.className}`}>
         <Header />

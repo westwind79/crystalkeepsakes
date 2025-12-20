@@ -9,20 +9,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { navItems } from '@/lib/navigation'
 import CartIcon from './CartIcon'
 
 export default function Header() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  // Navigation items
-  const navItems = [
-    { href: '/', label: 'HOME' },
-    { href: '/products', label: 'PRODUCTS' },
-    { href: '/about', label: 'ABOUT' },
-    { href: '/contact', label: 'CONTACT' },
-    { href: '/faq', label: 'FAQ' },
-  ]
 
   // Check if link is active
   const isActive = (href: string) => {

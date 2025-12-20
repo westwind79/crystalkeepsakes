@@ -128,9 +128,9 @@ export default function ContactPage() {
 
       <Breadcrumbs items={[{ label: 'Contact' }]} />
 
-      <section className="bg-white py-8">
+      <section className="bg-slate-100 py-8">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl p-8 rounded-xl bg-white shadow-lg mx-auto">
             {submitStatus && (
               <div className={`mb-6 p-4 rounded-lg ${submitStatus.success ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
                 {submitStatus.message}
@@ -139,7 +139,7 @@ export default function ContactPage() {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                <label className="block text-md font-semibold text-gray-900 mb-2">Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="name"
@@ -152,7 +152,7 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <label className="block text-md font-semibold text-gray-700 mb-2">Email <span className="text-red-500">*</span></label>
                 <input
                   type="email"
                   name="email"
@@ -165,7 +165,7 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <label className="block text-md font-semibold text-gray-700 mb-2">Phone</label>
                 <input
                   type="tel"
                   name="phone"
@@ -177,7 +177,7 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Topic *</label>
+                <label className="block text-md font-semibold text-gray-700 mb-2">Topic <span className="text-red-500">*</span></label>
                 <select
                   name="topic"
                   value={formData.topic}
@@ -193,7 +193,7 @@ export default function ContactPage() {
               
               {formData.topic === 'order_problem' && (
                 <div className="bg-green-50 border-2 border-[#8DC63F]/30 rounded-lg p-4 shadow-sm">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Order Number *</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Order Number <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     name="orderNumber"
@@ -208,7 +208,7 @@ export default function ContactPage() {
               )}
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                <label className="block text-md font-semibold text-gray-700 mb-2">Message <span className="text-red-500">*</span></label>
                 <textarea
                   name="comment"
                   rows={5}
