@@ -87,14 +87,14 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
-              <li>
+              {/*<li>
                 <Link 
                   href="/shipping" 
                   className="text-text-secondary hover:text-brand-400 transition-colors text-sm no-underline"
                 >
                   Shipping
                 </Link>
-              </li>
+              </li>*/}
             </ul>
           </div>
           
@@ -112,15 +112,15 @@ export default function Footer() {
                   About Us
                 </Link>
               </li>
-              <li>
+              {/*<li>
                 <Link 
                   href="/process" 
                   className="text-text-secondary hover:text-brand-400 transition-colors text-sm no-underline"
                 >
                   Our Process
                 </Link>
-              </li>
-              <li>
+              </li>*/}
+              {/*<li>
                 <Link 
                   href="https://x.com/3DKeepsakes" 
                   target="_blank"
@@ -129,7 +129,7 @@ export default function Footer() {
                 >
                   Follow Us
                 </Link>
-              </li>
+              </li>*/}
             </ul>
           </div>
         </div>

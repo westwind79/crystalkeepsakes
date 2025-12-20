@@ -8,7 +8,7 @@ const configs = {
   test: {
     targetOut: 'out-test',
     env: '.env.production.test',
-    htaccess: '_htaccess.production.test',  // ✅ Your actual file
+    htaccess: '.htaccess.production.test',  // ✅ Your actual file
     basePath: '/test',
     stripeKeys: 'TEST (sk_test_...)',
     uploadTo: '/public_html/crystalkeepsakes.com/test/',
@@ -17,7 +17,7 @@ const configs = {
   prod: {
     targetOut: 'out-prod',
     env: '.env.production',
-    htaccess: '_htaccess.production',  // ✅ Your actual file
+    htaccess: '.htaccess.production',  // ✅ Your actual file
     basePath: '',
     stripeKeys: 'LIVE (sk_live_...)',
     uploadTo: '/public_html/crystalkeepsakes.com/',
@@ -26,7 +26,7 @@ const configs = {
   local: {
     targetOut: 'out',
     env: '.env',
-    htaccess: '_htaccess.local',  // ✅ Your actual file
+    htaccess: '.htaccess.local',  // ✅ Your actual file
     basePath: '',
     stripeKeys: 'TEST (sk_test_...)',
     uploadTo: 'N/A - Served by MAMP',

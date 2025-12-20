@@ -43,7 +43,7 @@ export default function AddedToCartModal({ show, onClose, itemDetails }: AddedTo
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
-          className="bg-slate-800 text-white border-2 border-[var(--brand-350)] border-brand-500/30 rounded-2xl shadow-2xl shadow-brand-500/20 max-w-lg w-full animate-slideUp"
+          className="bg-slate-800 text-white border-2 border-[var(--brand-350)] border-brand-500/30 rounded-2xl shadow-2xl shadow-brand-500/20 w-max w-full animate-slideUp"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
