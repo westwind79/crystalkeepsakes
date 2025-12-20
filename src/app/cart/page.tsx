@@ -335,6 +335,7 @@ export default function CartPage() {
                           onClick={() => window.open(item.productImage, '_blank')}
                           title="Click to view full size"
                         />
+                        <span className="text-xs text-gray-600 font-medium mt-1">Product Image</span>
                         <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
                       </div>
                       
@@ -348,6 +349,7 @@ export default function CartPage() {
                             onClick={() => window.open(item.customImage?.dataUrl, '_blank')}
                             title="Click to view full size"
                           />
+                          <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
                           <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
                         </div>
                       )}
@@ -566,7 +568,7 @@ export default function CartPage() {
               
               <p className="text-center text-gray-500 text-xs mt-4 flex items-center justify-center gap-2">
                 <span className="text-lg">🔒</span>
-                Secure checkout powered by Stripe
+                Secure checkout powered by <Link className="text-[var(--brand-500)]" href="https://stripe.com/">Stripe</Link>
               </p>
             </div>
           </div>
