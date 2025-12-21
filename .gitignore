@@ -20,6 +20,11 @@ build/
 dist/
 .emergent/
 
+# ADD THESE:
+out-prod/vendor/
+out-test/vendor/
+out/vendor/
+
 # Environment Variables (NEVER commit real credentials)
 .env
 .env.local

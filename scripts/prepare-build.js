@@ -90,17 +90,6 @@ try {
     console.log(`  ⚠️  ${config.htaccess} not found - build will work without it`);
   }
 
-  // Step 4: Copy vendor/ folder (for PHP dependencies)
-  const vendorSource = 'vendor';
-  const vendorDest = path.join(config.targetOut, 'vendor');
-  
-  if (fs.existsSync(vendorSource)) {
-    fs.copySync(vendorSource, vendorDest, { overwrite: true });
-    console.log(`  ✅ Copied vendor/ → ${config.targetOut}/vendor/`);
-  } else if (mode !== 'local') {
-    console.log(`  ⚠️  vendor/ folder not found - run 'composer install' if using Stripe`);
-  }
-
   // Step 5: Copy .env file to build output
   // This .env will be used by the PHP backend on the server
   if (fs.existsSync(config.env)) {
