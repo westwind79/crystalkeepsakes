@@ -1,4 +1,5 @@
 # .htaccess for Next.js static export - PRODUCTION ROOT
+# Date: 2024-12-20 | Version: 1.0.5
 # Place this in public_html/crystalkeepsakes.com/test/.htaccess
 
 <IfModule mod_rewrite.c>
@@ -21,14 +22,18 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Add trailing slash to directories
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_URI} !(.*)/$
-  RewriteRule ^(.*)$ /$1/ [L,R=301]
+  # REMOVED TRAILING SLASH RULE - Next.js uses .html files not directories
 
-  # Try to serve .html file
+  # Try to serve .html file for clean URLs
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.*)$ $1.html [L]
+
+  # Fallback to index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.html [L]
 </IfModule>
 
 # Security Headers

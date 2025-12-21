@@ -336,7 +336,6 @@ export default function CartPage() {
                           title="Click to view full size"
                         />
                         <span className="text-xs text-gray-600 font-medium mt-1">Product Image</span>
-                        <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
                       </div>
                       
                       {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
@@ -350,7 +349,6 @@ export default function CartPage() {
                             title="Click to view full size"
                           />
                           <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
-                          <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
                         </div>
                       )}
                     </div>
