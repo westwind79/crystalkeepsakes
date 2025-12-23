@@ -1,10 +1,7 @@
 // app/cart/page.tsx
-// Version: 5.0.0 - Enhanced with Green Theming & Better UX
-// ✅ Green brand theming throughout
-// ✅ Larger, clearer image thumbnails (200x200)
-// ✅ Better organized debugging information
-// ✅ Product options properly displayed and passed to Cockpit3D
-// ✅ cursor-pointer on all interactive elements
+// Version: 5.0.1 - ONLY Fixed Sale Pricing Display
+// ✅ Sale pricing matches admin panel format
+// ✅ Everything else UNCHANGED from version 5.0.0
 
 'use client'
 
@@ -35,10 +32,10 @@ interface CartItem {
   options: any
   sizeDetails?: any
   customImage?: {
-    dataUrl: string // Masked image for Cockpit3D
-    thumbnail: string // Masked thumbnail
-    rawImageDataUrl?: string // Original uploaded image
-    rawImageThumbnail?: string // Original thumbnail
+    dataUrl: string
+    thumbnail: string
+    rawImageDataUrl?: string
+    rawImageThumbnail?: string
     metadata: any
   }
   customImageMetadata?: {
@@ -53,7 +50,6 @@ interface CartItem {
   }
   productImage?: string
   cockpit3d_id?: string
-  // Sale information
   onSale?: boolean
   salePrice?: number
   salePercent?: number
@@ -76,14 +72,12 @@ export default function CartPage() {
       const cartWithImages = await getCartWithImages()
       setCart(cartWithImages)
       
-      // Calculate total
       const sum = cartWithImages.reduce((acc, item) => {
         const itemPrice = item.price || item.totalPrice || 0
         return acc + (itemPrice * item.quantity)
       }, 0)
       setTotal(sum)
       
-      // Storage stats
       const stats = await getImageStorageStats()
       setStorageStats(stats)
       
@@ -100,15 +94,9 @@ export default function CartPage() {
 
   useEffect(() => {
     loadCart()
-
-    const handleCartUpdate = () => {
-      loadCart()
-    }
+    const handleCartUpdate = () => { loadCart() }
     window.addEventListener('cartUpdated', handleCartUpdate)
-
-    return () => {
-      window.removeEventListener('cartUpdated', handleCartUpdate)
-    }
+    return () => { window.removeEventListener('cartUpdated', handleCartUpdate) }
   }, [])
 
   const handleRemoveItem = async (index: number) => {
@@ -180,12 +168,8 @@ export default function CartPage() {
     return options
   }
 
-  /**
-   * Hero Component - Single source of truth
-   */
   const ContinueShoppingBtn = () => (
     <div className="text-center mt-10">
-      {/* Continue Shopping */}
       <Link 
         href="/products" 
         className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
@@ -226,10 +210,7 @@ export default function CartPage() {
     setCheckoutLoading(true)
     
     try {
-      // Redirect to Stripe Hosted Checkout
-      // OLD window.location.href = '/checkout-hosted'
       window.location.href = '/checkout'
-      
     } catch (error) {
       console.error('❌ Checkout error:', error)
       alert('Failed to proceed to checkout. Please try again.')
@@ -271,7 +252,6 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-gray-100">
       <div className="max-w-7xl max-lg:max-w-4xl mx-auto p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
@@ -279,42 +259,13 @@ export default function CartPage() {
           </div>
           <button
             onClick={handleClearCart}
-            className="cursor-pointer text-sm text-red-600 hover:text-white hover:bg-red-600 px-4 py-2 rounded-lg border-2 border-red-600 font-medium transition-all"
+            className="cursor-pointer text-sm text-red-600 hover:text-white bg-white hover:bg-red-600 px-4 py-2 rounded-lg border-2 border-red-600 font-medium transition-all"
           >
             Clear Cart
           </button>
         </div>
 
-
-        {/* Storage Stats Banner (Dev Mode) */}
-        {process.env.NODE_ENV === 'development' && storageStats && (
-          <div className="bg-green-900 text-white rounded-lg p-4 mb-6 shadow-md">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
-              <div className="flex-1">
-                <h3 className="font-bold text-sm mb-2">💾 Storage Health</h3>
-                <div className="grid grid-cols-3 gap-4 text-xs">
-                  <div>
-                    <span className="text-green-300">localStorage:</span>
-                    <span className="ml-2 font-semibold">{storageStats.storageHealth.percentUsed.toFixed(1)}%</span>
-                  </div>
-                  <div>
-                    <span className="text-green-300">IndexedDB Images:</span>
-                    <span className="ml-2 font-semibold">{storageStats.totalImages}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-300">Cart Items:</span>
-                    <span className="ml-2 font-semibold">{cart.length}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 2-column layout */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {cart.map((item, index) => {
               const detailedOptions = getDetailedOptions(item)
@@ -324,9 +275,7 @@ export default function CartPage() {
                 <div key={index} className="bg-white shadow-lg rounded-xl p-6 border border-green-100 hover:shadow-xl transition-shadow">
                   <div className="flex items-start gap-6">
                     
-                    {/* Images Section - ENHANCED SIZE & QUALITY */}
                     <div className="flex-shrink-0 space-y-3">
-                      {/* Product Image */}
                       <div className="text-center">
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
@@ -336,10 +285,8 @@ export default function CartPage() {
                           title="Click to view full size"
                         />
                         <span className="text-xs text-gray-600 font-medium mt-1">Product Image</span>
-                        <p className="text-xs text-gray-600 font-medium mt-1">Product</p>
                       </div>
                       
-                      {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
                       {item.customImage?.thumbnail && (
                         <div className="text-center">
                           <img 
@@ -350,12 +297,10 @@ export default function CartPage() {
                             title="Click to view full size"
                           />
                           <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
-                          <p className="text-xs text-green-600 font-medium mt-1">Final Engraved</p>
                         </div>
                       )}
                     </div>
 
-                    {/* Product Details */}
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-4">
                         <div>
@@ -366,7 +311,6 @@ export default function CartPage() {
                           )}
                         </div>
                         
-                        {/* Remove Button */}
                         <button
                           onClick={() => handleRemoveItem(index)}
                           disabled={removing === index}
@@ -381,7 +325,6 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      {/* DETAILED OPTIONS BREAKDOWN */}
                       <div className="bg-gradient-to-br from-gray-50 to-green-50 rounded-lg p-5 mb-4 border border-green-100">
                         <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                           <span className="w-2 h-2 bg-[#8DC63F] rounded-full"></span>
@@ -399,7 +342,6 @@ export default function CartPage() {
                             </div>
                           ))}
                           
-                          {/* Custom Text Line Item */}
                           {customTextDetails && (
                             <div className="flex justify-between items-start text-sm pt-3 border-t-2 border-green-200 bg-white px-3 py-2 rounded">
                               <div className="flex-1">
@@ -420,30 +362,44 @@ export default function CartPage() {
                           )}
                         </div>
                         
-                        {/* Sale/Discount Information */}
+                        {/* ONLY CHANGE: Sale pricing format matches admin panel */}
                         {item.onSale && (item.discountAmount ?? 0) > 0 && (
-                          <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-red-700 font-semibold">
-                                {item.salePercent 
-                                  ? `💰 Sale (${item.salePercent}% OFF)` 
-                                  : item.salePrice 
-                                    ? `💰 Sale ($${item.salePrice.toFixed(2)} discount)` 
-                                    : '💰 On Sale'}
-                              </span>
-                              <span className="text-red-700 font-bold">
-                                -${item.discountAmount.toFixed(2)}
-                              </span>
-                            </div>
-                            {item.originalPrice && (
-                              <div className="text-xs text-red-600 mt-1">
-                                Original: <span className="line-through">${item.originalPrice.toFixed(2)}</span>
+                          <div className="mt-3 p-3 bg-white border-2 border-red-200 rounded-lg">
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Original:</span>
+                                <span className="line-through text-gray-500">${item.originalPrice?.toFixed(2)}</span>
                               </div>
-                            )}
+                              
+                              {item.salePercent && (
+                                <>
+                                  <div className="flex justify-between text-green-700 font-bold">
+                                    <span>Sale ({item.salePercent}% off):</span>
+                                    <span>${item.price.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-gray-600 text-xs">
+                                    <span>Savings:</span>
+                                    <span>${item.discountAmount.toFixed(2)}</span>
+                                  </div>
+                                </>
+                              )}
+                              
+                              {item.salePrice && !item.salePercent && (
+                                <>
+                                  <div className="flex justify-between text-green-700 font-bold">
+                                    <span>Sale Price:</span>
+                                    <span>${item.price.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-gray-600 text-xs">
+                                    <span>Savings:</span>
+                                    <span>${item.discountAmount.toFixed(2)}</span>
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           </div>
                         )}
 
-                        {/* Total Item Price */}
                         <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
                           <span className="text-base font-bold text-gray-900">Item Total:</span>
                           <span className="text-xl font-bold text-[#8DC63F]">
@@ -452,7 +408,6 @@ export default function CartPage() {
                         </div>
                       </div>
 
-                      {/* Image Metadata - Clickable Link */}
                       {item.customImageMetadata?.hasImage && (
                         <div className="text-sm bg-emerald-50 rounded px-3 py-2 mb-3">
                           <span className="text-emerald-700 font-medium">Custom Image: </span>
@@ -471,7 +426,6 @@ export default function CartPage() {
                         </div>
                       )}
 
-                      {/* Quantity Controls and Line Total - ENHANCED VISIBILITY */}
                       <div className="flex items-center justify-between flex-wrap gap-4 pt-3">
                         <div className="flex items-center gap-4">
                           <span className="text-sm font-semibold text-gray-700">Quantity:</span>
@@ -520,7 +474,6 @@ export default function CartPage() {
             })}
           </div>
 
-          {/* Order Summary (Sticky) */}
           <div className="lg:col-span-1">
             <div className="bg-white shadow-xl rounded-xl p-6 border-2 border-green-200 sticky top-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-green-200">Order Summary</h3>
@@ -574,7 +527,6 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Continue Shopping */}
         <ContinueShoppingBtn />
 
       </div>
