@@ -60,16 +60,24 @@ export interface OrderLineItem {
   sku: string
   basePrice: number
   optionsPrice: number
-  totalPrice: number
+  price?: number       // Per-unit price (basePrice + optionsPrice, after discounts)
+  totalPrice: number   // Total price including quantity (price * quantity)
   quantity: number
   size: SizeDetails
   options: ProductOption[]
+  productImage?: string | null
   customImage?: CustomImage
   customText?: {
     text: string
     font?: string
     maxCharacters?: number
   }
+  // Sale/discount fields
+  onSale?: boolean
+  salePrice?: number
+  salePercent?: number
+  originalPrice?: number
+  discountAmount?: number
   dateAdded: string
   lastModified: string
 }
