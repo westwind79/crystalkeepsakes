@@ -151,31 +151,40 @@ export default function CartPage() {
   const getDetailedOptions = (item: CartItem) => {
     const options: Array<{ name: string; value: string; price: number }> = []
     
-    if (!item.options || !Array.isArray(item.options)) {
-      return options
+    // Check sizeDetails first (the actual structure used by ProductDetailClient)
+    if (item.sizeDetails && item.sizeDetails.sizeName) {
+      options.push({
+        name: 'Size',
+        value: item.sizeDetails.sizeName,
+        price: item.sizeDetails.basePrice || 0
+      })
     }
     
-    item.options.forEach((opt: any) => {
-      if (opt.category === 'size' && opt.name) {
-        options.push({
-          name: 'Size',
-          value: opt.name,
-          price: opt.price || 0
-        })
-      } else if (opt.category === 'lightBase' && opt.name) {
-        options.push({
-          name: 'Light Base',
-          value: opt.name,
-          price: opt.priceModifier || 0
-        })
-      } else if (opt.category === 'background' && opt.name) {
-        options.push({
-          name: 'Background',
-          value: opt.name,
-          price: opt.priceModifier || 0
-        })
-      }
-    })
+    // Then check options array for lightBase, background, etc.
+    if (item.options && Array.isArray(item.options)) {
+      item.options.forEach((opt: any) => {
+        // Skip size in options array if we already have sizeDetails
+        if (opt.category === 'size' && opt.name && !item.sizeDetails) {
+          options.push({
+            name: 'Size',
+            value: opt.name,
+            price: opt.price || opt.basePrice || 0
+          })
+        } else if (opt.category === 'lightBase' && opt.name) {
+          options.push({
+            name: 'Light Base',
+            value: opt.name,
+            price: opt.priceModifier || opt.price || 0
+          })
+        } else if (opt.category === 'background' && opt.name) {
+          options.push({
+            name: 'Background',
+            value: opt.name,
+            price: opt.priceModifier || opt.price || 0
+          })
+        }
+      })
+    }
     
     return options
   }
