@@ -210,10 +210,12 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       sku: item.sku,
       
       // Pricing (preserve all price fields)
+      // IMPORTANT: price should be PER-UNIT price (basePrice + optionsPrice), NOT total
+      // totalPrice already includes quantity, so we should NOT use it for price
       basePrice: item.basePrice,
       optionsPrice: item.optionsPrice,
-      price: item.price || item.totalPrice || item.basePrice,
-      totalPrice: item.totalPrice || (item.price * item.quantity),
+      price: item.price || ((item.basePrice || 0) + (item.optionsPrice || 0)) || item.basePrice,
+      totalPrice: item.totalPrice || ((item.price || ((item.basePrice || 0) + (item.optionsPrice || 0))) * item.quantity),
       quantity: item.quantity,
       
       // Product configuration (preserve full structure)
