@@ -411,12 +411,16 @@ export default function ProductDetailClient() {
       const totalPrice = getTotalPrice()
       const originalPrice = selectedSize?.price || product.basePrice
       
+      // Calculate per-unit price (basePrice after sale discount + options)
+      const unitPrice = totalPrice / quantity
+      
       // Get sale information using centralized utility
-      const saleInfo = getSaleInfo(product, totalPrice / quantity, originalPrice)
+      const saleInfo = getSaleInfo(product, unitPrice, originalPrice)
       
       console.log('💰 [ADD TO CART] Pricing:', {
         basePrice: originalPrice,
         optionsPrice,
+        unitPrice,
         totalPrice,
         quantity,
         saleInfo
@@ -430,6 +434,7 @@ export default function ProductDetailClient() {
         sku: product.sku,
         basePrice: originalPrice,
         optionsPrice: optionsPrice,
+        price: unitPrice,  // Per-unit price for cart calculations
         totalPrice: totalPrice,
         quantity: quantity,
         size: sizeDetails,
