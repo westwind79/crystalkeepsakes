@@ -29,7 +29,8 @@ export default function CheckoutHostedPage() {
         setError('Your cart is empty')
         // Preserve test path prefix when redirecting
         const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
-        const isTestEnv = currentPath.startsWith('/test')
+        const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+        const isTestEnv = currentPath.startsWith('/test') || currentHref.includes('/test/')
         const cartUrl = isTestEnv ? '/test/cart' : '/cart'
         setTimeout(() => router.push(cartUrl), 2000)
         return
