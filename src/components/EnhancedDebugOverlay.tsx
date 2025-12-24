@@ -392,9 +392,37 @@ export default function EnhancedDebugOverlay() {
                       }`}>{systemInfo.env.mode.toUpperCase()}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-gray-400">Base Path:</span>
+                      <span className="text-white">{systemInfo.env.basePath}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-gray-400">Backend:</span>
                       <span className="text-white text-[10px]">{systemInfo.env.backend}</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Stripe Keys Section */}
+                <div className="bg-gray-800 rounded-lg p-3">
+                  <h3 className="text-sm font-bold text-purple-400 mb-2">💳 Stripe Config</h3>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Key Type:</span>
+                      <span className={`font-bold ${
+                        systemInfo.env.stripeKeyType?.includes('LIVE') ? 'text-red-400 bg-red-900/30 px-2 py-0.5 rounded' :
+                        systemInfo.env.stripeKeyType?.includes('TEST') ? 'text-green-400 bg-green-900/30 px-2 py-0.5 rounded' : 
+                        'text-yellow-400'
+                      }`}>{systemInfo.env.stripeKeyType}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Publishable:</span>
+                      <span className="text-white font-mono text-[10px]">{systemInfo.env.stripePublishableKey}</span>
+                    </div>
+                    {systemInfo.env.mode === 'testing' && systemInfo.env.stripeKeyType?.includes('LIVE') && (
+                      <div className="mt-2 p-2 bg-red-900/50 rounded border border-red-500">
+                        <p className="text-red-300 text-[10px] font-bold">⚠️ WARNING: Using LIVE Stripe keys in TESTING mode!</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
