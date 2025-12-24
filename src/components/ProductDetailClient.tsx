@@ -16,6 +16,7 @@ import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/t
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import { uploadCustomerImages } from '@/lib/customerImageUpload'
+import { startOrder, updateOrderImages, getPendingOrderForProduct, markOrderInCart, getOrderDataForCart } from '@/lib/orderTracker'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 import { assetPath } from '@/lib/assetPath'
