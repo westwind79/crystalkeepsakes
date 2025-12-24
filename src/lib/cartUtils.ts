@@ -101,11 +101,27 @@ async function compressImageToThumbnail(dataUrl: string): Promise<string> {
 }
 
 /**
- * Clean options object - remove ALL image data URLs
+ * Clean options object/array - remove image data URLs but PRESERVE structure
+ * CRITICAL: This must preserve the options array structure for cart display!
  */
 function cleanOptions(options: any): any {
-  if (!options) return {}
+  if (!options) return []
   
+  // If options is an array (from ProductDetailClient buildProductOptions)
+  // Preserve the full array structure, just remove image data
+  if (Array.isArray(options)) {
+    return options.map((opt: any) => {
+      const cleaned = { ...opt }
+      // Remove any image data URLs that might be in options
+      delete cleaned.rawImageUrl
+      delete cleaned.imageUrl
+      delete cleaned.maskedImageUrl
+      delete cleaned.dataUrl
+      return cleaned
+    })
+  }
+  
+  // If options is an object (legacy format)
   const cleaned = { ...options }
   
   // Remove all image data URLs from options
@@ -115,17 +131,7 @@ function cleanOptions(options: any): any {
   delete cleaned.dataUrl
   delete cleaned.customImage
   
-  // Keep only essential metadata
-  return {
-    size: cleaned.size,
-    background: cleaned.background,
-    lightBase: cleaned.lightBase,
-    giftStand: cleaned.giftStand,
-    customText: cleaned.customText,
-    // Only keep image filenames, not data URLs
-    imageFilename: cleaned.imageFilename,
-    maskName: cleaned.maskName
-  }
+  return cleaned
 }
 
 /**
