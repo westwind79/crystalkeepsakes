@@ -44,80 +44,40 @@ export default function CheckoutHostedPage() {
       console.log('=== CHECKOUT DEBUG ===')
       console.log('Cart items:', cart.length)
       console.log('Order number:', orderNumber)
+      // ✅ Images should already be uploaded when adding to cart
+      // Just use the server URLs that are already stored in customImage
       cart.forEach((item, idx) => {
-        console.log(`Item ${idx}:`, {
-          productId: item.productId,
+        console.log(`🔍 Item ${idx} (${item.productId}):`, {
           hasCustomImage: !!item.customImage,
-          dataUrlLength: item.customImage?.dataUrl?.length,
-          dataUrlStart: item.customImage?.dataUrl?.substring(0, 50),
-          rawImageLength: item.customImage?.rawImageDataUrl?.length
+          serverUrl: item.customImage?.serverUrl,
+          originalServerUrl: item.customImage?.originalServerUrl,
+          tempOrderRef: item.customImage?.tempOrderRef
         })
       })
       
-      const cartWithServerUrls = await Promise.all(
-        cart.map(async (item, idx) => {
-          // Check if this item has images in IndexedDB
-          if (item.customImage?.dataUrl) {
-            console.log(`📤 Uploading images for item ${idx}: ${item.productId}`)
-            console.log('  - Masked image length:', item.customImage.dataUrl.length)
-            console.log('  - Masked image starts with:', item.customImage.dataUrl.substring(0, 50))
-            
-            logger.info(`Uploading images for item: ${item.productId}`)
-            
-            try {
-              const uploadResult = await uploadCustomerImages(
-                item.customImage.dataUrl, // Masked image from IndexedDB
-                item.customImage.rawImageDataUrl, // Raw image from IndexedDB
-                item.productId,
-                orderNumber // Pass order number for folder structure
-              )
-              
-              console.log('  - Upload result:', uploadResult)
-              
-              if (uploadResult.errors.length > 0) {
-                console.error('  - Upload errors:', uploadResult.errors)
-                logger.error('Image upload errors:', uploadResult.errors)
-              }
-              
-              // Replace base64 with server URLs
-              return {
-                ...item,
-                maskedImageUrl: uploadResult.maskedUrl,
-                rawImageUrl: uploadResult.rawUrl,
-                imageUploadErrors: uploadResult.errors
-              }
-            } catch (error) {
-              console.error('  - Upload exception:', error)
-              return item
-            }
-          }
-          
-          console.log(`⏭️  Item ${idx} has no custom image, skipping upload`)
-          return item
-        })
-      )
-
-      logger.info('✅ Images uploaded, preparing checkout...')
-      console.log('=== AFTER UPLOAD ===')
-      cartWithServerUrls.forEach((item, idx) => {
-        console.log(`Item ${idx}:`, {
-          productId: item.productId,
-          maskedImageUrl: item.maskedImageUrl,
-          rawImageUrl: item.rawImageUrl,
-          errors: item.imageUploadErrors
-        })
-      })
-
-      // Prepare cart items for checkout (now with server URLs)
-      const cartForCheckout = cartWithServerUrls.map(item => {
-        const { customImage, ...itemWithoutImage } = item as any
+      // Prepare cart items for checkout with server URLs
+      const cartForCheckout = cart.map(item => {
         return {
-          ...itemWithoutImage,
-          customImageId: item.customImageId,
+          productId: item.productId,
+          cockpit3d_id: item.cockpit3d_id,
+          name: item.name,
+          sku: item.sku,
+          price: item.price,
+          quantity: item.quantity,
+          
+          // Size & Options for Cockpit3D
+          sizeDetails: item.sizeDetails,
+          options: item.options,
+          customText: item.customText,
+          
+          // ✅ Use server URLs from cart (already uploaded when adding to cart)
+          maskedImageUrl: item.customImage?.serverUrl,
+          rawImageUrl: item.customImage?.originalServerUrl,
           customImageMetadata: item.customImageMetadata,
-          // Include image URLs for webhook/Cockpit3D
-          maskedImageUrl: item.maskedImageUrl,
-          rawImageUrl: item.rawImageUrl
+          tempOrderRef: item.customImage?.tempOrderRef,
+          
+          // Product image (for items without custom images)
+          productImage: item.productImage
         }
       })
 
