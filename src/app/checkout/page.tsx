@@ -228,7 +228,12 @@ export default function CheckoutHostedPage() {
               )}
               
               <button
-                onClick={() => router.push('/cart')}
+                onClick={() => {
+                  // Preserve test path prefix when returning to cart
+                  const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+                  const isTestEnv = currentPath.startsWith('/test')
+                  router.push(isTestEnv ? '/test/cart' : '/cart')
+                }}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Return to Cart
