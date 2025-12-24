@@ -95,32 +95,31 @@ try {
     // Get custom image path from environment or use defaults
     $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
     
+    // ✅ ALWAYS calculate htdocsRoot for URL generation later
+    // This script is at: htdocs/crystalkeepsakes/api/customer-image-upload.php
+    // We want: htdocs/crystal-data/
+    // So: go up 2 levels from this file, then into crystal-data
+    $scriptDir = __DIR__; // /htdocs/crystalkeepsakes/api/
+    $projectRoot = dirname($scriptDir); // /htdocs/crystalkeepsakes/
+    $htdocsRoot = dirname($projectRoot); // /htdocs/
+    
+    // Normalize slashes for Windows
+    $htdocsRoot = str_replace('\\', '/', $htdocsRoot);
+    $htdocsRoot = rtrim($htdocsRoot, '/');
+    
+    error_log("📁 Script location: $scriptDir");
+    error_log("📁 Project root: $projectRoot");
+    error_log("📁 Htdocs root (calculated): $htdocsRoot");
+    
+    // Also log DOCUMENT_ROOT for comparison/debugging
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'NOT SET';
+    error_log("📁 DOCUMENT_ROOT (for reference): $documentRoot");
+    
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // ✅ RELIABLE PATH CALCULATION - Don't trust DOCUMENT_ROOT!
-        // This script is at: htdocs/crystalkeepsakes/api/customer-image-upload.php
-        // We want: htdocs/crystal-data/
-        // So: go up 2 levels from this file, then into crystal-data
-        
-        $scriptDir = __DIR__; // /htdocs/crystalkeepsakes/api/
-        $projectRoot = dirname($scriptDir); // /htdocs/crystalkeepsakes/
-        $htdocsRoot = dirname($projectRoot); // /htdocs/
-        
-        // Normalize slashes for Windows
-        $htdocsRoot = str_replace('\\', '/', $htdocsRoot);
-        $htdocsRoot = rtrim($htdocsRoot, '/');
-        
-        error_log("📁 Script location: $scriptDir");
-        error_log("📁 Project root: $projectRoot");
-        error_log("📁 Htdocs root (calculated): $htdocsRoot");
-        
-        // Also log DOCUMENT_ROOT for comparison/debugging
-        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'NOT SET';
-        error_log("📁 DOCUMENT_ROOT (for reference): $documentRoot");
-        
         if ($mode === 'development') {
             // Local dev: htdocs/crystal-data/order-images-test/
             $uploadDir = $htdocsRoot . '/crystal-data/order-images-test/';
