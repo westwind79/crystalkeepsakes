@@ -297,6 +297,14 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       lineItemId: item.lineItemId
     }
     
+    // Debug: Log what we're storing
+    console.log('📦 Storing cart item with customImage:', {
+      hasCustomImage: !!cartItem.customImage,
+      serverUrl: cartItem.customImage?.serverUrl,
+      originalServerUrl: cartItem.customImage?.originalServerUrl,
+      filename: cartItem.customImage?.filename
+    })
+    
     // ✅ BUSINESS DECISION: NEVER combine cart items - always add as separate line items
     // This ensures customers see each item distinctly, making it clear they're ordering multiple units
     // Even if items are identical, they remain separate for clarity and easier order management
