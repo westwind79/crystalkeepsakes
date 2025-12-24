@@ -205,11 +205,13 @@ export default function ProductDetailClient() {
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
    * Receives the masked/compressed image from editor
-   * ✅ NOW UPLOADS IMMEDIATELY to server on Save (not on Add to Cart)
+   * ✅ NOW STARTS ORDER TRACKING - Order begins when image is saved!
+   * ✅ Uploads images immediately to server
    */
   const handleImageEditorSave = async (compressedImage: string) => {
-    logger.info('Image saved from editor - starting immediate upload', { 
-      size: compressedImage.length 
+    logger.info('Image saved from editor - STARTING ORDER', { 
+      size: compressedImage.length,
+      productId: product?.id
     })
     
     // Save the masked/compressed image (final product) for local display
@@ -222,23 +224,44 @@ export default function ProductDetailClient() {
       return newErrors
     })
     
+    // ✅ START ORDER TRACKING - This is when the order begins!
+    const orderRef = `ORD_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    setTempOrderRef(orderRef)
+    
+    // Start order with image data (server URLs will be added after upload)
+    const pendingOrder = startOrder(
+      product?.id?.toString() || 'unknown',
+      {
+        maskedDataUrl: compressedImage,
+        rawDataUrl: rawUploadedImage || undefined,
+        filename: originalFileName || `product-${product?.id}-${Date.now()}.png`,
+        uploadedAt: new Date().toISOString()
+      },
+      {
+        name: product?.name,
+        sku: product?.sku,
+        cockpit3dId: product?.cockpit3d_id
+      }
+    )
+    
+    console.log('📦 [IMAGE SAVE] Order tracking started:', {
+      orderRef: pendingOrder.tempOrderRef,
+      productId: product?.id,
+      productName: product?.name
+    })
+    
     // ✅ IMMEDIATELY UPLOAD to server
     setIsUploadingImage(true)
     
     try {
-      // Generate a temporary order reference for image organization
-      const orderRef = `TEMP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      setTempOrderRef(orderRef)
+      console.log('📤 [IMAGE SAVE] Uploading images to server...')
       
-      console.log('📤 [IMAGE SAVE] Uploading images to server immediately...')
-      console.log('📁 [IMAGE SAVE] Order reference:', orderRef)
-      
-      // Upload both masked and raw images
+      // Upload both masked and raw images using the order ref
       const uploadResult = await uploadCustomerImages(
         compressedImage,
         rawUploadedImage || undefined,
         product?.id?.toString() || 'unknown',
-        orderRef
+        pendingOrder.tempOrderRef // Use the order ref for folder organization
       )
       
       if (uploadResult.maskedUrl) {
@@ -251,21 +274,26 @@ export default function ProductDetailClient() {
         console.log('✅ [IMAGE SAVE] Raw image uploaded:', uploadResult.rawUrl)
       }
       
+      // ✅ UPDATE ORDER with server URLs
+      updateOrderImages(
+        pendingOrder.tempOrderRef,
+        uploadResult.maskedUrl,
+        uploadResult.rawUrl
+      )
+      
       if (uploadResult.errors.length > 0) {
         console.warn('⚠️ [IMAGE SAVE] Upload warnings:', uploadResult.errors)
-        // Don't fail completely - images might still work
       }
       
-      logger.success('Images uploaded to server on Save', {
+      logger.success('Order started and images uploaded', {
+        orderRef: pendingOrder.tempOrderRef,
         maskedUrl: uploadResult.maskedUrl,
-        rawUrl: uploadResult.rawUrl,
-        orderRef
+        rawUrl: uploadResult.rawUrl
       })
       
     } catch (error) {
       console.error('❌ [IMAGE SAVE] Failed to upload images:', error)
       logger.error('Image upload failed on save', error)
-      // Set error but don't block - user can still try to add to cart
       setErrors(prev => ({
         ...prev,
         imageUpload: 'Image upload failed. Please try saving again.'
