@@ -211,13 +211,14 @@ try {
         'url' => $fileUrl,
         'size' => $imageSize,
         'type' => $imageType,
-        'environment' => $isDev ? 'development' : 'production',
+        'environment' => $mode,
         'debug' => [
             'uploadDir' => $uploadDir,
             'filePath' => $filePath,
             'fileExists' => file_exists($filePath),
             'fileSize' => filesize($filePath),
-            'isReadable' => is_readable($filePath)
+            'isReadable' => is_readable($filePath),
+            'htdocsRoot' => $htdocsRoot
         ]
     ]);
     
