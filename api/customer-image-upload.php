@@ -88,7 +88,6 @@ try {
     
     // Determine upload directory based on environment
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
-    $projectRoot = dirname(__DIR__);
     $backendUrl = getEnvVar('NEXT_PUBLIC_PHP_BACKEND_URL') ?? 'http://localhost:8888/crystalkeepsakes';
     
     error_log("🖼️  Image Upload - Mode: $mode");
@@ -101,27 +100,25 @@ try {
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // Fallback: Detect based on mode
+        // ✅ FIX: Use DOCUMENT_ROOT to get htdocs path correctly
         // 
         // FOLDER STRUCTURE:
-        // Local (MAMP):      C:\MAMP\htdocs\crystal-data\  (sibling to crystalkeepsakes)
-        // Production:        public_html/crystal-data/     (sibling to crystalkeepsakes.com)
+        // Local (MAMP):      C:\MAMP\htdocs\crystal-data\  (INSIDE htdocs)
+        // Production:        public_html/crystal-data/     (INSIDE public_html)
         //
-        // $projectRoot = crystalkeepsakes folder
-        // dirname($projectRoot) = htdocs or public_html
-        // So: dirname($projectRoot) . '/crystal-data/' = correct sibling folder
+        // $_SERVER['DOCUMENT_ROOT'] = htdocs or public_html directly
         
-        $htdocsOrPublicHtml = dirname($projectRoot); // Go up to htdocs or public_html
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+        error_log("DOCUMENT_ROOT: $documentRoot");
         
         if ($mode === 'development') {
             // Local dev: htdocs/crystal-data/order-images-test/
-            $uploadDir = $htdocsOrPublicHtml . '/crystal-data/order-images-test/';
+            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
         } else {
             // Production: public_html/crystal-data/order-images/
-            $uploadDir = $htdocsOrPublicHtml . '/crystal-data/order-images/';
+            $uploadDir = $documentRoot . '/crystal-data/order-images/';
         }
-        error_log("Using default path for $mode: $uploadDir");
-        error_log("htdocs/public_html root: $htdocsOrPublicHtml");
+        error_log("Upload directory: $uploadDir");
     }
     
     // Ensure directory has trailing slash
