@@ -77,9 +77,25 @@ export interface CartItem {
  * Compress image to thumbnail for cart display
  * ✅ ENHANCED: Higher quality for cart preview (400px @ 0.9 quality)
  * Larger size and better quality = clearer cart images
+ * NOTE: Only works with base64 data URLs, not server URLs
  */
 async function compressImageToThumbnail(dataUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
+    // Skip compression for server URLs (they can't be drawn on canvas due to CORS)
+    if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+      // Return a placeholder or the URL itself for server images
+      console.log('⚠️ Skipping thumbnail compression for server URL')
+      resolve(dataUrl) // Just return the URL as-is
+      return
+    }
+    
+    // Validate it's a data URL
+    if (!dataUrl.startsWith('data:image/')) {
+      console.warn('⚠️ Invalid data URL format, skipping compression')
+      resolve(dataUrl)
+      return
+    }
+    
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
@@ -113,7 +129,10 @@ async function compressImageToThumbnail(dataUrl: string): Promise<string> {
       // ✅ Much higher quality (0.9 instead of 0.7)
       resolve(canvas.toDataURL('image/jpeg', 0.9))
     }
-    img.onerror = () => reject(new Error('Image compression failed'))
+    img.onerror = () => {
+      console.error('❌ Image compression failed for:', dataUrl.substring(0, 50))
+      reject(new Error('Image compression failed'))
+    }
     img.src = dataUrl
   })
 }
