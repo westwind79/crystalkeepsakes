@@ -369,15 +369,49 @@ export default function ProductDetailClient() {
         const img = new window.Image()
         img.src = finalMaskedImage
         
+        // Store full-res locally as backup
         if (uploadedImage) {
           storeFullResImage(product.id.toString(), uploadedImage)
         }
         
         await new Promise(resolve => { img.onload = resolve })
         
+        // Generate a temporary order reference for image upload
+        // This will be replaced with real order number at checkout
+        const tempOrderRef = `TEMP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        
+        // Upload images to server immediately and get URLs
+        let maskedImageUrl: string | undefined
+        let originalImageUrl: string | undefined
+        
+        if (needsUpload(finalMaskedImage)) {
+          console.log('📤 Uploading custom images to server...')
+          const uploadResult = await uploadCustomerImages(
+            finalMaskedImage,
+            uploadedImage || undefined,
+            product.id.toString(),
+            tempOrderRef
+          )
+          
+          if (uploadResult.maskedUrl) {
+            maskedImageUrl = uploadResult.maskedUrl
+            console.log('✅ Masked image uploaded:', maskedImageUrl)
+          }
+          if (uploadResult.rawUrl) {
+            originalImageUrl = uploadResult.rawUrl
+            console.log('✅ Original image uploaded:', originalImageUrl)
+          }
+          if (uploadResult.errors.length > 0) {
+            console.warn('⚠️ Image upload errors:', uploadResult.errors)
+          }
+        }
+        
         customImage = {
-          dataUrl: finalMaskedImage,
-          originalDataUrl: uploadedImage,
+          // Store SERVER URLs instead of base64 when available
+          dataUrl: maskedImageUrl || finalMaskedImage, // Prefer server URL
+          originalDataUrl: originalImageUrl || uploadedImage, // Prefer server URL
+          serverUrl: maskedImageUrl, // Explicit server URL field
+          originalServerUrl: originalImageUrl, // Explicit original server URL
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
@@ -385,7 +419,8 @@ export default function ProductDetailClient() {
           height: img.height,
           processedAt: new Date().toISOString(),
           maskId: product.maskImageUrl,
-          maskName: 'Product Mask'
+          maskName: 'Product Mask',
+          tempOrderRef: tempOrderRef // Track which temp folder images are in
         }
       }
       
