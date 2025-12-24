@@ -491,17 +491,32 @@ export default function CartPage() {
                       {item.customImageMetadata?.hasImage && (
                         <div className="text-sm bg-emerald-50 rounded px-3 py-2 mb-3">
                           <span className="text-emerald-700 font-medium">Custom Image: </span>
-                          {item.customImage?.rawImageDataUrl ? (
+                          {/* Prefer server URL over base64 */}
+                          {(item.customImage?.serverUrl || item.customImage?.dataUrl) ? (
                             <a 
-                              href={item.customImage.rawImageDataUrl} 
+                              href={item.customImage.serverUrl || item.customImage.dataUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
                             >
-                              {item.customImageMetadata.filename || 'View Image'}
+                              {item.customImageMetadata.filename || 'View Masked Image'}
                             </a>
                           ) : (
                             <span className="text-emerald-600">{item.customImageMetadata.filename}</span>
+                          )}
+                          {/* Also show original if available */}
+                          {(item.customImage?.originalServerUrl || item.customImage?.originalDataUrl) && (
+                            <>
+                              <span className="mx-2 text-gray-400">|</span>
+                              <a 
+                                href={item.customImage.originalServerUrl || item.customImage.originalDataUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                              >
+                                View Original
+                              </a>
+                            </>
                           )}
                         </div>
                       )}
