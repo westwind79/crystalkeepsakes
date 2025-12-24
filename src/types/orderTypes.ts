@@ -22,6 +22,7 @@ export interface CustomImage {
   maskName?: string
   fullResId?: string
   tempOrderRef?: string        // Temp folder reference before real order number assigned
+  orderStartedAt?: string      // When order tracking began (image save time)
 }
 
 /**
