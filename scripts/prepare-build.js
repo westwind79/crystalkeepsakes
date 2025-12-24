@@ -102,6 +102,17 @@ try {
     console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
   }
 
+  // Step 5b: Copy composer.json for PHP dependencies
+  // This allows running 'composer install' on the server if vendor folder is missing
+  const composerSource = 'composer.json';
+  if (fs.existsSync(composerSource)) {
+    const composerDest = path.join(config.targetOut, 'composer.json');
+    fs.copyFileSync(composerSource, composerDest);
+    console.log(`  ✅ Copied composer.json → ${config.targetOut}/composer.json`);
+  } else {
+    console.log(`  ⚠️  composer.json not found - PHP dependencies may not work`);
+  }
+
   // Step 6: Create deployment instructions
   const deployInstructions = `
 ╔════════════════════════════════════════════════════════════════╗
