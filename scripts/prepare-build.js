@@ -159,6 +159,13 @@ try {
    ☐ Verify order confirmation email
    ${mode === 'prod' ? '☐ Check SSL certificate is valid' : '☐ Verify /test is password protected (optional)'}
 
+📦 PHP DEPENDENCIES (Stripe):
+   ☐ composer.json is included in build
+   ☐ If vendor/ folder is missing on server, run:
+      cd ${config.uploadTo}
+      composer install
+   ☐ Verify vendor/autoload.php exists
+
 ⚠️  SAFETY REMINDERS:
    ${mode === 'prod' ? '• Using LIVE Stripe keys - real charges will occur!' : '• Using TEST Stripe keys - no real charges'}
    • Double-check you're uploading to: ${config.uploadTo}
