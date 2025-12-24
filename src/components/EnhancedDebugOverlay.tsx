@@ -116,7 +116,20 @@ export default function EnhancedDebugOverlay() {
         mode: process.env.NEXT_PUBLIC_ENV_MODE || 'development',
         basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/',
         backend: process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'Not set',
-        stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST'
+        stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST',
+        // Show partial keys for debugging (first 12 chars + last 4)
+        stripePublishableKey: (() => {
+          const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
+          if (!key) return 'NOT SET'
+          if (key.length < 20) return key
+          return `${key.substring(0, 12)}...${key.substring(key.length - 4)}`
+        })(),
+        stripeKeyType: (() => {
+          const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
+          if (key.startsWith('pk_live_')) return 'LIVE 🔴'
+          if (key.startsWith('pk_test_')) return 'TEST 🟢'
+          return 'UNKNOWN ⚠️'
+        })()
       },
       production: {
         cartItems: cart.length,
