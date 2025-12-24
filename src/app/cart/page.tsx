@@ -263,26 +263,37 @@ export default function CartPage() {
     setCheckoutLoading(true)
     
     try {
-      // Redirect to checkout using current path context
-      // This preserves /test/ prefix if we're in the test environment
+      // Detect test environment from multiple sources
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const currentHref = typeof window !== 'undefined' ? window.location.href : ''
       
-      // Check for /test or /test/ at the start of the path
-      const isTestEnv = currentPath.startsWith('/test/') || currentPath === '/test' || currentPath.startsWith('/test?')
+      // Check for /test in path OR in full URL (handles various URL structures)
+      const isTestEnv = currentPath.startsWith('/test/') || 
+                        currentPath === '/test' || 
+                        currentPath.startsWith('/test?') ||
+                        currentHref.includes('/test/') ||
+                        currentHref.includes('crystalkeepsakes.com/test')
       
-      // Build the checkout URL
-      let checkoutUrl = '/checkout'
+      // Build the checkout URL - use full URL to avoid any relative path issues
+      let checkoutUrl: string
       if (isTestEnv) {
-        checkoutUrl = '/test/checkout'
-      } else if (process.env.NEXT_PUBLIC_BASE_PATH) {
-        checkoutUrl = `${process.env.NEXT_PUBLIC_BASE_PATH}/checkout`
+        // For test environment, use absolute path
+        if (typeof window !== 'undefined') {
+          const origin = window.location.origin
+          checkoutUrl = `${origin}/test/checkout`
+        } else {
+          checkoutUrl = '/test/checkout'
+        }
+      } else {
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+        checkoutUrl = basePath ? `${basePath}/checkout` : '/checkout'
       }
       
       console.log('🛒 Proceeding to checkout:', { 
         currentPath, 
+        currentHref,
         isTestEnv, 
-        checkoutUrl,
-        href: typeof window !== 'undefined' ? window.location.href : 'N/A'
+        checkoutUrl
       })
       
       window.location.href = checkoutUrl
