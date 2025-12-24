@@ -109,6 +109,12 @@ export default function ProductDetailClient() {
   const [finalMaskedImage, setFinalMaskedImage] = useState<string | null>(null)
   const [showEditor, setShowEditor] = useState(false)
   
+  // Server URLs for uploaded images (populated on Save, not Add to Cart)
+  const [maskedImageServerUrl, setMaskedImageServerUrl] = useState<string | null>(null)
+  const [rawImageServerUrl, setRawImageServerUrl] = useState<string | null>(null)
+  const [tempOrderRef, setTempOrderRef] = useState<string | null>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  
   // UI State
   const [addingToCart, setAddingToCart] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
