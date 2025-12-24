@@ -219,11 +219,18 @@ function buildCockpit3DOrderItem(item: any, index: number): Cockpit3DOrderItem {
   }
 
   // Add custom image URLs if present
-  // Note: Images need to be uploaded to accessible URL first
-  if (item.customImageId) {
-    // Placeholder - actual implementation needs image upload
-    orderItem.special_instructions = `Custom image ID: ${item.customImageId}`
-    // TODO: Upload image and set original_photo and cropped_photo URLs
+  // ✅ USE SERVER URLs for Cockpit3D - these are the actual accessible URLs
+  if (item.customImage?.serverUrl || item.customImage?.originalServerUrl) {
+    orderItem.cropped_photo = item.customImage.serverUrl || undefined
+    orderItem.original_photo = item.customImage.originalServerUrl || item.customImage.serverUrl || undefined
+    
+    console.log('🖼️ [COCKPIT3D ITEM BUILDER] Image URLs:', {
+      cropped_photo: orderItem.cropped_photo,
+      original_photo: orderItem.original_photo
+    })
+  } else if (item.customImageId) {
+    // Fallback: note the image ID if no server URL available
+    orderItem.special_instructions = `⚠️ Image pending upload (ID: ${item.customImageId})`
   }
 
   // Add custom text as special instructions
