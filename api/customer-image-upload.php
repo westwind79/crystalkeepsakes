@@ -100,37 +100,35 @@ try {
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // Get DOCUMENT_ROOT and log it for debugging
-        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        error_log("RAW DOCUMENT_ROOT: $documentRoot");
+        // ✅ RELIABLE PATH CALCULATION - Don't trust DOCUMENT_ROOT!
+        // This script is at: htdocs/crystalkeepsakes/api/customer-image-upload.php
+        // We want: htdocs/crystal-data/
+        // So: go up 2 levels from this file, then into crystal-data
         
-        // ✅ MAMP FIX: Detect if we're in MAMP and ensure path goes INSIDE htdocs
-        // MAMP sometimes sets DOCUMENT_ROOT to the vhost folder, not htdocs
-        if (strpos($documentRoot, 'MAMP') !== false) {
-            // We're in MAMP - force the correct htdocs path
-            // Check if htdocs is already in the path
-            if (strpos($documentRoot, 'htdocs') === false) {
-                // DOCUMENT_ROOT doesn't include htdocs - this is wrong!
-                // Try to find htdocs in the path
-                $documentRoot = preg_replace('/MAMP[\/\\\\]?$/', 'MAMP/htdocs', $documentRoot);
-                error_log("MAMP DETECTED - Corrected to: $documentRoot");
-            }
-        }
+        $scriptDir = __DIR__; // /htdocs/crystalkeepsakes/api/
+        $projectRoot = dirname($scriptDir); // /htdocs/crystalkeepsakes/
+        $htdocsRoot = dirname($projectRoot); // /htdocs/
         
         // Normalize slashes for Windows
-        $documentRoot = str_replace('\\', '/', $documentRoot);
-        $documentRoot = rtrim($documentRoot, '/');
+        $htdocsRoot = str_replace('\\', '/', $htdocsRoot);
+        $htdocsRoot = rtrim($htdocsRoot, '/');
         
-        error_log("FINAL DOCUMENT_ROOT: $documentRoot");
+        error_log("📁 Script location: $scriptDir");
+        error_log("📁 Project root: $projectRoot");
+        error_log("📁 Htdocs root (calculated): $htdocsRoot");
+        
+        // Also log DOCUMENT_ROOT for comparison/debugging
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'NOT SET';
+        error_log("📁 DOCUMENT_ROOT (for reference): $documentRoot");
         
         if ($mode === 'development') {
             // Local dev: htdocs/crystal-data/order-images-test/
-            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $htdocsRoot . '/crystal-data/order-images-test/';
         } else {
             // Production: public_html/crystal-data/order-images/
-            $uploadDir = $documentRoot . '/crystal-data/order-images/';
+            $uploadDir = $htdocsRoot . '/crystal-data/order-images/';
         }
-        error_log("Upload directory: $uploadDir");
+        error_log("📁 Upload directory: $uploadDir");
     }
     
     // Ensure directory has trailing slash
