@@ -151,4 +151,7 @@ api/order-data/
 .htaccess.bak
 
 # Emergent Platform
-emergent.yml
+emergent.yml-e 
+# Environment files
+*.env
+*.env.*
