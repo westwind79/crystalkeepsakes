@@ -240,7 +240,8 @@ export default function CheckoutHostedPage() {
                 onClick={() => {
                   // Preserve test path prefix when returning to cart
                   const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
-                  const isTestEnv = currentPath.startsWith('/test')
+                  const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+                  const isTestEnv = currentPath.startsWith('/test') || currentHref.includes('/test/')
                   router.push(isTestEnv ? '/test/cart' : '/cart')
                 }}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
