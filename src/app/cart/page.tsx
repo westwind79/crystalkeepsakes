@@ -151,7 +151,7 @@ export default function CartPage() {
   const getDetailedOptions = (item: CartItem) => {
     const options: Array<{ name: string; value: string; price: number }> = []
     
-    // Check sizeDetails first (the actual structure used by ProductDetailClient)
+    // 1. SIZE - Check sizeDetails first (used by ProductDetailClient)
     if (item.sizeDetails && item.sizeDetails.sizeName) {
       options.push({
         name: 'Size',
@@ -160,27 +160,43 @@ export default function CartPage() {
       })
     }
     
-    // Then check options array for lightBase, background, etc.
+    // 2. Process options array for all Cockpit3D required fields
     if (item.options && Array.isArray(item.options)) {
       item.options.forEach((opt: any) => {
-        // Skip size in options array if we already have sizeDetails
-        if (opt.category === 'size' && opt.name && !item.sizeDetails) {
-          options.push({
-            name: 'Size',
-            value: opt.name,
-            price: opt.price || opt.basePrice || 0
-          })
-        } else if (opt.category === 'lightBase' && opt.name) {
+        // Light Base
+        if (opt.category === 'lightBase' && opt.name) {
           options.push({
             name: 'Light Base',
-            value: opt.name,
+            value: opt.name || opt.value,
             price: opt.priceModifier || opt.price || 0
           })
-        } else if (opt.category === 'background' && opt.name) {
+        }
+        // Background
+        else if (opt.category === 'background' && opt.name) {
           options.push({
             name: 'Background',
-            value: opt.name,
+            value: opt.name || opt.value,
             price: opt.priceModifier || opt.price || 0
+          })
+        }
+        // Faces (for multi-face products) - HIDDEN until pricing set
+        else if (opt.category === 'faces' && opt.name) {
+          options.push({
+            name: 'Faces',
+            value: opt.name || opt.value,
+            price: opt.priceModifier || opt.price || 0
+          })
+        }
+        // Custom Text (when in options array)
+        else if (opt.category === 'customText' && (opt.line1 || opt.line2)) {
+          // Skip - handled by getCustomTextDetails below
+        }
+        // Size in options (fallback if no sizeDetails)
+        else if (opt.category === 'size' && opt.name && !item.sizeDetails) {
+          options.push({
+            name: 'Size',
+            value: opt.name || opt.value,
+            price: opt.price || opt.basePrice || 0
           })
         }
       })
@@ -189,23 +205,20 @@ export default function CartPage() {
     return options
   }
 
-  /**
-   * Hero Component - Single source of truth
-   */
-  const ContinueShoppingBtn = () => (
-    <div className="text-center mt-10">
-      {/* Continue Shopping */}
-      <Link 
-        href="/products" 
-        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
-      >
-        <span>←</span>
-        <span>Continue Shopping</span>
-      </Link>
-    </div>
-  )
-
   const getCustomTextDetails = (item: CartItem) => {
+    // First check if custom text is in the options array
+    if (item.options && Array.isArray(item.options)) {
+      const textOpt = item.options.find((opt: any) => opt.category === 'customText')
+      if (textOpt && (textOpt.line1 || textOpt.line2)) {
+        return {
+          line1: textOpt.line1 || '',
+          line2: textOpt.line2 || '',
+          price: textOpt.priceModifier || 0
+        }
+      }
+    }
+    
+    // Fallback to direct customText property
     if (item.customText) {
       const line1 = item.customText.line1 || ''
       const line2 = item.customText.line2 || ''
@@ -214,7 +227,7 @@ export default function CartPage() {
         let textPrice = 0
         if (Array.isArray(item.options)) {
           const textOpt = item.options.find((opt: any) => 
-            opt.category === 'textOption' || opt.name?.toLowerCase().includes('text')
+            opt.category === 'customText' || opt.name?.toLowerCase().includes('text')
           )
           if (textOpt && textOpt.priceModifier) {
             textPrice = textOpt.priceModifier
