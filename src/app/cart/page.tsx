@@ -339,27 +339,47 @@ export default function CartPage() {
                     <div className="flex-shrink-0 space-y-3">
                       {/* Product Image */}
                       <div className="text-center">
-                        <img 
-                          src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
-                          alt={item.name}
-                          className="w-65 h-65 object-cover rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                          onClick={() => window.open(item.productImage, '_blank')}
-                          title="Click to view full size"
-                        />
-                        <span className="text-xs text-gray-600 font-medium mt-1">Product Image</span>
+                        <a href={item.productImage || '#'} target="_blank" rel="noopener noreferrer">
+                          <img 
+                            src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
+                            alt={item.name}
+                            className="w-65 h-65 object-cover rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            title="Click to view full size"
+                          />
+                        </a>
+                        <span className="text-xs text-gray-600 font-medium mt-1 block">Product Image</span>
                       </div>
                       
                       {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
                       {(item.customImage?.serverUrl || item.customImage?.thumbnail || item.customImage?.dataUrl) && (
                         <div className="text-center">
-                          <img 
-                            src={item.customImage.serverUrl || item.customImage.thumbnail || item.customImage.dataUrl}
-                            alt="Final Engraved Version"
-                            className="w-65 h-65 object-cover rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                            onClick={() => window.open(item.customImage?.serverUrl || item.customImage?.dataUrl, '_blank')}
-                            title="Click to view full size"
-                          />
-                          <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
+                          {/* Use server URL for link, thumbnail/dataUrl for display */}
+                          <a 
+                            href={item.customImage.serverUrl || '#'} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            title={item.customImage.serverUrl ? "Click to view full size on server" : "Server URL not available"}
+                          >
+                            <img 
+                              src={item.customImage.thumbnail || item.customImage.dataUrl || item.customImage.serverUrl}
+                              alt="Final Engraved Version"
+                              className="w-65 h-65 object-cover rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            />
+                          </a>
+                          <span className="text-xs text-green-600 font-medium mt-1 block">Final Engraved</span>
+                          {/* Show server URL status */}
+                          {item.customImage.serverUrl ? (
+                            <a 
+                              href={item.customImage.serverUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-500 hover:text-blue-700 underline block mt-1"
+                            >
+                              View on Server ↗
+                            </a>
+                          ) : (
+                            <span className="text-xs text-orange-500 block mt-1">⚠️ No server URL</span>
+                          )}
                         </div>
                       )}
                     </div>
