@@ -263,9 +263,18 @@ export default function CartPage() {
     setCheckoutLoading(true)
     
     try {
-      // Redirect to Stripe Hosted Checkout
-      // OLD window.location.href = '/checkout-hosted'
-      window.location.href = '/checkout'
+      // Get base path for proper routing (e.g., /test for test environment)
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+      
+      // Redirect to checkout using current path context
+      // This preserves /test/ prefix if we're in the test environment
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const isTestEnv = currentPath.startsWith('/test')
+      
+      const checkoutUrl = isTestEnv ? '/test/checkout' : `${basePath}/checkout`
+      
+      console.log('🛒 Proceeding to checkout:', { basePath, currentPath, isTestEnv, checkoutUrl })
+      window.location.href = checkoutUrl
       
     } catch (error) {
       console.error('❌ Checkout error:', error)
