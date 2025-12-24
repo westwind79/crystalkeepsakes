@@ -201,7 +201,8 @@ export async function addToCart(item: CartItem | any): Promise<void> {
         }
         
         // Store BOTH raw and masked images in IndexedDB
-        customImageId = await imageDB.storeImage(
+        // Note: storeImage returns null if IndexedDB is unavailable (graceful fallback)
+        const storedId = await imageDB.storeImage(
           item.productId,
           maskedImageUrl,
           thumbnail,
@@ -219,24 +220,31 @@ export async function addToCart(item: CartItem | any): Promise<void> {
           rawThumbnail // Store raw thumbnail
         )
         
+        // storedId will be null if IndexedDB is unavailable
+        customImageId = storedId || undefined
+        
         customImageMetadata = {
           filename: item.customImage?.filename || item.options?.imageFilename,
           maskName: item.customImage?.maskName || item.options?.maskName,
           hasImage: true
         }
         
-        logger.success('Images stored in IndexedDB', {
-          imageId: customImageId,
-          hasRawImage: !!rawImageUrl,
-          maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
-          rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
-          thumbnailSizeKB: Math.round(thumbnail.length / 1024)
-        })
+        if (customImageId) {
+          logger.success('Images stored in IndexedDB', {
+            imageId: customImageId,
+            hasRawImage: !!rawImageUrl,
+            maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
+            rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
+            thumbnailSizeKB: Math.round(thumbnail.length / 1024)
+          })
+        } else {
+          console.warn('⚠️ IndexedDB unavailable - images will use server URLs only')
+        }
       } catch (error) {
         logger.error('Failed to store image in IndexedDB', error)
         // Continue without image rather than fail entire add
         customImageId = undefined
-        customImageMetadata = { hasImage: false }
+        customImageMetadata = { hasImage: true } // Still mark as having image (server URL)
       }
     }
     
