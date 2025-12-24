@@ -100,16 +100,28 @@ try {
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // ✅ FIX: Use DOCUMENT_ROOT to get htdocs path correctly
-        // 
-        // FOLDER STRUCTURE:
-        // Local (MAMP):      C:\MAMP\htdocs\crystal-data\  (INSIDE htdocs)
-        // Production:        public_html/crystal-data/     (INSIDE public_html)
-        //
-        // $_SERVER['DOCUMENT_ROOT'] = htdocs or public_html directly
-        
+        // Get DOCUMENT_ROOT and log it for debugging
         $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        error_log("DOCUMENT_ROOT: $documentRoot");
+        error_log("RAW DOCUMENT_ROOT: $documentRoot");
+        
+        // ✅ MAMP FIX: Detect if we're in MAMP and ensure path goes INSIDE htdocs
+        // MAMP sometimes sets DOCUMENT_ROOT to the vhost folder, not htdocs
+        if (strpos($documentRoot, 'MAMP') !== false) {
+            // We're in MAMP - force the correct htdocs path
+            // Check if htdocs is already in the path
+            if (strpos($documentRoot, 'htdocs') === false) {
+                // DOCUMENT_ROOT doesn't include htdocs - this is wrong!
+                // Try to find htdocs in the path
+                $documentRoot = preg_replace('/MAMP[\/\\\\]?$/', 'MAMP/htdocs', $documentRoot);
+                error_log("MAMP DETECTED - Corrected to: $documentRoot");
+            }
+        }
+        
+        // Normalize slashes for Windows
+        $documentRoot = str_replace('\\', '/', $documentRoot);
+        $documentRoot = rtrim($documentRoot, '/');
+        
+        error_log("FINAL DOCUMENT_ROOT: $documentRoot");
         
         if ($mode === 'development') {
             // Local dev: htdocs/crystal-data/order-images-test/
