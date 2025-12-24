@@ -134,11 +134,18 @@ export default function CheckoutHostedPage() {
       // Get base path for proper redirect URLs (e.g., /test for test environment)
       const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
       
+      // ✅ FIX: Explicitly send the frontend URL for Stripe redirects
+      // This ensures correct redirect back to localhost:3000 (not localhost:8888)
+      const frontendUrl = typeof window !== 'undefined' 
+        ? `${window.location.protocol}//${window.location.host}${basePath}`
+        : `http://localhost:3000${basePath}`
+      
       const payload = {
         cartItems: cartForCheckout,
         subtotal: subtotal,
         orderNumber: orderNumber, // Use the same order number
-        basePath: basePath // Tell PHP which subdirectory we're in
+        basePath: basePath, // Tell PHP which subdirectory we're in
+        frontendUrl: frontendUrl // Explicit frontend URL for Stripe redirects
       }
 
       logger.info('Making API call', { 
