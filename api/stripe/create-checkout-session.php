@@ -129,17 +129,35 @@ try {
     $baseUrl = '';
     $subDirectory = '';
     
-    // Check if client explicitly sent base_path (most reliable)
-    if (!empty($data->basePath)) {
+    // BEST: Use explicit frontendUrl from client (most reliable)
+    if (!empty($data->frontendUrl)) {
+        $baseUrl = rtrim($data->frontendUrl, '/');
+        error_log("Using explicit frontendUrl from client: $baseUrl");
+    }
+    // Check if client explicitly sent base_path
+    elseif (!empty($data->basePath)) {
         $subDirectory = '/' . trim($data->basePath, '/');
         error_log("Using explicit basePath from client: $subDirectory");
+        
+        // Still need to determine the host
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            $parsedUrl = parse_url($_SERVER['HTTP_REFERER']);
+            $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+            if (isset($parsedUrl['port'])) {
+                $baseUrl .= ':' . $parsedUrl['port'];
+            }
+            $baseUrl .= $subDirectory;
+        }
     }
     
-    // FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
-    if (isset($_SERVER['HTTP_REFERER'])) {
+    // Fallback: FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
+    if (empty($baseUrl) && isset($_SERVER['HTTP_REFERER'])) {
         $referer = $_SERVER['HTTP_REFERER'];
         $parsedUrl = parse_url($referer);
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+        if (isset($parsedUrl['port'])) {
+            $baseUrl .= ':' . $parsedUrl['port'];
+        }
         
         // Handle subdirectory paths (e.g., /test, /crystalkeepsakes)
         if (isset($parsedUrl['path']) && empty($subDirectory)) {
@@ -154,22 +172,17 @@ try {
         error_log("Using HTTP_REFERER: $baseUrl (subdir: '$subDirectory')");
     }
     // Fallback to HTTP_ORIGIN (doesn't include path)
-    elseif (isset($_SERVER['HTTP_ORIGIN'])) {
+    elseif (empty($baseUrl) && isset($_SERVER['HTTP_ORIGIN'])) {
         $baseUrl = $_SERVER['HTTP_ORIGIN'] . $subDirectory;
         error_log("Using HTTP_ORIGIN: $baseUrl");
     } 
     // Fallback to environment-based detection
-    else {
+    elseif (empty($baseUrl)) {
         if ($mode === 'production') {
             $baseUrl = 'https://crystalkeepsakes.com' . $subDirectory;
         } else {
-            // Check if running in MAMP subdirectory
-            $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-            if (strpos($docRoot, 'MAMP') !== false || strpos($docRoot, 'htdocs') !== false) {
-                $baseUrl = 'http://localhost:8888/crystalkeepsakes';
-            } else {
-                $baseUrl = 'http://localhost:3000';
-            }
+            // Default to localhost:3000 for Next.js dev server
+            $baseUrl = 'http://localhost:3000' . $subDirectory;
         }
         error_log("Using fallback URL: $baseUrl");
     }
