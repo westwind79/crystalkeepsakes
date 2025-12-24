@@ -805,17 +805,33 @@ export default function EnhancedDebugOverlay() {
                               const cart = await getCartWithImages()
                               
                               // Build payload matching PHP endpoint expectations
+                              // ✅ KEEP THE OPTIONS ARRAY - don't flatten it!
                               const payload = {
-                                orderNumber: orderPreview.order_id,
+                                orderNumber: orderPreview.address.order_id,
                                 cartItems: cart.map((item: any) => ({
-                                  ...item,
+                                  productId: item.productId,
                                   cockpit3d_id: item.cockpit3d_id || item.productId,
-                                  options: {
-                                    size: item.sizeDetails?.name || item.size?.name,
-                                    lightBase: item.options?.find((o: any) => o.category === 'lightBase')?.name || 'none',
-                                    background: item.options?.find((o: any) => o.category === 'background')?.name,
-                                    customText: item.customText || item.options?.find((o: any) => o.category === 'customText')
-                                  }
+                                  name: item.name,
+                                  sku: item.sku,
+                                  quantity: item.quantity,
+                                  price: item.price,
+                                  totalPrice: item.totalPrice,
+                                  basePrice: item.basePrice,
+                                  // ✅ KEEP THE OPTIONS ARRAY AS-IS
+                                  options: item.options,
+                                  // ✅ KEEP SIZE DETAILS
+                                  size: item.size,
+                                  sizeDetails: item.sizeDetails,
+                                  // ✅ KEEP CUSTOM TEXT
+                                  customText: item.customText,
+                                  // ✅ KEEP IMAGE DATA
+                                  customImage: item.customImage ? {
+                                    serverUrl: item.customImage.serverUrl,
+                                    originalServerUrl: item.customImage.originalServerUrl,
+                                    filename: item.customImage.filename,
+                                    tempOrderRef: item.customImage.tempOrderRef
+                                  } : null,
+                                  customImageId: item.customImageId
                                 })),
                                 customer: {
                                   firstName: 'Test',
