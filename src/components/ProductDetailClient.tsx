@@ -435,43 +435,21 @@ export default function ProductDetailClient() {
         
         await new Promise(resolve => { img.onload = resolve })
         
-        // Generate a temporary order reference for image upload
-        // This will be replaced with real order number at checkout
-        const tempOrderRef = `TEMP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-        
-        // Upload images to server immediately and get URLs
-        let maskedImageUrl: string | undefined
-        let originalImageUrl: string | undefined
-        
-        if (needsUpload(finalMaskedImage)) {
-          console.log('📤 Uploading custom images to server...')
-          const uploadResult = await uploadCustomerImages(
-            finalMaskedImage,
-            uploadedImage || undefined,
-            product.id.toString(),
-            tempOrderRef
-          )
-          
-          if (uploadResult.maskedUrl) {
-            maskedImageUrl = uploadResult.maskedUrl
-            console.log('✅ Masked image uploaded:', maskedImageUrl)
-          }
-          if (uploadResult.rawUrl) {
-            originalImageUrl = uploadResult.rawUrl
-            console.log('✅ Original image uploaded:', originalImageUrl)
-          }
-          if (uploadResult.errors.length > 0) {
-            console.warn('⚠️ Image upload errors:', uploadResult.errors)
-          }
-        }
+        // ✅ USE ALREADY-UPLOADED SERVER URLs (uploaded on Save, not here)
+        // Images were uploaded in handleImageEditorSave, so we just use the stored URLs
+        console.log('📸 [ADD TO CART] Using pre-uploaded images:', {
+          maskedServerUrl: maskedImageServerUrl,
+          rawServerUrl: rawImageServerUrl,
+          tempOrderRef: tempOrderRef
+        })
         
         customImage = {
           // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
           dataUrl: finalMaskedImage, // Always keep base64 for local processing
           originalDataUrl: uploadedImage, // Always keep base64 for local processing
-          // ✅ Store server URLs separately for Cockpit3D/checkout
-          serverUrl: maskedImageUrl, // Server URL for masked image
-          originalServerUrl: originalImageUrl, // Server URL for original image
+          // ✅ Use server URLs that were uploaded on Save
+          serverUrl: maskedImageServerUrl || undefined,
+          originalServerUrl: rawImageServerUrl || undefined,
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
@@ -480,7 +458,7 @@ export default function ProductDetailClient() {
           processedAt: new Date().toISOString(),
           maskId: product.maskImageUrl,
           maskName: 'Product Mask',
-          tempOrderRef: tempOrderRef // Track which temp folder images are in
+          tempOrderRef: tempOrderRef || undefined // Track which temp folder images are in
         }
       }
       
