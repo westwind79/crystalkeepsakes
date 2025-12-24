@@ -683,7 +683,7 @@ export default function ProductDetailClient() {
 
                 {finalMaskedImage ? (
                   <div className="space-y-4">
-                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
+                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100 relative">
                       <Image
                         src={finalMaskedImage} 
                         alt="Customer Preview" 
@@ -691,19 +691,44 @@ export default function ProductDetailClient() {
                         width={1024}
                         height={1024}
                       />
+                      {/* Upload status overlay */}
+                      {isUploadingImage && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="text-center text-white">
+                            <div className="inline-block w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mb-2"></div>
+                            <p className="text-sm font-medium">Uploading image...</p>
+                          </div>
+                        </div>
+                      )}
+                      {/* Upload success indicator */}
+                      {!isUploadingImage && maskedImageServerUrl && (
+                        <div className="absolute bottom-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Saved to server
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-3">
                       <button
                         type="button"
                         onClick={() => setShowEditor(true)}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
+                        disabled={isUploadingImage}
+                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Edit Image
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFinalMaskedImage(null)}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
+                        onClick={() => {
+                          setFinalMaskedImage(null)
+                          setMaskedImageServerUrl(null)
+                          setRawImageServerUrl(null)
+                          setTempOrderRef(null)
+                        }}
+                        disabled={isUploadingImage}
+                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Remove Image
                       </button>
