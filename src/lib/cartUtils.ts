@@ -208,6 +208,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     
     // Create cart item with ALL order data preserved
     // NOTE: Do NOT store image data URLs here - they're in IndexedDB only!
+    // BUT we DO store server URLs since those are lightweight strings
     const cartItem: CartItem = {
       // Product identification
       productId: item.productId,
@@ -230,12 +231,25 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       options: item.options || cleanedOptions,  // Preserve original options array/object
       productImage: item.productImage || null,
       
-      // Custom image (IndexedDB reference ONLY - not data URLs!)
+      // Custom image references
       customImageId,
       customImageMetadata,
       
-      // DO NOT store image data URLs in localStorage - causes QuotaExceeded!
-      // Images are loaded from IndexedDB when displaying cart
+      // ✅ CRITICAL: Store server URLs for Cockpit3D order payload
+      // These are lightweight string URLs, NOT base64 data
+      customImage: item.customImage ? {
+        serverUrl: item.customImage.serverUrl,
+        originalServerUrl: item.customImage.originalServerUrl,
+        filename: item.customImage.filename,
+        mimeType: item.customImage.mimeType,
+        width: item.customImage.width,
+        height: item.customImage.height,
+        processedAt: item.customImage.processedAt,
+        maskId: item.customImage.maskId,
+        maskName: item.customImage.maskName,
+        tempOrderRef: item.customImage.tempOrderRef,
+        // DO NOT store dataUrl or originalDataUrl (base64) - causes QuotaExceeded!
+      } : undefined,
       
       // Custom text (preserve full object)
       customText: item.customText,
