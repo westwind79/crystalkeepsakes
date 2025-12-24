@@ -202,13 +202,14 @@ export default function ProductDetailClient() {
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
    * Receives the masked/compressed image from editor
+   * ✅ NOW UPLOADS IMMEDIATELY to server on Save (not on Add to Cart)
    */
-  const handleImageEditorSave = (compressedImage: string) => {
-    logger.info('Image saved from editor', { 
+  const handleImageEditorSave = async (compressedImage: string) => {
+    logger.info('Image saved from editor - starting immediate upload', { 
       size: compressedImage.length 
     })
     
-    // Save the masked/compressed image (final product)
+    // Save the masked/compressed image (final product) for local display
     setFinalMaskedImage(compressedImage)
     setShowEditor(false)
     setErrors(prev => {
@@ -217,6 +218,58 @@ export default function ProductDetailClient() {
       delete newErrors.finalImage
       return newErrors
     })
+    
+    // ✅ IMMEDIATELY UPLOAD to server
+    setIsUploadingImage(true)
+    
+    try {
+      // Generate a temporary order reference for image organization
+      const orderRef = `TEMP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      setTempOrderRef(orderRef)
+      
+      console.log('📤 [IMAGE SAVE] Uploading images to server immediately...')
+      console.log('📁 [IMAGE SAVE] Order reference:', orderRef)
+      
+      // Upload both masked and raw images
+      const uploadResult = await uploadCustomerImages(
+        compressedImage,
+        rawUploadedImage || undefined,
+        product?.id?.toString() || 'unknown',
+        orderRef
+      )
+      
+      if (uploadResult.maskedUrl) {
+        setMaskedImageServerUrl(uploadResult.maskedUrl)
+        console.log('✅ [IMAGE SAVE] Masked image uploaded:', uploadResult.maskedUrl)
+      }
+      
+      if (uploadResult.rawUrl) {
+        setRawImageServerUrl(uploadResult.rawUrl)
+        console.log('✅ [IMAGE SAVE] Raw image uploaded:', uploadResult.rawUrl)
+      }
+      
+      if (uploadResult.errors.length > 0) {
+        console.warn('⚠️ [IMAGE SAVE] Upload warnings:', uploadResult.errors)
+        // Don't fail completely - images might still work
+      }
+      
+      logger.success('Images uploaded to server on Save', {
+        maskedUrl: uploadResult.maskedUrl,
+        rawUrl: uploadResult.rawUrl,
+        orderRef
+      })
+      
+    } catch (error) {
+      console.error('❌ [IMAGE SAVE] Failed to upload images:', error)
+      logger.error('Image upload failed on save', error)
+      // Set error but don't block - user can still try to add to cart
+      setErrors(prev => ({
+        ...prev,
+        imageUpload: 'Image upload failed. Please try saving again.'
+      }))
+    } finally {
+      setIsUploadingImage(false)
+    }
   }
 
   const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
