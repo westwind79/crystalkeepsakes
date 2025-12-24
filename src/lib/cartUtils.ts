@@ -600,8 +600,14 @@ export async function getImageStorageStats() {
       storageHealth: checkStorageHealth()
     }
   } catch (error) {
-    logger.error('Failed to get storage stats', error)
-    return null
+    // Don't log as error - this is expected when IndexedDB is unavailable
+    console.warn('⚠️ IndexedDB stats unavailable:', error)
+    return {
+      totalImages: 0,
+      estimatedSizeMB: 0,
+      isAvailable: false,
+      storageHealth: checkStorageHealth()
+    }
   }
 }
 
