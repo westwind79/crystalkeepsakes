@@ -451,14 +451,6 @@ export default function CartPage() {
                             )}
                           </div>
                         )}
-
-                        {/* Total Item Price */}
-                        <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
-                          <span className="text-base font-bold text-gray-900">Item Total:</span>
-                          <span className="text-xl font-bold text-[#8DC63F]">
-                            ${item.price.toFixed(2)}
-                          </span>
-                        </div>
                       </div>
 
                       {/* Image Metadata - Clickable Link */}
