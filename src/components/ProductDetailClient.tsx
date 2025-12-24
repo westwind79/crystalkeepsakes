@@ -407,11 +407,12 @@ export default function ProductDetailClient() {
         }
         
         customImage = {
-          // Store SERVER URLs instead of base64 when available
-          dataUrl: maskedImageUrl || finalMaskedImage, // Prefer server URL
-          originalDataUrl: originalImageUrl || uploadedImage, // Prefer server URL
-          serverUrl: maskedImageUrl, // Explicit server URL field
-          originalServerUrl: originalImageUrl, // Explicit original server URL
+          // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
+          dataUrl: finalMaskedImage, // Always keep base64 for local processing
+          originalDataUrl: uploadedImage, // Always keep base64 for local processing
+          // ✅ Store server URLs separately for Cockpit3D/checkout
+          serverUrl: maskedImageUrl, // Server URL for masked image
+          originalServerUrl: originalImageUrl, // Server URL for original image
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
