@@ -28,9 +28,9 @@ export interface CartItem {
   size?: any  // Keep for backward compatibility
   sizeDetails?: any
   options: any
-  productImage?: string  // Product's own image (for items without custom images)
+  productImage?: string | null  // Product's own image (for items without custom images)
   
-  // Custom image storage (IndexedDB)
+  // Custom image storage (IndexedDB reference)
   customImageId?: string  // Reference to IndexedDB image
   customImageMetadata?: {
     filename?: string
@@ -38,13 +38,31 @@ export interface CartItem {
     hasImage: boolean
   }
   
-  // Image URLs for display (data URLs from IndexedDB)
+  // ✅ Custom image with SERVER URLs for Cockpit3D
+  customImage?: {
+    serverUrl?: string           // Server URL for masked image
+    originalServerUrl?: string   // Server URL for original image
+    filename?: string
+    mimeType?: string
+    width?: number
+    height?: number
+    processedAt?: string
+    maskId?: string
+    maskName?: string
+    tempOrderRef?: string
+    // For backward compatibility / display fallback
+    thumbnail?: string
+    dataUrl?: string
+    originalDataUrl?: string
+  }
+  
+  // Legacy image URLs (deprecated - use customImage.serverUrl instead)
   rawImageUrl?: string  // Original uploaded image (before masking)
   maskedImageUrl?: string  // Final masked/edited image (for Cockpit3D)
   
   // Custom text
   customText?: {
-    text: string
+    text?: string
     line1?: string
     line2?: string
   }
