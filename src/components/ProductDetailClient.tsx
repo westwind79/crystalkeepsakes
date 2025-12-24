@@ -1,8 +1,10 @@
 // components/ProductDetailClient.tsx
-// Version: 3.1.0 - FIX: Reset file input for re-upload same image
+// Version: 3.2.0 - FIX: Upload images on SAVE (not Add to Cart)
 // ✅ Premium e-commerce design inspired by Tailwind UI
 // ✅ Clean spacing, modern typography, professional polish
 // ✅ Fixed: File input resets after upload to allow same file selection
+// ✅ Fixed: Images now upload immediately when customer clicks "Save" in editor
+// ✅ Fixed: Server URLs stored immediately for Cockpit3D integration
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
