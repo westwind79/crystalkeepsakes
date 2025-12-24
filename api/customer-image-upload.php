@@ -179,20 +179,23 @@ try {
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
     // Generate web-accessible URL
-    // Figure out the path relative to MAMP htdocs
-    $htdocsPath = $_SERVER['DOCUMENT_ROOT']; // e.g., C:/MAMP/htdocs
-    error_log("Document root: $htdocsPath");
+    // Use our calculated htdocsRoot for reliable path calculation
+    // $htdocsRoot was calculated earlier from script location
+    error_log("📁 Using htdocsRoot for URL: $htdocsRoot");
     
-    // Get path relative to htdocs (include date subfolder)
-    $relativePath = str_replace($htdocsPath, '', $fullUploadDir);
-    $relativePath = str_replace('\\', '/', $relativePath); // Windows to Unix paths
+    // Normalize the upload directory path for comparison
+    $normalizedUploadDir = str_replace('\\', '/', $fullUploadDir);
+    $normalizedHtdocs = str_replace('\\', '/', $htdocsRoot);
+    
+    // Get path relative to htdocs
+    $relativePath = str_replace($normalizedHtdocs, '', $normalizedUploadDir);
     $relativePath = ltrim($relativePath, '/');
     
-    error_log("Relative path from htdocs: $relativePath");
+    error_log("📁 Relative path from htdocs: $relativePath");
     
     if ($mode === 'development') {
         // Local: MAMP serves from htdocs root on port 8888
-        // URL: http://localhost:8888/crystal-data/order-images-test/2025-11/26/file.jpg
+        // URL: http://localhost:8888/crystal-data/order-images-test/ORDER123/file.png
         $fileUrl = 'http://localhost:8888/' . $relativePath . $filename;
     } else {
         // Production: Relative path (same domain)
