@@ -102,14 +102,26 @@ try {
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
         // Fallback: Detect based on mode
+        // 
+        // FOLDER STRUCTURE:
+        // Local (MAMP):      C:\MAMP\htdocs\crystal-data\  (sibling to crystalkeepsakes)
+        // Production:        public_html/crystal-data/     (sibling to crystalkeepsakes.com)
+        //
+        // $projectRoot = crystalkeepsakes folder
+        // dirname($projectRoot) = htdocs or public_html
+        // So: dirname($projectRoot) . '/crystal-data/' = correct sibling folder
+        
+        $htdocsOrPublicHtml = dirname($projectRoot); // Go up to htdocs or public_html
+        
         if ($mode === 'development') {
-            // Local dev: Use crystal-data outside project
-            $uploadDir = dirname($projectRoot) . '/crystal-data/order-images-test/';
+            // Local dev: htdocs/crystal-data/order-images-test/
+            $uploadDir = $htdocsOrPublicHtml . '/crystal-data/order-images-test/';
         } else {
-            // Production: Use crystal-data outside public_html
-            $uploadDir = '/home/uydbo2r007mb/crystal-data/order-images/';
+            // Production: public_html/crystal-data/order-images/
+            $uploadDir = $htdocsOrPublicHtml . '/crystal-data/order-images/';
         }
         error_log("Using default path for $mode: $uploadDir");
+        error_log("htdocs/public_html root: $htdocsOrPublicHtml");
     }
     
     // Ensure directory has trailing slash
