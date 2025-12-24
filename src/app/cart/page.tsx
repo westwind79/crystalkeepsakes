@@ -323,32 +323,6 @@ export default function CartPage() {
         </div>
 
 
-        {/* Storage Stats Banner (Dev Mode) */}
-        {process.env.NODE_ENV === 'development' && storageStats && (
-          <div className="bg-green-900 text-white rounded-lg p-4 mb-6 shadow-md">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
-              <div className="flex-1">
-                <h3 className="font-bold text-sm mb-2">💾 Storage Health</h3>
-                <div className="grid grid-cols-3 gap-4 text-xs">
-                  <div>
-                    <span className="text-green-300">localStorage:</span>
-                    <span className="ml-2 font-semibold">{storageStats.storageHealth.percentUsed.toFixed(1)}%</span>
-                  </div>
-                  <div>
-                    <span className="text-green-300">IndexedDB Images:</span>
-                    <span className="ml-2 font-semibold">{storageStats.totalImages}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-300">Cart Items:</span>
-                    <span className="ml-2 font-semibold">{cart.length}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* 2-column layout */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
