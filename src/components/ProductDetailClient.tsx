@@ -478,13 +478,19 @@ export default function ProductDetailClient() {
           tempOrderRef: tempOrderRef
         })
         
+        // Get order data from tracker
+        const orderData = tempOrderRef ? getOrderDataForCart(tempOrderRef) : null
+        if (orderData) {
+          console.log('📦 [ADD TO CART] Order data from tracker:', orderData)
+        }
+        
         customImage = {
           // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
           dataUrl: finalMaskedImage, // Always keep base64 for local processing
           originalDataUrl: uploadedImage, // Always keep base64 for local processing
           // ✅ Use server URLs that were uploaded on Save
-          serverUrl: maskedImageServerUrl || undefined,
-          originalServerUrl: rawImageServerUrl || undefined,
+          serverUrl: orderData?.serverUrl || maskedImageServerUrl || undefined,
+          originalServerUrl: orderData?.originalServerUrl || rawImageServerUrl || undefined,
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
@@ -493,7 +499,13 @@ export default function ProductDetailClient() {
           processedAt: new Date().toISOString(),
           maskId: product.maskImageUrl,
           maskName: 'Product Mask',
-          tempOrderRef: tempOrderRef || undefined // Track which temp folder images are in
+          tempOrderRef: tempOrderRef || undefined, // Track which temp folder images are in
+          orderStartedAt: orderData?.orderStartedAt // When order tracking began
+        }
+        
+        // Mark order as in cart
+        if (tempOrderRef) {
+          markOrderInCart(tempOrderRef)
         }
       }
       
