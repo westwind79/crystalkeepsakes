@@ -376,13 +376,13 @@ export default function CartPage() {
                       </div>
                       
                       {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
-                      {item.customImage?.thumbnail && (
+                      {(item.customImage?.serverUrl || item.customImage?.thumbnail || item.customImage?.dataUrl) && (
                         <div className="text-center">
                           <img 
-                            src={item.customImage.thumbnail}
+                            src={item.customImage.serverUrl || item.customImage.thumbnail || item.customImage.dataUrl}
                             alt="Final Engraved Version"
                             className="w-65 h-65 object-cover rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                            onClick={() => window.open(item.customImage?.dataUrl, '_blank')}
+                            onClick={() => window.open(item.customImage?.serverUrl || item.customImage?.dataUrl, '_blank')}
                             title="Click to view full size"
                           />
                           <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
