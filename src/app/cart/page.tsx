@@ -244,6 +244,21 @@ export default function CartPage() {
     return null
   }
 
+  /**
+   * Continue Shopping Button Component
+   */
+  const ContinueShoppingBtn = () => (
+    <div className="text-center mt-10">
+      <Link 
+        href="/products" 
+        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
+      >
+        <span>←</span>
+        <span>Continue Shopping</span>
+      </Link>
+    </div>
+  )
+
   async function proceedToCheckout() {
     setCheckoutLoading(true)
     
