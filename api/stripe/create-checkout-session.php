@@ -47,15 +47,27 @@ try {
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
-    // Get Stripe key
-    if ($mode === 'production') {
-        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
-    } else {
+    // Get Stripe key - SIMPLIFIED: Just use STRIPE_SECRET_KEY
+    // The .env file should have the appropriate key for that environment
+    // Production .env has sk_live_, Test .env has sk_test_
+    $secretKey = getEnvVar('STRIPE_SECRET_KEY');
+    
+    // Fallback to development key if STRIPE_SECRET_KEY not found
+    if (!$secretKey) {
         $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
     }
     
     if (!$secretKey) {
-        throw new Exception("Stripe secret key not found");
+        throw new Exception("Stripe secret key not found. Check .env has STRIPE_SECRET_KEY");
+    }
+    
+    // Log key type for debugging (safe - only shows prefix)
+    $keyType = strpos($secretKey, 'sk_live_') === 0 ? 'LIVE' : 'TEST';
+    error_log("Stripe key type: $keyType");
+    
+    // SAFETY CHECK: Warn if using live keys in non-production mode
+    if ($keyType === 'LIVE' && $mode !== 'production') {
+        error_log("⚠️ WARNING: Using LIVE Stripe key in $mode mode!");
     }
     
     // Load Stripe
