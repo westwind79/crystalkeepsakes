@@ -9,10 +9,12 @@ import { loadStripe } from '@stripe/stripe-js'
 import { logger } from '@/utils/logger'
 import { CartItem } from '@/lib/cartUtils'
 
-// Get publishable key
-const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-  ? process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY!
-  : process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY!
+// Get publishable key - SIMPLIFIED: Use NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+// The .env file should have the appropriate key for that environment
+const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  || process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY
+  || process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY
+  || ''
 
 let stripePromise: ReturnType<typeof loadStripe> | null = null
 
