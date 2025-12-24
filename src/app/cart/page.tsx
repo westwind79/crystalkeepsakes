@@ -263,17 +263,28 @@ export default function CartPage() {
     setCheckoutLoading(true)
     
     try {
-      // Get base path for proper routing (e.g., /test for test environment)
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
-      
       // Redirect to checkout using current path context
       // This preserves /test/ prefix if we're in the test environment
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
-      const isTestEnv = currentPath.startsWith('/test')
       
-      const checkoutUrl = isTestEnv ? '/test/checkout' : `${basePath}/checkout`
+      // Check for /test or /test/ at the start of the path
+      const isTestEnv = currentPath.startsWith('/test/') || currentPath === '/test' || currentPath.startsWith('/test?')
       
-      console.log('🛒 Proceeding to checkout:', { basePath, currentPath, isTestEnv, checkoutUrl })
+      // Build the checkout URL
+      let checkoutUrl = '/checkout'
+      if (isTestEnv) {
+        checkoutUrl = '/test/checkout'
+      } else if (process.env.NEXT_PUBLIC_BASE_PATH) {
+        checkoutUrl = `${process.env.NEXT_PUBLIC_BASE_PATH}/checkout`
+      }
+      
+      console.log('🛒 Proceeding to checkout:', { 
+        currentPath, 
+        isTestEnv, 
+        checkoutUrl,
+        href: typeof window !== 'undefined' ? window.location.href : 'N/A'
+      })
+      
       window.location.href = checkoutUrl
       
     } catch (error) {
