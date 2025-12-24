@@ -27,7 +27,11 @@ export default function CheckoutHostedPage() {
       
       if (!cart || cart.length === 0) {
         setError('Your cart is empty')
-        setTimeout(() => router.push('/cart'), 2000)
+        // Preserve test path prefix when redirecting
+        const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+        const isTestEnv = currentPath.startsWith('/test')
+        const cartUrl = isTestEnv ? '/test/cart' : '/cart'
+        setTimeout(() => router.push(cartUrl), 2000)
         return
       }
 
