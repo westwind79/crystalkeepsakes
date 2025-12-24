@@ -95,13 +95,18 @@ export default function CheckoutHostedPage() {
       const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
       // Get base path for proper redirect URLs (e.g., /test for test environment)
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+      // ✅ FIX: Detect test environment from URL path, not just env variable
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const isTestEnv = currentPath.startsWith('/test')
+      const basePath = isTestEnv ? '/test' : (process.env.NEXT_PUBLIC_BASE_PATH || '')
       
       // ✅ FIX: Explicitly send the frontend URL for Stripe redirects
       // This ensures correct redirect back to localhost:3000 (not localhost:8888)
       const frontendUrl = typeof window !== 'undefined' 
         ? `${window.location.protocol}//${window.location.host}${basePath}`
         : `http://localhost:3000${basePath}`
+      
+      console.log('🌐 Checkout URL config:', { currentPath, isTestEnv, basePath, frontendUrl })
       
       const payload = {
         cartItems: cartForCheckout,
