@@ -96,18 +96,21 @@ export default function CheckoutHostedPage() {
       const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
       // Get base path for proper redirect URLs (e.g., /test for test environment)
-      // ✅ FIX: Detect test environment from URL path, not just env variable
+      // ✅ FIX: Detect test environment from URL path AND full URL, not just env variable
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
-      const isTestEnv = currentPath.startsWith('/test')
+      const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+      const isTestEnv = currentPath.startsWith('/test') || 
+                        currentHref.includes('/test/') || 
+                        currentHref.includes('crystalkeepsakes.com/test')
       const basePath = isTestEnv ? '/test' : (process.env.NEXT_PUBLIC_BASE_PATH || '')
       
       // ✅ FIX: Explicitly send the frontend URL for Stripe redirects
-      // This ensures correct redirect back to localhost:3000 (not localhost:8888)
+      // This ensures correct redirect back to the correct domain with /test prefix
       const frontendUrl = typeof window !== 'undefined' 
         ? `${window.location.protocol}//${window.location.host}${basePath}`
         : `http://localhost:3000${basePath}`
       
-      console.log('🌐 Checkout URL config:', { currentPath, isTestEnv, basePath, frontendUrl })
+      console.log('🌐 Checkout URL config:', { currentPath, currentHref, isTestEnv, basePath, frontendUrl })
       
       const payload = {
         cartItems: cartForCheckout,
