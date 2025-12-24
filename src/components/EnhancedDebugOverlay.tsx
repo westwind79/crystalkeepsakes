@@ -30,6 +30,8 @@ interface SystemInfo {
     basePath: string
     backend: string
     stripeMode: string
+    stripePublishableKey?: string
+    stripeKeyType?: string
   }
 }
 
