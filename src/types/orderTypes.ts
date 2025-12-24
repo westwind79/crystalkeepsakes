@@ -8,8 +8,10 @@
  * Stores user-uploaded/edited images for product customization
  */
 export interface CustomImage {
-  dataUrl: string              // Masked/compressed for Cockpit3D
-  originalDataUrl?: string     // ✅ ADD: Original uploaded for display
+  dataUrl: string              // Masked/compressed image (server URL preferred, base64 fallback)
+  originalDataUrl?: string     // Original uploaded image (server URL preferred, base64 fallback)
+  serverUrl?: string           // Explicit server URL for masked image
+  originalServerUrl?: string   // Explicit server URL for original image
   filename: string
   mimeType: string
   fileSize: number
@@ -19,6 +21,7 @@ export interface CustomImage {
   maskId?: string
   maskName?: string
   fullResId?: string
+  tempOrderRef?: string        // Temp folder reference before real order number assigned
 }
 
 /**
