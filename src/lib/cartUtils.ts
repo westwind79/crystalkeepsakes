@@ -352,21 +352,26 @@ export function getCart(): CartItem[] {
 
 /**
  * Get cart with images loaded from IndexedDB
+ * Falls back to server URLs if IndexedDB is unavailable
  */
 export async function getCartWithImages(): Promise<Array<CartItem & { 
   customImage?: { 
-    dataUrl: string
-    thumbnail: string
+    dataUrl?: string
+    thumbnail?: string
     rawImageDataUrl?: string
     rawImageThumbnail?: string
-    metadata: any
+    metadata?: any
+    // Server URLs (always available if uploaded)
+    serverUrl?: string
+    originalServerUrl?: string
   } 
 }>> {
   const cart = getCart()
   
-  // Load images from IndexedDB
+  // Load images from IndexedDB (if available)
   const cartWithImages = await Promise.all(
     cart.map(async (item) => {
+      // If we have an IndexedDB reference, try to load it
       if (item.customImageId) {
         try {
           const imageRecord = await imageDB.getImage(item.customImageId)
@@ -374,22 +379,39 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
             return {
               ...item,
               customImage: {
+                // IndexedDB data
                 dataUrl: imageRecord.dataUrl, // Masked image
                 thumbnail: imageRecord.thumbnail, // Masked thumbnail
                 rawImageDataUrl: imageRecord.rawImageDataUrl, // Original uploaded image
                 rawImageThumbnail: imageRecord.rawImageThumbnail, // Original thumbnail
-                metadata: imageRecord.metadata
+                metadata: imageRecord.metadata,
+                // Preserve server URLs from cart item
+                serverUrl: item.customImage?.serverUrl,
+                originalServerUrl: item.customImage?.originalServerUrl
               }
             }
           }
         } catch (error) {
-          logger.warn(`Failed to load image for cart item`, { 
-            productId: item.productId,
-            imageId: item.customImageId,
-            error 
-          })
+          // IndexedDB failed - fall through to use server URLs
+          console.warn(`⚠️ IndexedDB unavailable for cart item ${item.productId}`)
         }
       }
+      
+      // If we have server URLs but no IndexedDB data, still return the item
+      // with server URLs preserved (this is the fallback for privacy mode browsers)
+      if (item.customImage?.serverUrl) {
+        return {
+          ...item,
+          customImage: {
+            // Use server URL as thumbnail fallback
+            thumbnail: item.customImage.serverUrl,
+            serverUrl: item.customImage.serverUrl,
+            originalServerUrl: item.customImage.originalServerUrl,
+            metadata: item.customImageMetadata
+          }
+        }
+      }
+      
       return item
     })
   )
