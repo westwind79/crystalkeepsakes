@@ -120,11 +120,11 @@ try {
     } else {
         // crystal-data is INSIDE the site folder (DOCUMENT_ROOT)
         if ($mode === 'development') {
-            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $documentRoot . '/crystal-data/orders-test/';
         } else if ($mode === 'testing') {
-            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $documentRoot . '/crystal-data/orders-test/';
         } else {
-            $uploadDir = $documentRoot . '/crystal-data/order-images/';
+            $uploadDir = $documentRoot . '/crystal-data/orders/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
