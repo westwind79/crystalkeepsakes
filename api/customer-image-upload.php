@@ -104,33 +104,27 @@ try {
     $documentRoot = str_replace('\\', '/', $documentRoot);
     $documentRoot = rtrim($documentRoot, '/');
     
-    // IMPORTANT: crystal-data is a SIBLING folder to the site, not inside it
+    // crystal-data goes INSIDE the site folder (DOCUMENT_ROOT)
     // Structure:
-    //   public_html/crystalkeepsakes.com/api/  ← script location (DOCUMENT_ROOT = crystalkeepsakes.com)
-    //   public_html/crystal-data/              ← images (SIBLING to site)
-    // OR for MAMP:
-    //   htdocs/crystalkeepsakes/api/           ← script location
-    //   htdocs/crystal-data/                   ← images (SIBLING to site)
-    
-    // Go UP one level from DOCUMENT_ROOT to find the parent (public_html or htdocs)
-    $webRoot = dirname($documentRoot);  // e.g., /home/user/public_html or C:/MAMP/htdocs
+    //   Production: public_html/crystalkeepsakes.com/crystal-data/
+    //   Test:       public_html/crystalkeepsakes.com/test/crystal-data/ (or shared)
+    //   MAMP:       htdocs/crystalkeepsakes/crystal-data/
     
     error_log("📁 Script location: $scriptDir");
     error_log("📁 DOCUMENT_ROOT: $documentRoot");
-    error_log("📁 Web root (parent): $webRoot");
     
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // crystal-data is in the parent folder (sibling to site)
+        // crystal-data is INSIDE the site folder (DOCUMENT_ROOT)
         if ($mode === 'development') {
-            $uploadDir = $webRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
         } else if ($mode === 'testing') {
-            $uploadDir = $webRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
         } else {
-            $uploadDir = $webRoot . '/crystal-data/order-images/';
+            $uploadDir = $documentRoot . '/crystal-data/order-images/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
