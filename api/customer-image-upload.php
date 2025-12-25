@@ -187,31 +187,32 @@ try {
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
     // Generate web-accessible URL
-    // crystal-data is INSIDE the site folder, so URL is relative to domain root
+    // URL structure: {basePath}/crystal-data/orders[-test]/{orderNumber}/{filename}
+    // e.g., /test/crystal-data/orders-test/ORD_123/file.png
+    // e.g., /crystal-data/orders/ORD_123/file.png
     
-    // Normalize paths for comparison
-    $normalizedUploadDir = str_replace('\\', '/', $fullUploadDir);
-    $normalizedDocRoot = str_replace('\\', '/', $documentRoot);
-    
-    // Get path relative to DOCUMENT_ROOT (this becomes the URL path)
-    $relativePath = str_replace($normalizedDocRoot, '', $normalizedUploadDir);
-    $relativePath = ltrim($relativePath, '/');
-    
-    error_log("📁 DOCUMENT_ROOT: $documentRoot");
-    error_log("📁 Full upload dir: $fullUploadDir");
-    error_log("📁 Relative path: $relativePath");
-    
+    // Build the URL path (relative to domain root)
     if ($mode === 'development') {
-        // Local MAMP: http://localhost:8888/crystalkeepsakes/crystal-data/...
-        // Note: MAMP's DOCUMENT_ROOT might be htdocs/crystalkeepsakes, so URL is relative
-        $fileUrl = 'http://localhost:8888/' . $relativePath . $filename;
+        // Local MAMP: include full localhost URL
+        // MAMP structure: http://localhost:8888/crystalkeepsakes/crystal-data/...
+        $mampBase = rtrim($backendUrl, '/');
+        if ($mode === 'development' || $mode === 'testing') {
+            $fileUrl = $mampBase . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+        } else {
+            $fileUrl = $mampBase . '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+        }
     } else {
-        // Production/Testing: URL is relative to domain root
-        // e.g., /crystal-data/order-images/ORDER123/file.png
-        $fileUrl = '/' . $relativePath . $filename;
+        // Production/Testing: URL relative to domain with basePath
+        // e.g., /test/crystal-data/orders-test/ORD_123/file.png
+        if ($mode === 'testing') {
+            $fileUrl = $basePath . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+        } else {
+            $fileUrl = $basePath . '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+        }
     }
     
     error_log("✅ Final image URL: $fileUrl");
+    error_log("📁 Base path used: " . ($basePath ?: '(root)'));
     
     // Return success with file info
     echo json_encode([
