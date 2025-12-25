@@ -205,7 +205,7 @@ export default function ProductDetailClient() {
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
    * Receives the masked/compressed image from editor
-   * ✅ NOW STARTS ORDER TRACKING - Order begins when image is saved!
+   * ✅ Uses UNIFIED ORDER ID system - same ID everywhere!
    * ✅ Uploads images immediately to server
    */
   const handleImageEditorSave = async (compressedImage: string) => {
@@ -224,44 +224,28 @@ export default function ProductDetailClient() {
       return newErrors
     })
     
-    // ✅ START ORDER TRACKING - This is when the order begins!
-    const orderRef = `ORD_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    setTempOrderRef(orderRef)
+    // ✅ GET UNIFIED ORDER ID - same ID used everywhere!
+    const orderId = getOrderIdForUpload(product?.id?.toString())
+    setTempOrderRef(orderId)
     
-    // Start order with image data (server URLs will be added after upload)
-    const pendingOrder = startOrder(
-      product?.id?.toString() || 'unknown',
-      {
-        maskedDataUrl: compressedImage,
-        rawDataUrl: rawUploadedImage || undefined,
-        filename: originalFileName || `product-${product?.id}-${Date.now()}.png`,
-        uploadedAt: new Date().toISOString()
-      },
-      {
-        name: product?.name,
-        sku: product?.sku,
-        cockpit3dId: product?.cockpit3d_id
-      }
-    )
-    
-    console.log('📦 [IMAGE SAVE] Order tracking started:', {
-      orderRef: pendingOrder.tempOrderRef,
+    console.log('📦 [IMAGE SAVE] Using unified order ID:', {
+      orderId,
       productId: product?.id,
       productName: product?.name
     })
     
-    // ✅ IMMEDIATELY UPLOAD to server
+    // ✅ IMMEDIATELY UPLOAD to server using unified order ID
     setIsUploadingImage(true)
     
     try {
       console.log('📤 [IMAGE SAVE] Uploading images to server...')
       
-      // Upload both masked and raw images using the order ref
+      // Upload both masked and raw images using the UNIFIED order ID
       const uploadResult = await uploadCustomerImages(
         compressedImage,
         rawUploadedImage || undefined,
         product?.id?.toString() || 'unknown',
-        pendingOrder.tempOrderRef // Use the order ref for folder organization
+        orderId // Use unified order ID for folder organization
       )
       
       if (uploadResult.maskedUrl) {
@@ -274,19 +258,15 @@ export default function ProductDetailClient() {
         console.log('✅ [IMAGE SAVE] Raw image uploaded:', uploadResult.rawUrl)
       }
       
-      // ✅ UPDATE ORDER with server URLs
-      updateOrderImages(
-        pendingOrder.tempOrderRef,
-        uploadResult.maskedUrl,
-        uploadResult.rawUrl
-      )
+      // ✅ UPDATE SESSION with server URLs
+      updateSessionImages(uploadResult.maskedUrl, uploadResult.rawUrl)
       
       if (uploadResult.errors.length > 0) {
         console.warn('⚠️ [IMAGE SAVE] Upload warnings:', uploadResult.errors)
       }
       
       logger.success('Order started and images uploaded', {
-        orderRef: pendingOrder.tempOrderRef,
+        orderId,
         maskedUrl: uploadResult.maskedUrl,
         rawUrl: uploadResult.rawUrl
       })
