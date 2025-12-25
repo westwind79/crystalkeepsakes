@@ -337,6 +337,9 @@ export default function ProductDetailClient() {
         newErrors.finalImage = 'Please save your edited image before adding to cart'
       } else if (isUploadingImage) {
         newErrors.imageUpload = 'Please wait for image upload to complete'
+      } else if (!maskedImageServerUrl) {
+        // ✅ NEW: Block add to cart if server upload failed
+        newErrors.imageUpload = 'Image upload failed. Please click "Edit Image" and save again.'
       }
     }
     
@@ -353,6 +356,7 @@ export default function ProductDetailClient() {
       hasMaskedImage: !!finalMaskedImage,
       isUploadingImage,
       hasServerUrl: !!maskedImageServerUrl,
+      serverUrl: maskedImageServerUrl,
       errors: newErrors,
       isValid
     })
