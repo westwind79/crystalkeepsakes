@@ -149,31 +149,71 @@ console.log('');
 console.log('📋 Step 3: Running Next.js build...\n');
 
 try {
-  // CRITICAL: Clear any cached env values first
-  // Next.js caches env at startup, we need a fresh build
-  
-  // Delete .next cache to ensure clean build with correct env
+  // Clear .next cache to ensure clean build
   const nextCacheDir = path.join(__dirname, '..', '.next');
   if (fs.existsSync(nextCacheDir)) {
     console.log('   🧹 Clearing .next cache...');
     fs.rmSync(nextCacheDir, { recursive: true, force: true });
   }
   
-  // Use dotenv-cli to explicitly load our env file BEFORE Next.js loads its own
-  // This ensures our .env.production.test takes precedence over .env.production
-  const buildCmd = `npx dotenv -e ${config.envFile} -- next build`;
+  // WINDOWS-COMPATIBLE FIX: Temporarily swap env files
+  // Next.js ONLY reads .env.production when NODE_ENV=production
+  // So we temporarily copy our target env file to .env.production
+  const envProductionPath = path.join(__dirname, '..', '.env.production');
+  const envBackupPath = path.join(__dirname, '..', '.env.production.backup');
+  const targetEnvPath = path.join(__dirname, '..', config.envFile);
   
-  console.log(`   Command: ${buildCmd}`);
+  let needsRestore = false;
+  
+  if (mode === 'test' && fs.existsSync(targetEnvPath)) {
+    console.log('   🔄 Swapping env files for test build...');
+    
+    // Backup existing .env.production if it exists
+    if (fs.existsSync(envProductionPath)) {
+      fs.copyFileSync(envProductionPath, envBackupPath);
+      console.log('      → Backed up .env.production');
+      needsRestore = true;
+    }
+    
+    // Copy .env.production.test to .env.production
+    fs.copyFileSync(targetEnvPath, envProductionPath);
+    console.log('      → Copied .env.production.test → .env.production');
+    
+    // Verify the content
+    const envContent = fs.readFileSync(envProductionPath, 'utf8');
+    const stripeKeyMatch = envContent.match(/NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=([^\n\r]*)/);
+    if (stripeKeyMatch) {
+      console.log(`      → Stripe Key in .env.production: ${stripeKeyMatch[1].substring(0, 15)}...`);
+    }
+  }
+  
+  const buildCmd = 'next build';
+  
+  console.log(`\n   Command: ${buildCmd}`);
   console.log(`   Environment: ${process.env.NODE_ENV}`);
-  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}`);
-  console.log(`   Stripe Key: ${(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '').substring(0, 15)}...`);
-  console.log('');
+  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
   
-  execSync(buildCmd, {
-    stdio: 'inherit',
-    shell: true,
-    env: process.env  // Pass current environment with loaded vars
-  });
+  try {
+    execSync(buildCmd, {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } finally {
+    // ALWAYS restore original .env.production
+    if (needsRestore && fs.existsSync(envBackupPath)) {
+      console.log('\n   🔄 Restoring original .env.production...');
+      fs.copyFileSync(envBackupPath, envProductionPath);
+      fs.unlinkSync(envBackupPath);
+      console.log('      → Restored .env.production');
+    } else if (mode === 'test' && !needsRestore) {
+      // Remove the temporary .env.production we created
+      if (fs.existsSync(envProductionPath)) {
+        fs.unlinkSync(envProductionPath);
+        console.log('\n   🧹 Removed temporary .env.production');
+      }
+    }
+  }
   
   console.log('\n✅ Build completed successfully!\n');
   
