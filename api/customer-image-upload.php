@@ -215,7 +215,8 @@ try {
             'fileExists' => file_exists($filePath),
             'fileSize' => filesize($filePath),
             'isReadable' => is_readable($filePath),
-            'htdocsRoot' => $htdocsRoot
+            'documentRoot' => $documentRoot,
+            'relativePath' => $relativePath
         ]
     ]);
     
