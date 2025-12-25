@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCartWithImages } from '@/lib/cartUtils'
+import { getCurrentOrderSession, getOrCreateOrderSession } from '@/lib/unifiedOrderId'
 import { logger, isDevelopment } from '@/utils/logger'
 
 export default function CheckoutHostedPage() {
@@ -38,16 +39,24 @@ export default function CheckoutHostedPage() {
 
       logger.info('Initiating Stripe Checkout', { items: cart.length })
 
-      // Generate order number ONCE for entire checkout process
-      const orderNumber = `CK-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`
-      console.log('🎫 Generated Order Number:', orderNumber)
+      // ✅ USE UNIFIED ORDER ID - same ID used for images, Stripe, Cockpit3D, emails
+      // Try to get existing session (created when image was saved), or create new one
+      let orderSession = getCurrentOrderSession()
+      if (!orderSession) {
+        // Fallback: create new session if none exists (shouldn't happen normally)
+        orderSession = getOrCreateOrderSession()
+        console.log('⚠️ No existing order session, created new one:', orderSession.orderId)
+      }
+      const orderNumber = orderSession.orderId
+      console.log('🎫 Using Unified Order ID:', orderNumber)
       localStorage.setItem('pending_order_number', orderNumber)
 
       // STEP 1: Upload images to server BEFORE creating checkout session
       logger.info('📤 Uploading customer images to server...')
       console.log('=== CHECKOUT DEBUG ===')
       console.log('Cart items:', cart.length)
-      console.log('Order number:', orderNumber)
+      console.log('Order number (unified):', orderNumber)
+      console.log('Order session:', orderSession)
       // ✅ Images should already be uploaded when adding to cart
       // Just use the server URLs that are already stored in customImage
       cart.forEach((item, idx) => {
