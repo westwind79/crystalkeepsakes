@@ -910,6 +910,7 @@ export default function ProductDetailClient() {
                   </label>
                   {errors.image && <p className="mt-2 text-sm text-red-600">{errors.image}</p>}
                   {errors.finalImage && <p className="mt-2 text-sm text-red-600">{errors.finalImage}</p>}
+                  {errors.imageUpload && <p className="mt-2 text-sm text-red-600">{errors.imageUpload}</p>}
                 </div>
               )}
 
