@@ -95,37 +95,37 @@ try {
     // Get custom image path from environment or use defaults
     $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
     
-    // ✅ ALWAYS calculate htdocsRoot for URL generation later
-    // This script is at: htdocs/crystalkeepsakes/api/customer-image-upload.php
-    // We want: htdocs/crystal-data/
-    // So: go up 2 levels from this file, then into crystal-data
-    $scriptDir = __DIR__; // /htdocs/crystalkeepsakes/api/
-    $projectRoot = dirname($scriptDir); // /htdocs/crystalkeepsakes/
-    $htdocsRoot = dirname($projectRoot); // /htdocs/
+    // Calculate paths for file storage and URL generation
+    $scriptDir = __DIR__;
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
     
-    // Normalize slashes for Windows
-    $htdocsRoot = str_replace('\\', '/', $htdocsRoot);
-    $htdocsRoot = rtrim($htdocsRoot, '/');
+    // Normalize slashes
+    $scriptDir = str_replace('\\', '/', $scriptDir);
+    $documentRoot = str_replace('\\', '/', $documentRoot);
+    $documentRoot = rtrim($documentRoot, '/');
     
     error_log("📁 Script location: $scriptDir");
-    error_log("📁 Project root: $projectRoot");
-    error_log("📁 Htdocs root (calculated): $htdocsRoot");
+    error_log("📁 DOCUMENT_ROOT: $documentRoot");
     
-    // Also log DOCUMENT_ROOT for comparison/debugging
-    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'NOT SET';
-    error_log("📁 DOCUMENT_ROOT (for reference): $documentRoot");
+    // For URL generation, we need the web root (DOCUMENT_ROOT)
+    // For file storage, we use the calculated path
     
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
+        // Store files relative to DOCUMENT_ROOT
+        // This ensures the URL path matches the file path
         if ($mode === 'development') {
-            // Local dev: htdocs/crystal-data/order-images-test/
-            $uploadDir = $htdocsRoot . '/crystal-data/order-images-test/';
+            // Local dev: crystal-data/order-images-test/
+            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+        } else if ($mode === 'testing') {
+            // Testing: crystal-data/order-images-test/
+            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
         } else {
-            // Production: public_html/crystal-data/order-images/
-            $uploadDir = $htdocsRoot . '/crystal-data/order-images/';
+            // Production: crystal-data/order-images/
+            $uploadDir = $documentRoot . '/crystal-data/order-images/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
