@@ -237,7 +237,8 @@ try {
         'environment' => $mode,
         'debug' => [
             'scriptDir' => $scriptDir,
-            'siteRoot' => $siteRoot,
+            'apiParent' => $apiParent,
+            'mainSiteRoot' => $mainSiteRoot,
             'basePath' => $basePath,
             'uploadDir' => $uploadDir,
             'fullUploadDir' => $fullUploadDir,
