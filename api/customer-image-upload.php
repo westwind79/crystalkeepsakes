@@ -96,45 +96,61 @@ try {
     $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
     
     // Calculate paths for file storage and URL generation
-    // CRITICAL: Use script location (__DIR__) to find site root, NOT DOCUMENT_ROOT
-    // On GoDaddy, DOCUMENT_ROOT is /home/user/public_html but site is in a subfolder
+    // CRITICAL: Use script location (__DIR__) to find the MAIN site root
+    // On GoDaddy structure:
+    //   Production: /public_html/crystalkeepsakes.com/api/  -> site root is /public_html/crystalkeepsakes.com/
+    //   Test:       /public_html/crystalkeepsakes.com/test/api/ -> site root is STILL /public_html/crystalkeepsakes.com/
+    // ALL images go to /public_html/crystalkeepsakes.com/crystal-data/ (shared location)
+    
     $scriptDir = __DIR__;  // e.g., /home/user/public_html/crystalkeepsakes.com/test/api
     
     // Normalize slashes
     $scriptDir = str_replace('\\', '/', $scriptDir);
     $scriptDir = rtrim($scriptDir, '/');
     
-    // Site root is ONE level up from /api/ folder
-    // e.g., /home/user/public_html/crystalkeepsakes.com/test/api -> /home/user/public_html/crystalkeepsakes.com/test
-    $siteRoot = dirname($scriptDir);
-    
-    error_log("📁 Script location: $scriptDir");
-    error_log("📁 Site root (calculated): $siteRoot");
+    // Get the parent of /api/ folder
+    $apiParent = dirname($scriptDir);  // e.g., .../crystalkeepsakes.com/test
     
     // Determine the URL base path (for generating web URLs)
-    // Test site: /test/  |  Prod site: /
+    // Test site: /test  |  Prod site: (empty)
     $basePath = getEnvVar('NEXT_PUBLIC_BASE_PATH') ?? '';
     $basePath = trim($basePath, '/');
+    
+    // Calculate MAIN site root (where crystal-data lives)
+    // If basePath is "test", go up one more level from apiParent
+    // If basePath is empty (production), apiParent IS the site root
+    if ($basePath) {
+        // Test mode: /crystalkeepsakes.com/test/api -> go up to /crystalkeepsakes.com/
+        $mainSiteRoot = dirname($apiParent);
+    } else {
+        // Production mode: /crystalkeepsakes.com/api -> already at site root
+        $mainSiteRoot = $apiParent;
+    }
+    
+    // Format basePath for URLs
     if ($basePath) {
         $basePath = '/' . $basePath;  // e.g., /test
     }
     
-    error_log("📁 Base path: " . ($basePath ?: '(root)'));
+    error_log("📁 Script location: $scriptDir");
+    error_log("📁 API parent: $apiParent");
+    error_log("📁 MAIN site root (crystal-data location): $mainSiteRoot");
+    error_log("📁 Base path for URLs: " . ($basePath ?: '(root)'));
     
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // crystal-data goes INSIDE the site folder (next to /api, /_next, etc.)
+        // crystal-data goes in MAIN site folder: /crystalkeepsakes.com/crystal-data/
+        // Both test and prod share this location, just different subfolders
         // Structure:
-        //   Production: crystalkeepsakes.com/crystal-data/orders/
-        //   Test:       crystalkeepsakes.com/test/crystal-data/orders-test/
-        //   MAMP:       htdocs/crystalkeepsakes/crystal-data/orders-test/
+        //   /crystalkeepsakes.com/crystal-data/orders/       <- Production orders
+        //   /crystalkeepsakes.com/crystal-data/orders-test/  <- Test orders
         if ($mode === 'development' || $mode === 'testing') {
-            $uploadDir = $siteRoot . '/crystal-data/orders-test/';
+            $uploadDir = $mainSiteRoot . '/crystal-data/orders-test/';
         } else {
-            $uploadDir = $siteRoot . '/crystal-data/orders/';
+            $uploadDir = $mainSiteRoot . '/crystal-data/orders/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
