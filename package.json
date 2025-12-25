@@ -38,6 +38,7 @@
     "baseline-browser-mapping": "^2.9.5",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^11.0.0",
     "env-cmd": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
