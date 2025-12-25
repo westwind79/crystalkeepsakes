@@ -70,6 +70,7 @@ export async function createPaymentIntent(
     logger.payment('Order totals', totals)
 
     // Send to PHP - PHP will VERIFY these amounts
+    // ✅ USE UNIFIED ORDER ID - passed in from caller (checkout page)
     const requestBody = {
       cartItems: cartItems.map(item => ({
         name: item.name,
@@ -80,7 +81,7 @@ export async function createPaymentIntent(
       })),
       cockpitOrder, 
       fullCartItems: fullCartItems || cartItems,
-      orderNumber: orderNumber || `ORD-${Date.now()}`,
+      orderNumber: orderNumber, // Must be provided by caller (unified order ID)
       shippingMethod: shippingMethod,
       // Send calculated totals (PHP will verify)
       subtotal: totals.subtotal,
