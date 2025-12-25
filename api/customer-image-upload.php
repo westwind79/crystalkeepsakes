@@ -183,25 +183,40 @@ try {
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
     // Generate web-accessible URL
-    error_log("📁 DOCUMENT_ROOT for URL: $documentRoot");
+    // crystal-data is at the SAME LEVEL as the site folder
+    // URL must be relative to the PARENT domain (not the site subfolder)
     
     // Normalize paths for comparison
     $normalizedUploadDir = str_replace('\\', '/', $fullUploadDir);
-    $normalizedDocRoot = str_replace('\\', '/', $documentRoot);
+    $normalizedWebRoot = str_replace('\\', '/', $webRoot);
     
-    // Get path relative to document root (this becomes the URL path)
-    $relativePath = str_replace($normalizedDocRoot, '', $normalizedUploadDir);
+    // Get path relative to web root parent
+    $relativePath = str_replace($normalizedWebRoot, '', $normalizedUploadDir);
     $relativePath = ltrim($relativePath, '/');
     
-    error_log("📁 Relative path from doc root: $relativePath");
+    error_log("📁 Web root: $webRoot");
+    error_log("📁 Full upload dir: $fullUploadDir");
+    error_log("📁 Relative path: $relativePath");
     
     if ($mode === 'development') {
-        // Local: MAMP serves from htdocs root on port 8888
+        // Local MAMP: http://localhost:8888/crystal-data/...
         $fileUrl = 'http://localhost:8888/' . $relativePath . $filename;
     } else {
-        // Production/Testing: URL is relative to domain root
-        // e.g., /crystal-data/order-images/ORDER123/file.png
-        $fileUrl = '/' . $relativePath . $filename;
+        // Production/Testing: The URL needs to go UP from the site folder
+        // Since crystal-data is a sibling, URL is: /../crystal-data/... 
+        // But browsers resolve this, so we use absolute from domain root
+        // Assuming crystalkeepsakes.com domain points to crystalkeepsakes.com folder,
+        // we need a separate subdomain or the files won't be accessible!
+        
+        // WORKAROUND: Use the parent domain structure
+        // If your hosting allows, crystal-data should be accessible at same domain level
+        $fileUrl = '/../' . $relativePath . $filename;
+        
+        // Alternative: If you have a CDN or separate URL for images
+        $imageBaseUrl = getEnvVar('IMAGE_BASE_URL');
+        if ($imageBaseUrl) {
+            $fileUrl = rtrim($imageBaseUrl, '/') . '/' . $relativePath . $filename;
+        }
     }
     
     error_log("✅ Final image URL: $fileUrl");
