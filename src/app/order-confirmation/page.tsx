@@ -142,7 +142,13 @@ function OrderConfirmationContent() {
       // Clear the cart and sessionStorage after successful order
       await clearCart()
       sessionStorage.removeItem('pendingOrder')
-      logger.success('Order confirmed, cart cleared')
+      localStorage.removeItem('pending_order_number')
+      
+      // Mark order as completed and clear session for next order
+      markOrderCompleted(orderNumber)
+      clearOrderSession()
+      
+      logger.success('Order confirmed, cart and session cleared')
       
       setLoading(false)
       
