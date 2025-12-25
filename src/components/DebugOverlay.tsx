@@ -76,8 +76,12 @@ export default function DebugOverlay() {
       setCartItems(cart || [])
       
       if (cart && cart.length > 0) {
-        // Generate test order number
-        const testOrderNumber = `TEST-${Date.now()}`
+        // ✅ Use unified order ID from session (or create test prefix version)
+        const { getCurrentOrderSession } = await import('@/lib/unifiedOrderId')
+        const session = getCurrentOrderSession()
+        const testOrderNumber = session?.orderId 
+          ? `TEST-${session.orderId}` 
+          : `TEST-CK_${Date.now()}`
         
         // Mock customer info for preview
         const mockCustomer = {
