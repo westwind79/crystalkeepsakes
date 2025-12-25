@@ -209,6 +209,18 @@ export default function ProductDetailClient() {
    * ✅ Uploads images immediately to server
    */
   const handleImageEditorSave = async (compressedImage: string) => {
+    console.log('🎨 [IMAGE EDITOR SAVE] ==========================')
+    console.log('🎨 [IMAGE EDITOR SAVE] Received compressedImage:', {
+      exists: !!compressedImage,
+      length: compressedImage?.length,
+      startsWithData: compressedImage?.startsWith('data:'),
+      first50chars: compressedImage?.substring(0, 50)
+    })
+    console.log('🎨 [IMAGE EDITOR SAVE] Raw image available:', {
+      exists: !!rawUploadedImage,
+      length: rawUploadedImage?.length
+    })
+    
     logger.info('Image saved from editor - STARTING ORDER', { 
       size: compressedImage.length,
       productId: product?.id
@@ -238,7 +250,9 @@ export default function ProductDetailClient() {
     setIsUploadingImage(true)
     
     try {
-      console.log('📤 [IMAGE SAVE] Uploading images to server...')
+      console.log('📤 [IMAGE SAVE] Starting uploads...')
+      console.log('📤 [IMAGE SAVE] Masked image (compressedImage):', compressedImage ? `${compressedImage.length} chars` : 'NULL!')
+      console.log('📤 [IMAGE SAVE] Raw image (rawUploadedImage):', rawUploadedImage ? `${rawUploadedImage.length} chars` : 'NULL!')
       
       // Upload both masked and raw images using the UNIFIED order ID
       const uploadResult = await uploadCustomerImages(
@@ -248,9 +262,13 @@ export default function ProductDetailClient() {
         orderId // Use unified order ID for folder organization
       )
       
+      console.log('📤 [IMAGE SAVE] Upload result:', uploadResult)
+      
       if (uploadResult.maskedUrl) {
         setMaskedImageServerUrl(uploadResult.maskedUrl)
         console.log('✅ [IMAGE SAVE] Masked image uploaded:', uploadResult.maskedUrl)
+      } else {
+        console.error('❌ [IMAGE SAVE] Masked image NOT uploaded! No URL returned')
       }
       
       if (uploadResult.rawUrl) {
