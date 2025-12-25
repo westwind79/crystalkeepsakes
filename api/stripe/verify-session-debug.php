@@ -20,10 +20,10 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 try {
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     
-    if ($mode === 'production') {
-        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
-    } else {
-        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
+    // ONLY uses STRIPE_SECRET_KEY
+    $secretKey = getEnvVar('STRIPE_SECRET_KEY');
+    if (!$secretKey) {
+        throw new Exception('STRIPE_SECRET_KEY not found in .env');
     }
     
     \Stripe\Stripe::setApiKey($secretKey);
