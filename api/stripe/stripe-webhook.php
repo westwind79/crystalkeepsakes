@@ -56,15 +56,23 @@ if (file_exists(__DIR__ . '/db-connect.php')) {
     }
 }
 
-// Get environment variables
+// Get environment variables - ONLY uses standardized names
 $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
 
-if ($mode === 'production') {
-    $stripeSecretKey = getEnvVariable('STRIPE_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_WEBHOOK_SECRET');
-} else {
-    $stripeSecretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_DEVELOPMENT_WEBHOOK_SECRET');
+// ONLY use STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET
+$stripeSecretKey = getEnvVariable('STRIPE_SECRET_KEY');
+$webhookSecret = getEnvVariable('STRIPE_WEBHOOK_SECRET');
+
+if (!$stripeSecretKey) {
+    error_log('ERROR: STRIPE_SECRET_KEY not found in .env');
+    http_response_code(500);
+    exit('Stripe secret key not configured');
+}
+
+if (!$webhookSecret) {
+    error_log('ERROR: STRIPE_WEBHOOK_SECRET not found in .env');
+    http_response_code(500);
+    exit('Stripe webhook secret not configured');
 }
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
