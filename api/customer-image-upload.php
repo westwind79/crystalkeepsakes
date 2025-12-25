@@ -203,32 +203,29 @@ try {
     error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
     
     // Generate web-accessible URL
-    // URL structure: {basePath}/crystal-data/orders[-test]/{orderNumber}/{filename}
-    // e.g., /test/crystal-data/orders-test/ORD_123/file.png
-    // e.g., /crystal-data/orders/ORD_123/file.png
+    // Since crystal-data is in the MAIN site root (crystalkeepsakes.com/crystal-data/),
+    // URLs are always relative to domain root, NOT to /test/
+    // e.g., https://crystalkeepsakes.com/crystal-data/orders-test/ORD_123/file.png
+    // e.g., https://crystalkeepsakes.com/crystal-data/orders/ORD_123/file.png
     
-    // Build the URL path (relative to domain root)
+    // Build the URL path (relative to domain root - NO basePath prefix!)
     if ($mode === 'development') {
         // Local MAMP: include full localhost URL
         // MAMP structure: http://localhost:8888/crystalkeepsakes/crystal-data/...
         $mampBase = rtrim($backendUrl, '/');
-        if ($mode === 'development' || $mode === 'testing') {
-            $fileUrl = $mampBase . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
-        } else {
-            $fileUrl = $mampBase . '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
-        }
+        $fileUrl = $mampBase . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
     } else {
-        // Production/Testing: URL relative to domain with basePath
-        // e.g., /test/crystal-data/orders-test/ORD_123/file.png
+        // Production/Testing: URL relative to DOMAIN root (not /test/)
+        // Both go to /crystal-data/ directly
         if ($mode === 'testing') {
-            $fileUrl = $basePath . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+            $fileUrl = '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
         } else {
-            $fileUrl = $basePath . '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+            $fileUrl = '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
         }
     }
     
     error_log("✅ Final image URL: $fileUrl");
-    error_log("📁 Base path used: " . ($basePath ?: '(root)'));
+    error_log("📁 File saved to: $filePath");
     
     // Return success with file info
     echo json_encode([
