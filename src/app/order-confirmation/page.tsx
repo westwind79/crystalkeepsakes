@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { clearCart } from '@/lib/cartUtils'
+import { getCurrentOrderSession, markOrderCompleted, clearOrderSession } from '@/lib/unifiedOrderId'
 import { logger } from '@/utils/logger'
 
 function OrderConfirmationContent() {
@@ -51,9 +52,23 @@ function OrderConfirmationContent() {
         logger.warn('No pending order found in sessionStorage')
       }
 
-      // Generate order number
-      const orderNumber = pendingOrder?.orderNumber || `CK-${Date.now()}`
-      console.log('🔢 [ORDER CONFIRMATION] Order Number:', orderNumber)
+      // ✅ USE UNIFIED ORDER ID - get from session, pendingOrder, or localStorage
+      let orderNumber = pendingOrder?.orderNumber
+      if (!orderNumber) {
+        // Try unified order session
+        const orderSession = getCurrentOrderSession()
+        orderNumber = orderSession?.orderId
+      }
+      if (!orderNumber) {
+        // Try localStorage fallback
+        orderNumber = localStorage.getItem('pending_order_number')
+      }
+      if (!orderNumber) {
+        // Last resort fallback (shouldn't happen)
+        orderNumber = `CK_FALLBACK_${Date.now()}`
+        console.warn('⚠️ [ORDER CONFIRMATION] No order ID found anywhere, using fallback:', orderNumber)
+      }
+      console.log('🔢 [ORDER CONFIRMATION] Order Number (unified):', orderNumber)
       
       // Process the order (Cockpit3D + Email)
       if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
