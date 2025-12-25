@@ -96,35 +96,45 @@ try {
     $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
     
     // Calculate paths for file storage and URL generation
-    $scriptDir = __DIR__;
-    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    // CRITICAL: Use script location (__DIR__) to find site root, NOT DOCUMENT_ROOT
+    // On GoDaddy, DOCUMENT_ROOT is /home/user/public_html but site is in a subfolder
+    $scriptDir = __DIR__;  // e.g., /home/user/public_html/crystalkeepsakes.com/test/api
     
     // Normalize slashes
     $scriptDir = str_replace('\\', '/', $scriptDir);
-    $documentRoot = str_replace('\\', '/', $documentRoot);
-    $documentRoot = rtrim($documentRoot, '/');
+    $scriptDir = rtrim($scriptDir, '/');
     
-    // crystal-data goes INSIDE the site folder (DOCUMENT_ROOT)
-    // Structure:
-    //   Production: public_html/crystalkeepsakes.com/crystal-data/
-    //   Test:       public_html/crystalkeepsakes.com/test/crystal-data/ (or shared)
-    //   MAMP:       htdocs/crystalkeepsakes/crystal-data/
+    // Site root is ONE level up from /api/ folder
+    // e.g., /home/user/public_html/crystalkeepsakes.com/test/api -> /home/user/public_html/crystalkeepsakes.com/test
+    $siteRoot = dirname($scriptDir);
     
     error_log("📁 Script location: $scriptDir");
-    error_log("📁 DOCUMENT_ROOT: $documentRoot");
+    error_log("📁 Site root (calculated): $siteRoot");
+    
+    // Determine the URL base path (for generating web URLs)
+    // Test site: /test/  |  Prod site: /
+    $basePath = getEnvVar('NEXT_PUBLIC_BASE_PATH') ?? '';
+    $basePath = trim($basePath, '/');
+    if ($basePath) {
+        $basePath = '/' . $basePath;  // e.g., /test
+    }
+    
+    error_log("📁 Base path: " . ($basePath ?: '(root)'));
     
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // crystal-data is INSIDE the site folder (DOCUMENT_ROOT)
-        if ($mode === 'development') {
-            $uploadDir = $documentRoot . '/crystal-data/orders-test/';
-        } else if ($mode === 'testing') {
-            $uploadDir = $documentRoot . '/crystal-data/orders-test/';
+        // crystal-data goes INSIDE the site folder (next to /api, /_next, etc.)
+        // Structure:
+        //   Production: crystalkeepsakes.com/crystal-data/orders/
+        //   Test:       crystalkeepsakes.com/test/crystal-data/orders-test/
+        //   MAMP:       htdocs/crystalkeepsakes/crystal-data/orders-test/
+        if ($mode === 'development' || $mode === 'testing') {
+            $uploadDir = $siteRoot . '/crystal-data/orders-test/';
         } else {
-            $uploadDir = $documentRoot . '/crystal-data/orders/';
+            $uploadDir = $siteRoot . '/crystal-data/orders/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
