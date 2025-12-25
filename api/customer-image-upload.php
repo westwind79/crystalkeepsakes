@@ -223,15 +223,16 @@ try {
         'type' => $imageType,
         'environment' => $mode,
         'debug' => [
+            'scriptDir' => $scriptDir,
+            'siteRoot' => $siteRoot,
+            'basePath' => $basePath,
             'uploadDir' => $uploadDir,
             'fullUploadDir' => $fullUploadDir,
             'filePath' => $filePath,
             'fileExists' => file_exists($filePath),
             'fileSize' => filesize($filePath),
             'isReadable' => is_readable($filePath),
-            'documentRoot' => $documentRoot,
-            'relativePath' => $relativePath,
-            'scriptDir' => $scriptDir
+            'generatedUrl' => $fileUrl
         ]
     ]);
     
