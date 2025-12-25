@@ -374,14 +374,14 @@ export default function DebugOverlay() {
                     <div className="font-bold text-blue-400">🔧 Environment Info</div>
                     <button
                       onClick={() => {
+                        const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
+                        const keyType = stripeKey.startsWith('pk_live_') ? 'LIVE' : stripeKey.startsWith('pk_test_') ? 'TEST' : 'UNKNOWN'
                         const envInfo = {
                           mode: process.env.NEXT_PUBLIC_ENV_MODE || 'development',
                           basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/',
                           backend: process.env.NEXT_PUBLIC_PHP_BACKEND_URL,
-                          stripeKey: process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-                            ? process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY?.substring(0, 20)
-                            : process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY?.substring(0, 20),
-                          stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST'
+                          stripeKey: stripeKey ? stripeKey.substring(0, 15) + '...' : 'NOT SET',
+                          stripeKeyType: keyType
                         }
                         navigator.clipboard.writeText(JSON.stringify(envInfo, null, 2))
                       }}
@@ -415,19 +415,17 @@ export default function DebugOverlay() {
                   <div className="flex justify-between">
                     <span className="text-gray-400">Stripe Key:</span>
                     <span className="text-white font-mono text-[10px]">
-                      {process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-                        ? (process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'
-                        : (process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'}
+                      {(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Stripe Mode:</span>
                     <span className={
-                      process.env.NEXT_PUBLIC_ENV_MODE === 'production'
+                      (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '').startsWith('pk_live_')
                         ? 'text-red-400 font-bold'
                         : 'text-green-400 font-bold'
                     }>
-                      {process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? '🔴 LIVE' : '✓ TEST'}
+                      {(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '').startsWith('pk_live_') ? '🔴 LIVE' : '✓ TEST'}
                     </span>
                   </div>
                   
