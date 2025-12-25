@@ -149,16 +149,25 @@ console.log('');
 console.log('📋 Step 3: Running Next.js build...\n');
 
 try {
-  // Build command - Next.js will automatically load the correct .env file
-  // For test mode: .env.production.test
-  // For prod mode: .env.production
-  // For local mode: .env.local
+  // CRITICAL: Clear any cached env values first
+  // Next.js caches env at startup, we need a fresh build
   
-  const buildCmd = 'next build';
+  // Delete .next cache to ensure clean build with correct env
+  const nextCacheDir = path.join(__dirname, '..', '.next');
+  if (fs.existsSync(nextCacheDir)) {
+    console.log('   🧹 Clearing .next cache...');
+    fs.rmSync(nextCacheDir, { recursive: true, force: true });
+  }
+  
+  // Use dotenv-cli to explicitly load our env file BEFORE Next.js loads its own
+  // This ensures our .env.production.test takes precedence over .env.production
+  const buildCmd = `npx dotenv -e ${config.envFile} -- next build`;
   
   console.log(`   Command: ${buildCmd}`);
   console.log(`   Environment: ${process.env.NODE_ENV}`);
-  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
+  console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}`);
+  console.log(`   Stripe Key: ${(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '').substring(0, 15)}...`);
+  console.log('');
   
   execSync(buildCmd, {
     stdio: 'inherit',
