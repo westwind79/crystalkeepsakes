@@ -1,53 +1,44 @@
 <analysis>**original_problem_statement:**
-The user's e-commerce store has a non-functional shopping cart. The initial reported issues were that product options were missing and pricing was incorrect. This expanded to a larger set of requirements:
-1.  **Image Upload Logic:** Customer-customized images should be uploaded immediately when the user saves them in the image editor, not when they are added to the cart. An order should be considered started at this point.
-2.  **Image Upload Path:** The image upload script creates the  folder in the wrong location on the user's MAMP and production servers. This is a critical, recurring blocker.
-3.  **Stripe Keys:** The  environment is incorrectly using live production Stripe keys, causing confusion and risk.
-4.  **Cart Display:** The cart is not displaying the final masked images correctly, likely due to the broken upload path.
-5.  **URL Preservation:** The  base path is lost when navigating to checkout.
-6.  **Order ID Format:** Implement a new order ID format: .
-7.  **Hidden Faces Option:** Add a hidden faces option (for 1-10 faces) for future use.
-8.  **Debug Overlay:** Enhance the debug overlay to show all environment data, including partial Stripe keys.
-9.  **Cockpit3D Payload:** The data sent to the Cockpit3D service is missing product options and image URLs.
-10. **Build Process:** Ensure  is included in the build output so PHP dependencies can be installed on the server.
-11. **LocalStorage Bloat:** Storing images in the browser's localStorage is causing it to fill up too quickly.
+The user's e-commerce store, built with Next.js and a PHP backend, has a critically non-functional shopping cart for custom products. The initial problem of missing product options and incorrect pricing evolved into a larger set of requirements focused on fixing the entire custom order lifecycle.
+
+The primary goals are:
+1.  **Fix Image Uploads:** A recurring and critical issue where customized product images are saved with an incorrect server file path, making them inaccessible to the frontend. The upload script must place images in a shared  directory, with separate subfolders for test () and production () environments. Each order must have its own unique subfolder.
+2.  **Resolve Masked Image Failure:** The masked (final, engraved-look) image is consistently failing to upload, while the raw (original) image succeeds. This breaks the user experience as customers cannot see their final product in the cart or on the order confirmation.
+3.  **Implement a Unified Order ID:** Create a single, consistent Order ID ( format) that is generated when a user starts customizing a product. This ID must be used for the image upload folder, cart data, Stripe session, Cockpit3D payload, and all email notifications to ensure data integrity.
+4.  **Fix Environment-Specific Bugs:** The  environment was incorrectly using live production Stripe keys due to a flaw in the build process. The fix for this needs verification.
+5.  **Create an Order Processing & Notification Flow:** Upon successful payment, a new backend process should trigger that sends the final order payload to an external Cockpit3D service and sends a comprehensive order confirmation email to .
+6.  **Enhance Debugging:** Implement a comprehensive debug panel that displays all critical state information (unified order ID, cart data, environment variables, etc.) to help diagnose issues faster.
+7.  **Address LocalStorage Bloat:** Prevent large base64 image data from being stored in  to avoid browser storage limits.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A Next.js 14 e-commerce application with a PHP backend for handling image uploads and Stripe payments. The application state, including the shopping cart, is managed on the client-side using  and . The user builds the application locally on a MAMP server and deploys the static output ( folder) via FTP to a production server, which has been the source of significant environment-related bugs.
+The application is a Next.js 14 e-commerce store with a standalone PHP backend for handling image uploads, Stripe payments, and order processing. The state is managed on the client-side. The user deploys the application by manually FTPing the build output ( folder) from their local MAMP server to a production server, which has been the source of numerous environment-related issues.
+
+Recent significant additions include:
+- A new Unified Order ID system ().
+- A new comprehensive debug panel component ().
+- A new central order processing endpoint () which handles Cockpit3D submission and triggers an enhanced email notification script.
+- A completely rewritten PHP image upload script () designed to handle pathing correctly across test and production environments.
 
 **Last working item**:
-- **Last item agent was working:** The agent was trying to resolve why uploaded images have an incorrect URL that includes the full server filesystem path (e.g., ) instead of a web-accessible one (e.g., ). The agent concluded that although the code in the repository is correct, the user has an **old version of the  file on their production server**. The agent's last action was instructing the user to re-deploy the updated PHP file from their latest build.
-- **Status:** USER VERIFICATION PENDING
-- **Agent Testing Done:** N
-- **Which testing method agent to use?** Manual testing by the user on their production server.
-- **User Testing Done:** N
+-   **Last item agent was working:** The agent was debugging why the **masked image** is not being uploaded, which results in it being missing from the cart and the final Cockpit3D order payload. The raw image uploads correctly, but the  (masked image URL) is absent from the final data. The agent also noticed that an **old, stale Order ID** was being reused across sessions, which is a critical data integrity problem.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent to simulate the full user flow: load product page, upload an image, save it in the editor, add to cart, and proceed to checkout. The agent must inspect the browser's console logs and network requests to validate the new logging and check for errors during the masked image upload.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1 (P0):** Incorrect Image URL Path on Production.
-- **Issue 2 (P1):** Stripe keys are incorrect in the  environment.
-- **Issue 3 (P2):** Masked images are not appearing in the cart or order payload.
-- **Issue 4 (P3):** High LocalStorage usage due to storing base64 image data.
+-   **Issue 1 (P0):** Masked image is not being uploaded or saved.
+-   **Issue 2 (P1):** A stale, old Order ID is being reused across different user sessions.
+-   **Issue 3 (P2):** The fix for incorrect Stripe keys in the  environment has not been verified by the user.
+-   **Issue 4 (P3):** The fix for high LocalStorage usage has not been verified by the user.
 
 **Issues Detail:**
-- **Issue 1: Incorrect Image URL Path on Production**
-    - **Attempted fixes:** The agent refactored  multiple times. The final, correct version uses  to build a web-accessible path, assuming the  folder exists inside the site's root directory.
-    - **Next debug checklist:**
-        1.  Confirm with the user that they have uploaded the latest version of  from their  folder to their server's  directory.
-        2.  Ask the user to test the image upload again and check the URL generated in the browser console.
-        3.  If it still fails, the  variable on the user's server may be configured unexpectedly. Ask the user to provide its value for further debugging.
-    - **Why fix this issue and what will be achieved with the fix?** This is the highest priority blocker. Fixing it will make custom product images visible in the cart and available for the Cockpit3D order payload.
-    - **Status:** USER VERIFICATION PENDING
-    - **Is recurring issue?** Y
-    - **Should Test frontend/backend/both after fix?** Backend (tested via frontend action).
-    - **Blocked on other issue:** None.
-
-- **Issue 2: Stripe keys are incorrect in the  environment**
-    - **Attempted fixes:** The agent identified that Next.js's build process was ignoring  and using  instead. The build script  was modified to temporarily rename  to  during the build, guaranteeing the correct keys are baked into the JavaScript. The user's build log confirms this is working, but they are still seeing live keys, indicating a deployment issue.
-    - **Next debug checklist:**
-        1.  Re-explain to the user that  variables are embedded at **build time** from their **local**  file.
-        2.  Confirm they have run 
+-   **Issue 1: Masked image is not being uploaded or saved**
+    -   **Attempted fixes:** The agent refactored the PHP upload script multiple times, unified the Order ID system, and added extensive logging to both the frontend (, ) and the PHP backend to trace the data flow. A user-facing alert was also added to notify if the masked upload fails.
+    -   **Next debug checklist:**
+        1.  Confirm the user has rebuilt (
 > crystalkeepsakes@0.1.0 build:test
 > node scripts/safe-build.js test
 
@@ -58,120 +49,119 @@ A Next.js 14 e-commerce application with a PHP backend for handling image upload
 
 ✅ No recently modified files found
 
-📋 Step 2: Setting build environment... *after* correcting their local env file.
-        3.  Confirm they have uploaded the **entire contents** of the new  folder, overwriting all old JavaScript files on the server.
-    - **Why fix this issue and what will be achieved with the fix?** Prevents accidental live transactions during testing and resolves a major point of user frustration.
-    - **Status:** USER VERIFICATION PENDING
-    - **Is recurring issue?** Y
-    - **Should Test frontend/backend/both after fix?** Frontend.
-    - **Blocked on other issue:** None.
+📋 Step 2: Setting build environment...) and deployed the latest code to activate the new, detailed logging.
+        2.  Request the **full browser developer console output** when the user saves an image. This is crucial to see the  data URL from the new logs in .
+        3.  Request the **Network tab details** for the  call corresponding to the masked image, checking its payload and server response.
+        4.  Investigate why  is  when an item is added to the cart, as this is the direct cause of the image not appearing.
+    -   **Why fix this issue and what will be achieved with the fix?** This is the primary blocker for the entire custom product workflow. Fixing it will allow customers to see their final customized product in the cart and enable complete orders to be sent to production.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both.
 
-- **Issue 3: Masked images are not appearing in the cart or order payload**
-    - **Attempted fixes:** The agent reviewed console logs provided by the user, which show that both the raw and masked images *are* being successfully uploaded. This confirms the issue is a downstream effect of **Issue 1**. The incorrect URL is being returned, so the frontend cannot display the image.
-    - **Next debug checklist:** This issue should be automatically resolved once **Issue 1** is fixed. No further action is needed until then.
-    - **Why fix this issue and what will be achieved with the fix?** This is a core part of the user experience. Customers need to see their final customized image.
-    - **Status:** BLOCKED
-    - **Is recurring issue?** N
-    - **Should Test frontend/backend/both after fix?** Frontend.
-    - **Blocked on other issue:** Issue 1: Incorrect Image URL Path on Production.
-
-- **Issue 4: High LocalStorage usage**
-    - **Attempted fixes:** The agent modified  in the  function to explicitly delete  and  fields from the  object before stringifying and saving to localStorage.
-    - **Next debug checklist:**
-        1.  Ask the user to clear their browser's localStorage.
-        2.  Ask them to add a product with a custom image to the cart.
-        3.  Have them check the localStorage usage again in the browser's developer tools.
-    - **Why fix this issue and what will be achieved with the fix?** Prevents the browser storage from filling up, which can cause the application to fail.
-    - **Status:** USER VERIFICATION PENDING
-    - **Is recurring issue?** N
-    - **Should Test frontend/backend/both after fix?** Frontend.
-    - **Blocked on other issue:** None.
+-   **Issue 2: A stale, old Order ID is being reused**
+    -   **Attempted fixes:** None. The agent only just identified this from the user's last message.
+    -   **Next debug checklist:**
+        1.  Review  to ensure the  function is being called reliably after an order is completed.
+        2.  Examine  to understand how the session is stored (e.g., ) and cleared.
+        3.  Add logging to  to track when it finds an existing session versus creating a new one.
+    -   **Why fix this issue and what will be achieved with the fix?** Prevents new orders from overwriting the image files of previous orders and ensures data integrity across the system. Each customization session must have a unique ID.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend.
 
 **In progress Task List**:
-None.
+None. All current work is focused on fixing the critical P0 and P1 issues.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **(P1)** Implement Cockpit3D order payload submission and email notifications on successful checkout.
-    *   **(P2)** Implement the faces option (1-10) in .
-    *   **(P3)** Implement the  order ID format in the PHP backend.
+    *   **(P1)** Verify the end-to-end order flow after fixing the masked image and stale ID issues.
+    *   **(P2)** Implement the hidden faces option (1-10) in .
 *   **Future Tasks:**
-    *   **(P4)** Conduct a codebase audit to identify and list unused files.
-    *   **(P5)** Create a static Privacy Policy page.
+    *   **(P3)** Conduct a codebase audit to identify and remove unused files.
+    *   **(P4)** Create a static Privacy Policy page.
 
 **Completed work in this session**
-- **Image Upload Trigger (DONE):** Refactored image upload to occur immediately on Save in the image editor, not on Add to Cart.
-- **Order Tracking System (DONE):** Created  to start building order data as soon as an image is saved.
-- **URL Path Preservation (DONE):** Fixed an issue where the  base path was lost during redirection to checkout by making URL generation dynamic in  and .
-- **Stripe Key Unification (DONE):** Refactored the entire codebase (JS and PHP) to use only two standardized Stripe key variables:  and , eliminating confusion from multiple variable names.
-- **Build Script Fix (DONE):** Fixed  to correctly use  for test builds, solving the issue of live keys being embedded in the test environment's JavaScript.
-- **Image Path Logic (DONE):** Corrected the image upload path logic in  to place the  folder *inside* the main site directory.
-- **LocalStorage Bloat (DONE):** Implemented a fix in  to strip base64 image data before saving the cart to localStorage.
-- **Debug Overlay Enhancements (DONE):** The debug overlay now shows partial Stripe keys to help diagnose environment issues.
-- **Build Process Improvement (DONE):** Updated  to include  in the build output.
+-   **Unified Order ID System:** Created  and refactored the application to use a single, consistent order ID () from product customization through checkout.
+-   **PHP Image Upload Path Fix:** Rewrote  to reliably save images to a shared  directory, with unique subfolders per order ID.
+-   **Comprehensive Debug Overlay:** Implemented a new, detailed debug panel () to show all critical session and environment data.
+-   **Email Notification System:** Created a new endpoint () that handles Cockpit3D submission and sends a detailed HTML email on successful order confirmation.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Issue 1: Stripe keys in  environment.** A fix was implemented in the build script, but it requires user verification after a rebuild and deploy to confirm it's resolved.
+-   **Issue 2: High LocalStorage usage.** A fix to strip base64 data before saving to localStorage was implemented in  but awaits user verification.
 
 **Known issue recurrence from previous fork**
-- The incorrect image upload path and the confusion around Stripe keys in the test environment are both highly recurring issues, primarily due to the complexity of the user's local build and FTP deployment workflow.
+-   The incorrect image upload path has been a persistent, central theme. While the pathing logic is believed to be correct now, the failure of the masked image upload is a manifestation of this recurring problem area.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS.
-- **Backend:** Standalone PHP scripts.
-- **State Management:** Client-side using  and .
-- **Build Process:** A custom Node.js script () that manages environment variables and runs the Next.js static export ().
-- **Deployment:** User manually uploads the build output folder via FTP.
+-   **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS.
+-   **Backend:** Standalone PHP scripts.
+-   **State Management:** Client-side via , , and .
+-   **Build Process:** A custom Node.js script () that manages environment variables for test vs. production builds.
+-   **Deployment:** Manual FTP of the  directory.
 
 **key DB schema**
-- **localStorage:** Stores the cart object .
-- **IndexedDB:** Caches image data for local thumbnails.
+-    (or ) stores the unified order session object, e.g., .
 
 **changes in tech stack**
-None.
+-   None.
 
 **All files of reference**
-- : The core of the image path issue.
-- : The custom build script that handles environment variables.
-- : Manages product options, image editing, and adding items to the cart.
-- : Core logic for saving/loading the cart and stripping image data.
-- : Frontend Stripe key configuration.
-- : Backend Stripe key configuration.
+-   **Core of current bug:**
+    -   : Orchestrates the image upload via .
+    -   : Generates the masked image data.
+    -   : Receives and saves the uploaded image files.
+-   **Stale ID issue:**
+    -   : Source of truth for order IDs.
+    -   : Location where the session should be cleared.
+-   **New Features:**
+    -   : The new debug panel.
+    -   : The new order processing endpoint.
 
 **Critical Info for New Agent**
-- **The user's deployment process is the main source of issues.** Fixes you implement are not live until the user runs the local build script and FTPs the output. You must constantly reinforce this.
-- **Next.js  variables are set at BUILD TIME.** The  file on the server is ONLY for the PHP backend at RUNTIME. This is a critical distinction the user struggles with.
-- The two most important issues to focus on are the **image URL path (Issue 1)** and the **Stripe test keys (Issue 2)**. Resolving these will clear up the user's main frustrations.
-- Assume the user's deployed files are out of date until they explicitly confirm they have re-built and re-uploaded the *entire* build directory.
+-   Your absolute first priority is to resolve the **failing masked image upload (P0)**. Do not attempt other changes until you get diagnostic data for this.
+-   Your second priority is to fix the **stale Order ID issue (P1)**. This is a critical data integrity bug.
+-   **You MUST get diagnostic data from the user.** The previous agent added extensive logging. Instruct the user to rebuild and deploy the latest code, then capture and share the browser's developer console output and network tab details during an image save attempt. You cannot debug this blind.
+-   Reinforce the user's manual deployment workflow: any code change requires 
+> crystalkeepsakes@0.1.0 build:test
+> node scripts/safe-build.js test
+
+
+🔨 Starting SAFE build for TEST mode
+
+📋 Step 1: Checking for locked files...
+
+✅ No recently modified files found
+
+📋 Step 2: Setting build environment... followed by FTPing the **entire  directory** to their server.
 
 **Last 10 User Messages and any pending HUMAN messages**
-- latest: yes, the NEW way were trying to resolve the images is crystalkeepsakes.com/crystal-data is the NEW way. even on the local:3000/crsytal-data/ or the "php" way localhost:8888/crystalkeepsakes/crystal-data or are we doing this wrong and we STILL need to test sending emails when the orders are done AND sending cockpit3d order payload"
-- "[Console log showing both images uploaded successfully but with wrong full server path]"
-- "missing the full path to the images I see customImage "emerald-laser-beam.jpg", why is that NOT set into the /crystalkeepsakes.com/crystal-data/order-images-test ?"
-- "The code looks correct - it uses `$documentRoot . /crystal-data/...`. The issue is your production server has an OLD version of the PHP file!"
-- "WHERE is the masked saved image?!?!?! not only should it upload BOTH files, its not.
-- [Build log showing test build seems successful]
-- This is what happens on build:test to confirm: [long build log]
-- Uploading 1 image almost maxed the local storage... with NO masked customer image im so frustrated with you right now. and no its public_html/crystalkeepsakes.com and public_html/crystal-data/order-images/ Would be MAMPhtdocscrystal-data and htdocscrystalkeepsakes
-- {...} Yes, MOVE it. Its the only way to have crystal-data IN crystalkeepsakes/ and crystalkeepsakes.com/ and for /test"
-- "the URL in the link is wrong look at it the destination: https://crystalkeepsakes.com/home/uydbo2r007mb/public_html/crystal-data/... thats the ONLY image that uploaded, the masked images are NOT working on prod.. testing too WHY did the cart blow up so bad?
+-   User is frustrated that the masked image is missing from the final order payload and not showing in the cart debug panel, stating it was working.
+-   User provided a Cockpit3D JSON payload showing  exists but  (the masked image) is missing.
+-   User provided another screenshot showing the cart is not displaying the masked image.
+-   User confirmed the email address for notifications is .
+-   User reported an ID mismatch between the image folder (), the test order ID (), and the Stripe session ID (), which was a critical clue that led to the creation of the unified ID system.
 
 **Project Health Check:**
-- **Broken:** The core user flow for custom products is broken due to the incorrect image URLs being generated by an outdated PHP script on the user's server.
-- **Mocked:** None.
+-   **Broken:** The core user flow for custom products is critically broken because the masked image is not being saved or displayed.
+-   **Mocked:** None.
 
 **3rd Party Integrations**
-- **Stripe:** For payment processing.
-- **Cockpit3D:** An external service that will receive the final order payload.
+-   **Stripe:** For payment processing.
+-   **Cockpit3D:** An external service that receives the final order payload.
 
 **Testing status**
-- **Testing agent used after significant changes:** NO
-- **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:** None.
-- **Known regressions:** The image upload path and Stripe key configuration have been persistent, recurring problems.
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None.
+-   **Known regressions:** The masked image upload was allegedly working at some point but is now broken again.
 
 **Credentials to test flow:**
-N/A. All testing must be performed by the user in their own environments.
+-   N/A. All testing must be performed by the user in their own environments.
 
 **What agent forgot to execute**
-- The agent has not yet started implementing the new order ID format, the hidden faces option, or the final submission of the order payload to Cockpit3D and the emailing system. The focus has been entirely on fixing the critical blockers.</analysis>
+-   The agent correctly identified the stale Order ID issue as a major problem but has not yet attempted a fix. This must be prioritized right after getting debug info for the masked image failure.
+-   Verification for the Stripe key and LocalStorage fixes is still pending from the user.</analysis>
