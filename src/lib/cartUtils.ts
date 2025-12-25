@@ -425,11 +425,33 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
 export function saveCart(cart: CartItem[]): void {
   try {
     // Strip large image data URLs before saving to localStorage
+    // ONLY keep: serverUrl, originalServerUrl, filename, metadata references
     const cartForStorage = cart.map(item => {
       const cleaned = { ...item }
       // Remove image data URLs - only keep imageId references
       delete cleaned.rawImageUrl
       delete cleaned.maskedImageUrl
+      
+      // ✅ CRITICAL: Strip base64 from customImage - only keep server URLs!
+      if (cleaned.customImage) {
+        cleaned.customImage = {
+          // Keep server URLs (small strings)
+          serverUrl: cleaned.customImage.serverUrl,
+          originalServerUrl: cleaned.customImage.originalServerUrl,
+          // Keep metadata (small)
+          filename: cleaned.customImage.filename,
+          mimeType: cleaned.customImage.mimeType,
+          width: cleaned.customImage.width,
+          height: cleaned.customImage.height,
+          processedAt: cleaned.customImage.processedAt,
+          maskId: cleaned.customImage.maskId,
+          maskName: cleaned.customImage.maskName,
+          tempOrderRef: cleaned.customImage.tempOrderRef,
+          orderStartedAt: cleaned.customImage.orderStartedAt
+          // EXCLUDE: dataUrl, originalDataUrl (these are huge base64 strings!)
+        }
+      }
+      
       // Clean options object too
       if (cleaned.options) {
         cleaned.options = cleanOptions(cleaned.options)
