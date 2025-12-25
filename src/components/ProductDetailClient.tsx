@@ -457,6 +457,8 @@ export default function ProductDetailClient() {
         alert('⚠️ Please upload your image before adding to cart.')
       } else if (validation.errors.finalImage) {
         alert('⚠️ Please save your edited image before adding to cart.')
+      } else if (validation.errors.imageUpload) {
+        alert('⚠️ ' + validation.errors.imageUpload)
       } else if (validation.errors.size) {
         alert('⚠️ Please select a size before adding to cart.')
       } else if (Object.keys(validation.errors).length > 0) {
