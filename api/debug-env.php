@@ -36,11 +36,12 @@ require_once __DIR__ . '/env-loader.php';
 <h2>📋 Loaded Environment Variables</h2>
 <pre><?php
 
-// Try to load some key variables
+// Try to load some key variables - ONLY standardized names
 $testKeys = [
     'NEXT_PUBLIC_ENV_MODE',
-    'STRIPE_DEVELOPMENT_SECRET_KEY',
     'STRIPE_SECRET_KEY',
+    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
+    'STRIPE_WEBHOOK_SECRET',
     'COCKPIT3D_USERNAME',
     'COCKPIT3D_RETAIL_ID',
     'NEXT_PUBLIC_PHP_BACKEND_URL'
