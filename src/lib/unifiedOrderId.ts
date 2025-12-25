@@ -236,6 +236,22 @@ export function clearOrderSession(): void {
 }
 
 /**
+ * Force create a new session (for starting fresh customization)
+ * Use this when user uploads a NEW image to ensure unique order ID
+ */
+export function forceNewOrderSession(productId?: string): OrderSession {
+  if (typeof window === 'undefined') {
+    return createNewSession(productId)
+  }
+  
+  // Clear any existing session first
+  localStorage.removeItem(STORAGE_KEY)
+  console.log('🆕 [ORDER] Forcing new session...')
+  
+  return createNewSession(productId)
+}
+
+/**
  * Get order ID for use in API calls
  * Creates session if needed
  */
