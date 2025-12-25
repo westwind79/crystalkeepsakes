@@ -213,12 +213,14 @@ try {
         'environment' => $mode,
         'debug' => [
             'uploadDir' => $uploadDir,
+            'fullUploadDir' => $fullUploadDir,
             'filePath' => $filePath,
             'fileExists' => file_exists($filePath),
             'fileSize' => filesize($filePath),
             'isReadable' => is_readable($filePath),
             'documentRoot' => $documentRoot,
-            'relativePath' => $relativePath
+            'relativePath' => $relativePath,
+            'scriptDir' => $scriptDir
         ]
     ]);
     
