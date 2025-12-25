@@ -104,28 +104,33 @@ try {
     $documentRoot = str_replace('\\', '/', $documentRoot);
     $documentRoot = rtrim($documentRoot, '/');
     
+    // IMPORTANT: crystal-data is a SIBLING folder to the site, not inside it
+    // Structure:
+    //   public_html/crystalkeepsakes.com/api/  ← script location (DOCUMENT_ROOT = crystalkeepsakes.com)
+    //   public_html/crystal-data/              ← images (SIBLING to site)
+    // OR for MAMP:
+    //   htdocs/crystalkeepsakes/api/           ← script location
+    //   htdocs/crystal-data/                   ← images (SIBLING to site)
+    
+    // Go UP one level from DOCUMENT_ROOT to find the parent (public_html or htdocs)
+    $webRoot = dirname($documentRoot);  // e.g., /home/user/public_html or C:/MAMP/htdocs
+    
     error_log("📁 Script location: $scriptDir");
     error_log("📁 DOCUMENT_ROOT: $documentRoot");
-    
-    // For URL generation, we need the web root (DOCUMENT_ROOT)
-    // For file storage, we use the calculated path
+    error_log("📁 Web root (parent): $webRoot");
     
     if ($customPath) {
         // Use path from .env
         $uploadDir = $customPath;
         error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
     } else {
-        // Store files relative to DOCUMENT_ROOT
-        // This ensures the URL path matches the file path
+        // crystal-data is in the parent folder (sibling to site)
         if ($mode === 'development') {
-            // Local dev: crystal-data/order-images-test/
-            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $webRoot . '/crystal-data/order-images-test/';
         } else if ($mode === 'testing') {
-            // Testing: crystal-data/order-images-test/
-            $uploadDir = $documentRoot . '/crystal-data/order-images-test/';
+            $uploadDir = $webRoot . '/crystal-data/order-images-test/';
         } else {
-            // Production: crystal-data/order-images/
-            $uploadDir = $documentRoot . '/crystal-data/order-images/';
+            $uploadDir = $webRoot . '/crystal-data/order-images/';
         }
         error_log("📁 Upload directory: $uploadDir");
     }
