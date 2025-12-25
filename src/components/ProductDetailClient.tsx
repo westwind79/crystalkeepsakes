@@ -268,7 +268,13 @@ export default function ProductDetailClient() {
         setMaskedImageServerUrl(uploadResult.maskedUrl)
         console.log('✅ [IMAGE SAVE] Masked image uploaded:', uploadResult.maskedUrl)
       } else {
-        console.error('❌ [IMAGE SAVE] Masked image NOT uploaded! No URL returned')
+        console.error('❌ [IMAGE SAVE] ⚠️ MASKED IMAGE NOT UPLOADED! serverUrl is empty!')
+        console.error('❌ [IMAGE SAVE] Upload errors:', uploadResult.errors)
+        // Show error to user!
+        setErrors(prev => ({
+          ...prev,
+          imageUpload: 'Masked image failed to upload. Please try saving again.'
+        }))
       }
       
       if (uploadResult.rawUrl) {
