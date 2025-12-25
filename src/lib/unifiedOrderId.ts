@@ -65,6 +65,17 @@ export function generateOrderId(): string {
 /**
  * Get or create current order session
  * Returns existing session if still valid, otherwise creates new one
+ * 
+ * IMPORTANT: Sessions are only reused if:
+ * - Status is 'customizing' (actively editing image) or 'in_cart' (has items)
+ * - Session has images uploaded (indicates active customization)
+ * - Session is less than 2 hours old (prevents stale sessions)
+ * 
+ * A NEW session is created if:
+ * - No existing session
+ * - Session is 'browsing' only (no commitment yet)
+ * - Session is too old
+ * - Session is 'completed'
  */
 export function getOrCreateOrderSession(productId?: string): OrderSession {
   if (typeof window === 'undefined') {
@@ -76,17 +87,34 @@ export function getOrCreateOrderSession(productId?: string): OrderSession {
     if (stored) {
       const session: OrderSession = JSON.parse(stored)
       
-      // Check if session is still valid (not completed, not too old)
+      // Check if session is still valid
       const sessionAge = Date.now() - new Date(session.createdAt).getTime()
-      const MAX_AGE = 24 * 60 * 60 * 1000 // 24 hours
+      const MAX_AGE = 2 * 60 * 60 * 1000 // 2 hours (reduced from 24 hours)
       
-      if (session.status !== 'completed' && sessionAge < MAX_AGE) {
+      // Only reuse session if:
+      // 1. Not completed
+      // 2. Not too old
+      // 3. Has actual work done (images uploaded OR in cart)
+      const hasWork = session.status === 'customizing' || 
+                      session.status === 'in_cart' || 
+                      session.status === 'checkout' ||
+                      (session.images.masked || session.images.raw)
+      
+      if (session.status !== 'completed' && sessionAge < MAX_AGE && hasWork) {
+        console.log('♻️ [ORDER] Reusing existing session:', session.orderId, 'status:', session.status)
         // Update product if provided
         if (productId && !session.productId) {
           session.productId = productId
           saveOrderSession(session)
         }
         return session
+      } else {
+        // Session exists but doesn't qualify for reuse
+        console.log('🗑️ [ORDER] Discarding old/inactive session:', session.orderId, {
+          status: session.status,
+          ageMinutes: Math.round(sessionAge / 60000),
+          hasWork
+        })
       }
     }
   } catch (e) {
