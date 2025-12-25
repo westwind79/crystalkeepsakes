@@ -115,11 +115,10 @@ $config = [
     ],
 ];
 
-// Check which keys would be used
-$activeStripeKey = $mode === 'production' 
-    ? getEnvVar('STRIPE_SECRET_KEY') 
-    : getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
-$config['stripe']['will_use'] = $activeStripeKey ? maskValue($activeStripeKey) : 'NONE - WILL FAIL';
+// Check which keys would be used - ONLY STRIPE_SECRET_KEY
+$activeStripeKey = getEnvVar('STRIPE_SECRET_KEY');
+$keyType = strpos($activeStripeKey ?: '', 'sk_live_') === 0 ? 'LIVE' : 'TEST';
+$config['stripe']['will_use'] = $activeStripeKey ? maskValue($activeStripeKey) . " ($keyType)" : 'NONE - WILL FAIL';
 
 switch ($action) {
     case 'status':
