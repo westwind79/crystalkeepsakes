@@ -455,22 +455,16 @@ export default function ProductDetailClient() {
         console.log('📸 [ADD TO CART] Using pre-uploaded images:', {
           maskedServerUrl: maskedImageServerUrl,
           rawServerUrl: rawImageServerUrl,
-          tempOrderRef: tempOrderRef
+          orderId: tempOrderRef
         })
-        
-        // Get order data from tracker
-        const orderData = tempOrderRef ? getOrderDataForCart(tempOrderRef) : null
-        if (orderData) {
-          console.log('📦 [ADD TO CART] Order data from tracker:', orderData)
-        }
         
         customImage = {
           // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
           dataUrl: finalMaskedImage, // Always keep base64 for local processing
           originalDataUrl: uploadedImage, // Always keep base64 for local processing
           // ✅ Use server URLs that were uploaded on Save
-          serverUrl: orderData?.serverUrl || maskedImageServerUrl || undefined,
-          originalServerUrl: orderData?.originalServerUrl || rawImageServerUrl || undefined,
+          serverUrl: maskedImageServerUrl || undefined,
+          originalServerUrl: rawImageServerUrl || undefined,
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
@@ -479,13 +473,12 @@ export default function ProductDetailClient() {
           processedAt: new Date().toISOString(),
           maskId: product.maskImageUrl,
           maskName: 'Product Mask',
-          tempOrderRef: tempOrderRef || undefined, // Track which temp folder images are in
-          orderStartedAt: orderData?.orderStartedAt // When order tracking began
+          tempOrderRef: tempOrderRef || undefined // Unified order ID
         }
         
-        // Mark order as in cart
+        // Mark order as in cart using unified session
         if (tempOrderRef) {
-          markOrderInCart(tempOrderRef)
+          markSessionInCart()
         }
       }
       
