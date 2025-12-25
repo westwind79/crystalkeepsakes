@@ -21,18 +21,20 @@ $results = [
 ];
 
 try {
-    // Get Stripe key
+    // Get Stripe key - ONLY uses STRIPE_SECRET_KEY
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
+    $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     
-    if ($mode === 'production') {
-        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
-    } else {
-        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
+    if (!$secretKey) {
+        throw new Exception('STRIPE_SECRET_KEY not found in .env');
     }
     
+    // Detect key type from prefix
+    $keyType = strpos($secretKey, 'sk_live_') === 0 ? 'LIVE' : 'TEST';
+    
     $results['details']['mode'] = $mode;
-    $results['details']['key_type'] = $mode === 'production' ? 'LIVE' : 'TEST';
-    $results['details']['key_starts_with'] = substr($secretKey, 0, 7);
+    $results['details']['key_type'] = $keyType;
+    $results['details']['key_starts_with'] = substr($secretKey, 0, 12);
     
     // Set API key
     \Stripe\Stripe::setApiKey($secretKey);
