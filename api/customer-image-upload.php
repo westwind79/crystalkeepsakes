@@ -147,7 +147,7 @@ try {
         error_log("Creating directory: $fullUploadDir");
         if (!mkdir($fullUploadDir, 0755, true)) {
             error_log("❌ Failed to create directory. Make sure crystal-data folder exists in htdocs!");
-            error_log("Expected structure: {DOCUMENT_ROOT}/crystal-data/order-images-test/");
+            error_log("Expected structure: {DOCUMENT_ROOT}/crystal-data/orders-test/");
             throw new Exception("Failed to create upload directory: $fullUploadDir - Please create 'crystal-data' folder inside htdocs");
         }
         error_log("✓ Directory created successfully");
