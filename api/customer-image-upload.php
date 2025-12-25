@@ -2,10 +2,15 @@
 /**
  * Customer Image Upload API
  * Handles customer-uploaded images for product customization
- * Works in both development (local) and production environments
  * 
- * These are TEMPORARY images for cart items, NOT product gallery images
- * They persist until order completion or cleanup (7 days)
+ * CRITICAL PATH STRUCTURE:
+ *   ALL images go to: /public_html/crystalkeepsakes.com/crystal-data/
+ *   - Production: /crystal-data/orders/{ORDER_ID}/
+ *   - Test/Dev:   /crystal-data/orders-test/{ORDER_ID}/
+ * 
+ * URL Structure (always from domain root):
+ *   - https://crystalkeepsakes.com/crystal-data/orders/CK_0000001/file.png
+ *   - https://crystalkeepsakes.com/crystal-data/orders-test/CK_0000001/file.png
  */
 
 header('Content-Type: application/json');
@@ -39,12 +44,10 @@ try {
     $imageData = $data['imageData'];
     $productId = $data['productId'] ?? 'unknown';
     $imageType = $data['imageType'] ?? 'masked'; // 'masked' or 'raw'
-    $orderNumber = $data['orderNumber'] ?? null; // CRITICAL: Order number for folder structure
+    $orderNumber = $data['orderNumber'] ?? null; // Order ID for folder structure
     
     // Debug: Log image data info
-    error_log("📥 Received image data - Type: $imageType, Product: $productId");
-    error_log("📏 Data length: " . strlen($imageData) . " chars");
-    error_log("🔍 Data starts with: " . substr($imageData, 0, 50) . "...");
+    error_log("📥 Received image data - Type: $imageType, Product: $productId, Order: $orderNumber");
     
     // Parse base64 image
     if (!preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
@@ -53,130 +56,85 @@ try {
     }
     
     $imageExtension = $matches[1];
-    error_log("📸 Image type detected: $imageExtension");
-    
     $base64Image = substr($imageData, strpos($imageData, ',') + 1);
-    error_log("📏 Base64 string length: " . strlen($base64Image) . " chars");
-    
-    $binaryImage = base64_decode($base64Image, true); // Strict mode
+    $binaryImage = base64_decode($base64Image, true);
     
     if ($binaryImage === false) {
-        error_log("❌ Base64 decode failed!");
         throw new Exception('Failed to decode base64 image');
     }
     
-    error_log("✓ Decoded to binary: " . strlen($binaryImage) . " bytes");
-    
-    // Validate it's actually an image by checking magic bytes
+    // Validate it's actually an image
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $detectedMime = $finfo->buffer($binaryImage);
-    error_log("🔍 Detected MIME type: $detectedMime");
     
     if (!str_starts_with($detectedMime, 'image/')) {
-        error_log("❌ Not a valid image! MIME: $detectedMime");
         throw new Exception("Invalid image data. Detected type: $detectedMime");
     }
     
-    // Validate image size (max 10MB for customer uploads)
+    // Validate image size (max 10MB)
     $imageSize = strlen($binaryImage);
-    $maxSize = 10 * 1024 * 1024; // 10MB
-    if ($imageSize > $maxSize) {
+    if ($imageSize > 10 * 1024 * 1024) {
         throw new Exception('Image too large. Maximum size is 10MB.');
     }
     
     error_log("✓ Image validated: $imageSize bytes, type: $detectedMime");
     
-    // Determine upload directory based on environment
+    // Get environment mode
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
-    $backendUrl = getEnvVar('NEXT_PUBLIC_PHP_BACKEND_URL') ?? 'http://localhost:8888/crystalkeepsakes';
-    
-    error_log("🖼️  Image Upload - Mode: $mode");
-    
-    // Get custom image path from environment or use defaults
-    $customPath = getEnvVar('CUSTOMER_IMAGE_PATH');
-    
-    // Calculate paths for file storage and URL generation
-    // CRITICAL: Use script location (__DIR__) to find the MAIN site root
-    // On GoDaddy structure:
-    //   Production: /public_html/crystalkeepsakes.com/api/  -> site root is /public_html/crystalkeepsakes.com/
-    //   Test:       /public_html/crystalkeepsakes.com/test/api/ -> site root is STILL /public_html/crystalkeepsakes.com/
-    // ALL images go to /public_html/crystalkeepsakes.com/crystal-data/ (shared location)
-    
-    $scriptDir = __DIR__;  // e.g., /home/user/public_html/crystalkeepsakes.com/test/api
-    
-    // Normalize slashes
-    $scriptDir = str_replace('\\', '/', $scriptDir);
-    $scriptDir = rtrim($scriptDir, '/');
-    
-    // Get the parent of /api/ folder
-    $apiParent = dirname($scriptDir);  // e.g., .../crystalkeepsakes.com/test
-    
-    // Determine the URL base path (for generating web URLs)
-    // Test site: /test  |  Prod site: (empty)
     $basePath = getEnvVar('NEXT_PUBLIC_BASE_PATH') ?? '';
     $basePath = trim($basePath, '/');
     
-    // Calculate MAIN site root (where crystal-data lives)
-    // If basePath is "test", go up one more level from apiParent
-    // If basePath is empty (production), apiParent IS the site root
-    if ($basePath) {
-        // Test mode: /crystalkeepsakes.com/test/api -> go up to /crystalkeepsakes.com/
-        $mainSiteRoot = dirname($apiParent);
+    error_log("🖼️  Image Upload - Mode: $mode, BasePath: $basePath");
+    
+    // ============================================================
+    // CRITICAL: Calculate the MAIN site root (crystalkeepsakes.com)
+    // ============================================================
+    // Script location: /crystalkeepsakes.com/api/ (prod) or /crystalkeepsakes.com/test/api/ (test)
+    // We need to get to: /crystalkeepsakes.com/crystal-data/
+    
+    $scriptDir = str_replace('\\', '/', __DIR__);
+    $scriptDir = rtrim($scriptDir, '/');
+    
+    // Go up from /api/ to site folder
+    $siteFolder = dirname($scriptDir);  // e.g., /crystalkeepsakes.com/test or /crystalkeepsakes.com
+    
+    // If we're in /test/api, go up one more level to main site
+    if ($basePath === 'test') {
+        $mainSiteRoot = dirname($siteFolder);  // /crystalkeepsakes.com
     } else {
-        // Production mode: /crystalkeepsakes.com/api -> already at site root
-        $mainSiteRoot = $apiParent;
+        $mainSiteRoot = $siteFolder;  // Already at /crystalkeepsakes.com
     }
     
-    // Format basePath for URLs
-    if ($basePath) {
-        $basePath = '/' . $basePath;  // e.g., /test
-    }
+    error_log("📁 Script dir: $scriptDir");
+    error_log("📁 Site folder: $siteFolder");
+    error_log("📁 Main site root: $mainSiteRoot");
     
-    error_log("📁 Script location: $scriptDir");
-    error_log("📁 API parent: $apiParent");
-    error_log("📁 MAIN site root (crystal-data location): $mainSiteRoot");
-    error_log("📁 Base path for URLs: " . ($basePath ?: '(root)'));
-    
-    if ($customPath) {
-        // Use path from .env
-        $uploadDir = $customPath;
-        error_log("Using CUSTOMER_IMAGE_PATH from .env: $uploadDir");
+    // ============================================================
+    // Set upload directory inside main site: /crystalkeepsakes.com/crystal-data/
+    // ============================================================
+    if ($mode === 'development' || $mode === 'testing') {
+        $uploadDir = $mainSiteRoot . '/crystal-data/orders-test/';
     } else {
-        // crystal-data goes in MAIN site folder: /crystalkeepsakes.com/crystal-data/
-        // Both test and prod share this location, just different subfolders
-        // Structure:
-        //   /crystalkeepsakes.com/crystal-data/orders/       <- Production orders
-        //   /crystalkeepsakes.com/crystal-data/orders-test/  <- Test orders
-        if ($mode === 'development' || $mode === 'testing') {
-            $uploadDir = $mainSiteRoot . '/crystal-data/orders-test/';
-        } else {
-            $uploadDir = $mainSiteRoot . '/crystal-data/orders/';
-        }
-        error_log("📁 Upload directory: $uploadDir");
+        $uploadDir = $mainSiteRoot . '/crystal-data/orders/';
     }
     
-    // Ensure directory has trailing slash
-    $uploadDir = rtrim($uploadDir, '/') . '/';
-    
-    // Create ORDER-BASED subfolder (one folder per order)
+    // Create ORDER-BASED subfolder
     if ($orderNumber) {
         $fullUploadDir = $uploadDir . $orderNumber . '/';
-        error_log("📁 Creating order-based folder: $fullUploadDir");
     } else {
-        // Fallback: use temp folder if no order number yet
-        $fullUploadDir = $uploadDir . 'temp-' . time() . '/';
-        error_log("⚠️  No order number provided, using temp folder: $fullUploadDir");
+        // Fallback: use timestamp-based temp folder
+        $fullUploadDir = $uploadDir . 'temp-' . date('Ymd-His') . '/';
     }
+    
+    error_log("📁 Full upload dir: $fullUploadDir");
     
     // Create directory if doesn't exist
     if (!file_exists($fullUploadDir)) {
-        error_log("Creating directory: $fullUploadDir");
         if (!mkdir($fullUploadDir, 0755, true)) {
-            error_log("❌ Failed to create directory. Make sure crystal-data folder exists in htdocs!");
-            error_log("Expected structure: {DOCUMENT_ROOT}/crystal-data/orders-test/");
-            throw new Exception("Failed to create upload directory: $fullUploadDir - Please create 'crystal-data' folder inside htdocs");
+            error_log("❌ Failed to create directory: $fullUploadDir");
+            throw new Exception("Failed to create upload directory. Please ensure crystal-data folder exists at site root with write permissions.");
         }
-        error_log("✓ Directory created successfully");
+        error_log("✓ Directory created: $fullUploadDir");
     }
     
     // Verify writable
@@ -190,44 +148,33 @@ try {
     $filename = "customer_{$productId}_{$imageType}_{$timestamp}_{$uniqueId}.{$imageExtension}";
     $filePath = $fullUploadDir . $filename;
     
-    error_log("Saving image to: $filePath");
-    
     // Save file
     if (file_put_contents($filePath, $binaryImage) === false) {
         throw new Exception('Failed to save image file');
     }
     
-    // Set proper permissions (readable by web server)
     chmod($filePath, 0644);
+    error_log("✓ Image saved: $filePath (" . filesize($filePath) . " bytes)");
     
-    error_log("✓ Image saved successfully: " . filesize($filePath) . " bytes");
-    
+    // ============================================================
     // Generate web-accessible URL
-    // Since crystal-data is in the MAIN site root (crystalkeepsakes.com/crystal-data/),
-    // URLs are always relative to domain root, NOT to /test/
-    // e.g., https://crystalkeepsakes.com/crystal-data/orders-test/ORD_123/file.png
-    // e.g., https://crystalkeepsakes.com/crystal-data/orders/ORD_123/file.png
-    
-    // Build the URL path (relative to domain root - NO basePath prefix!)
+    // URL is ALWAYS relative to domain root: /crystal-data/orders[-test]/...
+    // ============================================================
     if ($mode === 'development') {
-        // Local MAMP: include full localhost URL
-        // MAMP structure: http://localhost:8888/crystalkeepsakes/crystal-data/...
-        $mampBase = rtrim($backendUrl, '/');
-        $fileUrl = $mampBase . '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
+        // Local MAMP
+        $backendUrl = getEnvVar('NEXT_PUBLIC_PHP_BACKEND_URL') ?? 'http://localhost:8888/crystalkeepsakes';
+        $backendUrl = rtrim($backendUrl, '/');
+        $subFolder = 'orders-test';
+        $fileUrl = $backendUrl . '/crystal-data/' . $subFolder . '/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
     } else {
-        // Production/Testing: URL relative to DOMAIN root (not /test/)
-        // Both go to /crystal-data/ directly
-        if ($mode === 'testing') {
-            $fileUrl = '/crystal-data/orders-test/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
-        } else {
-            $fileUrl = '/crystal-data/orders/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
-        }
+        // Production/Testing - URL from domain root
+        $subFolder = ($mode === 'testing') ? 'orders-test' : 'orders';
+        $fileUrl = '/crystal-data/' . $subFolder . '/' . ($orderNumber ? $orderNumber . '/' : '') . $filename;
     }
     
     error_log("✅ Final image URL: $fileUrl");
-    error_log("📁 File saved to: $filePath");
     
-    // Return success with file info
+    // Return success
     echo json_encode([
         'success' => true,
         'filename' => $filename,
@@ -235,17 +182,15 @@ try {
         'size' => $imageSize,
         'type' => $imageType,
         'environment' => $mode,
+        'orderNumber' => $orderNumber,
         'debug' => [
             'scriptDir' => $scriptDir,
-            'apiParent' => $apiParent,
+            'siteFolder' => $siteFolder,
             'mainSiteRoot' => $mainSiteRoot,
-            'basePath' => $basePath,
             'uploadDir' => $uploadDir,
             'fullUploadDir' => $fullUploadDir,
             'filePath' => $filePath,
             'fileExists' => file_exists($filePath),
-            'fileSize' => filesize($filePath),
-            'isReadable' => is_readable($filePath),
             'generatedUrl' => $fileUrl
         ]
     ]);
