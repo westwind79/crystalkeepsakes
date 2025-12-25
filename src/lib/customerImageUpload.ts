@@ -25,16 +25,34 @@ export async function uploadCustomerImage(
   orderNumber?: string
 ): Promise<UploadResult> {
   try {
+    // Validate input
+    if (!imageData) {
+      console.error(`❌ [UPLOAD ${imageType}] No image data provided!`)
+      return { success: false, error: 'No image data provided' }
+    }
+    
+    if (!imageData.startsWith('data:image/')) {
+      console.error(`❌ [UPLOAD ${imageType}] Invalid image format - must be base64 data URL`)
+      console.error(`❌ [UPLOAD ${imageType}] Received: ${imageData.substring(0, 50)}...`)
+      return { success: false, error: 'Invalid image format - must start with data:image/' }
+    }
+    
+    // Log what we're uploading
+    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Starting upload:`, {
+      type: imageType,
+      productId,
+      orderNumber,
+      dataLength: imageData.length,
+      dataPreview: imageData.substring(0, 50) + '...'
+    })
+    
     // Get backend URL
     const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
     const apiUrl = backendUrl 
       ? `${backendUrl}/api/customer-image-upload.php` 
       : '/api/customer-image-upload.php'
     
-    console.log('📤 Uploading customer image to:', apiUrl)
-    if (orderNumber) {
-      console.log('📁 Order folder:', orderNumber)
-    }
+    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] API URL:`, apiUrl)
     
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -45,39 +63,37 @@ export async function uploadCustomerImage(
         imageData,
         productId,
         imageType,
-        orderNumber // Include order number for folder structure
+        orderNumber
       })
     })
     
+    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response status:`, response.status)
+    
     if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] HTTP error:`, response.status, errorText)
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
     
     const result = await response.json()
+    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response:`, result)
     
     if (result.success) {
-      console.log('✅ Customer image uploaded:', result.url)
-      console.log('📊 Upload info:', {
-        filename: result.filename,
-        size: `${(result.size / 1024).toFixed(2)} KB`,
-        environment: result.environment,
-        type: result.type
-      })
-      
+      console.log(`✅ [UPLOAD ${imageType.toUpperCase()}] SUCCESS:`, result.url)
       return {
         success: true,
         url: result.url,
         filename: result.filename
       }
     } else {
-      console.error('❌ Upload failed:', result.error)
+      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] FAILED:`, result.error)
       return {
         success: false,
         error: result.error
       }
     }
   } catch (error) {
-    console.error('❌ Error uploading customer image:', error)
+    console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] EXCEPTION:`, error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Upload failed'
