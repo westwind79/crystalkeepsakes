@@ -122,23 +122,47 @@ export async function uploadCustomerImages(
   let maskedUrl: string | undefined
   let rawUrl: string | undefined
   
-  // Upload masked image with order number
-  const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
-  if (maskedResult.success) {
-    maskedUrl = maskedResult.url
+  console.log('🖼️ [UPLOAD IMAGES] Starting upload for order:', orderNumber)
+  console.log('🖼️ [UPLOAD IMAGES] Masked image provided:', !!maskedImage, maskedImage ? `(${maskedImage.length} chars)` : '')
+  console.log('🖼️ [UPLOAD IMAGES] Raw image provided:', !!rawImage, rawImage ? `(${rawImage.length} chars)` : '')
+  
+  // Upload masked image FIRST
+  if (maskedImage) {
+    console.log('🖼️ [UPLOAD IMAGES] === Uploading MASKED image ===')
+    const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
+    if (maskedResult.success) {
+      maskedUrl = maskedResult.url
+      console.log('✅ [UPLOAD IMAGES] MASKED image uploaded:', maskedUrl)
+    } else {
+      const errorMsg = `Masked image: ${maskedResult.error}`
+      errors.push(errorMsg)
+      console.error('❌ [UPLOAD IMAGES] MASKED image FAILED:', maskedResult.error)
+    }
   } else {
-    errors.push(`Masked image: ${maskedResult.error}`)
+    console.warn('⚠️ [UPLOAD IMAGES] No masked image provided!')
+    errors.push('No masked image provided')
   }
   
-  // Upload raw image if provided with order number
+  // Upload raw image if provided
   if (rawImage) {
+    console.log('🖼️ [UPLOAD IMAGES] === Uploading RAW image ===')
     const rawResult = await uploadCustomerImage(rawImage, productId, 'raw', orderNumber)
     if (rawResult.success) {
       rawUrl = rawResult.url
+      console.log('✅ [UPLOAD IMAGES] RAW image uploaded:', rawUrl)
     } else {
-      errors.push(`Raw image: ${rawResult.error}`)
+      const errorMsg = `Raw image: ${rawResult.error}`
+      errors.push(errorMsg)
+      console.error('❌ [UPLOAD IMAGES] RAW image FAILED:', rawResult.error)
     }
+  } else {
+    console.log('ℹ️ [UPLOAD IMAGES] No raw image provided (optional)')
   }
+  
+  console.log('🖼️ [UPLOAD IMAGES] === Upload Summary ===')
+  console.log('🖼️ [UPLOAD IMAGES] Masked URL:', maskedUrl || '(FAILED)')
+  console.log('🖼️ [UPLOAD IMAGES] Raw URL:', rawUrl || '(not provided or failed)')
+  console.log('🖼️ [UPLOAD IMAGES] Errors:', errors.length > 0 ? errors : 'None')
   
   return {
     maskedUrl,
