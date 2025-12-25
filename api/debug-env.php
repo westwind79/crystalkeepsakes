@@ -116,25 +116,17 @@ if ($mode === 'production') {
     echo "<span class='warning'>⚠️  Using LIVE Stripe keys!</span>\n";
 } else {
     echo "<span class='success'>$mode</span> ✓\n";
-    echo "Using TEST Stripe keys (safe for development)\n";
 }
 
-$devKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
-$liveKey = getEnvVar('STRIPE_SECRET_KEY');
+$stripeKey = getEnvVar('STRIPE_SECRET_KEY');
+$keyType = strpos($stripeKey ?: '', 'sk_live_') === 0 ? 'LIVE' : 'TEST';
 
 echo "\nStripe Keys Configuration:\n";
-if ($mode === 'development' || $mode === 'testing') {
-    if ($devKey) {
-        echo "  <span class='success'>✓</span> Development key configured\n";
-    } else {
-        echo "  <span class='error'>✗</span> Development key MISSING\n";
-    }
+if ($stripeKey) {
+    echo "  <span class='success'>✓</span> STRIPE_SECRET_KEY configured ($keyType)\n";
+    echo "  Key prefix: " . substr($stripeKey, 0, 12) . "...\n";
 } else {
-    if ($liveKey) {
-        echo "  <span class='success'>✓</span> Production key configured\n";
-    } else {
-        echo "  <span class='error'>✗</span> Production key MISSING\n";
-    }
+    echo "  <span class='error'>✗</span> STRIPE_SECRET_KEY MISSING\n";
 }
 ?>
 </pre>
@@ -151,8 +143,9 @@ if (!file_exists($vendorPath)) {
     $issues[] = "❌ Run: composer install";
 }
 
-if (!getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY') && $mode !== 'production') {
-    $issues[] = "❌ Add STRIPE_DEVELOPMENT_SECRET_KEY to .env";
+if (!getEnvVar('STRIPE_SECRET_KEY')) {
+    $issues[] = "❌ Add STRIPE_SECRET_KEY to .env";
+}
 }
 
 if (empty($issues)) {
