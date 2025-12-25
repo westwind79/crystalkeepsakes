@@ -187,6 +187,18 @@ export default function ProductDetailClient() {
       return
     }
 
+    // ✅ NEW IMAGE = NEW ORDER SESSION
+    // Clear any existing server URLs and order ref since this is a fresh upload
+    console.log('🆕 [IMAGE UPLOAD] New image uploaded - clearing existing session data')
+    setMaskedImageServerUrl(null)
+    setRawImageServerUrl(null)
+    setTempOrderRef(null)
+    setFinalMaskedImage(null)
+    
+    // Force a new order session for this new image
+    // This ensures each new image customization gets a unique folder
+    clearOrderSession()
+
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
