@@ -16,7 +16,7 @@ import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/t
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
 import { uploadCustomerImages } from '@/lib/customerImageUpload'
-import { getOrCreateOrderSession, updateOrderImages as updateSessionImages, markOrderInCart as markSessionInCart, getOrderIdForUpload } from '@/lib/unifiedOrderId'
+import { getOrCreateOrderSession, updateOrderImages as updateSessionImages, markOrderInCart as markSessionInCart, getOrderIdForUpload, forceNewOrderSession, clearOrderSession } from '@/lib/unifiedOrderId'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 import { assetPath } from '@/lib/assetPath'
