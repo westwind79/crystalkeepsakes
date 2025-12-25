@@ -82,31 +82,21 @@ $config = [
         'php_backend_url' => getEnvVar('NEXT_PUBLIC_PHP_BACKEND_URL'),
     ],
     'stripe' => [
-        'live_secret' => [
+        // ONLY these 3 variables are used now
+        'secret_key' => [
             'value' => maskValue(getEnvVar('STRIPE_SECRET_KEY')),
             'status' => validateKeyFormat(getEnvVar('STRIPE_SECRET_KEY'), 'stripe_secret'),
+            'key_type' => strpos(getEnvVar('STRIPE_SECRET_KEY') ?: '', 'sk_live_') === 0 ? 'LIVE' : 'TEST',
         ],
-        'live_publishable' => [
+        'publishable_key' => [
             'value' => maskValue(getEnvVar('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY')),
             'status' => validateKeyFormat(getEnvVar('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'), 'stripe_publishable'),
-        ],
-        'test_secret' => [
-            'value' => maskValue(getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY')),
-            'status' => validateKeyFormat(getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY'), 'stripe_secret'),
-        ],
-        'test_publishable' => [
-            'value' => maskValue(getEnvVar('STRIPE_DEVELOPMENT_PUBLISHABLE_KEY')),
-            'status' => validateKeyFormat(getEnvVar('STRIPE_DEVELOPMENT_PUBLISHABLE_KEY'), 'stripe_publishable'),
+            'key_type' => strpos(getEnvVar('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY') ?: '', 'pk_live_') === 0 ? 'LIVE' : 'TEST',
         ],
         'webhook_secret' => [
             'value' => maskValue(getEnvVar('STRIPE_WEBHOOK_SECRET')),
             'status' => validateKeyFormat(getEnvVar('STRIPE_WEBHOOK_SECRET'), 'stripe_webhook'),
         ],
-        'dev_webhook_secret' => [
-            'value' => maskValue(getEnvVar('STRIPE_DEVELOPMENT_WEBHOOK_SECRET')),
-            'status' => validateKeyFormat(getEnvVar('STRIPE_DEVELOPMENT_WEBHOOK_SECRET'), 'stripe_webhook'),
-        ],
-        'active_mode' => $mode === 'production' ? 'LIVE KEYS' : 'TEST KEYS',
     ],
     'cockpit3d' => [
         'api_url' => getEnvVar('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com',
