@@ -38,6 +38,8 @@ try {
     $data = json_decode($input, true);
     
     if (!$data || !isset($data['imageData'])) {
+        error_log("❌ No image data in request. Raw input length: " . strlen($input));
+        error_log("❌ Decoded data keys: " . (is_array($data) ? implode(', ', array_keys($data)) : 'not an array'));
         throw new Exception('No image data provided');
     }
     
@@ -47,11 +49,19 @@ try {
     $orderNumber = $data['orderNumber'] ?? null; // Order ID for folder structure
     
     // Debug: Log image data info
-    error_log("📥 Received image data - Type: $imageType, Product: $productId, Order: $orderNumber");
+    $imageDataLength = strlen($imageData);
+    $imageDataStart = substr($imageData, 0, 50);
+    error_log("📥 ====== IMAGE UPLOAD REQUEST ======");
+    error_log("📥 Type: $imageType");
+    error_log("📥 Product: $productId");
+    error_log("📥 Order: $orderNumber");
+    error_log("📥 Image data length: $imageDataLength chars");
+    error_log("📥 Image data starts with: $imageDataStart");
     
     // Parse base64 image
     if (!preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
         error_log("❌ Invalid format. Expected: data:image/TYPE;base64,...");
+        error_log("❌ Actual start: " . substr($imageData, 0, 100));
         throw new Exception('Invalid base64 image format');
     }
     
