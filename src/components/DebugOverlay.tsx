@@ -85,7 +85,7 @@ interface CartState {
 // MAIN COMPONENT
 // ============================================================================
 
-export default function ComprehensiveDebugOverlay() {
+export default function DebugOverlay() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [activeTab, setActiveTab] = useState<'order-ids' | 'env' | 'storage' | 'cart' | 'cockpit3d' | 'logs'>('order-ids')
