@@ -35,11 +35,16 @@ interface CartItem {
   options: any
   sizeDetails?: any
   customImage?: {
-    dataUrl: string // Masked image for Cockpit3D
-    thumbnail: string // Masked thumbnail
+    dataUrl?: string // Masked image base64 (for local display)
+    thumbnail?: string // Masked thumbnail
     rawImageDataUrl?: string // Original uploaded image
     rawImageThumbnail?: string // Original thumbnail
-    metadata: any
+    metadata?: any
+    // ✅ Server URLs for Cockpit3D order payload
+    serverUrl?: string // URL on the server for the masked image
+    originalServerUrl?: string // URL on the server for the original image
+    originalDataUrl?: string // Base64 for original image (fallback)
+    tempOrderRef?: string // Order reference for image folder
   }
   customImageMetadata?: {
     filename?: string
