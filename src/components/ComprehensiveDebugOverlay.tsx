@@ -365,12 +365,14 @@ export default function ComprehensiveDebugOverlay() {
     }
   }
 
+  const [sendTestEmail, setSendTestEmail] = useState(false)
+
   const handleTestSubmit = async () => {
     if (!cockpit3dOrder) return
     
     setIsSubmitting(true)
     setSubmitResult(null)
-    addLog('TEST', 'Submitting test order to Cockpit3D...')
+    addLog('TEST', `Submitting test order to Cockpit3D... (Email: ${sendTestEmail ? 'YES' : 'NO'})`)
     
     try {
       const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
@@ -379,12 +381,20 @@ export default function ComprehensiveDebugOverlay() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...cockpit3dOrder,
-          testMode: true
+          testMode: true,
+          sendTestEmail: sendTestEmail  // ✅ Send test email to orders@crystalkeepsakes.com
         })
       })
       
       const result = await response.json()
       setSubmitResult(result)
+      
+      // Log email result if applicable
+      if (result.email) {
+        addLog(result.email.sent ? 'SUCCESS' : 'INFO', 
+          `Email: ${result.email.sent ? '✅ Sent to ' + result.email.to : result.email.message}`)
+      }
+      
       addLog(result.success ? 'SUCCESS' : 'ERROR', `Test order result: ${result.success ? 'OK' : result.error}`)
     } catch (error: any) {
       setSubmitResult({ success: false, error: error.message })
