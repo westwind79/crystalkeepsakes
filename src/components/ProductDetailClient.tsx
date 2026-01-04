@@ -274,28 +274,43 @@ export default function ProductDetailClient() {
         orderId // Use unified order ID for folder organization
       )
       
-      console.log('📤 [IMAGE SAVE] Upload result:', uploadResult)
+      console.log('📤 [IMAGE SAVE] Upload result:', JSON.stringify({
+        maskedUrl: uploadResult.maskedUrl,
+        rawUrl: uploadResult.rawUrl,
+        errors: uploadResult.errors
+      }, null, 2))
       
+      // ✅ Check if at least the masked image uploaded successfully
       if (uploadResult.maskedUrl) {
         setMaskedImageServerUrl(uploadResult.maskedUrl)
         console.log('✅ [IMAGE SAVE] Masked image uploaded:', uploadResult.maskedUrl)
+        
+        // ✅ UPDATE SESSION with server URLs - ONLY if we have at least masked URL
+        updateSessionImages(uploadResult.maskedUrl, uploadResult.rawUrl)
+        console.log('✅ [IMAGE SAVE] Session updated with image URLs')
+        
+        // Clear any previous upload errors
+        setErrors(prev => {
+          const newErrors = { ...prev }
+          delete newErrors.imageUpload
+          return newErrors
+        })
       } else {
         console.error('❌ [IMAGE SAVE] ⚠️ MASKED IMAGE NOT UPLOADED! serverUrl is empty!')
         console.error('❌ [IMAGE SAVE] Upload errors:', uploadResult.errors)
+        console.error('❌ [IMAGE SAVE] Full upload result:', uploadResult)
         // Show error to user!
         setErrors(prev => ({
           ...prev,
-          imageUpload: 'Masked image failed to upload. Please try saving again.'
+          imageUpload: `Masked image failed to upload. ${uploadResult.errors.join('. ')}. Please try saving again.`
         }))
+        // ❌ Do NOT update session with empty URLs
       }
       
       if (uploadResult.rawUrl) {
         setRawImageServerUrl(uploadResult.rawUrl)
         console.log('✅ [IMAGE SAVE] Raw image uploaded:', uploadResult.rawUrl)
       }
-      
-      // ✅ UPDATE SESSION with server URLs
-      updateSessionImages(uploadResult.maskedUrl, uploadResult.rawUrl)
       
       if (uploadResult.errors.length > 0) {
         console.warn('⚠️ [IMAGE SAVE] Upload warnings:', uploadResult.errors)
@@ -304,7 +319,8 @@ export default function ProductDetailClient() {
       logger.success('Order started and images uploaded', {
         orderId,
         maskedUrl: uploadResult.maskedUrl,
-        rawUrl: uploadResult.rawUrl
+        rawUrl: uploadResult.rawUrl,
+        hasErrors: uploadResult.errors.length > 0
       })
       
     } catch (error) {
