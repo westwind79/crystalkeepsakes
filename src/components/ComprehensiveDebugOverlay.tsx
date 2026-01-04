@@ -782,14 +782,33 @@ export default function ComprehensiveDebugOverlay() {
 
                 {/* Test Submit */}
                 {cockpit3dOrder && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleTestSubmit}
-                      disabled={isSubmitting}
-                      className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-slate-600 rounded text-sm"
-                    >
-                      {isSubmitting ? '⏳ Submitting...' : '🧪 Test Submit (No Charge)'}
-                    </button>
+                  <div className="space-y-2">
+                    {/* Email option */}
+                    <label className="flex items-center gap-2 text-[11px] text-slate-400 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={sendTestEmail}
+                        onChange={(e) => setSendTestEmail(e.target.checked)}
+                        className="rounded bg-slate-700 border-slate-600"
+                      />
+                      <span>📧 Send test email to orders@crystalkeepsakes.com</span>
+                    </label>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleTestSubmit}
+                        disabled={isSubmitting}
+                        className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-slate-600 rounded text-sm"
+                      >
+                        {isSubmitting ? '⏳ Submitting...' : '🧪 Test Submit (No Charge)'}
+                      </button>
+                    </div>
+                    
+                    <div className="text-[10px] text-slate-500">
+                      ✓ Validates order structure<br/>
+                      ✓ Checks image URLs<br/>
+                      {sendTestEmail ? '✓ Sends notification email' : '✗ Email not enabled'}
+                    </div>
                   </div>
                 )}
 
