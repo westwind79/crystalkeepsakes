@@ -1,9 +1,19 @@
 'use client'
 
 /**
- * COMPREHENSIVE DEBUG OVERLAY
+ * DEBUG OVERLAY - Single Source of Truth
+ * =====================================
  * Shows ALL system state, order IDs, cart data, environment, storage, etc.
- * This is the "single source of truth" for debugging
+ * 
+ * Tabs:
+ * - Order IDs: Unified session, localStorage, sessionStorage state
+ * - Environment: All env variables, Stripe key type, Cockpit3D config
+ * - Storage: localStorage, sessionStorage, IndexedDB stats
+ * - Cart: All cart items with image URLs and order refs
+ * - Cockpit3D: Full order preview and test submission
+ * - Logs: Real-time activity log
+ * 
+ * Enable: ?debug=true OR development/testing mode
  */
 
 import { useState, useEffect, useCallback } from 'react'
