@@ -305,13 +305,24 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       lineItemId: item.lineItemId
     }
     
-    // Debug: Log what we're storing
-    console.log('📦 Storing cart item with customImage:', {
-      hasCustomImage: !!cartItem.customImage,
-      serverUrl: cartItem.customImage?.serverUrl,
-      originalServerUrl: cartItem.customImage?.originalServerUrl,
-      filename: cartItem.customImage?.filename
-    })
+    // ✅ Debug: Log what we're storing with clear visibility
+    console.log('📦 ===== ADD TO CART: CUSTOM IMAGE CHECK =====')
+    console.log('📦 Input item.customImage:', item.customImage ? {
+      hasServerUrl: !!item.customImage.serverUrl,
+      serverUrl: item.customImage.serverUrl,
+      hasOriginalServerUrl: !!item.customImage.originalServerUrl,
+      originalServerUrl: item.customImage.originalServerUrl,
+      tempOrderRef: item.customImage.tempOrderRef,
+      filename: item.customImage.filename
+    } : 'undefined')
+    console.log('📦 Stored cartItem.customImage:', cartItem.customImage ? {
+      hasServerUrl: !!cartItem.customImage.serverUrl,
+      serverUrl: cartItem.customImage.serverUrl,
+      hasOriginalServerUrl: !!cartItem.customImage.originalServerUrl,
+      originalServerUrl: cartItem.customImage.originalServerUrl,
+      tempOrderRef: cartItem.customImage.tempOrderRef
+    } : 'undefined')
+    console.log('📦 ===== END CUSTOM IMAGE CHECK =====')
     
     // ✅ BUSINESS DECISION: NEVER combine cart items - always add as separate line items
     // This ensures customers see each item distinctly, making it clear they're ordering multiple units
@@ -329,7 +340,8 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     
     logger.success('Item added to cart', { 
       totalItems: cart.length,
-      hasImage: !!customImageId
+      hasImage: !!customImageId,
+      hasServerUrl: !!cartItem.customImage?.serverUrl
     })
   } catch (error) {
     logger.error('Failed to add item to cart', error)
