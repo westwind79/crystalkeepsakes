@@ -364,6 +364,7 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
     // Server URLs (always available if uploaded)
     serverUrl?: string
     originalServerUrl?: string
+    tempOrderRef?: string
   } 
 }>> {
   const cart = getCart()
@@ -385,9 +386,10 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
                 rawImageDataUrl: imageRecord.rawImageDataUrl, // Original uploaded image
                 rawImageThumbnail: imageRecord.rawImageThumbnail, // Original thumbnail
                 metadata: imageRecord.metadata,
-                // Preserve server URLs from cart item
+                // ✅ Preserve ALL server URLs and refs from cart item
                 serverUrl: item.customImage?.serverUrl,
-                originalServerUrl: item.customImage?.originalServerUrl
+                originalServerUrl: item.customImage?.originalServerUrl,
+                tempOrderRef: item.customImage?.tempOrderRef
               }
             }
           }
@@ -397,16 +399,19 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
         }
       }
       
-      // If we have server URLs but no IndexedDB data, still return the item
-      // with server URLs preserved (this is the fallback for privacy mode browsers)
-      if (item.customImage?.serverUrl) {
+      // ✅ If we have server URLs but no IndexedDB data, preserve all customImage fields
+      // This is the fallback for privacy mode browsers
+      if (item.customImage?.serverUrl || item.customImage?.tempOrderRef) {
         return {
           ...item,
           customImage: {
             // Use server URL as thumbnail fallback
-            thumbnail: item.customImage.serverUrl,
-            serverUrl: item.customImage.serverUrl,
-            originalServerUrl: item.customImage.originalServerUrl,
+            thumbnail: item.customImage?.serverUrl || item.customImage?.dataUrl,
+            dataUrl: item.customImage?.dataUrl,
+            // ✅ Preserve ALL server data
+            serverUrl: item.customImage?.serverUrl,
+            originalServerUrl: item.customImage?.originalServerUrl,
+            tempOrderRef: item.customImage?.tempOrderRef,
             metadata: item.customImageMetadata
           }
         }
