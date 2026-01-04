@@ -122,7 +122,9 @@ export async function uploadCustomerImages(
   let maskedUrl: string | undefined
   let rawUrl: string | undefined
   
+  console.log('🖼️ [UPLOAD IMAGES] =============================================')
   console.log('🖼️ [UPLOAD IMAGES] Starting upload for order:', orderNumber)
+  console.log('🖼️ [UPLOAD IMAGES] Product ID:', productId)
   console.log('🖼️ [UPLOAD IMAGES] Masked image provided:', !!maskedImage, maskedImage ? `(${maskedImage.length} chars)` : '')
   console.log('🖼️ [UPLOAD IMAGES] Raw image provided:', !!rawImage, rawImage ? `(${rawImage.length} chars)` : '')
   
@@ -130,13 +132,16 @@ export async function uploadCustomerImages(
   if (maskedImage) {
     console.log('🖼️ [UPLOAD IMAGES] === Uploading MASKED image ===')
     const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
-    if (maskedResult.success) {
+    console.log('🖼️ [UPLOAD IMAGES] MASKED upload result:', JSON.stringify(maskedResult, null, 2))
+    
+    if (maskedResult.success && maskedResult.url) {
       maskedUrl = maskedResult.url
-      console.log('✅ [UPLOAD IMAGES] MASKED image uploaded:', maskedUrl)
+      console.log('✅ [UPLOAD IMAGES] MASKED image uploaded successfully:', maskedUrl)
     } else {
-      const errorMsg = `Masked image: ${maskedResult.error}`
+      const errorMsg = `Masked image upload failed: ${maskedResult.error || 'No URL returned'}`
       errors.push(errorMsg)
       console.error('❌ [UPLOAD IMAGES] MASKED image FAILED:', maskedResult.error)
+      console.error('❌ [UPLOAD IMAGES] Full result:', maskedResult)
     }
   } else {
     console.warn('⚠️ [UPLOAD IMAGES] No masked image provided!')
@@ -147,11 +152,13 @@ export async function uploadCustomerImages(
   if (rawImage) {
     console.log('🖼️ [UPLOAD IMAGES] === Uploading RAW image ===')
     const rawResult = await uploadCustomerImage(rawImage, productId, 'raw', orderNumber)
-    if (rawResult.success) {
+    console.log('🖼️ [UPLOAD IMAGES] RAW upload result:', JSON.stringify(rawResult, null, 2))
+    
+    if (rawResult.success && rawResult.url) {
       rawUrl = rawResult.url
-      console.log('✅ [UPLOAD IMAGES] RAW image uploaded:', rawUrl)
+      console.log('✅ [UPLOAD IMAGES] RAW image uploaded successfully:', rawUrl)
     } else {
-      const errorMsg = `Raw image: ${rawResult.error}`
+      const errorMsg = `Raw image upload failed: ${rawResult.error || 'No URL returned'}`
       errors.push(errorMsg)
       console.error('❌ [UPLOAD IMAGES] RAW image FAILED:', rawResult.error)
     }
@@ -159,10 +166,11 @@ export async function uploadCustomerImages(
     console.log('ℹ️ [UPLOAD IMAGES] No raw image provided (optional)')
   }
   
-  console.log('🖼️ [UPLOAD IMAGES] === Upload Summary ===')
-  console.log('🖼️ [UPLOAD IMAGES] Masked URL:', maskedUrl || '(FAILED)')
+  console.log('🖼️ [UPLOAD IMAGES] ========== UPLOAD SUMMARY ==========')
+  console.log('🖼️ [UPLOAD IMAGES] Masked URL:', maskedUrl || '❌ FAILED/MISSING')
   console.log('🖼️ [UPLOAD IMAGES] Raw URL:', rawUrl || '(not provided or failed)')
   console.log('🖼️ [UPLOAD IMAGES] Errors:', errors.length > 0 ? errors : 'None')
+  console.log('🖼️ [UPLOAD IMAGES] =============================================')
   
   return {
     maskedUrl,
