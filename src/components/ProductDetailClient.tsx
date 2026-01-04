@@ -510,11 +510,17 @@ export default function ProductDetailClient() {
         
         // ✅ USE ALREADY-UPLOADED SERVER URLs (uploaded on Save, not here)
         // Images were uploaded in handleImageEditorSave, so we just use the stored URLs
-        console.log('📸 [ADD TO CART] Using pre-uploaded images:', {
-          maskedServerUrl: maskedImageServerUrl,
-          rawServerUrl: rawImageServerUrl,
-          orderId: tempOrderRef
-        })
+        console.log('📸 ===== ADD TO CART: IMAGE URL CHECK =====')
+        console.log('📸 [ADD TO CART] maskedImageServerUrl state:', maskedImageServerUrl)
+        console.log('📸 [ADD TO CART] rawImageServerUrl state:', rawImageServerUrl)
+        console.log('📸 [ADD TO CART] tempOrderRef state:', tempOrderRef)
+        console.log('📸 [ADD TO CART] finalMaskedImage exists:', !!finalMaskedImage, finalMaskedImage?.length)
+        
+        // ⚠️ CRITICAL CHECK: If server URL is missing, log warning
+        if (!maskedImageServerUrl) {
+          console.error('⚠️ [ADD TO CART] WARNING: maskedImageServerUrl is empty!')
+          console.error('⚠️ [ADD TO CART] Image will be added WITHOUT server URL - Cockpit3D will NOT have the image!')
+        }
         
         customImage = {
           // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
