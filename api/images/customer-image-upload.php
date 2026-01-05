@@ -85,6 +85,16 @@ try {
     if (!preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
         error_log("❌ Invalid format. Expected: data:image/TYPE;base64,...");
         error_log("❌ Actual start: " . substr($imageData, 0, 100));
+        
+        // Log the failure
+        $logger = new UploadLogger();
+        $logger->logUploadStart($imageType, $productId, $orderNumber, strlen($input));
+        $logger->logUploadFailure('Invalid base64 image format', 'INVALID_FORMAT', [
+            'image_data_start' => substr($imageData, 0, 100),
+            'expected_format' => 'data:image/TYPE;base64,...',
+        ]);
+        $logger->writeLog();
+        
         throw new Exception('Invalid base64 image format');
     }
     
@@ -93,6 +103,13 @@ try {
     $binaryImage = base64_decode($base64Image, true);
     
     if ($binaryImage === false) {
+        $logger = new UploadLogger();
+        $logger->logUploadStart($imageType, $productId, $orderNumber, strlen($input));
+        $logger->logUploadFailure('Failed to decode base64 image', 'DECODE_FAILED', [
+            'base64_length' => strlen($base64Image),
+        ]);
+        $logger->writeLog();
+        
         throw new Exception('Failed to decode base64 image');
     }
     
@@ -101,12 +118,29 @@ try {
     $detectedMime = $finfo->buffer($binaryImage);
     
     if (!str_starts_with($detectedMime, 'image/')) {
+        $logger = new UploadLogger();
+        $logger->logUploadStart($imageType, $productId, $orderNumber, strlen($input));
+        $logger->logUploadFailure("Invalid image data. Detected type: $detectedMime", 'INVALID_MIME', [
+            'detected_mime' => $detectedMime,
+            'expected' => 'image/*',
+        ]);
+        $logger->writeLog();
+        
         throw new Exception("Invalid image data. Detected type: $detectedMime");
     }
     
     // Validate image size (max 10MB)
     $imageSize = strlen($binaryImage);
     if ($imageSize > 10 * 1024 * 1024) {
+        $logger = new UploadLogger();
+        $logger->logUploadStart($imageType, $productId, $orderNumber, strlen($input));
+        $logger->logUploadFailure('Image too large', 'SIZE_EXCEEDED', [
+            'image_size_bytes' => $imageSize,
+            'image_size_mb' => round($imageSize / 1024 / 1024, 2),
+            'max_allowed_mb' => 10,
+        ]);
+        $logger->writeLog();
+        
         throw new Exception('Image too large. Maximum size is 10MB.');
     }
     
