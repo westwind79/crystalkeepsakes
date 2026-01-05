@@ -177,6 +177,13 @@ try {
     error_log("📁 Main site root: $mainSiteRoot");
     
     // ============================================================
+    // Initialize the upload logger with correct path
+    // ============================================================
+    $logger = new UploadLogger($mainSiteRoot);
+    $logger->logUploadStart($imageType, $productId, $orderNumber, strlen($input));
+    $logger->logImageValidation($imageDataLength, $imageSize, $detectedMime, $imageExtension);
+    
+    // ============================================================
     // Set upload directory inside main site: /crystalkeepsakes.com/crystal-data/
     // ============================================================
     if ($mode === 'development' || $mode === 'testing') {
