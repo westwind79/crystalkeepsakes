@@ -122,18 +122,17 @@ export async function uploadCustomerImage(
         return { success: false, error: 'Invalid image format - must start with data:image/' }
       }
       
-      // Log what we're uploading
-      const imageSizeKB = Math.round(imageData.length / 1024)
+      // Log what we're uploading (using compressed size)
       console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Attempt ${attempt}/${maxRetries}:`, {
         type: imageType,
         productId,
         orderNumber,
-        sizeKB: imageSizeKB,
+        sizeKB: uploadSizeKB,
       })
       
-      // Warn if image is very large
-      if (imageSizeKB > 5000) {
-        console.warn(`⚠️ [UPLOAD ${imageType.toUpperCase()}] Large image: ${imageSizeKB}KB - may take longer`)
+      // Warn if image is still very large after compression
+      if (uploadSizeKB > 3000) {
+        console.warn(`⚠️ [UPLOAD ${imageType.toUpperCase()}] Large image: ${uploadSizeKB}KB - may take longer`)
       }
       
       // Get backend URL
@@ -144,7 +143,7 @@ export async function uploadCustomerImage(
       
       // Create abort controller for timeout (90 seconds for large images)
       const controller = new AbortController()
-      const timeoutMs = imageSizeKB > 3000 ? 90000 : 60000
+      const timeoutMs = uploadSizeKB > 2000 ? 90000 : 60000
       const timeoutId = setTimeout(() => {
         console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] TIMEOUT after ${timeoutMs/1000}s`)
         controller.abort()
@@ -157,7 +156,7 @@ export async function uploadCustomerImage(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            imageData,
+            imageData: uploadData,  // Use compressed data
             productId,
             imageType,
             orderNumber
