@@ -95,15 +95,29 @@ export async function uploadCustomerImage(
 ): Promise<UploadResult> {
   let lastError: string = 'Unknown error'
   
+  // Compress large images before upload (especially PNGs)
+  const originalSizeKB = Math.round(imageData.length / 1024)
+  let uploadData = imageData
+  
+  if (originalSizeKB > 2000 && typeof window !== 'undefined') {
+    console.log(`📦 [UPLOAD ${imageType.toUpperCase()}] Image is ${originalSizeKB}KB, compressing before upload...`)
+    uploadData = await compressForUpload(imageData, 1500) // Target 1.5MB max
+  }
+  
+  const uploadSizeKB = Math.round(uploadData.length / 1024)
+  if (uploadSizeKB !== originalSizeKB) {
+    console.log(`📦 [UPLOAD ${imageType.toUpperCase()}] Compressed: ${originalSizeKB}KB → ${uploadSizeKB}KB`)
+  }
+  
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       // Validate input
-      if (!imageData) {
+      if (!uploadData) {
         console.error(`❌ [UPLOAD ${imageType}] No image data provided!`)
         return { success: false, error: 'No image data provided' }
       }
       
-      if (!imageData.startsWith('data:image/')) {
+      if (!uploadData.startsWith('data:image/')) {
         console.error(`❌ [UPLOAD ${imageType}] Invalid image format - must be base64 data URL`)
         return { success: false, error: 'Invalid image format - must start with data:image/' }
       }
