@@ -240,7 +240,15 @@ try {
     $filePath = $fullUploadDir . $filename;
     
     // Save file
-    if (file_put_contents($filePath, $binaryImage) === false) {
+    $bytesWritten = file_put_contents($filePath, $binaryImage);
+    if ($bytesWritten === false) {
+        $logger->logUploadFailure('Failed to save image file', 'WRITE_FAILED', [
+            'file_path' => $filePath,
+            'image_size' => $imageSize,
+            'php_error' => error_get_last(),
+        ]);
+        $logger->writeLog();
+        
         throw new Exception('Failed to save image file');
     }
     
