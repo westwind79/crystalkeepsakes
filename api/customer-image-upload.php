@@ -52,6 +52,17 @@ try {
     if (!$data || !isset($data['imageData'])) {
         error_log("❌ No image data in request. Raw input length: " . strlen($input));
         error_log("❌ Decoded data keys: " . (is_array($data) ? implode(', ', array_keys($data)) : 'not an array'));
+        
+        // Try to initialize logger for error logging even without proper path
+        $logger = new UploadLogger();
+        $logger->logUploadStart('unknown', 'unknown', null, strlen($input));
+        $logger->logUploadFailure('No image data provided', 'NO_IMAGE_DATA', [
+            'raw_input_length' => strlen($input),
+            'decoded_data_keys' => is_array($data) ? array_keys($data) : 'not an array',
+            'json_last_error' => json_last_error_msg(),
+        ]);
+        $logger->writeLog();
+        
         throw new Exception('No image data provided');
     }
     
