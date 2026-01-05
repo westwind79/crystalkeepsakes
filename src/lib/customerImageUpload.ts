@@ -12,7 +12,13 @@ interface UploadResult {
 }
 
 /**
+ * Sleep helper for retry delays
+ */
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+/**
  * Upload a customer's customized image to the server
+ * Includes retry logic for transient failures
  * @param imageData Base64 image data
  * @param productId Product ID
  * @param imageType Type of image ('masked' or 'raw')
@@ -22,115 +28,124 @@ export async function uploadCustomerImage(
   imageData: string,
   productId: string,
   imageType: 'masked' | 'raw' = 'masked',
-  orderNumber?: string
+  orderNumber?: string,
+  maxRetries: number = 3
 ): Promise<UploadResult> {
-  try {
-    // Validate input
-    if (!imageData) {
-      console.error(`❌ [UPLOAD ${imageType}] No image data provided!`)
-      return { success: false, error: 'No image data provided' }
-    }
-    
-    if (!imageData.startsWith('data:image/')) {
-      console.error(`❌ [UPLOAD ${imageType}] Invalid image format - must be base64 data URL`)
-      console.error(`❌ [UPLOAD ${imageType}] Received: ${imageData.substring(0, 50)}...`)
-      return { success: false, error: 'Invalid image format - must start with data:image/' }
-    }
-    
-    // Log what we're uploading
-    const imageSizeKB = Math.round(imageData.length / 1024)
-    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Starting upload:`, {
-      type: imageType,
-      productId,
-      orderNumber,
-      dataLength: imageData.length,
-      sizeKB: imageSizeKB,
-      dataPreview: imageData.substring(0, 50) + '...'
-    })
-    
-    // Warn if image is very large
-    if (imageSizeKB > 5000) {
-      console.warn(`⚠️ [UPLOAD ${imageType.toUpperCase()}] Large image: ${imageSizeKB}KB - may take longer`)
-    }
-    
-    // Get backend URL
-    const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
-    const apiUrl = backendUrl 
-      ? `${backendUrl}/api/customer-image-upload.php` 
-      : '/api/customer-image-upload.php'
-    
-    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] API URL:`, apiUrl)
-    
-    // Create abort controller for timeout (60 seconds for large images)
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => {
-      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] TIMEOUT after 60 seconds`)
-      controller.abort()
-    }, 60000)
-    
+  let lastError: string = 'Unknown error'
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          imageData,
-          productId,
-          imageType,
-          orderNumber
-        }),
-        signal: controller.signal
+      // Validate input
+      if (!imageData) {
+        console.error(`❌ [UPLOAD ${imageType}] No image data provided!`)
+        return { success: false, error: 'No image data provided' }
+      }
+      
+      if (!imageData.startsWith('data:image/')) {
+        console.error(`❌ [UPLOAD ${imageType}] Invalid image format - must be base64 data URL`)
+        return { success: false, error: 'Invalid image format - must start with data:image/' }
+      }
+      
+      // Log what we're uploading
+      const imageSizeKB = Math.round(imageData.length / 1024)
+      console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Attempt ${attempt}/${maxRetries}:`, {
+        type: imageType,
+        productId,
+        orderNumber,
+        sizeKB: imageSizeKB,
       })
       
-      clearTimeout(timeoutId)
-      
-      console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response status:`, response.status)
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] HTTP error:`, response.status, errorText)
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      // Warn if image is very large
+      if (imageSizeKB > 5000) {
+        console.warn(`⚠️ [UPLOAD ${imageType.toUpperCase()}] Large image: ${imageSizeKB}KB - may take longer`)
       }
       
-      const result = await response.json()
-      console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response:`, result)
+      // Get backend URL
+      const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
+      const apiUrl = backendUrl 
+        ? `${backendUrl}/api/customer-image-upload.php` 
+        : '/api/customer-image-upload.php'
       
-      if (result.success) {
-        console.log(`✅ [UPLOAD ${imageType.toUpperCase()}] SUCCESS:`, result.url)
-        return {
-          success: true,
-          url: result.url,
-          filename: result.filename
+      // Create abort controller for timeout (90 seconds for large images)
+      const controller = new AbortController()
+      const timeoutMs = imageSizeKB > 3000 ? 90000 : 60000
+      const timeoutId = setTimeout(() => {
+        console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] TIMEOUT after ${timeoutMs/1000}s`)
+        controller.abort()
+      }, timeoutMs)
+      
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageData,
+            productId,
+            imageType,
+            orderNumber
+          }),
+          signal: controller.signal
+        })
+        
+        clearTimeout(timeoutId)
+        
+        console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response status:`, response.status)
+        
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] HTTP error:`, response.status, errorText)
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
         }
-      } else {
-        console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] FAILED:`, result.error)
-        return {
-          success: false,
-          error: result.error
+        
+        const result = await response.json()
+        
+        if (result.success) {
+          console.log(`✅ [UPLOAD ${imageType.toUpperCase()}] SUCCESS on attempt ${attempt}:`, result.url)
+          return {
+            success: true,
+            url: result.url,
+            filename: result.filename
+          }
+        } else {
+          console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] Server error:`, result.error)
+          lastError = result.error || 'Server returned failure'
+          // Don't retry server-side errors
+          return { success: false, error: lastError }
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        throw fetchError
+      }
+    } catch (error) {
+      // Determine error type and message
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          lastError = 'Upload timed out - image may be too large'
+        } else if (error.message === 'Failed to fetch') {
+          lastError = 'Network error - connection failed'
+        } else {
+          lastError = error.message
         }
       }
-    } catch (fetchError) {
-      clearTimeout(timeoutId)
-      throw fetchError
-    }
-  } catch (error) {
-    // More descriptive error messages
-    let errorMessage = 'Upload failed'
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        errorMessage = 'Upload timed out after 60 seconds'
-      } else if (error.message === 'Failed to fetch') {
-        errorMessage = 'Network error - check connection and server availability'
-      } else {
-        errorMessage = error.message
+      
+      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] Attempt ${attempt} failed:`, lastError)
+      
+      // Retry for network errors, not for validation errors
+      if (attempt < maxRetries && (lastError.includes('Network') || lastError.includes('timed out') || lastError.includes('Failed to fetch'))) {
+        const retryDelay = attempt * 2000 // 2s, 4s, 6s
+        console.log(`🔄 [UPLOAD ${imageType.toUpperCase()}] Retrying in ${retryDelay/1000}s...`)
+        await sleep(retryDelay)
       }
     }
-    console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] EXCEPTION:`, error)
-    return {
-      success: false,
-      error: errorMessage
-    }
+  }
+  
+  // All retries exhausted
+  console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] All ${maxRetries} attempts failed`)
+  return {
+    success: false,
+    error: `Upload failed after ${maxRetries} attempts: ${lastError}`
   }
 }
 
