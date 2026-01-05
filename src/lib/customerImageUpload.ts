@@ -38,13 +38,20 @@ export async function uploadCustomerImage(
     }
     
     // Log what we're uploading
+    const imageSizeKB = Math.round(imageData.length / 1024)
     console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Starting upload:`, {
       type: imageType,
       productId,
       orderNumber,
       dataLength: imageData.length,
+      sizeKB: imageSizeKB,
       dataPreview: imageData.substring(0, 50) + '...'
     })
+    
+    // Warn if image is very large
+    if (imageSizeKB > 5000) {
+      console.warn(`⚠️ [UPLOAD ${imageType.toUpperCase()}] Large image: ${imageSizeKB}KB - may take longer`)
+    }
     
     // Get backend URL
     const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
@@ -54,49 +61,75 @@ export async function uploadCustomerImage(
     
     console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] API URL:`, apiUrl)
     
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        imageData,
-        productId,
-        imageType,
-        orderNumber
+    // Create abort controller for timeout (60 seconds for large images)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => {
+      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] TIMEOUT after 60 seconds`)
+      controller.abort()
+    }, 60000)
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageData,
+          productId,
+          imageType,
+          orderNumber
+        }),
+        signal: controller.signal
       })
-    })
-    
-    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response status:`, response.status)
-    
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] HTTP error:`, response.status, errorText)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
-    
-    const result = await response.json()
-    console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response:`, result)
-    
-    if (result.success) {
-      console.log(`✅ [UPLOAD ${imageType.toUpperCase()}] SUCCESS:`, result.url)
-      return {
-        success: true,
-        url: result.url,
-        filename: result.filename
+      
+      clearTimeout(timeoutId)
+      
+      console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response status:`, response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] HTTP error:`, response.status, errorText)
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
-    } else {
-      console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] FAILED:`, result.error)
-      return {
-        success: false,
-        error: result.error
+      
+      const result = await response.json()
+      console.log(`📤 [UPLOAD ${imageType.toUpperCase()}] Response:`, result)
+      
+      if (result.success) {
+        console.log(`✅ [UPLOAD ${imageType.toUpperCase()}] SUCCESS:`, result.url)
+        return {
+          success: true,
+          url: result.url,
+          filename: result.filename
+        }
+      } else {
+        console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] FAILED:`, result.error)
+        return {
+          success: false,
+          error: result.error
+        }
       }
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      throw fetchError
     }
   } catch (error) {
+    // More descriptive error messages
+    let errorMessage = 'Upload failed'
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        errorMessage = 'Upload timed out after 60 seconds'
+      } else if (error.message === 'Failed to fetch') {
+        errorMessage = 'Network error - check connection and server availability'
+      } else {
+        errorMessage = error.message
+      }
+    }
     console.error(`❌ [UPLOAD ${imageType.toUpperCase()}] EXCEPTION:`, error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Upload failed'
+      error: errorMessage
     }
   }
 }
