@@ -202,17 +202,34 @@ try {
     
     error_log("📁 Full upload dir: $fullUploadDir");
     
+    // Log directory check
+    $logger->logDirectoryCheck($fullUploadDir);
+    
     // Create directory if doesn't exist
     if (!file_exists($fullUploadDir)) {
         if (!mkdir($fullUploadDir, 0755, true)) {
             error_log("❌ Failed to create directory: $fullUploadDir");
+            $logger->logUploadFailure("Failed to create upload directory", 'MKDIR_FAILED', [
+                'directory' => $fullUploadDir,
+                'parent_exists' => file_exists(dirname($fullUploadDir)),
+                'parent_writable' => is_writable(dirname($fullUploadDir)),
+            ]);
+            $logger->writeLog();
+            
             throw new Exception("Failed to create upload directory. Please ensure crystal-data folder exists at site root with write permissions.");
         }
         error_log("✓ Directory created: $fullUploadDir");
+        $logger->log('INFO', 'DIRECTORY_CREATED', ['path' => $fullUploadDir]);
     }
     
     // Verify writable
     if (!is_writable($fullUploadDir)) {
+        $logger->logUploadFailure("Upload directory not writable", 'NOT_WRITABLE', [
+            'directory' => $fullUploadDir,
+            'permissions' => substr(sprintf('%o', fileperms($fullUploadDir)), -4),
+        ]);
+        $logger->writeLog();
+        
         throw new Exception("Upload directory not writable: $fullUploadDir");
     }
     
