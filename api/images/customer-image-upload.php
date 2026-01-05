@@ -11,6 +11,14 @@
  * URL Structure (always from domain root):
  *   - https://crystalkeepsakes.com/crystal-data/orders/CK_0000001/file.png
  *   - https://crystalkeepsakes.com/crystal-data/orders-test/CK_0000001/file.png
+ * 
+ * LOG FILE: /crystal-data/logs/upload-log.txt
+ *   Tracks all upload attempts with diagnostics including:
+ *   - File size, type, and format
+ *   - Server limits (post_max_size, upload_max_filesize, memory_limit)
+ *   - Directory permissions and disk space
+ *   - User agent and IP address
+ *   - Success/failure status with detailed error info
  */
 
 header('Content-Type: application/json');
@@ -29,8 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Load environment loader
+// Load environment loader and upload logger
 require_once __DIR__ . '/env-loader.php';
+require_once __DIR__ . '/upload-logger.php';
+
+// Initialize logger (will be configured with proper path later)
+$logger = null;
 
 try {
     // Get JSON payload (images are sent as base64)
