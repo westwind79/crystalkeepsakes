@@ -273,6 +273,10 @@ try {
     
     error_log("✅ Final image URL: $fileUrl");
     
+    // Log successful upload
+    $logger->logUploadSuccess($filePath, $fileUrl, filesize($filePath));
+    $logger->writeLog();
+    
     // Return success
     echo json_encode([
         'success' => true,
@@ -282,6 +286,7 @@ try {
         'type' => $imageType,
         'environment' => $mode,
         'orderNumber' => $orderNumber,
+        'logRequestId' => $logger->getRequestId(),
         'debug' => [
             'scriptDir' => $scriptDir,
             'siteFolder' => $siteFolder,
@@ -295,10 +300,27 @@ try {
     ]);
     
 } catch (Exception $e) {
+    // If logger wasn't initialized yet, create one for error logging
+    if (!$logger) {
+        $logger = new UploadLogger();
+        $logger->logUploadStart(
+            $imageType ?? 'unknown',
+            $productId ?? 'unknown',
+            $orderNumber ?? null,
+            strlen($input ?? '')
+        );
+        $logger->logUploadFailure($e->getMessage(), 'EXCEPTION', [
+            'exception_class' => get_class($e),
+            'trace' => $e->getTraceAsString(),
+        ]);
+        $logger->writeLog();
+    }
+    
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => $e->getMessage(),
+        'logRequestId' => $logger ? $logger->getRequestId() : null,
     ]);
 }
 ?>
