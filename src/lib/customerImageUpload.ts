@@ -151,6 +151,7 @@ export async function uploadCustomerImage(
 
 /**
  * Upload both masked and raw images for a cart item
+ * Uploads in PARALLEL for better reliability
  * @param maskedImage Masked/processed image base64
  * @param rawImage Original uploaded image base64
  * @param productId Product ID
@@ -171,47 +172,62 @@ export async function uploadCustomerImages(
   let rawUrl: string | undefined
   
   console.log('🖼️ [UPLOAD IMAGES] =============================================')
-  console.log('🖼️ [UPLOAD IMAGES] Starting upload for order:', orderNumber)
+  console.log('🖼️ [UPLOAD IMAGES] Starting PARALLEL upload for order:', orderNumber)
   console.log('🖼️ [UPLOAD IMAGES] Product ID:', productId)
-  console.log('🖼️ [UPLOAD IMAGES] Masked image provided:', !!maskedImage, maskedImage ? `(${maskedImage.length} chars)` : '')
-  console.log('🖼️ [UPLOAD IMAGES] Raw image provided:', !!rawImage, rawImage ? `(${rawImage.length} chars)` : '')
+  console.log('🖼️ [UPLOAD IMAGES] Masked image:', maskedImage ? `${Math.round(maskedImage.length/1024)}KB` : 'NONE')
+  console.log('🖼️ [UPLOAD IMAGES] Raw image:', rawImage ? `${Math.round(rawImage.length/1024)}KB` : 'NONE')
   
-  // Upload masked image FIRST
+  // Build array of upload promises
+  const uploadPromises: Promise<{ type: 'masked' | 'raw', result: UploadResult }>[] = []
+  
   if (maskedImage) {
-    console.log('🖼️ [UPLOAD IMAGES] === Uploading MASKED image ===')
-    const maskedResult = await uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
-    console.log('🖼️ [UPLOAD IMAGES] MASKED upload result:', JSON.stringify(maskedResult, null, 2))
-    
-    if (maskedResult.success && maskedResult.url) {
-      maskedUrl = maskedResult.url
-      console.log('✅ [UPLOAD IMAGES] MASKED image uploaded successfully:', maskedUrl)
-    } else {
-      const errorMsg = `Masked image upload failed: ${maskedResult.error || 'No URL returned'}`
-      errors.push(errorMsg)
-      console.error('❌ [UPLOAD IMAGES] MASKED image FAILED:', maskedResult.error)
-      console.error('❌ [UPLOAD IMAGES] Full result:', maskedResult)
-    }
-  } else {
-    console.warn('⚠️ [UPLOAD IMAGES] No masked image provided!')
-    errors.push('No masked image provided')
+    uploadPromises.push(
+      uploadCustomerImage(maskedImage, productId, 'masked', orderNumber)
+        .then(result => ({ type: 'masked' as const, result }))
+    )
   }
   
-  // Upload raw image if provided
   if (rawImage) {
-    console.log('🖼️ [UPLOAD IMAGES] === Uploading RAW image ===')
-    const rawResult = await uploadCustomerImage(rawImage, productId, 'raw', orderNumber)
-    console.log('🖼️ [UPLOAD IMAGES] RAW upload result:', JSON.stringify(rawResult, null, 2))
-    
-    if (rawResult.success && rawResult.url) {
-      rawUrl = rawResult.url
-      console.log('✅ [UPLOAD IMAGES] RAW image uploaded successfully:', rawUrl)
+    uploadPromises.push(
+      uploadCustomerImage(rawImage, productId, 'raw', orderNumber)
+        .then(result => ({ type: 'raw' as const, result }))
+    )
+  }
+  
+  if (uploadPromises.length === 0) {
+    console.warn('⚠️ [UPLOAD IMAGES] No images to upload!')
+    errors.push('No images provided')
+    return { maskedUrl, rawUrl, errors }
+  }
+  
+  // Execute all uploads in parallel
+  console.log(`🚀 [UPLOAD IMAGES] Starting ${uploadPromises.length} parallel uploads...`)
+  const results = await Promise.allSettled(uploadPromises)
+  
+  // Process results
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      const { type, result: uploadResult } = result.value
+      
+      if (uploadResult.success && uploadResult.url) {
+        if (type === 'masked') {
+          maskedUrl = uploadResult.url
+          console.log('✅ [UPLOAD IMAGES] MASKED succeeded:', maskedUrl)
+        } else {
+          rawUrl = uploadResult.url
+          console.log('✅ [UPLOAD IMAGES] RAW succeeded:', rawUrl)
+        }
+      } else {
+        const errorMsg = `${type} image upload failed: ${uploadResult.error || 'No URL returned'}`
+        errors.push(errorMsg)
+        console.error(`❌ [UPLOAD IMAGES] ${type.toUpperCase()} FAILED:`, uploadResult.error)
+      }
     } else {
-      const errorMsg = `Raw image upload failed: ${rawResult.error || 'No URL returned'}`
+      // Promise rejected (shouldn't happen with our error handling, but just in case)
+      const errorMsg = `Upload rejected: ${result.reason}`
       errors.push(errorMsg)
-      console.error('❌ [UPLOAD IMAGES] RAW image FAILED:', rawResult.error)
+      console.error('❌ [UPLOAD IMAGES] Promise rejected:', result.reason)
     }
-  } else {
-    console.log('ℹ️ [UPLOAD IMAGES] No raw image provided (optional)')
   }
   
   console.log('🖼️ [UPLOAD IMAGES] ========== UPLOAD SUMMARY ==========')
