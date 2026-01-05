@@ -17,6 +17,68 @@ interface UploadResult {
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 /**
+ * Compress a large PNG to WebP for faster upload
+ * WebP is much smaller than PNG while maintaining quality
+ */
+async function compressForUpload(imageData: string, maxSizeKB: number = 2000): Promise<string> {
+  const currentSizeKB = Math.round(imageData.length / 1024)
+  
+  // If already small enough, return as-is
+  if (currentSizeKB <= maxSizeKB) {
+    console.log(`📦 [COMPRESS] Image already small enough: ${currentSizeKB}KB <= ${maxSizeKB}KB`)
+    return imageData
+  }
+  
+  console.log(`📦 [COMPRESS] Image too large (${currentSizeKB}KB), compressing...`)
+  
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        console.warn('📦 [COMPRESS] No canvas context, returning original')
+        resolve(imageData)
+        return
+      }
+      
+      // Draw image
+      ctx.drawImage(img, 0, 0)
+      
+      // Try WebP first (best compression), then JPEG
+      let quality = 0.9
+      let compressed = canvas.toDataURL('image/webp', quality)
+      
+      // If WebP not supported or still too big, try JPEG
+      if (compressed.startsWith('data:image/png') || compressed.length / 1024 > maxSizeKB) {
+        compressed = canvas.toDataURL('image/jpeg', quality)
+      }
+      
+      // Keep reducing quality until small enough
+      while (compressed.length / 1024 > maxSizeKB && quality > 0.5) {
+        quality -= 0.1
+        compressed = canvas.toDataURL('image/jpeg', quality)
+      }
+      
+      const newSizeKB = Math.round(compressed.length / 1024)
+      console.log(`📦 [COMPRESS] Compressed: ${currentSizeKB}KB → ${newSizeKB}KB (quality: ${quality.toFixed(1)})`)
+      
+      resolve(compressed)
+    }
+    
+    img.onerror = () => {
+      console.warn('📦 [COMPRESS] Failed to load image for compression, returning original')
+      resolve(imageData)
+    }
+    
+    img.src = imageData
+  })
+}
+
+/**
  * Upload a customer's customized image to the server
  * Includes retry logic for transient failures
  * @param imageData Base64 image data
