@@ -38,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Load environment loader and upload logger
-require_once __DIR__ . '/env-loader.php';
-require_once __DIR__ . '/upload-logger.php';
+require_once __DIR__ . '/../env-loader.php';
+require_once __DIR__ . '/../upload-logger.php';
 
 // Initialize logger (will be configured with proper path later)
 $logger = null;
