@@ -1,5 +1,5 @@
 <?php
-// api/upload-image.php
+// api/images/upload-image.php
 // Handles customer image uploads for product customization
 
 header('Content-Type: application/json');
