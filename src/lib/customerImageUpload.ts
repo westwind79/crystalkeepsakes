@@ -138,8 +138,8 @@ export async function uploadCustomerImage(
       // Get backend URL
       const backendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
       const apiUrl = backendUrl 
-        ? `${backendUrl}/api/customer-image-upload.php` 
-        : '/api/customer-image-upload.php'
+        ? `${backendUrl}/api/images/customer-image-upload.php` 
+        : '/api/images/customer-image-upload.php'
       
       // Create abort controller for timeout (90 seconds for large images)
       const controller = new AbortController()

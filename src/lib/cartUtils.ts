@@ -8,7 +8,6 @@
 
 import { logger } from '@/utils/logger'
 import { imageDB } from './imageStorageDB'
-import { uploadImageStorage } from './api/upload-image.php'
 
 export interface CartItem {
   // Product identification
