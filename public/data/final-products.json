@@ -669,7 +669,8 @@
     "maskImageUrl": "/img/masks/prestige-mask.png",
     "cost": 99.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-13T20:18:27.203Z",
+    "featured": true
   },
   {
     "id": "119",
@@ -1053,7 +1054,8 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-13T20:17:37.527Z",
+    "featured": true
   },
   {
     "id": "158",
@@ -1109,7 +1111,8 @@
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
     "cost": 17.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-13T20:17:37.527Z",
+    "featured": true
   },
   {
     "id": "160",
@@ -1963,13 +1966,13 @@
     "backgroundOptions": [],
     "textOptions": [],
     "maskImageUrl": null,
-    "featured": true,
+    "featured": false,
     "occasions": [
       "holiday",
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-14T18:51:47.214Z"
+    "editedAt": "2026-01-13T20:18:27.203Z"
   },
   {
     "id": "286",
@@ -2318,9 +2321,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/flower-ornament-mask.png",
-    "featured": true,
+    "featured": false,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-13T20:17:37.527Z",
     "occasions": [
       "holiday",
       "anniversary"
@@ -2383,9 +2386,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": true,
+    "featured": false,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-13T20:17:37.527Z",
     "occasions": [
       "holiday",
       "memorial"
@@ -2443,14 +2446,14 @@
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "featured": true,
+    "featured": false,
     "occasions": [
       "holiday",
       "anniversary",
       "graduation"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-13T20:17:37.527Z"
   },
   {
     "id": "444",
@@ -2504,9 +2507,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": true,
+    "featured": false,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-13T20:17:37.527Z",
     "occasions": [
       "memorial",
       "holiday",
@@ -2702,7 +2705,8 @@
       "baby"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-13T20:17:37.527Z",
+    "featured": true
   },
   {
     "id": "448",

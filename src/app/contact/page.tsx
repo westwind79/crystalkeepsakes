@@ -200,7 +200,7 @@ export default function ContactPage() {
                     value={formData.orderNumber}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#8DC63F] focus:border-[#8DC63F] transition-all bg-white ${errors.orderNumber ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="e.g., ORD-12345"
+                    placeholder="e.g., CK_12345"
                   />
                   {errors.orderNumber && <p className="mt-1 text-sm text-red-600">{errors.orderNumber}</p>}
                   <p className="mt-2 text-xs text-gray-600">Please provide your order number so we can assist you quickly.</p>
