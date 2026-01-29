@@ -667,9 +667,43 @@ export default function EnhancedProductAdminPage() {
       {`
         footer,
         header {display:none !important;}
+        
+        /* Admin Panel Clean UI Reset */
+        .admin-panel * {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+        }
+        
+        .admin-panel h1, .admin-panel h2, .admin-panel h3, .admin-panel h4, .admin-panel h5, .admin-panel h6 {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+          text-transform: none !important;
+          letter-spacing: normal !important;
+          font-variant: normal !important;
+        }
+        
+        .admin-panel .product-name {
+          font-weight: 600 !important;
+          text-transform: none !important;
+          font-variant: normal !important;
+        }
+        
+        .admin-panel .section-title {
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #6b7280;
+          margin-bottom: 0.75rem;
+        }
+        
+        .admin-panel input[type="number"],
+        .admin-panel input[type="text"],
+        .admin-panel textarea,
+        .admin-panel select {
+          font-size: 14px !important;
+        }
       `}
     </style>
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-100 admin-panel">
       {/* Development-Only Warning Banner */}
       <div className="bg-red-500 text-xs text-white px-4 py-2 text-center font-semibold">
         🚨 DEVELOPMENT ONLY - This admin panel must NEVER be deployed to production 🚨
