@@ -128,7 +128,7 @@ export default function EnhancedProductAdminPage() {
   const [editedProducts, setEditedProducts] = useState<ProductCustomizations>({});
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'options' | 'images'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'images'>('basic');
   const [availableMasks, setAvailableMasks] = useState<Array<{filename: string, path: string, displayName: string}>>([]);
   const [loading, setLoading] = useState(true);
 
