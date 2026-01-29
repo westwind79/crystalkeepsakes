@@ -1445,8 +1445,8 @@ export default function EnhancedProductAdminPage() {
                                     </div>
                                     
                                     {/* Price input */}
-                                    <div className="relative w-24">
-                                      <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                                    <div className="relative w-20">
+                                      <span className="absolute left-2 top-1.5 text-slate-400 text-xs">$</span>
                                       <input
                                         type="number"
                                         step="0.01"
@@ -1454,47 +1454,32 @@ export default function EnhancedProductAdminPage() {
                                         onChange={(e) =>
                                           updateSize(selectedProduct.id, index, { price: parseFloat(e.target.value) || 0 })
                                         }
-                                        className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                                        className="w-full pl-5 pr-1 py-1.5 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-slate-400"
                                       />
                                     </div>
                                     
                                     {/* Margin display */}
-                                    <div className="w-20 text-center text-xs">
+                                    <div className="w-16 text-center text-xs">
                                       {margin !== null ? (
-                                        <span className={margin >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                                          ${margin.toFixed(2)} ({marginPct}%)
+                                        <span className={margin >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
+                                          {marginPct}%
                                         </span>
                                       ) : (
-                                        <span className="text-gray-400">—</span>
+                                        <span className="text-slate-300">—</span>
                                       )}
                                     </div>
                                   </div>
                                 );
                               })}
                             </div>
-                            
-                            {/* Show calculated base price */}
-                            {(() => {
-                              const enabledSizes = selectedProductData.sizes.filter((s: any) => s.enabled !== false);
-                              if (enabledSizes.length > 0) {
-                                const minPrice = Math.min(...enabledSizes.map((s: any) => s.price || 0));
-                                return (
-                                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs">
-                                    <span className="text-gray-700">Auto-calculated Base Price: </span>
-                                    <span className="font-bold text-blue-700">${minPrice.toFixed(2)}</span>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            })()}
                           </div>
                         )}
 
                         {/* Lightbase Prices */}
                         {selectedProductData.lightBases && selectedProductData.lightBases.length > 0 && (
-                          <div>
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Lightbase Prices</h3>
-                            <div className="space-y-2">
+                          <div className="pt-4 border-t border-slate-200">
+                            <h4 className="section-title">Light Bases</h4>
+                            <div className="space-y-1.5">
                               {selectedProductData.lightBases.map((lb, index) => (
                                 <div key={lb.id} className="flex items-center gap-3">
                                   <input
@@ -1503,11 +1488,11 @@ export default function EnhancedProductAdminPage() {
                                     onChange={(e) =>
                                       updateLightBase(selectedProduct.id, index, { enabled: e.target.checked })
                                     }
-                                    className="w-4 h-4"
+                                    className="w-4 h-4 text-slate-600 border-slate-300 rounded"
                                   />
-                                  <div className="flex-1 text-sm text-gray-700">{lb.name}</div>
-                                  <div className="relative w-24">
-                                    <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                                  <div className="flex-1 text-sm text-slate-700">{lb.name}</div>
+                                  <div className="relative w-20">
+                                    <span className="absolute left-2 top-1.5 text-slate-400 text-xs">$</span>
                                     <input
                                       type="number"
                                       step="0.01"
@@ -1515,7 +1500,7 @@ export default function EnhancedProductAdminPage() {
                                       onChange={(e) =>
                                         updateLightBase(selectedProduct.id, index, { price: parseFloat(e.target.value) || null })
                                       }
-                                      className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                                      className="w-full pl-5 pr-1 py-1.5 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-slate-400"
                                     />
                                   </div>
                                 </div>
