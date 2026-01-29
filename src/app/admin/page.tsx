@@ -816,36 +816,12 @@ export default function EnhancedProductAdminPage() {
           </div>
         </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
-            <div className="text-xs font-medium text-gray-600 uppercase">🚫 Hidden</div>
-            <div className="text-3xl font-bold text-gray-900 mt-1">{getStats().hidden}</div>
-          </div>
-
-          <div className="bg-yellow-50 rounded-lg p-4 text-center border border-yellow-200">
-            <div className="text-xs font-medium text-yellow-600 uppercase">⭐ Featured</div>
-            <div className="text-3xl font-bold text-yellow-900 mt-1">{getStats().featured}</div>
-          </div>
-
-          <div className="bg-red-50 rounded-lg p-4 text-center border border-red-200">
-            <div className="text-xs font-medium text-red-600 uppercase">💰 On Sale</div>
-            <div className="text-3xl font-bold text-red-900 mt-1">{getStats().onSale}</div>
-          </div>
-
-          <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-            <div className="text-xs font-medium text-blue-600 uppercase">✏️ Edited</div>
-            <div className="text-3xl font-bold text-blue-900 mt-1">{getStats().edited}</div>
-          </div>
-
-        </div>
-
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-4">
           {/* Product List - Left Column */}
           <div className="col-span-12 lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-4 border-b bg-gray-50">
-                <p className="text-lg font-semibold text-gray-900">
-                  Products ({sourceProducts.length})
-                </p>                
+            <div className="bg-white rounded-lg border border-slate-200">
+              <div className="px-4 py-3 border-b border-slate-200">
+                <span className="text-sm font-medium text-slate-700">Products</span>
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: '75vh' }}>
                 {[...sourceProducts]
@@ -860,13 +836,13 @@ export default function EnhancedProductAdminPage() {
                   <button
                     key={product.id}
                     onClick={() => setSelectedProduct(product)}
-                    className={`w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${
-                      selectedProduct?.id === product.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
-                    } ${!isVisible ? 'opacity-50 bg-gray-50' : ''}`}
+                    className={`w-full text-left p-3 border-b border-slate-100 hover:bg-slate-50 transition-colors ${
+                      selectedProduct?.id === product.id ? 'bg-blue-50 border-l-2 border-l-blue-600' : ''
+                    } ${!isVisible ? 'opacity-40' : ''}`}
                   >
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-3">
                       {/* Product Thumbnail */}
-                      <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded overflow-hidden relative">
+                      <div className="w-16 h-16 flex-shrink-0 bg-slate-100 rounded overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
