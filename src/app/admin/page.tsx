@@ -189,10 +189,54 @@ export default function EnhancedProductAdminPage() {
   }, [editedProducts]); // Include editedProducts so it has latest state
 
   // Get merged product data (source + customizations)
+  // Ensures all light bases from MASTER_LIGHTBASES are present (with proper enabled state)
   const getProductData = (productId: string): Product => {
     const sourceProduct = sourceProducts.find((p) => p.id === productId);
     const customizations = editedProducts[productId] || {};
-    return { ...sourceProduct, ...customizations } as Product;
+    const merged = { ...sourceProduct, ...customizations } as Product;
+    
+    // Ensure all master light bases are present if product has ANY lightBases
+    // This prevents options from disappearing when unchecked
+    if (sourceProduct?.lightBases && sourceProduct.lightBases.length > 0) {
+      const existingLBs = merged.lightBases || [];
+      const existingIds = new Set(existingLBs.map(lb => lb.id));
+      
+      // Get prices from standalone lightbase products for syncing
+      const lightbasePrices: { [key: string]: number | null } = {};
+      Object.entries(LIGHTBASE_PRODUCT_MAP).forEach(([lbId, productId]) => {
+        const lbProduct = sourceProducts.find(p => p.id === productId);
+        const customPrice = editedProducts[productId]?.basePrice;
+        if (customPrice !== undefined) {
+          lightbasePrices[lbId] = customPrice;
+        } else if (lbProduct) {
+          lightbasePrices[lbId] = lbProduct.basePrice;
+        }
+      });
+      
+      // Merge existing LBs with master list
+      const fullLightBases = MASTER_LIGHTBASES.map(masterLB => {
+        const existing = existingLBs.find(lb => lb.id === masterLB.id);
+        if (existing) {
+          // Use synced price from standalone product if available
+          const syncedPrice = lightbasePrices[masterLB.id];
+          return {
+            ...existing,
+            price: syncedPrice !== undefined ? syncedPrice : existing.price
+          };
+        }
+        // Not in product's list - add as disabled
+        const syncedPrice = lightbasePrices[masterLB.id];
+        return { 
+          ...masterLB, 
+          price: syncedPrice !== undefined ? syncedPrice : masterLB.price,
+          enabled: false 
+        };
+      });
+      
+      merged.lightBases = fullLightBases;
+    }
+    
+    return merged;
   };
 
   // Update product customization
