@@ -735,49 +735,46 @@ export default function EnhancedProductAdminPage() {
       )}
 
       {/* Header */}
-      <div className="bg-white shadow-sm border-b z-10">
-        <div className="max-w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-full mx-auto px-6 py-3">
           <div className="flex justify-between items-center">
-            <div>
-               
-              <p className="text-sm text-gray-600 mt-1">              
-                {hasUnsavedChanges && (
-                  <span className="ml-2 text-yellow-600 font-semibold">• Unsaved Edits Active</span>
-                )}
-              </p>
+            <div className="flex items-center gap-4">
+              <h1 className="text-lg font-semibold text-slate-800">Product Manager</h1>
+              {hasUnsavedChanges && (
+                <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded">
+                  Unsaved Changes
+                </span>
+              )}
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={resetToSaved}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors flex items-center gap-2"
-                title="Discard all unsaved changes and reload from JSON file"
+                className="px-3 py-1.5 text-slate-600 text-sm font-medium hover:bg-slate-100 rounded transition-colors"
+                title="Discard all unsaved changes"
               >
-                <span>🔄</span>
-                <span>Reset</span>
+                Reset
               </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
                   showPreview
-                    ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-slate-200 text-slate-700'
+                    : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                {showPreview ? '👁️ Hide Preview' : '👁️ Show Preview'}
-              </button>
-              <button
-                onClick={saveFinalProducts}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
-              >
-                <span>💾</span>
-                <span>Save Products</span>
+                {showPreview ? 'Hide Preview' : 'Preview'}
               </button>
               <button
                 onClick={backupProducts}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-3 py-1.5 text-slate-600 text-sm font-medium hover:bg-slate-100 rounded transition-colors"
               >
-                <span>📦</span>
-                <span>Backup</span>
+                Backup
+              </button>
+              <button
+                onClick={saveFinalProducts}
+                className="px-4 py-1.5 bg-emerald-600 text-white text-sm font-medium rounded hover:bg-emerald-700 transition-colors"
+              >
+                Save Products
               </button>
             </div>
           </div>
@@ -785,19 +782,39 @@ export default function EnhancedProductAdminPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {/* Stats - Clean & Compact */}
-        <div className="my-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          
-          <div className="bg-purple-50 rounded-lg p-4 text-center border border-purple-200">
-            <div className="text-xs font-medium text-purple-600 uppercase">Total</div>
-            <div className="text-3xl font-bold text-purple-900 mt-1">{sourceProducts.length}</div>
+      <div className="max-w-full mx-auto px-6 py-4">
+        {/* Stats Row - Minimal */}
+        <div className="mb-4 flex gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-slate-500">Products:</span>
+            <span className="font-semibold text-slate-800">{sourceProducts.length}</span>
           </div>
-
-          <div className="bg-green-50 rounded-lg p-4 text-center border border-green-200">
-            <div className="text-xs font-medium text-green-600 uppercase">👁️ Visible</div>
-            <div className="text-3xl font-bold text-green-900 mt-1">{getStats().visible}</div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+            <span className="text-slate-500">Visible:</span>
+            <span className="font-semibold text-slate-800">{getStats().visible}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-slate-400 rounded-full"></span>
+            <span className="text-slate-500">Hidden:</span>
+            <span className="font-semibold text-slate-800">{getStats().hidden}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
+            <span className="text-slate-500">Featured:</span>
+            <span className="font-semibold text-slate-800">{getStats().featured}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
+            <span className="text-slate-500">On Sale:</span>
+            <span className="font-semibold text-slate-800">{getStats().onSale}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span className="text-slate-500">Edited:</span>
+            <span className="font-semibold text-slate-800">{getStats().edited}</span>
+          </div>
+        </div>
 
           <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
             <div className="text-xs font-medium text-gray-600 uppercase">🚫 Hidden</div>
