@@ -1009,55 +1009,49 @@ export default function EnhancedProductAdminPage() {
                                 type="radio"
                                 checked={selectedProductData.fulfillment !== 'custom'}
                                 onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'cockpit3d' })}
-                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                                className="w-4 h-4 text-slate-600 border-slate-300 focus:ring-slate-500"
                               />
                               <div className="flex-1">
-                                <span className="text-sm font-semibold text-gray-900">Cockpit3D</span>
-                                <p className="text-xs text-gray-600">Sent to Cockpit3D for fulfillment</p>
+                                <span className="text-sm text-slate-700">Cockpit3D</span>
+                                <p className="text-xs text-slate-400">Sent to Cockpit3D for fulfillment</p>
                               </div>
                             </label>
-                            <label className="flex items-center space-x-3 cursor-pointer">
+                            <label className="flex items-center gap-2 cursor-pointer">
                               <input
                                 type="radio"
                                 checked={selectedProductData.fulfillment === 'custom'}
                                 onChange={() => updateProduct(selectedProduct.id, { fulfillment: 'custom' })}
-                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                                className="w-4 h-4 text-slate-600 border-slate-300 focus:ring-slate-500"
                               />
                               <div className="flex-1">
-                                <span className="text-sm font-semibold text-gray-900">Custom (You fulfill)</span>
-                                <p className="text-xs text-gray-600">Wood coasters, custom items, etc.</p>
+                                <span className="text-sm text-slate-700">Custom (You fulfill)</span>
+                                <p className="text-xs text-slate-400">Wood coasters, custom items, etc.</p>
                               </div>
                             </label>
                           </div>
                         </div>
 
                         <div>
-                          <label className="flex items-center space-x-2">
+                          <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               checked={selectedProductData.requiresImage !== false}
                               onChange={(e) => updateProduct(selectedProduct.id, { requiresImage: e.target.checked })}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
                             />
-                            <span className="text-sm font-medium text-gray-700">Requires custom image</span>
+                            <span className="text-sm text-slate-700">Requires custom image</span>
                           </label>
                         </div>
 
                         {/* Categories Section */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-3">
-                            🏷️ Product Categories (Auto-detected)
-                          </label>
-                          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                            <p className="text-xs text-blue-600 mb-3">
-                              Categories are automatically detected based on product name and type. The system will categorize this product as:
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {(() => {
-                                const categories = getProductCategories(selectedProductData);
-                                
-                                if (categories.length === 0) {
-                                  return <span className="text-xs text-gray-500">No categories detected</span>;
+                        <div className="pt-4 border-t border-slate-200">
+                          <label className="section-title">Categories (Auto-detected)</label>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {(() => {
+                              const categories = getProductCategories(selectedProductData);
+                              
+                              if (categories.length === 0) {
+                                return <span className="text-xs text-slate-400">No categories detected</span>;
                                 }
                                 
                                 return categories.map((cat: string) => (
