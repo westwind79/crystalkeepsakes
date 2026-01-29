@@ -966,45 +966,45 @@ export default function EnhancedProductAdminPage() {
                               updateProduct(selectedProduct.id, { longDescription: e.target.value })
                             }
                             placeholder="Detailed product description... You can use HTML tags like <p>, <br>, <strong>, <ul>, <li>, etc."
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-y"
+                            className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-slate-400 resize-y"
                             style={{ minHeight: '120px' }}
                           />
-                          <p className="text-xs text-gray-500 mt-1">
-                            💡 Tip: Use HTML tags for formatting (e.g., &lt;p&gt;, &lt;br&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;)
+                          <p className="text-xs text-slate-400 mt-1">
+                            Tip: Use HTML tags for formatting (e.g., &lt;p&gt;, &lt;br&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;)
                           </p>
                         </div>
 
                         <div>
-                          <label className="flex items-center space-x-2">
+                          <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               checked={selectedProductData.featured || false}
                               onChange={(e) => updateProduct(selectedProduct.id, { featured: e.target.checked })}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
                             />
-                            <span className="text-sm font-medium text-gray-700">Featured product</span>
+                            <span className="text-sm text-slate-700">Featured product</span>
                           </label>
                         </div>
 
                         {/* Product Visibility */}
-                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-                          <label className="flex items-center space-x-3 cursor-pointer">
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded">
+                          <label className="flex items-center gap-2 cursor-pointer">
                             <input
                               type="checkbox"
                               checked={selectedProductData.visible !== false}
                               onChange={(e) => updateProduct(selectedProduct.id, { visible: e.target.checked })}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
                             />
-                            <span className="text-sm font-medium text-gray-700">👁️ Product Visible</span>
+                            <span className="text-sm text-slate-700">Product Visible</span>
                           </label>
-                          <p className="text-xs text-gray-600 mt-2 ml-7">Uncheck to hide this product from customers</p>
+                          <p className="text-xs text-slate-400 mt-1 ml-6">Uncheck to hide this product from customers</p>
                         </div>
 
                         {/* Fulfillment Method */}
-                        <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
-                          <label className="block text-sm font-bold text-gray-800 mb-3">\ud83d\ude9a Fulfillment</label>
-                          <div className="space-y-2">
-                            <label className="flex items-center space-x-3 cursor-pointer">
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded">
+                          <label className="section-title">Fulfillment</label>
+                          <div className="space-y-2 mt-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
                               <input
                                 type="radio"
                                 checked={selectedProductData.fulfillment !== 'custom'}
