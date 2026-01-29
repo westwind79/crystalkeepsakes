@@ -928,66 +928,43 @@ export default function ProductDetailClient() {
             )}
 
             {error && (
-              <div className="mt-6 rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-red-800">{error}</p>
-                  </div>
-                </div>
+              <div className="mt-4 rounded bg-red-50 p-3 text-sm text-red-800">
+                {error}
               </div>
             )}
 
-            <form className="mt-6">
+            <form className="mt-6 space-y-6">
               {/* Image Upload */}
               {product.requiresImage && (
-                <div className="mb-8">
-                  
-                  <label className="block mb-2">
-                    {/*Upload your image */}                    
-                    <h3 className="text-2xl font-bold font-[#72B01D]" ref={textRef}>
-                     {text.split("").map((char, index) => (
-                        <span key={index} style={{ display: "inline-block", whiteSpace: "pre", }}>
-                          {char === " " ? "\u00A0" : char}
-                        </span>
-                      ))} <CornerRightDown className="inline-block font-[#72B01D]" size={20} />
-                      <span className="text-red-500">*</span>
-                    </h3> 
-                    
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload your image <span className="text-red-500">*</span>
                   </label>
-
-                  <label className="mt-1 cursor-pointer flex justify-center rounded-lg border border-dashed border-gray-900/25 px-3 py-4">
+                  <label className="cursor-pointer flex justify-center rounded border-2 border-dashed border-gray-300 px-4 py-6 hover:border-gray-400 transition-colors">
                     <div className="text-center">
-                      <svg className="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
-                        <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clipRule="evenodd" />
+                      <svg className="mx-auto h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                       </svg>
-                       
-                      <span className="text-green-800">Upload a file</span>
+                      <span className="mt-2 block text-sm text-gray-600">Click to upload</span>
                       <input 
                         ref={fileInputRef}
                         type="file" 
                         className="sr-only"
                         accept="image/jpeg,image/png,image/gif"
                         onChange={handleImageUpload}
-                        /> 
-                        {/*<p className="pl-1">or drag and drop</p>*/}
-                      
-                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB<br/>Minimum dimensions: 500x500 pixels<br/>Higher resolution recommended for best results</p>
+                      />
+                      <p className="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
                     </div>
                   </label>
-                  {errors.image && <p className="mt-2 text-sm text-red-600">{errors.image}</p>}
-                  {errors.finalImage && <p className="mt-2 text-sm text-red-600">{errors.finalImage}</p>}
-                  {errors.imageUpload && <p className="mt-2 text-sm text-red-600">{errors.imageUpload}</p>}
+                  {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                  {errors.finalImage && <p className="mt-1 text-sm text-red-600">{errors.finalImage}</p>}
+                  {errors.imageUpload && <p className="mt-1 text-sm text-red-600">{errors.imageUpload}</p>}
                 </div>
               )}
 
               {/* Size */}
               {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-8">
+                <div>
                   <div className="flex items-center justify-between">
                     <h3 className="text-md font-medium text-gray-900">Choose a Size</h3>
                   </div>
