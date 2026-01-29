@@ -805,103 +805,94 @@ export default function ProductDetailClient() {
       </nav>
 
       {/* Product */}
-      <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:items-start lg:gap-x-12">
-        
-          <div className="relative lg:sticky lg:top-[85px]">
-            {/* Image gallery */}
-            <div className="flex flex-col-reverse">
-              
-              <div className="mt-6">
-                <h3 className="sr-only">Product Description</h3>
-                <div className="space-y-6 text-base text-gray-700">
-                  {product.longDescription && (
-                    <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
-                  )}
-                </div>
-              </div>
-
-              <div className="w-full overflow-hidden">
-
-                {finalMaskedImage ? (
-                  <div className="space-y-4">
-                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100 relative">
-                      <Image
-                        src={finalMaskedImage} 
-                        alt="Customer Preview" 
-                        className="h-full w-full object-cover object-center"
-                        width={1024}
-                        height={1024}
-                      />
-                      {/* Upload status overlay */}
-                      {isUploadingImage && (
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <div className="text-center text-white">
-                            <div className="inline-block w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mb-2"></div>
-                            <p className="text-sm font-medium">Uploading image...</p>
-                          </div>
-                        </div>
-                      )}
-                      {/* Upload success indicator */}
-                      {!isUploadingImage && maskedImageServerUrl && (
-                        <div className="absolute bottom-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Saved to server
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setShowEditor(true)}
-                        disabled={isUploadingImage}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Edit Image
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFinalMaskedImage(null)
-                          setMaskedImageServerUrl(null)
-                          setRawImageServerUrl(null)
-                          setTempOrderRef(null)
-                        }}
-                        disabled={isUploadingImage}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Remove Image
-                      </button>
-                    </div>
-                  </div>
-                ) : product.images && product.images.length > 1 ? (
-                  <div className={`lg:col-span-7 ${isPageLoaded ? 'fade-in' : 'opacity-0'}`}>
-                    <ProductGallery images={product.images} productName={product.name} />
-                    {/* Centralized Badges Component */}
-                    <ProductBadges product={product} position="gallery" />
-                  </div>
-                ) : (
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-x-12">
+          
+          {/* LEFT: Gallery - Sticky on desktop */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <div className="w-full overflow-hidden">
+              {finalMaskedImage ? (
+                <div className="space-y-4">
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
                     <Image
-                      src={mainImage.src}
-                      alt={product.name}
+                      src={finalMaskedImage} 
+                      alt="Customer Preview" 
+                      className="h-full w-full object-cover object-center"
                       width={1024}
                       height={1024}
-                      className="h-full w-full object-cover object-center"
                     />
-                    {/* Centralized Badges Component */}
-                    <ProductBadges product={product} position="detail" />
+                    {isUploadingImage && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="inline-block w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mb-2"></div>
+                          <p className="text-sm">Uploading...</p>
+                        </div>
+                      </div>
+                    )}
+                    {!isUploadingImage && maskedImageServerUrl && (
+                      <div className="absolute bottom-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Saved
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowEditor(true)}
+                      disabled={isUploadingImage}
+                      className="flex-1 rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFinalMaskedImage(null)
+                        setMaskedImageServerUrl(null)
+                        setRawImageServerUrl(null)
+                        setTempOrderRef(null)
+                      }}
+                      disabled={isUploadingImage}
+                      className="flex-1 rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : product.images && product.images.length > 1 ? (
+                <div className={`${isPageLoaded ? 'fade-in' : 'opacity-0'}`}>
+                  <ProductGallery images={product.images} productName={product.name} />
+                  <ProductBadges product={product} position="gallery" />
+                </div>
+              ) : (
+                <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
+                  <Image
+                    src={mainImage.src}
+                    alt={product.name}
+                    width={1024}
+                    height={1024}
+                    className="h-full w-full object-cover object-center"
+                  />
+                  <ProductBadges product={product} position="detail" />
+                </div>
+              )}
+            </div>
+            
+            {/* Description - Desktop only, below gallery */}
+            <div className="hidden lg:block mt-8">
+              {product.longDescription && (
+                <div className="prose prose-sm max-w-none text-gray-600">
+                  <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0 col-span-2">
+          {/* RIGHT: Product Info + Options */}
+          <div className="mt-8 lg:mt-0">
             <div className="flex items-start flex-wrap">
               <h1 className="text-6xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
             </div>
