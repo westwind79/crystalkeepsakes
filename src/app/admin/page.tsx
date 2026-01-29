@@ -896,29 +896,32 @@ export default function EnhancedProductAdminPage() {
 
           {/* Edit Panel - Middle Column */}
           <div className="col-span-12 lg:col-span-5">
-            <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-4 border-b bg-gray-50">
-                <p className="text-lg font-semibold text-gray-900">
-                  {selectedProduct ? `Edit: ${selectedProduct.name}` : 'Select a Product'}
-                </p>
+            <div className="bg-white rounded-lg border border-slate-200">
+              <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-700">
+                  {selectedProduct ? selectedProduct.name : 'Select a Product'}
+                </span>
+                {selectedProduct && (
+                  <span className="text-xs text-slate-400">ID: {selectedProduct.id}</span>
+                )}
               </div>
 
               {selectedProduct && selectedProductData ? (
                 <>
                   {/* Tabs */}
-                  <div className="flex border-b">
+                  <div className="flex border-b border-slate-200">
                     {[
-                      { id: 'basic', label: '📝 Basic', icon: '' },
-                      { id: 'pricing', label: '💰 Pricing', icon: '' },
-                      { id: 'images', label: '📸 Images', icon: '' },
+                      { id: 'basic', label: 'Basic' },
+                      { id: 'pricing', label: 'Pricing' },
+                      { id: 'images', label: 'Images' },
                     ].map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        className={`px-4 py-2 text-sm font-medium transition-colors ${
                           activeTab === tab.id
-                            ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50'
-                            : 'text-gray-600 hover:bg-gray-50'
+                            ? 'border-b-2 border-slate-800 text-slate-800'
+                            : 'text-slate-500 hover:text-slate-700'
                         }`}
                       >
                         {tab.label}
@@ -927,37 +930,33 @@ export default function EnhancedProductAdminPage() {
                   </div>
 
                   {/* Tab Content */}
-                  <div className="p-6 overflow-y-auto" style={{ maxHeight: '65vh' }}>
+                  <div className="p-5 overflow-y-auto" style={{ maxHeight: '70vh' }}>
                     {/* Basic Info Tab */}
                     {activeTab === 'basic' && (
-                      <div className="space-y-4">
+                      <div className="space-y-5">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Display Name
-                          </label>
+                          <label className="section-title">Display Name</label>
                           <input
                             type="text"
                             value={selectedProductData.name}
                             onChange={(e) => updateProduct(selectedProduct.id, { name: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-slate-400 focus:border-slate-400"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Short Description
-                          </label>
+                          <label className="section-title">Short Description</label>
                           <textarea
                             rows={2}
                             value={selectedProductData.description || ''}
                             onChange={(e) => updateProduct(selectedProduct.id, { description: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-y"
+                            className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-slate-400 resize-y"
                             style={{ minHeight: '60px' }}
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="section-title">
                             Long Description (HTML allowed)
                           </label>
                           <textarea
