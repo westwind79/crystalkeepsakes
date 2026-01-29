@@ -1192,21 +1192,17 @@ export default function EnhancedProductAdminPage() {
                     {/* Pricing Tab */}
                     {activeTab === 'pricing' && (
                       <div className="space-y-6">
-                        {/* Cost & Base Price - Only show if NO sizes (otherwise cost is per-size) */}
-                        <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg space-y-4">
-                          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                            <span>💰</span> Cost & Pricing
-                          </h4>
+                        {/* Cost & Base Price */}
+                        <div className="space-y-4">
+                          <h4 className="section-title">Base Pricing</h4>
                           
                           <div className="grid grid-cols-2 gap-4">
                             {/* Only show single cost field for products WITHOUT sizes */}
                             {!(selectedProductData.sizes && selectedProductData.sizes.length > 0) && (
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Cost (What you pay to fulfill)
-                                </label>
+                                <label className="block text-xs text-slate-500 mb-1">Cost</label>
                                 <div className="relative">
-                                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                  <span className="absolute left-3 top-2 text-slate-400 text-sm">$</span>
                                   <input
                                     type="number"
                                     step="0.01"
@@ -1214,7 +1210,7 @@ export default function EnhancedProductAdminPage() {
                                     value={selectedProductData.cost || ''}
                                     onChange={(e) => updateProduct(selectedProduct.id, { cost: parseFloat(e.target.value) || undefined })}
                                     placeholder="0.00"
-                                    className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                    className="w-full pl-7 pr-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-slate-400 bg-white"
                                   />
                                 </div>
                               </div>
