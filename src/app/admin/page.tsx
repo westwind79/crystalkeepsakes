@@ -1406,39 +1406,84 @@ export default function EnhancedProductAdminPage() {
                           )}
                         </div>
 
-                        {/* Size Prices */}
+                        {/* Size Prices with Cost per Size */}
                         {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
                           <div>
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Size Prices</h3>
-                            <p className="text-xs text-blue-600 mb-2">
-                              💡 Base Price will auto-update to the smallest enabled size price
+                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Size Pricing</h3>
+                            <p className="text-xs text-blue-600 mb-3">
+                              💡 Set cost and price for each size. Base Price auto-updates to smallest enabled size.
                             </p>
+                            
+                            {/* Header row */}
+                            <div className="flex items-center gap-3 mb-2 text-xs font-medium text-gray-500 uppercase">
+                              <div className="w-4"></div>
+                              <div className="flex-1">Size</div>
+                              <div className="w-24 text-center">Cost</div>
+                              <div className="w-24 text-center">Price</div>
+                              <div className="w-20 text-center">Margin</div>
+                            </div>
+                            
                             <div className="space-y-2">
-                              {selectedProductData.sizes.map((size, index) => (
-                                <div key={size.id} className="flex items-center gap-3">
-                                  <input
-                                    type="checkbox"
-                                    checked={size.enabled !== false}
-                                    onChange={(e) =>
-                                      updateSize(selectedProduct.id, index, { enabled: e.target.checked })
-                                    }
-                                    className="w-4 h-4"
-                                  />
-                                  <div className="flex-1 text-sm text-gray-700">{size.name}</div>
-                                  <div className="relative w-24">
-                                    <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                              {selectedProductData.sizes.map((size, index) => {
+                                const margin = size.price && size.cost ? size.price - size.cost : null;
+                                const marginPct = size.price && size.cost && size.cost > 0 
+                                  ? Math.round((margin! / size.cost) * 100) 
+                                  : null;
+                                
+                                return (
+                                  <div key={size.id} className="flex items-center gap-3">
                                     <input
-                                      type="number"
-                                      step="0.01"
-                                      value={size.price}
+                                      type="checkbox"
+                                      checked={size.enabled !== false}
                                       onChange={(e) =>
-                                        updateSize(selectedProduct.id, index, { price: parseFloat(e.target.value) || 0 })
+                                        updateSize(selectedProduct.id, index, { enabled: e.target.checked })
                                       }
-                                      className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                                      className="w-4 h-4"
                                     />
+                                    <div className="flex-1 text-sm text-gray-700">{size.name}</div>
+                                    
+                                    {/* Cost input */}
+                                    <div className="relative w-24">
+                                      <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                                      <input
+                                        type="number"
+                                        step="0.01"
+                                        value={size.cost || ''}
+                                        placeholder="0.00"
+                                        onChange={(e) =>
+                                          updateSize(selectedProduct.id, index, { cost: parseFloat(e.target.value) || undefined })
+                                        }
+                                        className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 bg-orange-50"
+                                      />
+                                    </div>
+                                    
+                                    {/* Price input */}
+                                    <div className="relative w-24">
+                                      <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                                      <input
+                                        type="number"
+                                        step="0.01"
+                                        value={size.price}
+                                        onChange={(e) =>
+                                          updateSize(selectedProduct.id, index, { price: parseFloat(e.target.value) || 0 })
+                                        }
+                                        className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                                      />
+                                    </div>
+                                    
+                                    {/* Margin display */}
+                                    <div className="w-20 text-center text-xs">
+                                      {margin !== null ? (
+                                        <span className={margin >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                                          ${margin.toFixed(2)} ({marginPct}%)
+                                        </span>
+                                      ) : (
+                                        <span className="text-gray-400">—</span>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                             
                             {/* Show calculated base price */}
