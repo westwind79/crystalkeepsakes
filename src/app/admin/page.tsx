@@ -842,7 +842,7 @@ export default function EnhancedProductAdminPage() {
                   >
                     <div className="flex items-start gap-3">
                       {/* Product Thumbnail */}
-                      <div className="w-16 h-16 flex-shrink-0 bg-slate-100 rounded overflow-hidden">
+                      <div className="w-12 h-12 flex-shrink-0 bg-slate-100 rounded overflow-hidden">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0].src}
@@ -850,66 +850,41 @@ export default function EnhancedProductAdminPage() {
                             className={`w-full h-full object-cover ${!isVisible ? 'grayscale' : ''}`}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                            No img
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                            —
                           </div>
                         )}
-                        
-                        {/* Status Icons - Top Right Corner */}
-                        <div className="absolute top-1 right-1 flex flex-col gap-1">
-                          {!isVisible && (
-                            <span className="bg-gray-800 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Hidden">
-                              🚫
-                            </span>
-                          )}
-                          {isFeatured && (
-                            <span className="bg-yellow-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="Featured">
-                              ⭐
-                            </span>
-                          )}
-                          {isOnSale && (
-                            <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-bold" title="On Sale">
-                              💰
-                            </span>
-                          )}
-                        </div>
                       </div>
 
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className={`font-semibold text-sm truncate ${!isVisible ? 'text-gray-500' : 'text-gray-900'}`}>
-                          {product.name}
-                        </h3>
-                        <p className="text-xs text-gray-600">SKU: {product.sku}</p>
-                        {/* Show price range for products with sizes, otherwise show base price */}
-                        {productData.sizes && productData.sizes.length > 0 ? (
-                          <p className="text-sm text-green-600 font-bold">
-                            {(() => {
-                              const enabledSizes = productData.sizes.filter((s: Size) => s.enabled !== false);
-                              if (enabledSizes.length === 0) return `$${productData.basePrice}`;
-                              const prices = enabledSizes.map((s: Size) => s.price);
-                              const minPrice = Math.min(...prices);
-                              const maxPrice = Math.max(...prices);
-                              return minPrice === maxPrice 
-                                ? `$${minPrice}` 
-                                : `$${minPrice} - $${maxPrice}`;
-                            })()}
-                          </p>
-                        ) : (
-                          <p className="text-sm text-green-600 font-bold">${productData.basePrice}</p>
-                        )}
-                        {(hasCustomizations(product.id) || product.edited) && (
-                          <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
-                            Edited
+                        <div className="flex items-center gap-2">
+                          <h3 className="product-name text-sm text-slate-800 truncate">
+                            {product.name}
+                          </h3>
+                          {isFeatured && <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" title="Featured"></span>}
+                          {isOnSale && <span className="w-1.5 h-1.5 bg-rose-500 rounded-full" title="On Sale"></span>}
+                          {(hasCustomizations(product.id) || product.edited) && (
+                            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" title="Edited"></span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-slate-400">{product.sku}</span>
+                          <span className="text-xs font-medium text-emerald-600">
+                            {productData.sizes && productData.sizes.length > 0 ? (
+                              (() => {
+                                const enabledSizes = productData.sizes.filter((s: Size) => s.enabled !== false);
+                                if (enabledSizes.length === 0) return `$${productData.basePrice}`;
+                                const prices = enabledSizes.map((s: Size) => s.price);
+                                const minPrice = Math.min(...prices);
+                                const maxPrice = Math.max(...prices);
+                                return minPrice === maxPrice ? `$${minPrice}` : `$${minPrice}–$${maxPrice}`;
+                              })()
+                            ) : (
+                              `$${productData.basePrice}`
+                            )}
                           </span>
-                        )}
-
-                        {product.editedAt && (
-                          <p className="text-xs text-blue-600 mt-1" title={`Last edited: ${new Date(product.editedAt).toLocaleString()}`}>
-                            ✏️ {new Date(product.editedAt).toLocaleDateString()}
-                          </p>
-                        )}
-
+                        </div>
                       </div>
                     </div>
                   </button>
