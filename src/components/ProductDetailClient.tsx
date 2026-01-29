@@ -1011,73 +1011,51 @@ export default function ProductDetailClient() {
                       >
                         <input
                           type="radio"
-                            name="background"
-                            value={bg.id}
-                            checked={selectedBackground?.id === bg.id}
-                            onChange={() => setSelectedBackground(bg)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{bg.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedBackground?.id === bg.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
+                          name="background"
+                          value={bg.id}
+                          checked={selectedBackground?.id === bg.id}
+                          onChange={() => setSelectedBackground(bg)}
+                          className="sr-only"
+                        />
+                        <span className="text-sm text-gray-900">{bg.name}</span>
+                        <span className="text-sm text-gray-500">
+                          {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'Free'}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               )}
 
               {/* Light Base */}
               {product.lightBases && product.lightBases.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-md font-medium text-gray-900">Light Base</h3>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a light base</legend>
-                    <div className="space-y-3">
-                      {product.lightBases.map((base) => (
-                        <label
-                          key={base.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedLightBase?.id === base.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="lightBase"
-                            value={base.id}
-                            checked={selectedLightBase?.id === base.id}
-                            onChange={() => setSelectedLightBase(base)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{base.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedLightBase?.id === base.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Light Base</label>
+                  <div className="space-y-2">
+                    {product.lightBases.map((base) => (
+                      <label
+                        key={base.id}
+                        className={`flex items-center justify-between cursor-pointer rounded border px-4 py-3 transition-colors ${
+                          selectedLightBase?.id === base.id
+                            ? 'border-[#72B01D] bg-[#72B01D]/10'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="lightBase"
+                          value={base.id}
+                          checked={selectedLightBase?.id === base.id}
+                          onChange={() => setSelectedLightBase(base)}
+                          className="sr-only"
+                        />
+                        <span className="text-sm text-gray-900">{base.name}</span>
+                        <span className="text-sm text-gray-500">
+                          {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'Free'}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               )}
 
