@@ -1061,11 +1061,9 @@ export default function ProductDetailClient() {
 
               {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center mb-4">
+                <div>
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input
-                      id="add-custom-text"
-                      name="showCustomText"
                       type="checkbox"
                       checked={showCustomText}
                       onChange={(e) => {
@@ -1076,21 +1074,20 @@ export default function ProductDetailClient() {
                       }}
                       className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
                     />
-                    <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
+                    <span className="text-sm text-gray-700">
+                      Add Custom Text 
                       {(() => {
                         const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
-                        return textPrice > 0 
-                          ? `Add Custom Text (+$${textPrice.toFixed(2)})`
-                          : 'Add Custom Text (No Extra Cost)';
+                        return textPrice > 0 ? ` (+$${textPrice.toFixed(2)})` : '';
                       })()}
-                    </label>
-                  </div>
+                    </span>
+                  </label>
                   
                   {showCustomText && (
-                    <div className="space-y-2">
+                    <div className="mt-3 space-y-3">
                       <div>
-                        <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
-                          Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
+                        <label htmlFor="text-line-1" className="block text-xs text-gray-500 mb-1">
+                          Line 1 ({customText.line1.length}/30)
                         </label>
                         <input
                           type="text"
@@ -1098,23 +1095,7 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Anniversary 2024"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full 
-                          rounded-md 
-                          border-0 
-                          py-2.5 
-                          pl-4 
-                          text-gray-900 
-                          shadow-sm 
-                          ring-1 
-                          ring-inset 
-                          ring-gray-300 
-                          placeholder:text-gray-400 
-                          focus:ring-2 
-                          focus:ring-inset 
-                          focus:ring-[var(--brand-400)]
-                          active:ring-[var(--brand-400)]
-                          sm:text-sm 
-                          sm:leading-6"
+                          className="block w-full rounded border border-gray-300 py-2 px-3 text-sm focus:border-[#72B01D] focus:ring-1 focus:ring-[#72B01D]"
                           maxLength={30}
                         />
                       </div>
