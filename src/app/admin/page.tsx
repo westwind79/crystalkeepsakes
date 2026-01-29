@@ -907,7 +907,6 @@ export default function EnhancedProductAdminPage() {
                     {[
                       { id: 'basic', label: '📝 Basic', icon: '' },
                       { id: 'pricing', label: '💰 Pricing', icon: '' },
-                      { id: 'options', label: '⚙️ Options', icon: '' },
                       { id: 'images', label: '📸 Images', icon: '' },
                     ].map((tab) => (
                       <button
