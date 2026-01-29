@@ -768,7 +768,7 @@ export default function EnhancedProductAdminPage() {
                 {[...sourceProducts]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((product) => {
-                  const productData = { ...product, ...(editedProducts[product.id] || {}) };
+                  const productData = getProductData(product.id);
                   const isVisible = productData.visible !== false;
                   const isFeatured = productData.featured === true;
                   const isOnSale = productData.sale === true || productData.salePrice || productData.salePercent;
