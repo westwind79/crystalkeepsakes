@@ -268,16 +268,18 @@ export default function EnhancedProductAdminPage() {
     }
   };
 
-  // Handle lightbase updates - GLOBAL sync across all products
+  // Handle lightbase updates - GLOBAL sync across all products AND standalone lightbase products
   const updateLightBase = (productId: string, lbIndex: number, updates: Partial<LightBase>) => {
     const product = getProductData(productId);
     const lightBases = [...(product.lightBases || [])];
     const updatedLB = { ...lightBases[lbIndex], ...updates };
     lightBases[lbIndex] = updatedLB;
     
-    // If price changed, sync to ALL products with this lightbase
+    // If price changed, sync to ALL products with this lightbase AND to standalone product
     if (updates.price !== undefined) {
       const lbId = updatedLB.id;
+      
+      // Sync to all products that have this lightbase as an option
       sourceProducts.forEach((p) => {
         if (p.id !== productId && p.lightBases) {
           const matchIdx = p.lightBases.findIndex((lb: LightBase) => lb.id === lbId);
@@ -288,6 +290,12 @@ export default function EnhancedProductAdminPage() {
           }
         }
       });
+      
+      // Sync to standalone lightbase product if exists
+      const standaloneProductId = LIGHTBASE_PRODUCT_MAP[lbId];
+      if (standaloneProductId && updates.price !== null) {
+        updateProduct(standaloneProductId, { basePrice: updates.price });
+      }
     }
     
     updateProduct(productId, { lightBases });
