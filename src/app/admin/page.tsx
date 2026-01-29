@@ -1217,13 +1217,13 @@ export default function EnhancedProductAdminPage() {
                             )}
                             
                             <div className={selectedProductData.sizes && selectedProductData.sizes.length > 0 ? 'col-span-2' : ''}>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-xs text-slate-500 mb-1">
                                 Base Price {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
-                                  <span className="text-xs text-blue-600">(= smallest size)</span>
+                                  <span className="text-slate-400">(auto from sizes)</span>
                                 )}
                               </label>
                               <div className="relative">
-                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <span className="absolute left-3 top-2 text-slate-400 text-sm">$</span>
                                 <input
                                   type="number"
                                   step="0.01"
@@ -1232,41 +1232,30 @@ export default function EnhancedProductAdminPage() {
                                     updateProduct(selectedProduct.id, { basePrice: parseFloat(e.target.value) || 0 })
                                   }
                                   disabled={selectedProductData.sizes && selectedProductData.sizes.length > 0}
-                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                  className="w-full pl-7 pr-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-slate-400 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed"
                                 />
                               </div>
-                              {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
-                                <p className="text-xs text-gray-600 mt-1">
-                                  Auto-set from size prices. Set cost per size below.
-                                </p>
-                              )}
                             </div>
                           </div>
                           
                           {/* Profit Display - only for products WITHOUT sizes */}
                           {!(selectedProductData.sizes && selectedProductData.sizes.length > 0) && 
                            selectedProductData.cost && selectedProductData.basePrice && (
-                            <div className="pt-3 border-t border-blue-300">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-700">Profit Margin (on base):</span>
-                                <span className="text-lg font-bold text-green-600">
-                                  ${(selectedProductData.basePrice - selectedProductData.cost).toFixed(2)}
-                                  <span className="text-sm ml-2">
-                                    ({Math.round(((selectedProductData.basePrice - selectedProductData.cost) / selectedProductData.cost) * 100)}%)
-                                  </span>
-                                </span>
-                              </div>
+                            <div className="flex items-center gap-2 mt-2 text-sm">
+                              <span className="text-slate-500">Margin:</span>
+                              <span className="font-medium text-emerald-600">
+                                ${(selectedProductData.basePrice - selectedProductData.cost).toFixed(2)}
+                                ({Math.round(((selectedProductData.basePrice - selectedProductData.cost) / selectedProductData.cost) * 100)}%)
+                              </span>
                             </div>
                           )}
                         </div>
 
                         {/* Sale Section */}
-                        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg space-y-4">
+                        <div className="space-y-3 pt-4 border-t border-slate-200">
                           <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                              <span>🔥</span> Sale Discount
-                            </h4>
-                            <label className="flex items-center space-x-2">
+                            <h4 className="section-title">Sale Discount</h4>
+                            <label className="flex items-center gap-2">
                               <input
                                 type="checkbox"
                                 checked={selectedProductData.sale || false}
@@ -1276,18 +1265,18 @@ export default function EnhancedProductAdminPage() {
                                     updateProduct(selectedProduct.id, { salePrice: undefined, salePercent: undefined });
                                   }
                                 }}
-                                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
                               />
-                              <span className="text-sm font-medium text-gray-700">On Sale</span>
+                              <span className="text-sm text-slate-600">On Sale</span>
                             </label>
                           </div>
 
                           {selectedProductData.sale && (
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                               <div className="grid grid-cols-2 gap-4">
                                 {/* Percentage Discount */}
                                 <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  <label className="block text-xs text-slate-500 mb-1">
                                     Discount % <span className="text-xs text-gray-500">(Recommended)</span>
                                   </label>
                                   <div className="relative">
