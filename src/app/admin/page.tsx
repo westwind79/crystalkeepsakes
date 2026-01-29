@@ -822,7 +822,23 @@ export default function EnhancedProductAdminPage() {
                           {product.name}
                         </h3>
                         <p className="text-xs text-gray-600">SKU: {product.sku}</p>
-                        <p className="text-sm text-green-600 font-bold">${product.basePrice}</p>
+                        {/* Show price range for products with sizes, otherwise show base price */}
+                        {productData.sizes && productData.sizes.length > 0 ? (
+                          <p className="text-sm text-green-600 font-bold">
+                            {(() => {
+                              const enabledSizes = productData.sizes.filter((s: Size) => s.enabled !== false);
+                              if (enabledSizes.length === 0) return `$${productData.basePrice}`;
+                              const prices = enabledSizes.map((s: Size) => s.price);
+                              const minPrice = Math.min(...prices);
+                              const maxPrice = Math.max(...prices);
+                              return minPrice === maxPrice 
+                                ? `$${minPrice}` 
+                                : `$${minPrice} - $${maxPrice}`;
+                            })()}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-green-600 font-bold">${productData.basePrice}</p>
+                        )}
                         {(hasCustomizations(product.id) || product.edited) && (
                           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
                             Edited
