@@ -965,59 +965,52 @@ export default function ProductDetailClient() {
               {/* Size */}
               {product.sizes && product.sizes.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-md font-medium text-gray-900">Choose a Size</h3>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {product.sizes.map((size) => (
+                      <label
+                        key={size.id}
+                        className={`cursor-pointer rounded border px-3 py-2 text-sm text-center transition-colors ${
+                          selectedSize?.id === size.id
+                            ? 'border-[#72B01D] bg-[#72B01D]/10 text-[#72B01D]'
+                            : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size.id}
+                          checked={selectedSize?.id === size.id}
+                          onChange={() => setSelectedSize(size)}
+                          className="sr-only"
+                        />
+                        <span className="block font-medium">{size.name}</span>
+                        {size.price > 0 && (
+                          <span className="block text-xs text-gray-500">${size.price}</span>
+                        )}
+                      </label>
+                    ))}
                   </div>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
-                      {product.sizes.map((size) => (
-                        <label
-                          key={size.id}
-                          className={`cursor-pointer rounded-md px-3 py-3 text-sm font-semibold uppercase shadow-sm focus:outline-none sm:flex-1 ${
-                            selectedSize?.id === size.id
-                              ? 'bg-[#72B01D] text-white hover:bg-[#5A8E17]'
-                              : 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="size"
-                            value={size.id}
-                            checked={selectedSize?.id === size.id}
-                            onChange={() => setSelectedSize(size)}
-                            className="sr-only"
-                          />
-                          <span className="block text-center">{size.name}</span>
-                          {size.price > 0 && (
-                            <span className="block text-center text-xs mt-1">${size.price}</span>
-                          )}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                  {errors.size && <p className="mt-2 text-sm text-red-600">{errors.size}</p>}
+                  {errors.size && <p className="mt-1 text-sm text-red-600">{errors.size}</p>}
                 </div>
               )}
 
               {/* Background Options */}
               {product.backgroundOptions && product.backgroundOptions.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-md font-medium text-gray-900">Background</h3>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a background</legend>
-                    <div className="space-y-3">
-                      {product.backgroundOptions.map((bg) => (
-                        <label
-                          key={bg.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedBackground?.id === bg.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Background</label>
+                  <div className="space-y-2">
+                    {product.backgroundOptions.map((bg) => (
+                      <label
+                        key={bg.id}
+                        className={`flex items-center justify-between cursor-pointer rounded border px-4 py-3 transition-colors ${
+                          selectedBackground?.id === bg.id
+                            ? 'border-[#72B01D] bg-[#72B01D]/10'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <input
+                          type="radio"
                             name="background"
                             value={bg.id}
                             checked={selectedBackground?.id === bg.id}
