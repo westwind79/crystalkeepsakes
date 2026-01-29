@@ -893,51 +893,37 @@ export default function ProductDetailClient() {
 
           {/* RIGHT: Product Info + Options */}
           <div className="mt-8 lg:mt-0">
-            <div className="flex items-start flex-wrap">
-              <h1 className="text-6xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
-            </div>
+            {/* Title - Sans-serif, not too large */}
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+              {product.name}
+            </h1>
 
-            <div className="mt-3">
-              <h2 className="sr-only">Product information</h2>
+            {/* Price */}
+            <div className="mt-4">
               {isOnSale(product) && (product.salePercent || product.salePrice) ? (
                 <div className="flex items-center gap-3 flex-wrap">
-                  <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
+                  <span className="text-2xl font-semibold text-[#72B01D]">
                     ${getTotalPrice().toFixed(2)}
-                  </p>
-                  <p className="text-2xl tracking-tight text-gray-500 line-through">
+                  </span>
+                  <span className="text-lg text-gray-400 line-through">
                     ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
-                  </p>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
-                    {product.salePercent 
-                      ? `${product.salePercent}% OFF` 
-                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (getTotalPrice() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-red-500 text-white text-xs font-medium">
+                    {product.salePercent ? `${product.salePercent}% OFF` : 'SALE'}
                   </span>
                 </div>
               ) : (
-                <p className="text-4xl font-bold tracking-tight text-gray-900">${getTotalPrice().toFixed(2)}</p>
+                <span className="text-2xl font-semibold text-gray-900">${getTotalPrice().toFixed(2)}</span>
               )}
             </div>
 
-            <div className={`mt-6 lg:col-span-5 ${isPageLoaded ? 'fade-in fade-in-delay-2' : 'opacity-0'}`}>
-              <h3 className="sr-only">Description</h3>
-              <div className="space-y-6 text-base text-gray-700">
-                <p>{product.description}</p>
-              </div>
-            </div>
+            {/* Short description */}
+            <p className="mt-4 text-gray-600 text-sm leading-relaxed">{product.description}</p>
 
             {/* Success/Error Messages */}
             {successMessage && (
-              <div className="mt-6 rounded-md bg-green-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-green-800">{successMessage}</p>
-                  </div>
-                </div>
+              <div className="mt-4 rounded bg-green-50 p-3 text-sm text-green-800">
+                {successMessage}
               </div>
             )}
 
