@@ -1052,72 +1052,52 @@ export default function EnhancedProductAdminPage() {
                               
                               if (categories.length === 0) {
                                 return <span className="text-xs text-slate-400">No categories detected</span>;
-                                }
-                                
-                                return categories.map((cat: string) => (
-                                  <span 
-                                    key={cat}
-                                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                                  >
-                                    {getCategoryLabel(cat)}
-                                  </span>
-                                ));
-                              })()}
-                            </div>
-                            <div className="mt-3 text-xs text-gray-600">
-                              <strong>Detection Rules:</strong>
-                              <ul className="list-disc list-inside mt-1 space-y-1">
-                                <li>Sale: ✓ if "On Sale" is checked above</li>
-                                <li>Featured: ✓ if "Featured product" is checked above</li>
-                                <li>Light Bases: Product IDs 105-108, 119, 160, 252, 276 (excludes ID 279)</li>
-                                <li>3D Crystals: Name contains "3D", "ball", "dome", "monument"</li>
-                                <li>2D Crystals: Name contains "2D" or "plaque"</li>
-                                <li>Keychains & Necklaces: Name contains "keychain" or "necklace"</li>
-                                <li>Ornaments: Name contains "ornament" or ID is 279</li>
-                                <li>Heart Shapes: Name contains "heart"</li>
-                              </ul>
-                            </div>
+                              }
+                              
+                              return categories.map((cat: string) => (
+                                <span 
+                                  key={cat}
+                                  className="inline-flex items-center px-2 py-1 rounded text-xs bg-slate-100 text-slate-600"
+                                >
+                                  {getCategoryLabel(cat)}
+                                </span>
+                              ));
+                            })()}
                           </div>
                         </div>
 
                         {/* Occasions Section - Manual Assignment */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-3">
-                            🎉 Occasions & Themes (Manual Selection)
-                          </label>
-                          <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg space-y-3">
-                            <p className="text-xs text-purple-600 mb-3">
-                              Select one or more occasions that this product is suitable for. These will be used for filtering on the products page.
-                            </p>
-                            <div className="grid grid-cols-2 gap-2">
-                              {OCCASION_CATEGORIES.map((occasion) => {
-                                const isSelected = selectedProductData.occasions?.includes(occasion.value) || false;
-                                
-                                return (
-                                  <label 
-                                    key={occasion.value}
-                                    className={`flex items-center space-x-2 p-2 rounded-lg border-2 cursor-pointer transition-all ${
-                                      isSelected 
-                                        ? 'bg-purple-100 border-purple-500' 
-                                        : 'bg-white border-gray-200 hover:border-purple-300'
-                                    }`}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={isSelected}
-                                      onChange={(e) => {
-                                        const currentOccasions = selectedProductData.occasions || [];
-                                        let updatedOccasions;
-                                        
-                                        if (e.target.checked) {
-                                          // Add occasion
-                                          updatedOccasions = [...currentOccasions, occasion.value];
-                                        } else {
-                                          // Remove occasion
-                                          updatedOccasions = currentOccasions.filter((o: string) => o !== occasion.value);
-                                        }
-                                        
-                                        updateProduct(selectedProduct.id, { occasions: updatedOccasions });
+                        <div className="pt-4 border-t border-slate-200">
+                          <label className="section-title">Occasions & Themes</label>
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+                            {OCCASION_CATEGORIES.map((occasion) => {
+                              const isSelected = selectedProductData.occasions?.includes(occasion.value) || false;
+                              
+                              return (
+                                <label 
+                                  key={occasion.value}
+                                  className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-all ${
+                                    isSelected 
+                                      ? 'bg-slate-100 border-slate-400' 
+                                      : 'bg-white border-slate-200 hover:border-slate-300'
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={(e) => {
+                                      const currentOccasions = selectedProductData.occasions || [];
+                                      let updatedOccasions;
+                                      
+                                      if (e.target.checked) {
+                                        // Add occasion
+                                        updatedOccasions = [...currentOccasions, occasion.value];
+                                      } else {
+                                        // Remove occasion
+                                        updatedOccasions = currentOccasions.filter((o: string) => o !== occasion.value);
+                                      }
+                                      
+                                      updateProduct(selectedProduct.id, { occasions: updatedOccasions });
                                       }}
                                       className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                                     />
