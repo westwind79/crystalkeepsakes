@@ -240,16 +240,47 @@ export default function EnhancedProductAdminPage() {
   };
 
   // Update product customization
+  // Also syncs lightbase prices when standalone lightbase product price changes
   const updateProduct = (productId: string, updates: Partial<Product>) => {
-    setEditedProducts((prev) => ({
-      ...prev,
-      [productId]: { 
-        ...prev[productId], 
-        ...updates,
-        edited: true,
-        editedAt: new Date().toISOString()
-      },
-    }));
+    setEditedProducts((prev) => {
+      const newState = {
+        ...prev,
+        [productId]: { 
+          ...prev[productId], 
+          ...updates,
+          edited: true,
+          editedAt: new Date().toISOString()
+        },
+      };
+      
+      // Check if this is a standalone lightbase product and basePrice changed
+      if (updates.basePrice !== undefined) {
+        const lbOptionId = Object.entries(LIGHTBASE_PRODUCT_MAP).find(
+          ([optionId, prodId]) => prodId === productId
+        )?.[0];
+        
+        if (lbOptionId) {
+          // Sync to all products that have this lightbase as an option
+          sourceProducts.forEach((p) => {
+            if (p.lightBases && p.lightBases.length > 0) {
+              const existingLBs = [...(newState[p.id]?.lightBases || p.lightBases)];
+              const matchIdx = existingLBs.findIndex((lb: LightBase) => lb.id === lbOptionId);
+              if (matchIdx >= 0) {
+                existingLBs[matchIdx] = { ...existingLBs[matchIdx], price: updates.basePrice };
+                newState[p.id] = {
+                  ...newState[p.id],
+                  lightBases: existingLBs,
+                  edited: true,
+                  editedAt: new Date().toISOString()
+                };
+              }
+            }
+          });
+        }
+      }
+      
+      return newState;
+    });
   };
 
   // Handle size updates
