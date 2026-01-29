@@ -39,6 +39,7 @@ interface Size {
   id: string;
   name: string;
   price: number;
+  cost?: number;
   cockpit3d_id?: string;
   enabled?: boolean;
 }
