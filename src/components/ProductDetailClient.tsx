@@ -965,105 +965,136 @@ export default function ProductDetailClient() {
               {/* Size */}
               {product.sizes && product.sizes.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {product.sizes.map((size) => (
-                      <label
-                        key={size.id}
-                        className={`cursor-pointer rounded border px-3 py-2 text-sm text-center transition-colors ${
-                          selectedSize?.id === size.id
-                            ? 'border-[#72B01D] bg-[#72B01D]/10 text-[#72B01D]'
-                            : 'border-gray-300 text-gray-700 hover:border-gray-400'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="size"
-                          value={size.id}
-                          checked={selectedSize?.id === size.id}
-                          onChange={() => setSelectedSize(size)}
-                          className="sr-only"
-                        />
-                        <span className="block font-medium">{size.name}</span>
-                        {size.price > 0 && (
-                          <span className="block text-xs text-gray-500">${size.price}</span>
-                        )}
-                      </label>
-                    ))}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-md font-medium text-gray-900">Choose a Size</h3>
                   </div>
-                  {errors.size && <p className="mt-1 text-sm text-red-600">{errors.size}</p>}
+                  <fieldset className="mt-4">
+                    <legend className="sr-only">Choose a size</legend>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
+                      {product.sizes.map((size) => (
+                        <label
+                          key={size.id}
+                          className={`cursor-pointer rounded-md px-3 py-3 text-sm font-semibold uppercase shadow-sm focus:outline-none sm:flex-1 ${
+                            selectedSize?.id === size.id
+                              ? 'bg-[#72B01D] text-white hover:bg-[#5A8E17]'
+                              : 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="size"
+                            value={size.id}
+                            checked={selectedSize?.id === size.id}
+                            onChange={() => setSelectedSize(size)}
+                            className="sr-only"
+                          />
+                          <span className="block text-center">{size.name}</span>
+                          {size.price > 0 && (
+                            <span className="block text-center text-xs mt-1">${size.price}</span>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                  {errors.size && <p className="mt-2 text-sm text-red-600">{errors.size}</p>}
                 </div>
               )}
 
               {/* Background Options */}
               {product.backgroundOptions && product.backgroundOptions.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Background</label>
-                  <div className="space-y-2">
-                    {product.backgroundOptions.map((bg) => (
-                      <label
-                        key={bg.id}
-                        className={`flex items-center justify-between cursor-pointer rounded border px-4 py-3 transition-colors ${
-                          selectedBackground?.id === bg.id
-                            ? 'border-[#72B01D] bg-[#72B01D]/10'
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="background"
-                          value={bg.id}
-                          checked={selectedBackground?.id === bg.id}
-                          onChange={() => setSelectedBackground(bg)}
-                          className="sr-only"
-                        />
-                        <span className="text-sm text-gray-900">{bg.name}</span>
-                        <span className="text-sm text-gray-500">
-                          {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'Free'}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
+                <div className="mb-8">
+                  <h3 className="text-md font-medium text-gray-900">Background</h3>
+                  <fieldset className="mt-4">
+                    <legend className="sr-only">Choose a background</legend>
+                    <div className="space-y-3">
+                      {product.backgroundOptions.map((bg) => (
+                        <label
+                          key={bg.id}
+                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
+                            selectedBackground?.id === bg.id
+                              ? 'border-transparent ring-2 ring-[#72B01D]'
+                              : 'border-gray-300'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="background"
+                            value={bg.id}
+                            checked={selectedBackground?.id === bg.id}
+                            onChange={() => setSelectedBackground(bg)}
+                            className="sr-only"
+                          />
+                          <span className="flex items-center">
+                            <span className="flex flex-col text-sm">
+                              <span className="font-medium text-gray-900">{bg.name}</span>
+                            </span>
+                          </span>
+                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+                            <span className="font-medium text-gray-900">
+                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'No Extra Cost'}
+                            </span>
+                          </span>
+                          {selectedBackground?.id === bg.id && (
+                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                 </div>
               )}
 
               {/* Light Base */}
               {product.lightBases && product.lightBases.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Light Base</label>
-                  <div className="space-y-2">
-                    {product.lightBases.map((base) => (
-                      <label
-                        key={base.id}
-                        className={`flex items-center justify-between cursor-pointer rounded border px-4 py-3 transition-colors ${
-                          selectedLightBase?.id === base.id
-                            ? 'border-[#72B01D] bg-[#72B01D]/10'
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="lightBase"
-                          value={base.id}
-                          checked={selectedLightBase?.id === base.id}
-                          onChange={() => setSelectedLightBase(base)}
-                          className="sr-only"
-                        />
-                        <span className="text-sm text-gray-900">{base.name}</span>
-                        <span className="text-sm text-gray-500">
-                          {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'Free'}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
+                <div className="mb-8">
+                  <h3 className="text-md font-medium text-gray-900">Light Base</h3>
+                  <fieldset className="mt-4">
+                    <legend className="sr-only">Choose a light base</legend>
+                    <div className="space-y-3">
+                      {product.lightBases.map((base) => (
+                        <label
+                          key={base.id}
+                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
+                            selectedLightBase?.id === base.id
+                              ? 'border-transparent ring-2 ring-[#72B01D]'
+                              : 'border-gray-300'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="lightBase"
+                            value={base.id}
+                            checked={selectedLightBase?.id === base.id}
+                            onChange={() => setSelectedLightBase(base)}
+                            className="sr-only"
+                          />
+                          <span className="flex items-center">
+                            <span className="flex flex-col text-sm">
+                              <span className="font-medium text-gray-900">{base.name}</span>
+                            </span>
+                          </span>
+                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+                            <span className="font-medium text-gray-900">
+                              {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'No Extra Cost'}
+                            </span>
+                          </span>
+                          {selectedLightBase?.id === base.id && (
+                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                 </div>
               )}
 
               {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.length > 0 && (
-                <div>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                <div className="mb-8">
+                  <div className="flex items-center mb-4">
                     <input
+                      id="add-custom-text"
+                      name="showCustomText"
                       type="checkbox"
                       checked={showCustomText}
                       onChange={(e) => {
@@ -1074,20 +1105,21 @@ export default function ProductDetailClient() {
                       }}
                       className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
                     />
-                    <span className="text-sm text-gray-700">
-                      Add Custom Text 
+                    <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
                       {(() => {
                         const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
-                        return textPrice > 0 ? ` (+$${textPrice.toFixed(2)})` : '';
+                        return textPrice > 0 
+                          ? `Add Custom Text (+$${textPrice.toFixed(2)})`
+                          : 'Add Custom Text (No Extra Cost)';
                       })()}
-                    </span>
-                  </label>
+                    </label>
+                  </div>
                   
                   {showCustomText && (
-                    <div className="mt-3 space-y-3">
+                    <div className="space-y-2">
                       <div>
-                        <label htmlFor="text-line-1" className="block text-xs text-gray-500 mb-1">
-                          Line 1 ({customText.line1.length}/30)
+                        <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
+                          Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
                         </label>
                         <input
                           type="text"
@@ -1095,7 +1127,23 @@ export default function ProductDetailClient() {
                           placeholder="e.g., Anniversary 2024"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full rounded border border-gray-300 py-2 px-3 text-sm focus:border-[#72B01D] focus:ring-1 focus:ring-[#72B01D]"
+                          className="block w-full 
+                          rounded-md 
+                          border-0 
+                          py-2.5 
+                          pl-4 
+                          text-gray-900 
+                          shadow-sm 
+                          ring-1 
+                          ring-inset 
+                          ring-gray-300 
+                          placeholder:text-gray-400 
+                          focus:ring-2 
+                          focus:ring-inset 
+                          focus:ring-[var(--brand-400)]
+                          active:ring-[var(--brand-400)]
+                          sm:text-sm 
+                          sm:leading-6"
                           maxLength={30}
                         />
                       </div>
@@ -1119,15 +1167,16 @@ export default function ProductDetailClient() {
               )}
 
               {/* Quantity */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-                <div className="flex items-center gap-2">
+              <div className="mb-8">
+                <label className="block text-md font-medium text-gray-900 mb-2 font-serif">Quantity</label>
+                <div className="flex items-center space-x-3">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="flex h-9 w-9 items-center justify-center rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
                   >
-                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <span className="sr-only">Decrease quantity</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clipRule="evenodd" />
                     </svg>
                   </button>
@@ -1136,14 +1185,15 @@ export default function ProductDetailClient() {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="block w-16 rounded border border-gray-300 py-1.5 text-center text-sm focus:border-[#72B01D] focus:ring-1 focus:ring-[#72B01D]"
+                    className="block w-20 rounded-md border-0 py-2 text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
                   />
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="flex h-9 w-9 items-center justify-center rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
                   >
-                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <span className="sr-only">Increase quantity</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                     </svg>
                   </button>
@@ -1155,20 +1205,11 @@ export default function ProductDetailClient() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="w-full rounded bg-[#72B01D] px-6 py-3 text-sm font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {addingToCart ? 'Adding...' : `Add to Cart — $${getTotalPrice().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
-            
-            {/* Description - Mobile only */}
-            <div className="lg:hidden mt-8 pt-6 border-t border-gray-200">
-              {product.longDescription && (
-                <div className="prose prose-sm max-w-none text-gray-600">
-                  <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
