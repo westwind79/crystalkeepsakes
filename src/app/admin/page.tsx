@@ -98,6 +98,31 @@ interface ProductCustomizations {
   [productId: string]: Partial<Product>;
 }
 
+// Master list of all available light bases - these should ALWAYS be visible
+const MASTER_LIGHTBASES: LightBase[] = [
+  { id: 'none', name: 'No Base', price: null, enabled: true },
+  { id: 'lightbase-rectangle', name: 'Lightbase Rectangle', price: 25, enabled: true },
+  { id: 'lightbase-square', name: 'Lightbase Square', price: 25, enabled: true },
+  { id: 'lightbase-wood-small', name: 'Lightbase Wood Small', price: 35, enabled: true },
+  { id: 'lightbase-wood-medium', name: 'Lightbase Wood Medium', price: 45, enabled: true },
+  { id: 'lightbase-wood-long', name: 'Lightbase Wood Long', price: 35, enabled: true },
+  { id: 'rotating-led-lightbase', name: 'Rotating LED Lightbase', price: 19.99, enabled: true },
+  { id: 'wooden-premium-base-mini', name: 'Wooden Premium Base Mini', price: 45, enabled: true },
+  { id: 'concave-lightbase', name: 'Concave Lightbase', price: 39, enabled: true },
+  { id: 'ornament-stand', name: 'Ornament Stand', price: 25, enabled: true },
+];
+
+// Mapping from lightbase option ID to standalone product ID
+const LIGHTBASE_PRODUCT_MAP: { [key: string]: string } = {
+  'lightbase-rectangle': '105',
+  'lightbase-square': '106',
+  'lightbase-wood-small': '107',
+  'lightbase-wood-medium': '108',
+  'lightbase-wood-long': '119',
+  'rotating-led-lightbase': '160',
+  'concave-lightbase': '276',
+};
+
 export default function EnhancedProductAdminPage() {
   const [sourceProducts, setSourceProducts] = useState<Product[]>([]);
   const [editedProducts, setEditedProducts] = useState<ProductCustomizations>({});
