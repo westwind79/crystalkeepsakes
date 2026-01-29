@@ -1191,32 +1191,35 @@ export default function EnhancedProductAdminPage() {
                     {/* Pricing Tab */}
                     {activeTab === 'pricing' && (
                       <div className="space-y-6">
-                        {/* Cost & Base Price */}
+                        {/* Cost & Base Price - Only show if NO sizes (otherwise cost is per-size) */}
                         <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg space-y-4">
                           <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
                             <span>💰</span> Cost & Pricing
                           </h4>
                           
                           <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Cost (What you pay to fulfill)
-                              </label>
-                              <div className="relative">
-                                <span className="absolute left-3 top-2 text-gray-500">$</span>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  min="0"
-                                  value={selectedProductData.cost || ''}
-                                  onChange={(e) => updateProduct(selectedProduct.id, { cost: parseFloat(e.target.value) || undefined })}
-                                  placeholder="0.00"
-                                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
-                                />
+                            {/* Only show single cost field for products WITHOUT sizes */}
+                            {!(selectedProductData.sizes && selectedProductData.sizes.length > 0) && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Cost (What you pay to fulfill)
+                                </label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={selectedProductData.cost || ''}
+                                    onChange={(e) => updateProduct(selectedProduct.id, { cost: parseFloat(e.target.value) || undefined })}
+                                    placeholder="0.00"
+                                    className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                  />
+                                </div>
                               </div>
-                            </div>
+                            )}
                             
-                            <div>
+                            <div className={selectedProductData.sizes && selectedProductData.sizes.length > 0 ? 'col-span-2' : ''}>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Base Price {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
                                   <span className="text-xs text-blue-600">(= smallest size)</span>
@@ -1237,14 +1240,15 @@ export default function EnhancedProductAdminPage() {
                               </div>
                               {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
                                 <p className="text-xs text-gray-600 mt-1">
-                                  Auto-set from size prices
+                                  Auto-set from size prices. Set cost per size below.
                                 </p>
                               )}
                             </div>
                           </div>
                           
-                          {/* Profit Display */}
-                          {selectedProductData.cost && selectedProductData.basePrice && (
+                          {/* Profit Display - only for products WITHOUT sizes */}
+                          {!(selectedProductData.sizes && selectedProductData.sizes.length > 0) && 
+                           selectedProductData.cost && selectedProductData.basePrice && (
                             <div className="pt-3 border-t border-blue-300">
                               <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-700">Profit Margin (on base):</span>
