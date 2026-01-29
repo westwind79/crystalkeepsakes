@@ -1398,22 +1398,19 @@ export default function EnhancedProductAdminPage() {
 
                         {/* Size Prices with Cost per Size */}
                         {selectedProductData.sizes && selectedProductData.sizes.length > 0 && (
-                          <div>
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Size Pricing</h3>
-                            <p className="text-xs text-blue-600 mb-3">
-                              💡 Set cost and price for each size. Base Price auto-updates to smallest enabled size.
-                            </p>
+                          <div className="pt-4 border-t border-slate-200">
+                            <h4 className="section-title">Size Pricing</h4>
                             
                             {/* Header row */}
-                            <div className="flex items-center gap-3 mb-2 text-xs font-medium text-gray-500 uppercase">
-                              <div className="w-4"></div>
+                            <div className="flex items-center gap-3 mb-2 text-xs text-slate-400">
+                              <div className="w-5"></div>
                               <div className="flex-1">Size</div>
-                              <div className="w-24 text-center">Cost</div>
-                              <div className="w-24 text-center">Price</div>
-                              <div className="w-20 text-center">Margin</div>
+                              <div className="w-20 text-center">Cost</div>
+                              <div className="w-20 text-center">Price</div>
+                              <div className="w-16 text-center">Margin</div>
                             </div>
                             
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                               {selectedProductData.sizes.map((size, index) => {
                                 const margin = size.price && size.cost ? size.price - size.cost : null;
                                 const marginPct = size.price && size.cost && size.cost > 0 
@@ -1428,22 +1425,22 @@ export default function EnhancedProductAdminPage() {
                                       onChange={(e) =>
                                         updateSize(selectedProduct.id, index, { enabled: e.target.checked })
                                       }
-                                      className="w-4 h-4"
+                                      className="w-4 h-4 text-slate-600 border-slate-300 rounded"
                                     />
-                                    <div className="flex-1 text-sm text-gray-700">{size.name}</div>
+                                    <div className="flex-1 text-sm text-slate-700">{size.name}</div>
                                     
                                     {/* Cost input */}
-                                    <div className="relative w-24">
-                                      <span className="absolute left-2 top-1.5 text-gray-500 text-sm">$</span>
+                                    <div className="relative w-20">
+                                      <span className="absolute left-2 top-1.5 text-slate-400 text-xs">$</span>
                                       <input
                                         type="number"
                                         step="0.01"
                                         value={size.cost || ''}
-                                        placeholder="0.00"
+                                        placeholder="—"
                                         onChange={(e) =>
                                           updateSize(selectedProduct.id, index, { cost: parseFloat(e.target.value) || undefined })
                                         }
-                                        className="w-full pl-6 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 bg-orange-50"
+                                        className="w-full pl-5 pr-1 py-1.5 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-slate-400"
                                       />
                                     </div>
                                     
