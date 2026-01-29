@@ -24,6 +24,7 @@ dist/
 out-prod/vendor/
 out-test/vendor/
 out/vendor/
+crystal-data/
 
 # Environment Variables (NEVER commit real credentials)
 .env

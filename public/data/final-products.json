@@ -147,7 +147,7 @@
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
     "sku": "Cut_Corner_Diamond",
-    "basePrice": 39.75,
+    "basePrice": 50,
     "description": "Elegant cut corner diamond 3D crystal keepsake perfect for honoring veterans, memorial tributes, and Christmas gifts. Personalized laser engraving preserves cherished memories forever.",
     "longDescription": "Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime.\n<br/>\nEach crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.\n<br/><br/>\n**Perfect For:**\n- Veteran memorial gifts and military tributes\n- Christmas ornaments with family photos\n- Memorial keepsakes for loved ones\n- Anniversary and wedding memories\n- Baby's first Christmas or milestone celebrations\n<br/><br/>\n**Customization Options:**\n- Optional custom text engraving ($9.50)\n- 2D or 3D backdrop enhancement\n- Multiple light base options for elegant display\n- Background removal service available\n\nThis personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail.\n\n**Dimensions**: Available in 5x5cm, 6x6cm, and 8x8cm",
     "images": [
@@ -177,21 +177,21 @@
       {
         "id": "202",
         "name": "Cut Corner Diamond (5x5cm)",
-        "price": 24.75,
+        "price": 50,
         "cockpit3d_id": "202",
         "cost": 24.75
       },
       {
         "id": "549",
         "name": "Cut Corner Diamond (6x6cm)",
-        "price": 39.75,
+        "price": 60,
         "cockpit3d_id": "549",
         "cost": 39.75
       },
       {
         "id": "550",
         "name": "Cut Corner Diamond (8x8cm)",
-        "price": 49.75,
+        "price": 70,
         "cockpit3d_id": "550",
         "cost": 49.75
       }
@@ -265,7 +265,7 @@
     "sale": false,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "105",
@@ -286,7 +286,10 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png"
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
+    "cost": 8.75,
+    "edited": true,
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "106",
@@ -309,7 +312,8 @@
     "textOptions": [],
     "maskImageUrl": null,
     "edited": true,
-    "editedAt": "2025-12-15T01:49:52.952Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 8.75
   },
   {
     "id": "107",
@@ -1224,7 +1228,8 @@
         "name": "Wide Heart small (80x70x40)",
         "price": 89,
         "cockpit3d_id": "717",
-        "cost": 39.75
+        "cost": 39.75,
+        "enabled": false
       },
       {
         "id": "527",
@@ -1269,7 +1274,8 @@
         "id": "775",
         "name": "Wooden Premium Base Mini",
         "price": null,
-        "cockpit3d_id": "775"
+        "cockpit3d_id": "775",
+        "enabled": false
       },
       {
         "id": "530",
@@ -1315,7 +1321,7 @@
     "maskImageUrl": "/img/masks/heart-mask.png",
     "cost": 69.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "anniversary",
       "wedding",
@@ -1381,7 +1387,8 @@
       "graduation"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 17.5
   },
   {
     "id": "248",
@@ -1500,7 +1507,7 @@
     "name": "3D Crystal Urn / Candles",
     "slug": "3d-crystal-urn-candles",
     "sku": "Urn_candles",
-    "basePrice": 256,
+    "basePrice": 150,
     "description": "Large 3D crystal urn for memorial tributes. Premium keepsake for veteran and loved one memorials. Sophisticated remembrance display piece.",
     "longDescription": "<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">Honor life's most precious memories with our Premium 3D Crystal Urn, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect.</p>\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design.</p>\n\n<p class=\"mb-6 text-lg leading-relaxed text-gray-800\">Premium Memorial Tribute:</p>\n<ul class=\"mb-6 text-lg leading-relaxed text-gray-800\">\n<li>- Veteran and military memorial centerpieces</li>\n<li>- Celebration of life displays</li>\n<li>- Funeral service commemorations</li>\n<li>- Memorial service keepsakes</li>\n<li>- Home memorial displays</li>\n<li>- Cemetery memorial alternatives</li>\n<li>- Significant tribute gifts</li>\n</ul>\n\n**Crystal Urn Features:**\n- Large, substantial size commands presence\n- Museum-quality 3D laser engraving\n- Captures incredible depth and detail\n- Urn symbolism honors memorial traditions\n- Can include service photos, portraits, or scenes\n- Optional custom text and epitaphs\n- 2D or 3D backdrop enhancement available\n\nThe 3D laser engraving technology used in this urn creates remarkable depth perception, making photographs appear almost holographic within the crystal. This is particularly effective for capturing military uniforms, medals, and formal portraits—details that matter in memorial tributes for veterans and service members.\n\n**Ideal For:**\n- Veteran funeral services\n- Military retirement memorials\n- Significant life tributes\n- Cremation memorials\n- Alternative to traditional urns\n- Memorial sanctuary displays\n- Prominent remembrance gifts\n\n**Customization Options:**\n- Full name, rank, and service dates\n- Military branch and insignia\n- Epitaphs and memorial verses\n- Service photos or formal portraits\n- 2D or 3D backdrop options\n- Background removal service\n- Custom text placement\n\nThis crystal urn memorial is often chosen by families who want a visible, beautiful tribute that doesn't hide away in a cemetery but instead remains part of daily life at home. Unlike traditional urns, this crystal memorial celebrates life with light, transparency, and beauty—reflecting the spirit of those we remember rather than the sadness of loss.\n\nMany customers place these memorials in home sanctuaries, on mantels, or in dedicated memorial spaces where they can be appreciated daily. The crystal catches light beautifully, creating changing displays throughout the day as sunlight moves through your home.\n\n**Investment Memorial:**\nAt $360, this is a significant memorial investment, but customers consistently tell us it's worth every penny for the quality, presence, and emotional impact it provides. This is a museum-quality memorial piece that will be cherished and passed down through generations.",
     "images": [
@@ -1556,7 +1563,7 @@
     "featured": true,
     "cost": 109.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "pet",
       "memorial",
@@ -1584,7 +1591,8 @@
     "textOptions": [],
     "maskImageUrl": null,
     "edited": true,
-    "editedAt": "2025-12-14T08:58:50.307Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 17.75
   },
   {
     "id": "262",
@@ -1820,7 +1828,7 @@
     "name": "Concave Lightbase",
     "slug": "concave-lightbase",
     "sku": "concave_lightbase",
-    "basePrice": 39,
+    "basePrice": 28,
     "description": "Specialized curved base designed specifically for ball crystals and spherical memorial pieces. The concave cradle provides secure positioning while illuminating spheres from optimal angles.",
     "longDescription": "<h4>Why Light Bases Matter</h4>\n\n<p class=\"mb-4\">The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.</p>\n\n<h4 class=\"mb-4\">Choosing Your Base:</h4>\n\n<p class=\"mb-4 font-semibold\">For Traditional/Classic Decor:</p>\n<p class=\"mb-4\">Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.</p>\n\n<p class=\"mb-4 font-semibold\">For Modern/Contemporary Decor:</p>\n<p class=\"mb-4\">LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.</p>\n\n<p class=\"mb-4 font-semibold\">For Dynamic Displays:</p> \n<p class=\"mb-4\">Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.</p>\n\n<p class=\"mb-4 font-semibold\">For Ball Crystals:</p>\n<p class=\"mb-4\">Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.</p>\n\n<p class=\"mb-4 font-semibold\">Light Colors & Moods:</p>\n<p class=\"mb-4\">Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.</p>\n\n<p class=\"mb-4 font-semibold\">Professional Presentation:</p>\n<p class=\"mb-4\">Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.</p>\n\n<p class=\"mb-4 font-semibold\">Gift Considerations:</p>\n<p class=\"mb-4\">When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>",
     "images": [
@@ -1836,7 +1844,8 @@
     "textOptions": [],
     "maskImageUrl": null,
     "edited": true,
-    "editedAt": "2025-12-15T07:29:03.950Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 12.75
   },
   {
     "id": "277",
@@ -1972,7 +1981,8 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2026-01-13T20:18:27.203Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 15
   },
   {
     "id": "286",
@@ -1999,13 +2009,13 @@
       {
         "id": "1029",
         "name": "Wooden Premium Base Mini",
-        "price": null,
+        "price": 35,
         "cockpit3d_id": "1029"
       },
       {
         "id": "1517",
         "name": "Lightbase Wood Small",
-        "price": null,
+        "price": 35,
         "cockpit3d_id": "1517"
       }
     ],
@@ -2050,7 +2060,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "288",
@@ -2077,14 +2087,15 @@
       {
         "id": "940",
         "name": "Lightbase Wood Medium",
-        "price": null,
+        "price": 30,
         "cockpit3d_id": "940"
       },
       {
         "id": "1433",
         "name": "Wooden Light Base with Keepsake Drawer",
         "price": null,
-        "cockpit3d_id": "1433"
+        "cockpit3d_id": "1433",
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -2128,7 +2139,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "290",
@@ -2256,12 +2267,13 @@
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
     "featured": true,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "holiday",
       "memorial",
       "pet"
-    ]
+    ],
+    "cost": 24.75
   },
   {
     "id": "441",
@@ -2323,11 +2335,12 @@
     "maskImageUrl": "/img/masks/flower-ornament-mask.png",
     "featured": false,
     "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "holiday",
       "anniversary"
-    ]
+    ],
+    "cost": 25.75
   },
   {
     "id": "442",
@@ -2388,11 +2401,12 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": false,
     "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "holiday",
       "memorial"
-    ]
+    ],
+    "cost": 25.75
   },
   {
     "id": "443",
@@ -2453,7 +2467,8 @@
       "graduation"
     ],
     "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 25.75
   },
   {
     "id": "444",
@@ -2509,14 +2524,15 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "featured": false,
     "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z",
+    "editedAt": "2026-01-29T20:43:17.990Z",
     "occasions": [
       "memorial",
       "holiday",
       "graduation",
       "retirement",
       "birthday"
-    ]
+    ],
+    "cost": 20.5
   },
   {
     "id": "445",
@@ -2638,7 +2654,8 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 15.75
   },
   {
     "id": "447",
@@ -2705,8 +2722,9 @@
       "baby"
     ],
     "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z",
-    "featured": true
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "featured": true,
+    "cost": 20.5
   },
   {
     "id": "448",
@@ -2775,7 +2793,8 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 49.75
   },
   {
     "id": "449",
@@ -2846,7 +2865,8 @@
       "retirement"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z",
+    "cost": 49.75
   },
   {
     "id": "453",
@@ -2964,9 +2984,9 @@
       }
     ],
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "cost": 79.75,
+    "cost": 134.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "454",
@@ -3098,43 +3118,49 @@
         "id": "1954",
         "name": "Wooden Premium Base Mini",
         "price": null,
-        "cockpit3d_id": "1954"
+        "cockpit3d_id": "1954",
+        "enabled": false
       },
       {
         "id": "1955",
         "name": "Lightbase Wood Small",
         "price": null,
-        "cockpit3d_id": "1955"
+        "cockpit3d_id": "1955",
+        "enabled": false
       },
       {
         "id": "1956",
         "name": "Rotating LED Lightbase",
         "price": null,
-        "cockpit3d_id": "1956"
+        "cockpit3d_id": "1956",
+        "enabled": false
       },
       {
         "id": "1957",
         "name": "Lightbase Wood Long",
         "price": null,
-        "cockpit3d_id": "1957"
+        "cockpit3d_id": "1957",
+        "enabled": false
       },
       {
         "id": "1958",
         "name": "Lightbase Wood Medium",
         "price": null,
-        "cockpit3d_id": "1958"
+        "cockpit3d_id": "1958",
+        "enabled": false
       },
       {
         "id": "1959",
         "name": "Lightbase Square",
-        "price": null,
+        "price": 25,
         "cockpit3d_id": "1959"
       },
       {
         "id": "1960",
         "name": "Lightbase Rectangle",
         "price": null,
-        "cockpit3d_id": "1960"
+        "cockpit3d_id": "1960",
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3175,7 +3201,7 @@
     "visible": false,
     "cost": 89.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-01-29T20:43:17.990Z"
   },
   {
     "id": "467",

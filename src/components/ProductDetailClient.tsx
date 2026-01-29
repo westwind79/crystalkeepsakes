@@ -23,12 +23,17 @@ import { assetPath } from '@/lib/assetPath'
 import { calculateTotal, calculateOptionsPrice, getSaleInfo } from '@/utils/pricingUtils'
 import ProductGallery from '@/components/ProductGallery'
 import ProductBadges from '@/components/ProductBadges'
+import gsap from 'gsap';
+
+import { ArrowBigLeft, ArrowLeft, CornerRightDown } from 'lucide-react'; 
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
 import '../app/css/gallery.css'
+import '../app/css/animations.css'
 
 import { getProducts } from '@/lib/products'
+
 
 // Environment
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
@@ -89,7 +94,7 @@ interface Product {
 export default function ProductDetailClient() {
   const params = useParams()
   const router = useRouter()
-  
+  const textRef = useRef(null);
   // Product State
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -125,15 +130,71 @@ export default function ProductDetailClient() {
   const [showAddedModal, setShowAddedModal] = useState(false)
   const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
+    // Animation State
+  const [isPageLoaded, setIsPageLoaded] = useState(false)
+  const [filterChanged, setFilterChanged] = useState<string | null>(null)
+
   // File input ref for resetting
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    // Only run animation if textRef exists (for products that require images)
+    if (textRef.current) {
+      const letters = textRef.current.querySelectorAll("span");
+
+      gsap.fromTo(
+        letters,
+        { y: 0, color: "#72B01D"  },
+        {
+          y: -10,
+          color: "#a3d77a",
+          duration: 0.15,
+          delay: 1,     
+          ease: "power1.out",
+          stagger: {
+            each: 0.05,
+            yoyo: true,
+            repeat: 1,
+          },
+        }
+      );
+    }
+  }, [product?.requiresImage]); // Add dependency to re-run when product changes
+
+  const text = "Upload Your Image";
   // Fetch product on mount
   useEffect(() => {
     if (params.slug) {
       fetchProduct(params.slug as string)
     }
   }, [params.slug])
+
+  // Page load animation trigger
+  useEffect(() => {
+    setIsPageLoaded(true)
+    console.log('[Animation] Page loaded')
+  }, [])
+
+  // Track size filter changes
+  useEffect(() => {
+    if (selectedSize) {
+      setFilterChanged('size')
+      console.log('[Animation] Size filter changed:', selectedSize.name)
+      const timer = setTimeout(() => setFilterChanged(null), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedSize?.id])
+
+  // Track lightBase filter changes
+  useEffect(() => {
+    if (selectedLightBase) {
+      setFilterChanged('lightBase')
+      console.log('[Animation] LightBase filter changed:', selectedLightBase.name)
+      const timer = setTimeout(() => setFilterChanged(null), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedLightBase?.id])
+
 
   const fetchProduct = async (slug: string) => {
     try {
@@ -817,11 +878,11 @@ export default function ProductDetailClient() {
                     </div>
                   </div>
                 ) : product.images && product.images.length > 1 ? (
-                  <>
-                    <ProductGallery images={product.images} />
+                  <div className={`lg:col-span-7 ${isPageLoaded ? 'fade-in' : 'opacity-0'}`}>
+                    <ProductGallery images={product.images} productName={product.name} />
                     {/* Centralized Badges Component */}
                     <ProductBadges product={product} position="gallery" />
-                  </>
+                  </div>
                 ) : (
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
                     <Image
@@ -866,7 +927,7 @@ export default function ProductDetailClient() {
               )}
             </div>
 
-            <div className="mt-6">
+            <div className={`mt-6 lg:col-span-5 ${isPageLoaded ? 'fade-in fade-in-delay-2' : 'opacity-0'}`}>
               <h3 className="sr-only">Description</h3>
               <div className="space-y-6 text-base text-gray-700">
                 <p>{product.description}</p>
@@ -908,9 +969,20 @@ export default function ProductDetailClient() {
               {/* Image Upload */}
               {product.requiresImage && (
                 <div className="mb-8">
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Upload your image <span className="text-red-500">*</span>
+                  
+                  <label className="block mb-2">
+                    {/*Upload your image */}                    
+                    <h3 className="text-2xl font-bold font-[#72B01D]" ref={textRef}>
+                     {text.split("").map((char, index) => (
+                        <span key={index} style={{ display: "inline-block", whiteSpace: "pre", }}>
+                          {char === " " ? "\u00A0" : char}
+                        </span>
+                      ))} <CornerRightDown className="inline-block font-[#72B01D]" size={20} />
+                      <span className="text-red-500">*</span>
+                    </h3> 
+                    
                   </label>
+
                   <label className="mt-1 cursor-pointer flex justify-center rounded-lg border border-dashed border-gray-900/25 px-3 py-4">
                     <div className="text-center">
                       <svg className="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
@@ -940,7 +1012,7 @@ export default function ProductDetailClient() {
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-8">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-gray-900">Size</h3>
+                    <h3 className="text-md font-medium text-gray-900">Choose a Size</h3>
                   </div>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a size</legend>
@@ -977,7 +1049,7 @@ export default function ProductDetailClient() {
               {/* Background Options */}
               {product.backgroundOptions && product.backgroundOptions.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-900">Background</h3>
+                  <h3 className="text-md font-medium text-gray-900">Background</h3>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a background</legend>
                     <div className="space-y-3">
@@ -1021,7 +1093,7 @@ export default function ProductDetailClient() {
               {/* Light Base */}
               {product.lightBases && product.lightBases.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-900">Light Base</h3>
+                  <h3 className="text-md font-medium text-gray-900">Light Base</h3>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a light base</legend>
                     <div className="space-y-3">
@@ -1142,7 +1214,7 @@ export default function ProductDetailClient() {
 
               {/* Quantity */}
               <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-900 mb-2">Quantity</label>
+                <label className="block text-md font-medium text-gray-900 mb-2 font-serif">Quantity</label>
                 <div className="flex items-center space-x-3">
                   <button
                     type="button"

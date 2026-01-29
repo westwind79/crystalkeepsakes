@@ -41,7 +41,7 @@ console.log(`
 `);
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
+  allowedDevOrigins: ['localhost', '10.0.0.*'],
   output: 'export',
   distDir: distDir,
   basePath: basePath,
