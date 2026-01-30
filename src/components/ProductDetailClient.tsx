@@ -1095,8 +1095,8 @@ export default function ProductDetailClient() {
                         />
                       </div>
                       <div>
-                        <label htmlFor="text-line-2" className="form-label d-block mb-1">
-                          Custom Text Line 2 <span className="text-muted">({customText.line2.length}/30)</span>
+                        <label htmlFor="text-line-2" className="block text-sm font-medium text-gray-700 mb-1">
+                          Custom Text Line 2 <span className="text-gray-400">({customText.line2.length}/30)</span>
                         </label>
                         <input
                           type="text"
