@@ -1122,7 +1122,6 @@ export default function ProductDetailClient() {
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="btn btn-outline-secondary"
                   >
-                    <span className="sr-only">Decrease quantity</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clipRule="evenodd" />
                     </svg>
@@ -1132,14 +1131,14 @@ export default function ProductDetailClient() {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="block w-20 rounded-md border-0 py-2 text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                    className="form-control text-center"
+                    style={{ width: '80px' }}
                   />
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="btn btn-outline-secondary"
                   >
-                    <span className="sr-only">Increase quantity</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                     </svg>
@@ -1152,9 +1151,9 @@ export default function ProductDetailClient() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn btn-primary btn-lg w-100 mt-4"
               >
-                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to Cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
           </div>
