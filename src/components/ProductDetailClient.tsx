@@ -1116,11 +1116,11 @@ export default function ProductDetailClient() {
               {/* Quantity */}
               <div className="product-option pt-2 mt-2">
                 <label className="h5">Quantity</label>
-                <div className="d-flex align-items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="btn btn-outline-secondary"
+                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                   >
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clipRule="evenodd" />
@@ -1131,13 +1131,12 @@ export default function ProductDetailClient() {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="form-control text-center"
-                    style={{ width: '80px' }}
+                    className="w-20 px-3 py-2 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D]"
                   />
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="btn btn-outline-secondary"
+                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                   >
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -1151,7 +1150,7 @@ export default function ProductDetailClient() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="btn btn-primary btn-lg w-100 mt-4"
+                className="w-full mt-4 px-6 py-3 bg-[#72B01D] text-white text-lg font-semibold rounded-md hover:bg-[#5a8c17] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {addingToCart ? 'Adding to cart...' : `Add to Cart - $${getTotalPrice().toFixed(2)}`}
               </button>
