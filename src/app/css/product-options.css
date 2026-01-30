@@ -40,12 +40,12 @@
 /* Selected state */
 .crystal-radio:has(input[type="radio"]:checked) {
   border-color: #72B01D;
-  background: #72B01D;
+  background: #4a7c12;
   color: #ffffff;
 }
 
 .crystal-radio:has(input[type="radio"]:checked)::before {
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%23ffffff' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%2372B01D' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
   display: block;
   height: 30px;
   width: 30px;
@@ -56,8 +56,8 @@
 
 /* Selected state hover */
 .crystal-radio:has(input[type="radio"]:checked):hover {
-  border-color: #5a9216;
-  background: #5a9216;
+  border-color: #3d6810;
+  background: #3d6810;
 }
 
 /* Price tag styling */
