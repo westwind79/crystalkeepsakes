@@ -964,90 +964,73 @@ export default function ProductDetailClient() {
 
               {/* Size */}
               {product.sizes && product.sizes.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-md font-medium text-gray-900">Choose a Size</h3>
-                  </div>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
-                      {product.sizes.map((size) => (
-                        <label
-                          key={size.id}
-                          className={`cursor-pointer rounded-md px-3 py-3 text-sm font-semibold uppercase shadow-sm focus:outline-none sm:flex-1 ${
-                            selectedSize?.id === size.id
-                              ? 'bg-[#72B01D] text-white hover:bg-[#5A8E17]'
-                              : 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="size"
-                            value={size.id}
-                            checked={selectedSize?.id === size.id}
-                            onChange={() => setSelectedSize(size)}
-                            className="sr-only"
-                          />
-                          <span className="block text-center">{size.name}</span>
-                          {size.price > 0 && (
-                            <span className="block text-center text-xs mt-1">${size.price}</span>
-                          )}
-                        </label>
-                      ))}
-                    </div>
+                <div className="product-option pt-2 mt-2">
+                  <fieldset>
+                    <legend className="h5">Select Size <span className="text-danger">*</span></legend>
+                    {errors.size && <div className="text-danger small">{errors.size}</div>}
+                    {product.sizes.map((size) => (
+                      <label key={size.id} className="crystal-radio">
+                        <span className="h5">{size.name}</span>
+                        <span className="option-price">
+                          <span className="option-price__wrapper h5">
+                            {size.price === 0 ? (
+                              <span className="option-price__included">
+                                <span className="option-price__paren">(</span>
+                                <span className="option-price__text">Included</span>
+                                <span className="option-price__paren">)</span>
+                              </span>
+                            ) : (
+                              <span className="option-price__additional">
+                                <span className="option-price__currency">$</span>
+                                <span className="option-price__value">{size.price}</span>
+                              </span>
+                            )}
+                          </span>
+                        </span>
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size.id}
+                          checked={selectedSize?.id === size.id}
+                          onChange={() => setSelectedSize(size)}
+                        />
+                        <span className="radio-checkmark"></span>
+                      </label>
+                    ))}
                   </fieldset>
-                  {errors.size && <p className="mt-2 text-sm text-red-600">{errors.size}</p>}
                 </div>
               )}
 
               {/* Background Options */}
               {product.backgroundOptions && product.backgroundOptions.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-md font-medium text-gray-900">Background</h3>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a background</legend>
-                    <div className="space-y-3">
-                      {product.backgroundOptions.map((bg) => (
-                        <label
-                          key={bg.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedBackground?.id === bg.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="background"
-                            value={bg.id}
-                            checked={selectedBackground?.id === bg.id}
-                            onChange={() => setSelectedBackground(bg)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{bg.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedBackground?.id === bg.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
+                <div className="product-option pt-2 mt-2">
+                  <fieldset>
+                    <legend className="h5">Background Style <span className="text-danger">*</span></legend>
+                    {product.backgroundOptions.map((bg) => (
+                      <label key={bg.id} className="crystal-radio">
+                        {bg.name}
+                        <span className="option-price">
+                          {bg.price === 0 ? '' : `(+$${bg.price.toFixed(2)})`}
+                        </span>
+                        <input
+                          type="radio"
+                          name="background"
+                          value={bg.id}
+                          checked={selectedBackground?.id === bg.id}
+                          onChange={() => setSelectedBackground(bg)}
+                        />
+                        <span className="radio-checkmark"></span>
+                      </label>
+                    ))}
                   </fieldset>
                 </div>
               )}
 
               {/* Light Base */}
               {product.lightBases && product.lightBases.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-md font-medium text-gray-900">Light Base</h3>
+                <div className="product-option pt-2 mt-2">
+                  <fieldset>
+                    <legend className="h5">Light Base <span className="text-danger">*</span></legend>
                   <fieldset className="mt-4">
                     <legend className="sr-only">Choose a light base</legend>
                     <div className="space-y-3">
