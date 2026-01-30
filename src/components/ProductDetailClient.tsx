@@ -966,8 +966,8 @@ export default function ProductDetailClient() {
               {product.sizes && product.sizes.length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
-                    <legend className="h5">Select Size <span className="text-danger">*</span></legend>
-                    {errors.size && <div className="text-danger small">{errors.size}</div>}
+                    <legend className="h5">Select Size <span className="text-red-500">*</span></legend>
+                    {errors.size && <div className="text-red-500 small">{errors.size}</div>}
                     {product.sizes.map((size) => (
                       <label key={size.id} className="crystal-radio">
                         <span className="h5">{size.name}</span>
@@ -1005,7 +1005,7 @@ export default function ProductDetailClient() {
               {product.backgroundOptions && product.backgroundOptions.length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
-                    <legend className="h5">Background Style <span className="text-danger">*</span></legend>
+                    <legend className="h5">Background Style <span className="text-red-500">*</span></legend>
                     {product.backgroundOptions.map((bg) => (
                       <label key={bg.id} className="crystal-radio">
                         {bg.name}
@@ -1030,7 +1030,7 @@ export default function ProductDetailClient() {
               {product.lightBases && product.lightBases.length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
-                    <legend className="h5">Light Base <span className="text-danger">*</span></legend>
+                    <legend className="h5">Light Base <span className="text-red-500">*</span></legend>
                     {product.lightBases.map((base) => (
                       <label key={base.id} className="crystal-radio">
                         {base.name}
