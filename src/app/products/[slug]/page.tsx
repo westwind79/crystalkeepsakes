@@ -7,10 +7,10 @@ import NextImage from 'next/image'
 import '../../css/gallery.css'
 /**
  * CRITICAL: Force static rendering for output: 'export' in production
- * In development, allow dynamic params for easier testing
+ * In development, we use force-dynamic to allow dynamic route testing
  */
-export const dynamic = 'force-static'
-export const dynamicParams = process.env.NODE_ENV === 'development' ? true : false
+export const dynamic = 'auto'
+export const dynamicParams = true
 
 /**
  * Build-time static generation for all known slugs
