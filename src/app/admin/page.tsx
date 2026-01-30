@@ -218,11 +218,14 @@ export default function EnhancedProductAdminPage() {
       const fullLightBases = MASTER_LIGHTBASES.map(masterLB => {
         const existing = existingLBs.find(lb => lb.id === masterLB.id);
         if (existing) {
-          // Use synced price from standalone product if available
+          // Use synced price from standalone product, or master price if existing is null/0
           const syncedPrice = lightbasePrices[masterLB.id];
+          const finalPrice = syncedPrice !== undefined ? syncedPrice 
+            : (existing.price !== null && existing.price !== 0) ? existing.price 
+            : masterLB.price;
           return {
             ...existing,
-            price: syncedPrice !== undefined ? syncedPrice : existing.price
+            price: finalPrice
           };
         }
         // Not in product's list - add as disabled
