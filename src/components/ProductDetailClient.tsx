@@ -1079,48 +1079,32 @@ export default function ProductDetailClient() {
                   </div>
                   
                   {showCustomText && (
-                    <div className="space-y-2">
-                      <div>
-                        <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
-                          Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
+                    <div className="mt-3">
+                      <div className="mb-2">
+                        <label htmlFor="text-line-1" className="form-label">
+                          Custom Text Line 1 <span className="character-count">({customText.line1.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-1"
-                          placeholder="e.g., Anniversary 2024"
+                          placeholder="Custom Text Line 1"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full 
-                          rounded-md 
-                          border-0 
-                          py-2.5 
-                          pl-4 
-                          text-gray-900 
-                          shadow-sm 
-                          ring-1 
-                          ring-inset 
-                          ring-gray-300 
-                          placeholder:text-gray-400 
-                          focus:ring-2 
-                          focus:ring-inset 
-                          focus:ring-[var(--brand-400)]
-                          active:ring-[var(--brand-400)]
-                          sm:text-sm 
-                          sm:leading-6"
+                          className="form-control"
                           maxLength={30}
                         />
                       </div>
                       <div>
-                        <label htmlFor="text-line-2" className="block text-sm text-gray-700 mb-1">
-                          Line 2 <span className="text-gray-400">({customText.line2.length}/30)</span>
+                        <label htmlFor="text-line-2" className="form-label">
+                          Custom Text Line 2 <span className="character-count">({customText.line2.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-2"
-                          placeholder="e.g., Forever & Always"
+                          placeholder="Custom Text Line 2"
                           value={customText.line2}
                           onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="form-control"
                           maxLength={30}
                         />
                       </div>
@@ -1130,13 +1114,13 @@ export default function ProductDetailClient() {
               )}
 
               {/* Quantity */}
-              <div className="mb-8">
-                <label className="block text-md font-medium text-gray-900 mb-2 font-serif">Quantity</label>
-                <div className="flex items-center space-x-3">
+              <div className="product-option pt-2 mt-2">
+                <label className="h5">Quantity</label>
+                <div className="d-flex align-items-center gap-2 mt-2">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="btn btn-outline-secondary"
                   >
                     <span className="sr-only">Decrease quantity</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
