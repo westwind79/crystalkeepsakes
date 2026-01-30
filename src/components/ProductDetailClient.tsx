@@ -1054,7 +1054,7 @@ export default function ProductDetailClient() {
               {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.length > 0 && (
                 <div className="product-option pt-2 mt-2">
-                  <div className="d-flex justify-content-start align-items-center">
+                  <div className="flex items-center">
                     <input
                       id="add-custom-text"
                       name="showCustomText"
@@ -1068,7 +1068,7 @@ export default function ProductDetailClient() {
                       }}
                       className="w-4 h-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D] mr-2"
                     />
-                    <label htmlFor="add-custom-text" className="h5 mb-0">
+                    <label htmlFor="add-custom-text" className="h5 mb-0 cursor-pointer">
                       {(() => {
                         const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
                         return textPrice > 0 
