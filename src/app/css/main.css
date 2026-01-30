@@ -307,9 +307,9 @@ header {
   padding: 6px 8px 6px 25px;
   margin-bottom: 6px;
   border-radius: 8px;
-  border: 1px solid var(--surface-100);
-/*  background: var(--surface-100);*/
-  color: var(--surface-50); 
+  border: 1px solid var(--surface-300);
+  background: var(--surface-50);
+  color: var(--surface-900); 
   transition: all 0.3s ease;
   cursor: pointer;
   font-weight: bold;
