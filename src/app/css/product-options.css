@@ -1,22 +1,23 @@
-/* Custom Radio Button Styles */
+/* Custom Radio Button Styles - Clean Modern Look */
 .custom-checkbox-label,
 .crystal-radio {
   cursor: pointer;
-  display: block;
+  display: flex;
+  align-items: center;
   position: relative;
-  padding: 10px 12px 10px 32px;
+  padding: 12px 16px 12px 40px;
   margin-bottom: 8px;
-  border-radius: 8px;
-  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
   background: #ffffff;
-  color: #1f2937; 
-  transition: all 0.2s ease;
+  color: #1f2937;
+  transition: all 0.15s ease;
   font-weight: 500;
-  overflow: hidden;
 }
 
 .crystal-radio .product-faces {
-  margin-right: 0.25em;
+  margin-right: 0.5em;
+  opacity: 0.7;
 }
 
 /* Hide default radio button */
@@ -29,46 +30,64 @@
   width: 0;
 }
 
+/* Checkmark circle - unselected */
+.crystal-radio::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
 /* Hover effect - unselected */
 .custom-checkbox-label:hover,
 .crystal-radio:hover {
+  border-color: #72B01D;
+  background: #fafff5;
+}
+
+.crystal-radio:hover::before {
+  border-color: #72B01D;
+}
+
+/* Selected state - border highlight style */
+.crystal-radio:has(input[type="radio"]:checked) {
   border-color: #72B01D;
   background: #f0fdf4;
   color: #1f2937;
 }
 
-/* Selected state */
-.crystal-radio:has(input[type="radio"]:checked) {
-  border-color: #72B01D;
-  background: #4a7c12;
-  color: #ffffff;
-}
-
+/* Checkmark circle - selected */
 .crystal-radio:has(input[type="radio"]:checked)::before {
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon fill='%2372b01d' points='0,24 0,0 24,0 0,24'/%3E%3Cpath fill='%23fff' d='M6.2 9.5l-2.7-2.6.9-.9 1.7 1.7 4.4-4.2.9.9-5.3 5.1z'/%3E%3C/svg%3E");
-  display: block;
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  top: 0;
-  left: 0; 
+  border-color: #72B01D;
+  background: #72B01D;
+  box-shadow: inset 0 0 0 3px #fff;
 }
 
 /* Selected state hover */
 .crystal-radio:has(input[type="radio"]:checked):hover {
-  border-color: #3d6810;
-  background: #3d6810;
+  border-color: #5a8c17;
+  background: #ecfce5;
 }
 
 /* Price tag styling */
 .crystal-radio .option-price {
-  font-size: 0.9em;
-  color: #6b7280;
-  margin-left: 8px;
+  margin-left: auto;
+  font-weight: 600;
+  color: #72B01D;
 }
 
-.crystal-radio:has(input[type="radio"]:checked) .option-price {
-  color: rgba(255,255,255,0.9);
+.crystal-radio .option-price .original-price {
+  text-decoration: line-through;
+  color: #9ca3af;
+  font-weight: 400;
+  margin-left: 8px;
 }
 
 .product-options > .product-option .form-label {
@@ -77,7 +96,10 @@
 }
 
 .crystal-radio .product-faces {
-  float: left;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: normal;
+  font-size: 0.85em;
+  color: #6b7280;
 }
