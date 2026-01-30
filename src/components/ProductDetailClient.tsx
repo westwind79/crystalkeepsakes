@@ -893,8 +893,8 @@ export default function ProductDetailClient() {
 
           {/* RIGHT: Product Info + Options */}
           <div className="mt-8 lg:mt-0">
-            {/* Title - Sans-serif, not too large */}
-            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
               {product.name}
             </h1>
 
