@@ -42,7 +42,8 @@ console.log(`
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['localhost', '10.0.0.*'],
-  output: 'export',
+  // output: 'export' only for production builds, not dev mode
+  ...(isDev ? {} : { output: 'export' }),
   distDir: distDir,
   basePath: basePath,
   assetPrefix: basePath,
