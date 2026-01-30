@@ -1080,31 +1080,31 @@ export default function ProductDetailClient() {
                   
                   {showCustomText && (
                     <div className="mt-3">
-                      <div className="mb-2">
-                        <label htmlFor="text-line-1" className="form-label">
-                          Custom Text Line 1 <span className="character-count">({customText.line1.length}/30)</span>
+                      <div className="mb-3">
+                        <label htmlFor="text-line-1" className="form-label d-block mb-1">
+                          Custom Text Line 1 <span className="text-muted">({customText.line1.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-1"
-                          placeholder="Custom Text Line 1"
+                          placeholder="e.g., In Loving Memory"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="form-control"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:border-transparent"
                           maxLength={30}
                         />
                       </div>
                       <div>
-                        <label htmlFor="text-line-2" className="form-label">
-                          Custom Text Line 2 <span className="character-count">({customText.line2.length}/30)</span>
+                        <label htmlFor="text-line-2" className="form-label d-block mb-1">
+                          Custom Text Line 2 <span className="text-muted">({customText.line2.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-2"
-                          placeholder="Custom Text Line 2"
+                          placeholder="e.g., Forever in Our Hearts"
                           value={customText.line2}
                           onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                          className="form-control"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:border-transparent"
                           maxLength={30}
                         />
                       </div>
