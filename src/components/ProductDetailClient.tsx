@@ -1066,7 +1066,7 @@ export default function ProductDetailClient() {
                           setCustomText({ line1: '', line2: '' })
                         }
                       }}
-                      className="form-check-input me-2"
+                      className="w-4 h-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D] mr-2"
                     />
                     <label htmlFor="add-custom-text" className="h5 mb-0">
                       {(() => {
