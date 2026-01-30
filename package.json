@@ -10,6 +10,7 @@
     "build:test": "node scripts/safe-build.js test",
     "build:prod": "node scripts/safe-build.js prod",
     "clean": "rimraf out out-test out-prod .next",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
