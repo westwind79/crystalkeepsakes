@@ -6,11 +6,11 @@ import ProductDetailClient from '@/components/ProductDetailClient'
 import NextImage from 'next/image'
 import '../../css/gallery.css'
 /**
- * CRITICAL: Force static rendering for output: 'export'
- * This prevents the "dynamic routes cannot coexist with static export" error
+ * CRITICAL: Force static rendering for output: 'export' in production
+ * In development, allow dynamic params for easier testing
  */
 export const dynamic = 'force-static'
-export const dynamicParams = false  // Required for output: 'export'
+export const dynamicParams = process.env.NODE_ENV === 'development' ? true : false
 
 /**
  * Build-time static generation for all known slugs
