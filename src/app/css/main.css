@@ -304,16 +304,26 @@ header {
   cursor: pointer;
   display: block;
   position: relative;
-  padding: 6px 8px 6px 25px;
-  margin-bottom: 6px;
+  padding: 10px 12px 10px 32px;
+  margin-bottom: 8px;
   border-radius: 8px;
-  border: 1px solid var(--surface-300);
-  background: var(--surface-50);
-  color: var(--surface-900); 
-  transition: all 0.3s ease;
-  cursor: pointer;
-  font-weight: bold;
+  border: 2px solid #ccc;
+  background: #f8f8f8;
+  color: #333; 
+  transition: all 0.2s ease;
+  font-weight: 500;
   overflow: hidden;
+}
+
+.crystal-radio:hover {
+  border-color: #72B01D;
+  background: #f0f7e6;
+}
+
+.crystal-radio:has(input:checked) {
+  border-color: #72B01D;
+  background: #72B01D;
+  color: #fff;
 }
 .crystal-radio {
   .product-faces {
