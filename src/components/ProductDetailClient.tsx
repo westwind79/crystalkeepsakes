@@ -1031,50 +1031,30 @@ export default function ProductDetailClient() {
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
                     <legend className="h5">Light Base <span className="text-danger">*</span></legend>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a light base</legend>
-                    <div className="space-y-3">
-                      {product.lightBases.map((base) => (
-                        <label
-                          key={base.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedLightBase?.id === base.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="lightBase"
-                            value={base.id}
-                            checked={selectedLightBase?.id === base.id}
-                            onChange={() => setSelectedLightBase(base)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{base.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedLightBase?.id === base.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
+                    {product.lightBases.map((base) => (
+                      <label key={base.id} className="crystal-radio">
+                        {base.name}
+                        <span className="option-price">
+                          {base.price && base.price > 0 ? `(+$${base.price.toFixed(2)})` : ''}
+                        </span>
+                        <input
+                          type="radio"
+                          name="lightBase"
+                          value={base.id}
+                          checked={selectedLightBase?.id === base.id}
+                          onChange={() => setSelectedLightBase(base)}
+                        />
+                        <span className="radio-checkmark"></span>
+                      </label>
+                    ))}
                   </fieldset>
                 </div>
               )}
 
               {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center mb-4">
+                <div className="product-option pt-2 mt-2">
+                  <div className="d-flex justify-content-start align-items-center">
                     <input
                       id="add-custom-text"
                       name="showCustomText"
@@ -1086,9 +1066,9 @@ export default function ProductDetailClient() {
                           setCustomText({ line1: '', line2: '' })
                         }
                       }}
-                      className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
+                      className="form-check-input me-2"
                     />
-                    <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
+                    <label htmlFor="add-custom-text" className="h5 mb-0">
                       {(() => {
                         const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
                         return textPrice > 0 
