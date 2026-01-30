@@ -15,6 +15,49 @@
    CSS VARIABLES & BASE SETUP
    ===================================================== */
 
+/* Restore list styles (Tailwind preflight removes them) */
+ul.list-disc {
+  list-style-type: disc !important;
+  padding-left: 1.5rem;
+}
+
+ol.list-decimal {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem;
+}
+
+/* For prose/content areas - restore natural list styling */
+.prose ul,
+.prose ol,
+article ul,
+article ol,
+.content ul,
+.content ol,
+[dangerouslySetInnerHTML] ul,
+div[class*="longDescription"] ul {
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.prose ul,
+article ul,
+.content ul {
+  list-style-type: disc;
+}
+
+.prose ol,
+article ol,
+.content ol {
+  list-style-type: decimal;
+}
+
+.prose li,
+article li,
+.content li {
+  margin-bottom: 0.5rem;
+}
+
 
 /* =====================================================
    BASE STYLES & RESET
