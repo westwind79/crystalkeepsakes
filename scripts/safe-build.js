@@ -272,21 +272,6 @@ try {
   process.exit(1);
 }
 
-// Step 4: Run prepare-build script
-console.log('📋 Step 4: Preparing build output...\n');
-
-try {
-  execSync(`node scripts/prepare-build.js ${mode}`, {
-    stdio: 'inherit',
-    shell: true
-  });
-  
-  console.log('\n✅ Build preparation complete!\n');
-  
-} catch (err) {
-  console.error('\n⚠️  Build preparation had issues, but build files exist.\n');
-}
-
 // Step 5: Summary
 const distDirs = {
   test: 'out-test',

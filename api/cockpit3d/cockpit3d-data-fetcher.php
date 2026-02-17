@@ -123,7 +123,7 @@ class CockPit3DFetcher {
         console_log("Retailer ID", $this->retailerId ? 'SET' : 'MISSING');
         
         // Set up caching in src/data
-        $this->cacheDir = dirname(__DIR__) . '/src/data/';
+        $this->cacheDir = dirname(dirname(dirname(__FILE__))) . '/src/data/';
         $this->cacheMaxAge = 3600; // 1 hour
         
         console_log("Cache directory", $this->cacheDir);
