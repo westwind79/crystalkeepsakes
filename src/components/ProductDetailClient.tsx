@@ -45,6 +45,7 @@ interface Size {
   name: string
   price: number
   enabled?: boolean
+  faces?: string  // e.g., "1", "1-2", "1-4", "1-12" for number of faces/people
 }
 
 interface LightBase {
