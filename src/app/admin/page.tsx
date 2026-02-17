@@ -1359,6 +1359,9 @@ export default function EnhancedProductAdminPage() {
                             <div className="flex items-center gap-3 mb-2 text-xs text-slate-400">
                               <div className="w-5"></div>
                               <div className="flex-1">Size</div>
+                              {selectedProductData.requiresImage && (
+                                <div className="w-16 text-center">Faces</div>
+                              )}
                               <div className="w-20 text-center">Cost</div>
                               <div className="w-20 text-center">Price</div>
                               <div className="w-16 text-center">Margin</div>
@@ -1382,6 +1385,21 @@ export default function EnhancedProductAdminPage() {
                                       className="w-4 h-4 text-slate-600 border-slate-300 rounded"
                                     />
                                     <div className="flex-1 text-sm text-slate-700">{size.name}</div>
+                                    
+                                    {/* Faces input - only for products requiring image */}
+                                    {selectedProductData.requiresImage && (
+                                      <div className="relative w-16">
+                                        <input
+                                          type="text"
+                                          value={size.faces || ''}
+                                          placeholder="1-2"
+                                          onChange={(e) =>
+                                            updateSize(selectedProduct.id, index, { faces: e.target.value || undefined })
+                                          }
+                                          className="w-full px-2 py-1.5 text-sm text-center border border-slate-300 rounded focus:ring-1 focus:ring-slate-400"
+                                        />
+                                      </div>
+                                    )}
                                     
                                     {/* Cost input */}
                                     <div className="relative w-20">
