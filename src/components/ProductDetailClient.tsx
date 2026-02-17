@@ -210,17 +210,22 @@ export default function ProductDetailClient() {
       
       setProduct(foundProduct)
       
+      // Select first ENABLED option for each category
       if (foundProduct.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0])
+        const enabledSizes = foundProduct.sizes.filter((s: Size) => s.enabled !== false)
+        if (enabledSizes.length > 0) setSelectedSize(enabledSizes[0])
       }
       if (foundProduct.lightBases && foundProduct.lightBases.length > 0) {
-        setSelectedLightBase(foundProduct.lightBases[0])
+        const enabledLightBases = foundProduct.lightBases.filter((lb: LightBase) => lb.enabled !== false)
+        if (enabledLightBases.length > 0) setSelectedLightBase(enabledLightBases[0])
       }
       if (foundProduct.backgroundOptions && foundProduct.backgroundOptions.length > 0) {
-        setSelectedBackground(foundProduct.backgroundOptions[0])
+        const enabledBackgrounds = foundProduct.backgroundOptions.filter((bg: BackgroundOption) => bg.enabled !== false)
+        if (enabledBackgrounds.length > 0) setSelectedBackground(enabledBackgrounds[0])
       }
       if (foundProduct.textOptions && foundProduct.textOptions.length > 0) {
-        setSelectedTextOption(foundProduct.textOptions[0])
+        const enabledTextOptions = foundProduct.textOptions.filter((t: TextOption) => t.enabled !== false)
+        if (enabledTextOptions.length > 0) setSelectedTextOption(enabledTextOptions[0])
       }
       
       logger.success('Product loaded', { name: foundProduct.name, id: foundProduct.id })
