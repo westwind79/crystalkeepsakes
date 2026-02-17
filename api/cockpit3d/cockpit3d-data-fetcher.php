@@ -1,5 +1,5 @@
 <?php
-// api/cockpit3d-data-fetcher.php
+// api/cockpit3d/cockpit3d-data-fetcher.php
 // Version: 2.2.0 - 2025-11-06 - FIXED OPTIONS LOGIC FOR ALL PRODUCT TYPES
 // Fixed: Crystals get lightbases FROM PRODUCT OPTIONS (not catalog)
 // Fixed: Keychains/Ornaments get NO lightbases

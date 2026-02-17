@@ -29,7 +29,7 @@
         "price": 9.5
       }
     ],
-    "visible": false,
+    "visible": true,
     "fulfillment": "custom",
     "occasions": [
       "memorial",
@@ -38,7 +38,8 @@
     ],
     "featured": false,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-17T21:44:21.769Z",
+    "cost": 50
   },
   {
     "id": "002",
@@ -493,52 +494,58 @@
         "price": null
       },
       {
-        "id": "236",
-        "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "236"
-      },
-      {
-        "id": "238",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "238"
-      },
-      {
-        "id": "366",
-        "name": "Lightbase Wood Long",
-        "price": 35,
-        "cockpit3d_id": "366"
-      },
-      {
-        "id": "477",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "477"
-      },
-      {
-        "id": "764",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "764"
-      },
-      {
-        "id": "765",
-        "name": "Wooden Premium Base Mini",
-        "price": 45,
-        "cockpit3d_id": "765"
-      },
-      {
-        "id": "235",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "235"
+        "enabled": true
       },
       {
-        "id": "1435",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": 55,
-        "cockpit3d_id": "1435"
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -578,7 +585,7 @@
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:54:59.111Z",
+    "editedAt": "2026-02-17T22:55:12.218Z",
     "occasions": [
       "graduation",
       "wedding",
@@ -1265,8 +1272,8 @@
     "slug": "new-wide-heart",
     "sku": "New_Wide_Heart",
     "basePrice": 119,
-    "description": "New Wide Heart",
-    "longDescription": "",
+    "description": "The heart-shaped design captures the warmth of your memories, transforming your photo into a lifelike 3D image that seems to float within the crystal. It’s the perfect way to celebrate love and is best suited for anniversaries, weddings, Valentine’s Day, or heartfelt memorials.",
+    "longDescription": "<p class=\"mb-4\">Turn your most special moment into a lovely 3D keepsake with the 3D Crystal Heart, crafted with love in North America.</p>\n\n<p class=\"mb-4\">It comes in multiple sizes and can be customized with engraved text, and you can also add an optional lighted base to make your crystal glow with emotion and perfection. Each piece comes in a premium gift box. We also include a free 3D preview before production, so you can see exactly how your memory will be captured in the crystal, and it is produced in cinematic HD.</p>\n\n",
     "images": [
       {
         "src": "/img/products/cockpit3d/171/cockpit3d_171_New_Wide_Heart.jpg",
@@ -1287,21 +1294,24 @@
         "price": 89,
         "cockpit3d_id": "717",
         "cost": 39.75,
-        "enabled": false
+        "enabled": false,
+        "faces": "1"
       },
       {
         "id": "527",
         "name": "Wide Heart Medium (100x90x50)",
         "price": 119,
         "cockpit3d_id": "527",
-        "cost": 69.75
+        "cost": 69.75,
+        "faces": "2"
       },
       {
         "id": "528",
         "name": "Wide Heart Large (125x110x60)",
         "price": 149,
         "cockpit3d_id": "528",
-        "cost": 89.75
+        "cost": 89.75,
+        "faces": "3"
       }
     ],
     "lightBases": [
@@ -1311,35 +1321,58 @@
         "price": null
       },
       {
-        "id": "531",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "531"
+        "enabled": true
       },
       {
-        "id": "532",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "532"
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
       },
       {
-        "id": "774",
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "774"
+        "enabled": true
       },
       {
-        "id": "775",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "775",
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
         "enabled": false
       },
       {
-        "id": "530",
-        "name": "Lightbase Square",
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
         "price": 25,
-        "cockpit3d_id": "530"
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -1379,7 +1412,7 @@
     "maskImageUrl": "/img/masks/heart-mask.png",
     "cost": 69.75,
     "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
+    "editedAt": "2026-02-17T21:45:15.345Z",
     "occasions": [
       "anniversary",
       "wedding",
@@ -1455,7 +1488,7 @@
     "sku": "3D_Crystal_Candle",
     "basePrice": 129,
     "description": "Small 3D crystal urn for memorial tributes. Premium keepsake for veteran and loved one memorials. Sophisticated remembrance display piece.",
-    "longDescription": "<p class=\"mb-4\"> Honor life's most precious memories with our <span class=\"font-semibold\">Premium 3D Crystal Urn</span>, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect. </p><p class=\"mb-4\"> This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Applications:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military memorial centerpieces</li><li class=\"text-gray-900\">Permanent home or altar tributes</li><li class=\"text-gray-900\">Celebration of life ceremonies</li><li class=\"text-gray-900\">Grave-side display alternatives</li><li class=\"text-gray-900\">Funeral service memorial presentations</li><li class=\"text-gray-900\">Legacy tributes for influential loved ones</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Premium Urn Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Large, prominent crystal urn silhouette</li><li class=\"text-gray-900\">Precision 3D laser engraving inside the crystal</li><li class=\"text-gray-900\">Polished edges and refined craftsmanship</li><li class=\"text-gray-900\">Available with optional LED base for illumination</li><li class=\"text-gray-900\">Exceptional clarity and depth for portraits</li><li class=\"text-gray-900\">Heavy and substantial for permanent display</li><li class=\"text-gray-900\">Custom engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Symbolism & Design:</h4><p class=\"mb-4\"> The urn is a long-standing symbol of respect and remembrance—used across cultures and centuries to honor the lives of the departed. Our crystal urn elevates this tradition, using modern engraving to preserve not ashes, but the memory, image, and essence of the person in stunning 3D clarity. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">3D photo engraving (single or multiple subjects)</li><li class=\"text-gray-900\">Custom text (name, rank, dates, epitaph)</li><li class=\"text-gray-900\">Military insignia or awards</li><li class=\"text-gray-900\">2D or 3D backdrop enhancements</li><li class=\"text-gray-900\">Optional background removal</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Placed on mantels or memory shelves</li><li class=\"text-gray-900\">Displayed on LED base for soft illumination</li><li class=\"text-gray-900\">Used as focal point in tribute tables</li><li class=\"text-gray-900\">Incorporated into permanent home memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">A Lasting Tribute:</h4><p class=\"mb-4\"> The <span class=\"font-semibold\">Premium 3D Crystal Urn</span> is more than a memorial—it’s a statement of love, gratitude, and reverence. It honors a legacy not with ashes, but with presence, form, and light—preserving a cherished image with stunning clarity and dignity for generations to come. </p>",
+    "longDescription": "<p class=\"mb-4\"> Honor life's most precious memories with our <span class=\"font-semibold\">Premium 3D Crystal Urn</span>, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect. </p><p class=\"mb-4\"> This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design. </p>\n<h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Applications:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military memorial centerpieces</li><li class=\"text-gray-900\">Permanent home or altar tributes</li><li class=\"text-gray-900\">Celebration of life ceremonies</li><li class=\"text-gray-900\">Grave-side display alternatives</li><li class=\"text-gray-900\">Funeral service memorial presentations</li><li class=\"text-gray-900\">Legacy tributes for influential loved ones</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Premium Urn Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Large, prominent crystal urn silhouette</li><li class=\"text-gray-900\">Precision 3D laser engraving inside the crystal</li><li class=\"text-gray-900\">Polished edges and refined craftsmanship</li><li class=\"text-gray-900\">Available with optional LED base for illumination</li><li class=\"text-gray-900\">Exceptional clarity and depth for portraits</li><li class=\"text-gray-900\">Heavy and substantial for permanent display</li><li class=\"text-gray-900\">Custom engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Symbolism & Design:</h4><p class=\"mb-4\"> The urn is a long-standing symbol of respect and remembrance—used across cultures and centuries to honor the lives of the departed. Our crystal urn elevates this tradition, using modern engraving to preserve not ashes, but the memory, image, and essence of the person in stunning 3D clarity. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">3D photo engraving (single or multiple subjects)</li><li class=\"text-gray-900\">Custom text (name, rank, dates, epitaph)</li><li class=\"text-gray-900\">Military insignia or awards</li><li class=\"text-gray-900\">2D or 3D backdrop enhancements</li><li class=\"text-gray-900\">Optional background removal</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Placed on mantels or memory shelves</li><li class=\"text-gray-900\">Displayed on LED base for soft illumination</li><li class=\"text-gray-900\">Used as focal point in tribute tables</li><li class=\"text-gray-900\">Incorporated into permanent home memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">A Lasting Tribute:</h4><p class=\"mb-4\"> The <span class=\"font-semibold\">Premium 3D Crystal Urn</span> is more than a memorial—it’s a statement of love, gratitude, and reverence. It honors a legacy not with ashes, but with presence, form, and light—preserving a cherished image with stunning clarity and dignity for generations to come. </p>",
     "images": [
       {
         "src": "/img/products/cockpit3d/248/cockpit3d_248_3D_Crystal_Candle.png",
@@ -1486,32 +1519,58 @@
         "price": null
       },
       {
-        "id": "876",
-        "name": "Wooden Premium Base Mini",
-        "price": 45,
-        "cockpit3d_id": "876",
-        "enabled": true
-      },
-      {
-        "id": "877",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "877",
         "enabled": true
       },
       {
-        "id": "878",
+        "id": "lightbase-square",
         "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "878",
+        "price": 20,
         "enabled": true
       },
       {
-        "id": "666",
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "rotating-led-lightbase",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "666",
-        "enabled": true
+        "enabled": false
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -1553,7 +1612,7 @@
     "featured": true,
     "cost": 49.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-02-17T22:49:35.052Z",
     "occasions": [
       "holiday",
       "pet",
@@ -1817,22 +1876,58 @@
         "price": null
       },
       {
-        "id": "741",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "741"
+        "id": "lightbase-rectangle",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "enabled": true
       },
       {
-        "id": "740",
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "740"
+        "enabled": true
       },
       {
-        "id": "1436",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "1436"
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": false
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -1879,7 +1974,7 @@
       "birthday"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-17T22:59:46.036Z"
   },
   {
     "id": "276",
@@ -2965,46 +3060,58 @@
         "price": null
       },
       {
-        "id": "1867",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "1867"
-      },
-      {
-        "id": "1868",
-        "name": "Lightbase Wood Small",
-        "price": null,
-        "cockpit3d_id": "1868"
-      },
-      {
-        "id": "1884",
-        "name": "Rotating LED Lightbase",
-        "price": null,
-        "cockpit3d_id": "1884"
-      },
-      {
-        "id": "1885",
-        "name": "Lightbase Wood Long",
-        "price": null,
-        "cockpit3d_id": "1885"
-      },
-      {
-        "id": "1886",
-        "name": "Lightbase Wood Medium",
-        "price": null,
-        "cockpit3d_id": "1886"
-      },
-      {
-        "id": "1887",
-        "name": "Lightbase Square",
-        "price": null,
-        "cockpit3d_id": "1887"
-      },
-      {
-        "id": "1888",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
-        "price": null,
-        "cockpit3d_id": "1888"
+        "price": 25,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3044,7 +3151,7 @@
     "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
     "cost": 134.75,
     "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "editedAt": "2026-02-17T22:49:47.081Z"
   },
   {
     "id": "454",
@@ -3069,46 +3176,58 @@
         "price": null
       },
       {
-        "id": "2003",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "2003"
+        "enabled": true
       },
       {
-        "id": "2004",
+        "id": "lightbase-square",
         "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "2004"
+        "price": 20,
+        "enabled": true
       },
       {
-        "id": "2005",
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "2005"
+        "enabled": true
       },
       {
-        "id": "2006",
+        "id": "lightbase-wood-medium",
         "name": "Lightbase Wood Medium",
         "price": 45,
-        "cockpit3d_id": "2006"
+        "enabled": false
       },
       {
-        "id": "2007",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "2007"
-      },
-      {
-        "id": "2008",
+        "id": "lightbase-wood-long",
         "name": "Lightbase Wood Long",
         "price": 35,
-        "cockpit3d_id": "2008"
+        "enabled": false
       },
       {
-        "id": "2009",
+        "id": "rotating-led-lightbase",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "2009"
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3148,7 +3267,7 @@
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
     "cost": 89.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-17T22:49:55.685Z"
   },
   {
     "id": "456",

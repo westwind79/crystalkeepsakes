@@ -2,21 +2,25 @@
 // v3.0.0 - 2025-01-15 - Static SSG with pre-generated slugs
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { getProductSlugs } from "./generate-params";
+
 import ProductDetailClient from '@/components/ProductDetailClient'
 import NextImage from 'next/image'
 import '../../css/gallery.css'
+
 /**
  * CRITICAL: Force static rendering for output: 'export' in production
  * In development, we use force-dynamic to allow dynamic route testing
  */
 export const dynamic = 'auto'
-export const dynamicParams = true
+export const dynamicParams = false;
 
 /**
  * Build-time static generation for all known slugs
  * Pre-renders all product pages at build time for SEO and performance
  * Reads from final-products.json
  */
+
 export async function generateStaticParams() {
   try {
     // Read JSON file from filesystem at build time

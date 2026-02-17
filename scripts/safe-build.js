@@ -82,9 +82,9 @@ const buildModes = {
     NEXT_PUBLIC_ENV_MODE: 'production',
     NODE_ENV: 'production'
   },
-  local: {
-    envFile: '.env.local',
-    BUILD_MODE: 'local',
+  development: {
+    envFile: '.env',
+    BUILD_MODE: 'dev',
     NEXT_PUBLIC_BASE_PATH: '',
     NEXT_PUBLIC_ENV_MODE: 'development',
     NODE_ENV: 'development'
