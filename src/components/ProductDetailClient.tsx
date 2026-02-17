@@ -980,6 +980,13 @@ export default function ProductDetailClient() {
                     {errors.size && <div className="text-red-500 small">{errors.size}</div>}
                     {product.sizes.filter(s => s.enabled !== false).map((size) => (
                       <label key={size.id} className="crystal-radio">
+                        {/* Show faces indicator for products that require images */}
+                        {product.requiresImage && size.faces && (
+                          <span className="product-faces">
+                            <Users size={18} />
+                            <span className="faces-count">{size.faces}</span>
+                          </span>
+                        )}
                         <span className="h5">{size.name}</span>
                         <span className="option-price">
                           <span className="option-price__wrapper h5">
