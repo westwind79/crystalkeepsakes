@@ -16,7 +16,24 @@
 }
 
 .crystal-radio .product-faces {
-  margin-right: 0.25em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 0.75em;
+  padding: 2px 8px;
+  background: rgba(114, 176, 29, 0.1);
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: #72B01D;
+}
+
+.crystal-radio:has(input[type="radio"]:checked) .product-faces {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.crystal-radio .product-faces .faces-count {
+  font-weight: 600;
 }
 
 /* Hide default radio button */
