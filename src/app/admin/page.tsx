@@ -1610,7 +1610,10 @@ export default function EnhancedProductAdminPage() {
                         {selectedProductData.longDescription && (
                           <div className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
                             <p className="font-semibold mb-2">Detailed Description:</p>
-                            <p>{selectedProductData.longDescription}</p>
+                            <div 
+                              className="prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{ __html: selectedProductData.longDescription }}
+                            />
                           </div>
                         )}
                       </div>
