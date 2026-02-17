@@ -963,12 +963,12 @@ export default function ProductDetailClient() {
               )}
 
               {/* Size */}
-              {product.sizes && product.sizes.length > 0 && (
+              {product.sizes && product.sizes.filter(s => s.enabled !== false).length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
                     <legend className="h5">Select Size <span className="text-red-500">*</span></legend>
                     {errors.size && <div className="text-red-500 small">{errors.size}</div>}
-                    {product.sizes.map((size) => (
+                    {product.sizes.filter(s => s.enabled !== false).map((size) => (
                       <label key={size.id} className="crystal-radio">
                         <span className="h5">{size.name}</span>
                         <span className="option-price">
@@ -1002,11 +1002,11 @@ export default function ProductDetailClient() {
               )}
 
               {/* Background Options */}
-              {product.backgroundOptions && product.backgroundOptions.length > 0 && (
+              {product.backgroundOptions && product.backgroundOptions.filter(bg => bg.enabled !== false).length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
                     <legend className="h5">Background Style <span className="text-red-500">*</span></legend>
-                    {product.backgroundOptions.map((bg) => (
+                    {product.backgroundOptions.filter(bg => bg.enabled !== false).map((bg) => (
                       <label key={bg.id} className="crystal-radio">
                         {bg.name}
                         <span className="option-price">
@@ -1027,11 +1027,11 @@ export default function ProductDetailClient() {
               )}
 
               {/* Light Base */}
-              {product.lightBases && product.lightBases.length > 0 && (
+              {product.lightBases && product.lightBases.filter(lb => lb.enabled !== false).length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <fieldset>
                     <legend className="h5">Light Base <span className="text-red-500">*</span></legend>
-                    {product.lightBases.map((base) => (
+                    {product.lightBases.filter(lb => lb.enabled !== false).map((base) => (
                       <label key={base.id} className="crystal-radio">
                         {base.name}
                         <span className="option-price">
@@ -1052,7 +1052,7 @@ export default function ProductDetailClient() {
               )}
 
               {/* Custom Text Checkbox Option */}
-              {product.textOptions && product.textOptions.length > 0 && (
+              {product.textOptions && product.textOptions.filter(t => t.enabled !== false).length > 0 && (
                 <div className="product-option pt-2 mt-2">
                   <div className="flex items-center">
                     <input
@@ -1070,7 +1070,8 @@ export default function ProductDetailClient() {
                     />
                     <label htmlFor="add-custom-text" className="h5 mb-0 cursor-pointer">
                       {(() => {
-                        const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
+                        const enabledTextOptions = product.textOptions.filter(t => t.enabled !== false);
+                        const textPrice = (enabledTextOptions.find(t => t.price > 0) || enabledTextOptions[1])?.price || 0;
                         return textPrice > 0 
                           ? `Add Custom Text (+$${textPrice.toFixed(2)})`
                           : 'Add Custom Text (No Extra Cost)';
