@@ -218,7 +218,7 @@
         "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "enabled": false
+        "enabled": true
       },
       {
         "id": "lightbase-wood-medium",
@@ -282,20 +282,22 @@
         "id": "none",
         "name": "No Text",
         "price": 0,
-        "cockpit3d_option_id": null
+        "cockpit3d_option_id": null,
+        "enabled": true
       },
       {
         "id": "customText",
         "name": "Custom Text",
         "price": 9.5,
-        "cockpit3d_option_id": "199"
+        "cockpit3d_option_id": "199",
+        "enabled": true
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
     "sale": true,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2026-01-30T04:21:35.782Z",
+    "editedAt": "2026-02-17T18:54:40.244Z",
     "salePercent": 10
   },
   {
