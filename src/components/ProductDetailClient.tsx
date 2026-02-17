@@ -1,8 +1,10 @@
 // components/ProductDetailClient.tsx
-// Version: 3.1.0 - FIX: Reset file input for re-upload same image
+// Version: 3.2.0 - FIX: Upload images on SAVE (not Add to Cart)
 // ✅ Premium e-commerce design inspired by Tailwind UI
 // ✅ Clean spacing, modern typography, professional polish
 // ✅ Fixed: File input resets after upload to allow same file selection
+// ✅ Fixed: Images now upload immediately when customer clicks "Save" in editor
+// ✅ Fixed: Server URLs stored immediately for Cockpit3D integration
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
@@ -13,18 +15,25 @@ import ImageEditor from '@/components/ImageEditor'
 import type { CustomImage, OrderLineItem, SizeDetails, ProductOption } from '@/types/orderTypes'
 import { logger } from '@/utils/logger'
 import { addToCart, checkStorageHealth, storeFullResImage } from '@/lib/cartUtils'
+import { uploadCustomerImages } from '@/lib/customerImageUpload'
+import { getOrCreateOrderSession, updateOrderImages as updateSessionImages, markOrderInCart as markSessionInCart, getOrderIdForUpload, forceNewOrderSession, clearOrderSession } from '@/lib/unifiedOrderId'
 import AddedToCartModal from '@/components/cart/AddedToCartModal'
 import { isFeaturedProduct, isLightbaseProduct, isOnSale, getProductCategories, getCategoryLabel } from '@/utils/categoriesConfig'
 import { assetPath } from '@/lib/assetPath'
 import { calculateTotal, calculateOptionsPrice, getSaleInfo } from '@/utils/pricingUtils'
 import ProductGallery from '@/components/ProductGallery'
 import ProductBadges from '@/components/ProductBadges'
+import gsap from 'gsap';
+
+import { ArrowBigLeft, ArrowLeft, CornerRightDown, Users, User } from 'lucide-react'; 
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
 import '../app/css/gallery.css'
+import '../app/css/animations.css'
 
 import { getProducts } from '@/lib/products'
+
 
 // Environment
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
@@ -35,6 +44,8 @@ interface Size {
   id: string
   name: string
   price: number
+  enabled?: boolean
+  faces?: string  // e.g., "1", "1-2", "1-4", "1-12" for number of faces/people
 }
 
 interface LightBase {
@@ -42,6 +53,7 @@ interface LightBase {
   name: string
   price: number | null
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface BackgroundOption {
@@ -49,6 +61,7 @@ interface BackgroundOption {
   name: string
   price: number
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface TextOption {
@@ -56,6 +69,7 @@ interface TextOption {
   name: string
   price: number
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface ProductImage {
@@ -85,7 +99,7 @@ interface Product {
 export default function ProductDetailClient() {
   const params = useParams()
   const router = useRouter()
-  
+  const textRef = useRef(null);
   // Product State
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -108,6 +122,12 @@ export default function ProductDetailClient() {
   const [finalMaskedImage, setFinalMaskedImage] = useState<string | null>(null)
   const [showEditor, setShowEditor] = useState(false)
   
+  // Server URLs for uploaded images (populated on Save, not Add to Cart)
+  const [maskedImageServerUrl, setMaskedImageServerUrl] = useState<string | null>(null)
+  const [rawImageServerUrl, setRawImageServerUrl] = useState<string | null>(null)
+  const [tempOrderRef, setTempOrderRef] = useState<string | null>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  
   // UI State
   const [addingToCart, setAddingToCart] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
@@ -115,15 +135,71 @@ export default function ProductDetailClient() {
   const [showAddedModal, setShowAddedModal] = useState(false)
   const [addedItemDetails, setAddedItemDetails] = useState<any>(null)
 
+    // Animation State
+  const [isPageLoaded, setIsPageLoaded] = useState(false)
+  const [filterChanged, setFilterChanged] = useState<string | null>(null)
+
   // File input ref for resetting
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    // Only run animation if textRef exists (for products that require images)
+    if (textRef.current) {
+      const letters = textRef.current.querySelectorAll("span");
+
+      gsap.fromTo(
+        letters,
+        { y: 0, color: "#72B01D"  },
+        {
+          y: -10,
+          color: "#a3d77a",
+          duration: 0.15,
+          delay: 1,     
+          ease: "power1.out",
+          stagger: {
+            each: 0.05,
+            yoyo: true,
+            repeat: 1,
+          },
+        }
+      );
+    }
+  }, [product?.requiresImage]); // Add dependency to re-run when product changes
+
+  const text = "Upload Your Image";
   // Fetch product on mount
   useEffect(() => {
     if (params.slug) {
       fetchProduct(params.slug as string)
     }
   }, [params.slug])
+
+  // Page load animation trigger
+  useEffect(() => {
+    setIsPageLoaded(true)
+    console.log('[Animation] Page loaded')
+  }, [])
+
+  // Track size filter changes
+  useEffect(() => {
+    if (selectedSize) {
+      setFilterChanged('size')
+      console.log('[Animation] Size filter changed:', selectedSize.name)
+      const timer = setTimeout(() => setFilterChanged(null), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedSize?.id])
+
+  // Track lightBase filter changes
+  useEffect(() => {
+    if (selectedLightBase) {
+      setFilterChanged('lightBase')
+      console.log('[Animation] LightBase filter changed:', selectedLightBase.name)
+      const timer = setTimeout(() => setFilterChanged(null), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedLightBase?.id])
+
 
   const fetchProduct = async (slug: string) => {
     try {
@@ -139,17 +215,22 @@ export default function ProductDetailClient() {
       
       setProduct(foundProduct)
       
+      // Select first ENABLED option for each category
       if (foundProduct.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0])
+        const enabledSizes = foundProduct.sizes.filter((s: Size) => s.enabled !== false)
+        if (enabledSizes.length > 0) setSelectedSize(enabledSizes[0])
       }
       if (foundProduct.lightBases && foundProduct.lightBases.length > 0) {
-        setSelectedLightBase(foundProduct.lightBases[0])
+        const enabledLightBases = foundProduct.lightBases.filter((lb: LightBase) => lb.enabled !== false)
+        if (enabledLightBases.length > 0) setSelectedLightBase(enabledLightBases[0])
       }
       if (foundProduct.backgroundOptions && foundProduct.backgroundOptions.length > 0) {
-        setSelectedBackground(foundProduct.backgroundOptions[0])
+        const enabledBackgrounds = foundProduct.backgroundOptions.filter((bg: BackgroundOption) => bg.enabled !== false)
+        if (enabledBackgrounds.length > 0) setSelectedBackground(enabledBackgrounds[0])
       }
       if (foundProduct.textOptions && foundProduct.textOptions.length > 0) {
-        setSelectedTextOption(foundProduct.textOptions[0])
+        const enabledTextOptions = foundProduct.textOptions.filter((t: TextOption) => t.enabled !== false)
+        if (enabledTextOptions.length > 0) setSelectedTextOption(enabledTextOptions[0])
       }
       
       logger.success('Product loaded', { name: foundProduct.name, id: foundProduct.id })
@@ -177,6 +258,18 @@ export default function ProductDetailClient() {
       return
     }
 
+    // ✅ NEW IMAGE = NEW ORDER SESSION
+    // Clear any existing server URLs and order ref since this is a fresh upload
+    console.log('🆕 [IMAGE UPLOAD] New image uploaded - clearing existing session data')
+    setMaskedImageServerUrl(null)
+    setRawImageServerUrl(null)
+    setTempOrderRef(null)
+    setFinalMaskedImage(null)
+    
+    // Force a new order session for this new image
+    // This ensures each new image customization gets a unique folder
+    clearOrderSession()
+
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
@@ -195,13 +288,28 @@ export default function ProductDetailClient() {
   /**
    * Handle save from ImageEditor - THIS IS CRITICAL
    * Receives the masked/compressed image from editor
+   * ✅ Uses UNIFIED ORDER ID system - same ID everywhere!
+   * ✅ Uploads images immediately to server
    */
-  const handleImageEditorSave = (compressedImage: string) => {
-    logger.info('Image saved from editor', { 
-      size: compressedImage.length 
+  const handleImageEditorSave = async (compressedImage: string) => {
+    console.log('🎨 [IMAGE EDITOR SAVE] ==========================')
+    console.log('🎨 [IMAGE EDITOR SAVE] Received compressedImage:', {
+      exists: !!compressedImage,
+      length: compressedImage?.length,
+      startsWithData: compressedImage?.startsWith('data:'),
+      first50chars: compressedImage?.substring(0, 50)
+    })
+    console.log('🎨 [IMAGE EDITOR SAVE] Raw image available:', {
+      exists: !!rawUploadedImage,
+      length: rawUploadedImage?.length
     })
     
-    // Save the masked/compressed image (final product)
+    logger.info('Image saved from editor - STARTING ORDER', { 
+      size: compressedImage.length,
+      productId: product?.id
+    })
+    
+    // Save the masked/compressed image (final product) for local display
     setFinalMaskedImage(compressedImage)
     setShowEditor(false)
     setErrors(prev => {
@@ -210,6 +318,92 @@ export default function ProductDetailClient() {
       delete newErrors.finalImage
       return newErrors
     })
+    
+    // ✅ GET UNIFIED ORDER ID - same ID used everywhere!
+    const orderId = getOrderIdForUpload(product?.id?.toString())
+    setTempOrderRef(orderId)
+    
+    console.log('📦 [IMAGE SAVE] Using unified order ID:', {
+      orderId,
+      productId: product?.id,
+      productName: product?.name
+    })
+    
+    // ✅ IMMEDIATELY UPLOAD to server using unified order ID
+    setIsUploadingImage(true)
+    
+    try {
+      console.log('📤 [IMAGE SAVE] Starting uploads...')
+      console.log('📤 [IMAGE SAVE] Masked image (compressedImage):', compressedImage ? `${compressedImage.length} chars` : 'NULL!')
+      console.log('📤 [IMAGE SAVE] Raw image (rawUploadedImage):', rawUploadedImage ? `${rawUploadedImage.length} chars` : 'NULL!')
+      
+      // Upload both masked and raw images using the UNIFIED order ID
+      const uploadResult = await uploadCustomerImages(
+        compressedImage,
+        rawUploadedImage || undefined,
+        product?.id?.toString() || 'unknown',
+        orderId // Use unified order ID for folder organization
+      )
+      
+      console.log('📤 [IMAGE SAVE] Upload result:', JSON.stringify({
+        maskedUrl: uploadResult.maskedUrl,
+        rawUrl: uploadResult.rawUrl,
+        errors: uploadResult.errors
+      }, null, 2))
+      
+      // ✅ Check if at least the masked image uploaded successfully
+      if (uploadResult.maskedUrl) {
+        setMaskedImageServerUrl(uploadResult.maskedUrl)
+        console.log('✅ [IMAGE SAVE] Masked image uploaded:', uploadResult.maskedUrl)
+        
+        // ✅ UPDATE SESSION with server URLs - ONLY if we have at least masked URL
+        updateSessionImages(uploadResult.maskedUrl, uploadResult.rawUrl)
+        console.log('✅ [IMAGE SAVE] Session updated with image URLs')
+        
+        // Clear any previous upload errors
+        setErrors(prev => {
+          const newErrors = { ...prev }
+          delete newErrors.imageUpload
+          return newErrors
+        })
+      } else {
+        console.error('❌ [IMAGE SAVE] ⚠️ MASKED IMAGE NOT UPLOADED! serverUrl is empty!')
+        console.error('❌ [IMAGE SAVE] Upload errors:', uploadResult.errors)
+        console.error('❌ [IMAGE SAVE] Full upload result:', uploadResult)
+        // Show error to user!
+        setErrors(prev => ({
+          ...prev,
+          imageUpload: `Masked image failed to upload. ${uploadResult.errors.join('. ')}. Please try saving again.`
+        }))
+        // ❌ Do NOT update session with empty URLs
+      }
+      
+      if (uploadResult.rawUrl) {
+        setRawImageServerUrl(uploadResult.rawUrl)
+        console.log('✅ [IMAGE SAVE] Raw image uploaded:', uploadResult.rawUrl)
+      }
+      
+      if (uploadResult.errors.length > 0) {
+        console.warn('⚠️ [IMAGE SAVE] Upload warnings:', uploadResult.errors)
+      }
+      
+      logger.success('Order started and images uploaded', {
+        orderId,
+        maskedUrl: uploadResult.maskedUrl,
+        rawUrl: uploadResult.rawUrl,
+        hasErrors: uploadResult.errors.length > 0
+      })
+      
+    } catch (error) {
+      console.error('❌ [IMAGE SAVE] Failed to upload images:', error)
+      logger.error('Image upload failed on save', error)
+      setErrors(prev => ({
+        ...prev,
+        imageUpload: 'Image upload failed. Please try saving again.'
+      }))
+    } finally {
+      setIsUploadingImage(false)
+    }
   }
 
   const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
@@ -228,6 +422,11 @@ export default function ProductDetailClient() {
         newErrors.image = 'Please upload an image'
       } else if (!finalMaskedImage) {
         newErrors.finalImage = 'Please save your edited image before adding to cart'
+      } else if (isUploadingImage) {
+        newErrors.imageUpload = 'Please wait for image upload to complete'
+      } else if (!maskedImageServerUrl) {
+        // ✅ NEW: Block add to cart if server upload failed
+        newErrors.imageUpload = 'Image upload failed. Please click "Edit Image" and save again.'
       }
     }
     
@@ -242,6 +441,9 @@ export default function ProductDetailClient() {
       requiresImage: product?.requiresImage,
       hasUploadedImage: !!uploadedImage,
       hasMaskedImage: !!finalMaskedImage,
+      isUploadingImage,
+      hasServerUrl: !!maskedImageServerUrl,
+      serverUrl: maskedImageServerUrl,
       errors: newErrors,
       isValid
     })
@@ -342,6 +544,8 @@ export default function ProductDetailClient() {
         alert('⚠️ Please upload your image before adding to cart.')
       } else if (validation.errors.finalImage) {
         alert('⚠️ Please save your edited image before adding to cart.')
+      } else if (validation.errors.imageUpload) {
+        alert('⚠️ ' + validation.errors.imageUpload)
       } else if (validation.errors.size) {
         alert('⚠️ Please select a size before adding to cart.')
       } else if (Object.keys(validation.errors).length > 0) {
@@ -368,15 +572,34 @@ export default function ProductDetailClient() {
         const img = new window.Image()
         img.src = finalMaskedImage
         
+        // Store full-res locally as backup
         if (uploadedImage) {
           storeFullResImage(product.id.toString(), uploadedImage)
         }
         
         await new Promise(resolve => { img.onload = resolve })
         
+        // ✅ USE ALREADY-UPLOADED SERVER URLs (uploaded on Save, not here)
+        // Images were uploaded in handleImageEditorSave, so we just use the stored URLs
+        console.log('📸 ===== ADD TO CART: IMAGE URL CHECK =====')
+        console.log('📸 [ADD TO CART] maskedImageServerUrl state:', maskedImageServerUrl)
+        console.log('📸 [ADD TO CART] rawImageServerUrl state:', rawImageServerUrl)
+        console.log('📸 [ADD TO CART] tempOrderRef state:', tempOrderRef)
+        console.log('📸 [ADD TO CART] finalMaskedImage exists:', !!finalMaskedImage, finalMaskedImage?.length)
+        
+        // ⚠️ CRITICAL CHECK: If server URL is missing, log warning
+        if (!maskedImageServerUrl) {
+          console.error('⚠️ [ADD TO CART] WARNING: maskedImageServerUrl is empty!')
+          console.error('⚠️ [ADD TO CART] Image will be added WITHOUT server URL - Cockpit3D will NOT have the image!')
+        }
+        
         customImage = {
-          dataUrl: finalMaskedImage,
-          originalDataUrl: uploadedImage,
+          // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
+          dataUrl: finalMaskedImage, // Always keep base64 for local processing
+          originalDataUrl: uploadedImage, // Always keep base64 for local processing
+          // ✅ Use server URLs that were uploaded on Save
+          serverUrl: maskedImageServerUrl || undefined,
+          originalServerUrl: rawImageServerUrl || undefined,
           filename: originalFileName || `product-${product.id}-${Date.now()}.png`,
           mimeType: 'image/png',
           fileSize: finalMaskedImage.length,
@@ -384,7 +607,13 @@ export default function ProductDetailClient() {
           height: img.height,
           processedAt: new Date().toISOString(),
           maskId: product.maskImageUrl,
-          maskName: 'Product Mask'
+          maskName: 'Product Mask',
+          tempOrderRef: tempOrderRef || undefined // Unified order ID
+        }
+        
+        // Mark order as in cart using unified session
+        if (tempOrderRef) {
+          markSessionInCart()
         }
       }
       
@@ -411,12 +640,16 @@ export default function ProductDetailClient() {
       const totalPrice = getTotalPrice()
       const originalPrice = selectedSize?.price || product.basePrice
       
+      // Calculate per-unit price (basePrice after sale discount + options)
+      const unitPrice = totalPrice / quantity
+      
       // Get sale information using centralized utility
-      const saleInfo = getSaleInfo(product, totalPrice / quantity, originalPrice)
+      const saleInfo = getSaleInfo(product, unitPrice, originalPrice)
       
       console.log('💰 [ADD TO CART] Pricing:', {
         basePrice: originalPrice,
         optionsPrice,
+        unitPrice,
         totalPrice,
         quantity,
         saleInfo
@@ -430,6 +663,7 @@ export default function ProductDetailClient() {
         sku: product.sku,
         basePrice: originalPrice,
         optionsPrice: optionsPrice,
+        price: unitPrice,  // Per-unit price for cart calculations
         totalPrice: totalPrice,
         quantity: quantity,
         size: sizeDetails,
@@ -581,302 +815,265 @@ export default function ProductDetailClient() {
       </nav>
 
       {/* Product */}
-      <div className="mx-auto max-w-2xl px-4 md:py-12 sm:px-6 lg:max-w-7xl lg:px-8">
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:items-start lg:gap-x-12">
-        
-          <div className="relative lg:sticky lg:top-[85px]">
-            {/* Image gallery */}
-            <div className="flex flex-col-reverse">
-              
-              <div className="mt-6">
-                <h3 className="sr-only">Product Description</h3>
-                <div className="space-y-6 text-base text-gray-700">
-                  {product.longDescription && (
-                    <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
-                  )}
-                </div>
-              </div>
-
-              <div className="w-full overflow-hidden">
-
-                {finalMaskedImage ? (
-                  <div className="space-y-4">
-                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
-                      <Image
-                        src={finalMaskedImage} 
-                        alt="Customer Preview" 
-                        className="h-full w-full object-cover object-center"
-                        width={1024}
-                        height={1024}
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setShowEditor(true)}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
-                      >
-                        Edit Image
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFinalMaskedImage(null)}
-                        className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2"
-                      >
-                        Remove Image
-                      </button>
-                    </div>
-                  </div>
-                ) : product.images && product.images.length > 1 ? (
-                  <>
-                    <ProductGallery images={product.images} />
-                    {/* Centralized Badges Component */}
-                    <ProductBadges product={product} position="gallery" />
-                  </>
-                ) : (
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-x-12">
+          
+          {/* LEFT: Gallery - Sticky on desktop */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <div className="w-full overflow-hidden">
+              {finalMaskedImage ? (
+                <div className="space-y-4">
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
                     <Image
-                      src={mainImage.src}
-                      alt={product.name}
+                      src={finalMaskedImage} 
+                      alt="Customer Preview" 
+                      className="h-full w-full object-cover object-center"
                       width={1024}
                       height={1024}
-                      className="h-full w-full object-cover object-center"
                     />
-                    {/* Centralized Badges Component */}
-                    <ProductBadges product={product} position="detail" />
+                    {isUploadingImage && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="inline-block w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mb-2"></div>
+                          <p className="text-sm">Uploading...</p>
+                        </div>
+                      </div>
+                    )}
+                    {!isUploadingImage && maskedImageServerUrl && (
+                      <div className="absolute bottom-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Saved
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowEditor(true)}
+                      disabled={isUploadingImage}
+                      className="flex-1 rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFinalMaskedImage(null)
+                        setMaskedImageServerUrl(null)
+                        setRawImageServerUrl(null)
+                        setTempOrderRef(null)
+                      }}
+                      disabled={isUploadingImage}
+                      className="flex-1 rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : product.images && product.images.length > 1 ? (
+                <div className={`${isPageLoaded ? 'fade-in' : 'opacity-0'}`}>
+                  <ProductGallery images={product.images} productName={product.name} />
+                  <ProductBadges product={product} position="gallery" />
+                </div>
+              ) : (
+                <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 relative">
+                  <Image
+                    src={mainImage.src}
+                    alt={product.name}
+                    width={1024}
+                    height={1024}
+                    className="h-full w-full object-cover object-center"
+                  />
+                  <ProductBadges product={product} position="detail" />
+                </div>
+              )}
+            </div>
+            
+            {/* Description - Desktop only, below gallery */}
+            <div className="hidden lg:block mt-8">
+              {product.longDescription && (
+                <div className="prose prose-sm max-w-none text-gray-600">
+                  <div dangerouslySetInnerHTML={{ __html: product.longDescription }} />
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0 col-span-2">
-            <div className="flex items-start flex-wrap">
-              <h1 className="text-6xl font-bold tracking-tight text-gray-900">{product.name}</h1>             
-            </div>
+          {/* RIGHT: Product Info + Options */}
+          <div className="mt-8 lg:mt-0">
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+              {product.name}
+            </h1>
 
-            <div className="mt-3">
-              <h2 className="sr-only">Product information</h2>
+            {/* Price */}
+            <div className="mt-4">
               {isOnSale(product) && (product.salePercent || product.salePrice) ? (
                 <div className="flex items-center gap-3 flex-wrap">
-                  <p className="text-4xl font-bold tracking-tight text-[#72B01D]">
+                  <span className="text-2xl font-semibold text-[#72B01D]">
                     ${getTotalPrice().toFixed(2)}
-                  </p>
-                  <p className="text-2xl tracking-tight text-gray-500 line-through">
+                  </span>
+                  <span className="text-lg text-gray-400 line-through">
                     ${(selectedSize?.price || product.basePrice)?.toFixed(2)}
-                  </p>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md">
-                    {product.salePercent 
-                      ? `${product.salePercent}% OFF` 
-                      : `SAVE ${Math.round((((selectedSize?.price || product.basePrice) - (getTotalPrice() / quantity)) / (selectedSize?.price || product.basePrice)) * 100)}%`}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-red-500 text-white text-xs font-medium">
+                    {product.salePercent ? `${product.salePercent}% OFF` : 'SALE'}
                   </span>
                 </div>
               ) : (
-                <p className="text-4xl font-bold tracking-tight text-gray-900">${getTotalPrice().toFixed(2)}</p>
+                <span className="text-2xl font-semibold text-gray-900">${getTotalPrice().toFixed(2)}</span>
               )}
             </div>
 
-            <div className="mt-6">
-              <h3 className="sr-only">Description</h3>
-              <div className="space-y-6 text-base text-gray-700">
-                <p>{product.description}</p>
-              </div>
-            </div>
+            {/* Short description */}
+            <p className="mt-4 text-gray-600 text-sm leading-relaxed">{product.description}</p>
 
             {/* Success/Error Messages */}
             {successMessage && (
-              <div className="mt-6 rounded-md bg-green-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-green-800">{successMessage}</p>
-                  </div>
-                </div>
+              <div className="mt-4 rounded bg-green-50 p-3 text-sm text-green-800">
+                {successMessage}
               </div>
             )}
 
             {error && (
-              <div className="mt-6 rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-red-800">{error}</p>
-                  </div>
-                </div>
+              <div className="mt-4 rounded bg-red-50 p-3 text-sm text-red-800">
+                {error}
               </div>
             )}
 
-            <form className="mt-6">
+            <form className="mt-6 space-y-6">
               {/* Image Upload */}
               {product.requiresImage && (
-                <div className="mb-8">
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                <div>
+                  <p className="h2 block text-lg font-bold text-gray-800 mb-1">
                     Upload your image <span className="text-red-500">*</span>
-                  </label>
-                  <label className="mt-1 cursor-pointer flex justify-center rounded-lg border border-dashed border-gray-900/25 px-3 py-4">
+                  </p>
+                  <label className="cursor-pointer flex justify-center rounded border-3 border-dashed border-gray-300 px-4 py-6 hover:border-gray-400 transition-colors">
                     <div className="text-center">
-                      <svg className="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
-                        <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clipRule="evenodd" />
+                      <svg className="mx-auto h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                       </svg>
-                       
-                      <span className="text-green-800">Upload a file</span>
+                      <span className="mt-2 block text-sm text-gray-600">Click to upload</span>
                       <input 
                         ref={fileInputRef}
                         type="file" 
                         className="sr-only"
                         accept="image/jpeg,image/png,image/gif"
                         onChange={handleImageUpload}
-                        /> 
-                        {/*<p className="pl-1">or drag and drop</p>*/}
-                      
-                      <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB<br/>Minimum dimensions: 500x500 pixels<br/>Higher resolution recommended for best results</p>
+                      />
+                      <p className="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
                     </div>
                   </label>
-                  {errors.image && <p className="mt-2 text-sm text-red-600">{errors.image}</p>}
-                  {errors.finalImage && <p className="mt-2 text-sm text-red-600">{errors.finalImage}</p>}
+                  {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                  {errors.finalImage && <p className="mt-1 text-sm text-red-600">{errors.finalImage}</p>}
+                  {errors.imageUpload && <p className="mt-1 text-sm text-red-600">{errors.imageUpload}</p>}
                 </div>
               )}
 
               {/* Size */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-gray-900">Size</h3>
-                  </div>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a size</legend>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-auto">
-                      {product.sizes.map((size) => (
-                        <label
-                          key={size.id}
-                          className={`cursor-pointer rounded-md px-3 py-3 text-sm font-semibold uppercase shadow-sm focus:outline-none sm:flex-1 ${
-                            selectedSize?.id === size.id
-                              ? 'bg-[#72B01D] text-white hover:bg-[#5A8E17]'
-                              : 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="size"
-                            value={size.id}
-                            checked={selectedSize?.id === size.id}
-                            onChange={() => setSelectedSize(size)}
-                            className="sr-only"
-                          />
-                          <span className="block text-center">{size.name}</span>
-                          {size.price > 0 && (
-                            <span className="block text-center text-xs mt-1">${size.price}</span>
-                          )}
-                        </label>
-                      ))}
-                    </div>
+              {product.sizes && product.sizes.filter(s => s.enabled !== false).length > 0 && (
+                <div className="product-option mb-3">
+                  <fieldset>
+                    <legend className="h2 text-lg">Select Size <span className="text-red-500">*</span></legend>
+                    {errors.size && <div className="text-red-500 small">{errors.size}</div>}
+                    {product.sizes.filter(s => s.enabled !== false).map((size) => (
+                      <label key={size.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
+                        {/* Show faces indicator for products that require images */}
+                        {product.requiresImage && size.faces && (
+                          <span className="product-faces mr-2 px-2 py-1">                            
+                            <span className="faces-count">
+                              {size.faces > 1 ? (
+                                <>
+                                  <Users size={18} />
+                                  {" "}1&ndash;{size.faces}
+                                </>
+                              ) : (
+                                <>
+                                  <User size={18} />
+                                  {" "}1
+                                </>
+                              )}
+                            </span>
+                          </span>
+                        )}
+                        <span className="size-option-name">{size.name}</span>
+                        <span className="option-price">
+                          <span className="option-price__wrapper">
+                             
+                              <span className="option-price__additional">
+                                <span className="option-price__currency">$</span>
+                                <span className="option-price__value">{size.price}</span>
+                              </span>
+                            
+                          </span>
+                        </span>
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size.id}
+                          checked={selectedSize?.id === size.id}
+                          onChange={() => setSelectedSize(size)}
+                        />
+                      </label>
+                    ))}
                   </fieldset>
-                  {errors.size && <p className="mt-2 text-sm text-red-600">{errors.size}</p>}
                 </div>
               )}
 
               {/* Background Options */}
-              {product.backgroundOptions && product.backgroundOptions.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-900">Background</h3>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a background</legend>
-                    <div className="space-y-3">
-                      {product.backgroundOptions.map((bg) => (
-                        <label
-                          key={bg.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedBackground?.id === bg.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="background"
-                            value={bg.id}
-                            checked={selectedBackground?.id === bg.id}
-                            onChange={() => setSelectedBackground(bg)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{bg.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {bg.price > 0 ? `+$${bg.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedBackground?.id === bg.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
+              {product.backgroundOptions && product.backgroundOptions.filter(bg => bg.enabled !== false).length > 0 && (
+                <div className="product-option mb-3">
+                  <fieldset>
+                    <legend className="h2 text-lg">Background Style <span className="text-red-500">*</span></legend>
+                    {product.backgroundOptions.filter(bg => bg.enabled !== false).map((bg) => (
+                      <label key={bg.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
+                        {bg.name}
+                        <span className="option-price">
+                          {bg.price === 0 ? '' : `+$${bg.price.toFixed(2)}`}
+                        </span>
+                        <input
+                          type="radio"
+                          name="background"
+                          value={bg.id}
+                          checked={selectedBackground?.id === bg.id}
+                          onChange={() => setSelectedBackground(bg)}
+                        />
+                      </label>
+                    ))}
                   </fieldset>
                 </div>
               )}
 
               {/* Light Base */}
-              {product.lightBases && product.lightBases.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-900">Light Base</h3>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Choose a light base</legend>
-                    <div className="space-y-3">
-                      {product.lightBases.map((base) => (
-                        <label
-                          key={base.id}
-                          className={`relative block cursor-pointer rounded-lg border px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between ${
-                            selectedLightBase?.id === base.id
-                              ? 'border-transparent ring-2 ring-[#72B01D]'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="lightBase"
-                            value={base.id}
-                            checked={selectedLightBase?.id === base.id}
-                            onChange={() => setSelectedLightBase(base)}
-                            className="sr-only"
-                          />
-                          <span className="flex items-center">
-                            <span className="flex flex-col text-sm">
-                              <span className="font-medium text-gray-900">{base.name}</span>
-                            </span>
-                          </span>
-                          <span className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
-                            <span className="font-medium text-gray-900">
-                              {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : 'No Extra Cost'}
-                            </span>
-                          </span>
-                          {selectedLightBase?.id === base.id && (
-                            <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-[#72B01D]" />
-                          )}
-                        </label>
-                      ))}
-                    </div>
+              {product.lightBases && product.lightBases.filter(lb => lb.enabled !== false).length > 0 && (
+                <div className="product-option mb-4">
+                  <fieldset>
+                    <legend className="h2 text-lg">Light Base <span className="text-red-500">*</span></legend>
+                    {product.lightBases.filter(lb => lb.enabled !== false).map((base) => (
+                      <label key={base.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
+                        {base.name}
+                        <span className="option-price">
+                          {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : ''}
+                        </span>
+                        <input
+                          type="radio"
+                          name="lightBase"
+                          value={base.id}
+                          checked={selectedLightBase?.id === base.id}
+                          onChange={() => setSelectedLightBase(base)}
+                        /> 
+                      </label>
+                    ))}
                   </fieldset>
                 </div>
               )}
 
               {/* Custom Text Checkbox Option */}
-              {product.textOptions && product.textOptions.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center mb-4">
+              {product.textOptions && product.textOptions.filter(t => t.enabled !== false).length > 0 && (
+                <div className="product-option mb-2">
+                  <div className="flex items-center">
                     <input
                       id="add-custom-text"
                       name="showCustomText"
@@ -888,61 +1085,46 @@ export default function ProductDetailClient() {
                           setCustomText({ line1: '', line2: '' })
                         }
                       }}
-                      className="h-4 w-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D]"
+                      className="w-4 h-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D] mr-2"
                     />
-                    <label htmlFor="add-custom-text" className="ml-3 text-sm font-medium text-gray-900">
+                    <label htmlFor="add-custom-text" className="h4 mb-0 cursor-pointer">
                       {(() => {
-                        const textPrice = (product.textOptions.find(t => t.price > 0) || product.textOptions[1])?.price || 0;
+                        const enabledTextOptions = product.textOptions.filter(t => t.enabled !== false);
+                        const textPrice = (enabledTextOptions.find(t => t.price > 0) || enabledTextOptions[1])?.price || 0;
                         return textPrice > 0 
-                          ? `Add Custom Text (+$${textPrice.toFixed(2)})`
+                          ? `Add Custom Text ( +$${textPrice.toFixed(2)} )`
                           : 'Add Custom Text (No Extra Cost)';
                       })()}
                     </label>
                   </div>
                   
                   {showCustomText && (
-                    <div className="space-y-2">
-                      <div>
-                        <label htmlFor="text-line-1" className="block text-sm text-gray-700 mb-1">
-                          Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
+                    <div className="mt-3">
+                      <div className="mb-3">
+                        <label htmlFor="text-line-1" className="block text-sm font-medium text-gray-700 mb-1">
+                          Custom Text Line 1 <span className="text-gray-400">({customText.line1.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-1"
-                          placeholder="e.g., Anniversary 2024"
+                          placeholder="e.g., In Loving Memory"
                           value={customText.line1}
                           onChange={(e) => setCustomText({ ...customText, line1: e.target.value })}
-                          className="block w-full 
-                          rounded-md 
-                          border-0 
-                          py-2.5 
-                          pl-4 
-                          text-gray-900 
-                          shadow-sm 
-                          ring-1 
-                          ring-inset 
-                          ring-gray-300 
-                          placeholder:text-gray-400 
-                          focus:ring-2 
-                          focus:ring-inset 
-                          focus:ring-[var(--brand-400)]
-                          active:ring-[var(--brand-400)]
-                          sm:text-sm 
-                          sm:leading-6"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:border-transparent"
                           maxLength={30}
                         />
                       </div>
                       <div>
-                        <label htmlFor="text-line-2" className="block text-sm text-gray-700 mb-1">
-                          Line 2 <span className="text-gray-400">({customText.line2.length}/30)</span>
+                        <label htmlFor="text-line-2" className="block text-sm font-medium text-gray-700 mb-1">
+                          Custom Text Line 2 <span className="text-gray-400">({customText.line2.length}/30)</span>
                         </label>
                         <input
                           type="text"
                           id="text-line-2"
-                          placeholder="e.g., Forever & Always"
+                          placeholder="e.g., Forever in Our Hearts"
                           value={customText.line2}
                           onChange={(e) => setCustomText({ ...customText, line2: e.target.value })}
-                          className="block w-full rounded-md border-0 py-2.5 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:border-transparent"
                           maxLength={30}
                         />
                       </div>
@@ -952,15 +1134,14 @@ export default function ProductDetailClient() {
               )}
 
               {/* Quantity */}
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-900 mb-2">Quantity</label>
-                <div className="flex items-center space-x-3">
+              <div className="product-option pt-2 mt-2">
+                <label className="h5">Quantity</label>
+                <div className="flex items-center gap-2 mt-2">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                   >
-                    <span className="sr-only">Decrease quantity</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clipRule="evenodd" />
                     </svg>
@@ -970,14 +1151,13 @@ export default function ProductDetailClient() {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="block w-20 rounded-md border-0 py-2 text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#72B01D] sm:text-sm sm:leading-6"
+                    className="w-20 px-3 py-2 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#72B01D]"
                   />
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50"
+                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                   >
-                    <span className="sr-only">Increase quantity</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                     </svg>
@@ -990,9 +1170,9 @@ export default function ProductDetailClient() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="cursor-pointer flex w-full items-center justify-center rounded-md border border-transparent bg-[#72B01D] px-8 py-3 text-base font-medium text-white hover:bg-[#5A8E17] focus:outline-none focus:ring-2 focus:ring-[#72B01D] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full mt-4 px-6 py-3 bg-[#72B01D] text-white text-lg font-semibold rounded-md hover:bg-[#5a8c17] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {addingToCart ? 'Adding to cart...' : `Add to cart - $${getTotalPrice().toFixed(2)}`}
+                {addingToCart ? 'Adding to cart...' : `Add to Cart - $${getTotalPrice().toFixed(2)}`}
               </button>
             </form>
           </div>

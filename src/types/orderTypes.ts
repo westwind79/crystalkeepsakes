@@ -8,8 +8,10 @@
  * Stores user-uploaded/edited images for product customization
  */
 export interface CustomImage {
-  dataUrl: string              // Masked/compressed for Cockpit3D
-  originalDataUrl?: string     // ✅ ADD: Original uploaded for display
+  dataUrl: string              // Masked/compressed image (server URL preferred, base64 fallback)
+  originalDataUrl?: string     // Original uploaded image (server URL preferred, base64 fallback)
+  serverUrl?: string           // Explicit server URL for masked image
+  originalServerUrl?: string   // Explicit server URL for original image
   filename: string
   mimeType: string
   fileSize: number
@@ -19,6 +21,8 @@ export interface CustomImage {
   maskId?: string
   maskName?: string
   fullResId?: string
+  tempOrderRef?: string        // Temp folder reference before real order number assigned
+  orderStartedAt?: string      // When order tracking began (image save time)
 }
 
 /**
@@ -60,16 +64,24 @@ export interface OrderLineItem {
   sku: string
   basePrice: number
   optionsPrice: number
-  totalPrice: number
+  price?: number       // Per-unit price (basePrice + optionsPrice, after discounts)
+  totalPrice: number   // Total price including quantity (price * quantity)
   quantity: number
   size: SizeDetails
   options: ProductOption[]
+  productImage?: string | null
   customImage?: CustomImage
   customText?: {
     text: string
     font?: string
     maxCharacters?: number
   }
+  // Sale/discount fields
+  onSale?: boolean
+  salePrice?: number
+  salePercent?: number
+  originalPrice?: number
+  discountAmount?: number
   dateAdded: string
   lastModified: string
 }

@@ -92,16 +92,16 @@ try {
     $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
-    // Get correct Stripe key
-    if ($mode === 'production') {
-        $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
-    } else {
-        $secretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
-    }
+    // ONLY uses STRIPE_SECRET_KEY
+    $secretKey = getEnvVariable('STRIPE_SECRET_KEY');
     
     if (!$secretKey) {
-        throw new Exception("Stripe secret key not found");
+        throw new Exception("STRIPE_SECRET_KEY not found in .env");
     }
+    
+    // Log key type for debugging
+    $keyType = strpos($secretKey, 'sk_live_') === 0 ? 'LIVE' : 'TEST';
+    error_log("Stripe key type: $keyType");
     
     // Load Stripe library
     $possibleVendorPaths = [

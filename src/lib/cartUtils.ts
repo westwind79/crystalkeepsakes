@@ -8,7 +8,6 @@
 
 import { logger } from '@/utils/logger'
 import { imageDB } from './imageStorageDB'
-import { uploadImageStorage } from './api/upload-image.php'
 
 export interface CartItem {
   // Product identification
@@ -28,9 +27,9 @@ export interface CartItem {
   size?: any  // Keep for backward compatibility
   sizeDetails?: any
   options: any
-  productImage?: string  // Product's own image (for items without custom images)
+  productImage?: string | null  // Product's own image (for items without custom images)
   
-  // Custom image storage (IndexedDB)
+  // Custom image storage (IndexedDB reference)
   customImageId?: string  // Reference to IndexedDB image
   customImageMetadata?: {
     filename?: string
@@ -38,13 +37,31 @@ export interface CartItem {
     hasImage: boolean
   }
   
-  // Image URLs for display (data URLs from IndexedDB)
+  // ✅ Custom image with SERVER URLs for Cockpit3D
+  customImage?: {
+    serverUrl?: string           // Server URL for masked image
+    originalServerUrl?: string   // Server URL for original image
+    filename?: string
+    mimeType?: string
+    width?: number
+    height?: number
+    processedAt?: string
+    maskId?: string
+    maskName?: string
+    tempOrderRef?: string
+    // For backward compatibility / display fallback
+    thumbnail?: string
+    dataUrl?: string
+    originalDataUrl?: string
+  }
+  
+  // Legacy image URLs (deprecated - use customImage.serverUrl instead)
   rawImageUrl?: string  // Original uploaded image (before masking)
   maskedImageUrl?: string  // Final masked/edited image (for Cockpit3D)
   
   // Custom text
   customText?: {
-    text: string
+    text?: string
     line1?: string
     line2?: string
   }
@@ -59,9 +76,25 @@ export interface CartItem {
  * Compress image to thumbnail for cart display
  * ✅ ENHANCED: Higher quality for cart preview (400px @ 0.9 quality)
  * Larger size and better quality = clearer cart images
+ * NOTE: Only works with base64 data URLs, not server URLs
  */
 async function compressImageToThumbnail(dataUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
+    // Skip compression for server URLs (they can't be drawn on canvas due to CORS)
+    if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+      // Return a placeholder or the URL itself for server images
+      console.log('⚠️ Skipping thumbnail compression for server URL')
+      resolve(dataUrl) // Just return the URL as-is
+      return
+    }
+    
+    // Validate it's a data URL
+    if (!dataUrl.startsWith('data:image/')) {
+      console.warn('⚠️ Invalid data URL format, skipping compression')
+      resolve(dataUrl)
+      return
+    }
+    
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
@@ -95,17 +128,36 @@ async function compressImageToThumbnail(dataUrl: string): Promise<string> {
       // ✅ Much higher quality (0.9 instead of 0.7)
       resolve(canvas.toDataURL('image/jpeg', 0.9))
     }
-    img.onerror = () => reject(new Error('Image compression failed'))
+    img.onerror = () => {
+      console.error('❌ Image compression failed for:', dataUrl.substring(0, 50))
+      reject(new Error('Image compression failed'))
+    }
     img.src = dataUrl
   })
 }
 
 /**
- * Clean options object - remove ALL image data URLs
+ * Clean options object/array - remove image data URLs but PRESERVE structure
+ * CRITICAL: This must preserve the options array structure for cart display!
  */
 function cleanOptions(options: any): any {
-  if (!options) return {}
+  if (!options) return []
   
+  // If options is an array (from ProductDetailClient buildProductOptions)
+  // Preserve the full array structure, just remove image data
+  if (Array.isArray(options)) {
+    return options.map((opt: any) => {
+      const cleaned = { ...opt }
+      // Remove any image data URLs that might be in options
+      delete cleaned.rawImageUrl
+      delete cleaned.imageUrl
+      delete cleaned.maskedImageUrl
+      delete cleaned.dataUrl
+      return cleaned
+    })
+  }
+  
+  // If options is an object (legacy format)
   const cleaned = { ...options }
   
   // Remove all image data URLs from options
@@ -115,17 +167,7 @@ function cleanOptions(options: any): any {
   delete cleaned.dataUrl
   delete cleaned.customImage
   
-  // Keep only essential metadata
-  return {
-    size: cleaned.size,
-    background: cleaned.background,
-    lightBase: cleaned.lightBase,
-    giftStand: cleaned.giftStand,
-    customText: cleaned.customText,
-    // Only keep image filenames, not data URLs
-    imageFilename: cleaned.imageFilename,
-    maskName: cleaned.maskName
-  }
+  return cleaned
 }
 
 /**
@@ -158,7 +200,8 @@ export async function addToCart(item: CartItem | any): Promise<void> {
         }
         
         // Store BOTH raw and masked images in IndexedDB
-        customImageId = await imageDB.storeImage(
+        // Note: storeImage returns null if IndexedDB is unavailable (graceful fallback)
+        const storedId = await imageDB.storeImage(
           item.productId,
           maskedImageUrl,
           thumbnail,
@@ -176,24 +219,31 @@ export async function addToCart(item: CartItem | any): Promise<void> {
           rawThumbnail // Store raw thumbnail
         )
         
+        // storedId will be null if IndexedDB is unavailable
+        customImageId = storedId || undefined
+        
         customImageMetadata = {
           filename: item.customImage?.filename || item.options?.imageFilename,
           maskName: item.customImage?.maskName || item.options?.maskName,
           hasImage: true
         }
         
-        logger.success('Images stored in IndexedDB', {
-          imageId: customImageId,
-          hasRawImage: !!rawImageUrl,
-          maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
-          rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
-          thumbnailSizeKB: Math.round(thumbnail.length / 1024)
-        })
+        if (customImageId) {
+          logger.success('Images stored in IndexedDB', {
+            imageId: customImageId,
+            hasRawImage: !!rawImageUrl,
+            maskedSizeKB: Math.round(maskedImageUrl.length / 1024),
+            rawSizeKB: rawImageUrl ? Math.round(rawImageUrl.length / 1024) : 0,
+            thumbnailSizeKB: Math.round(thumbnail.length / 1024)
+          })
+        } else {
+          console.warn('⚠️ IndexedDB unavailable - images will use server URLs only')
+        }
       } catch (error) {
         logger.error('Failed to store image in IndexedDB', error)
         // Continue without image rather than fail entire add
         customImageId = undefined
-        customImageMetadata = { hasImage: false }
+        customImageMetadata = { hasImage: true } // Still mark as having image (server URL)
       }
     }
     
@@ -202,6 +252,7 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     
     // Create cart item with ALL order data preserved
     // NOTE: Do NOT store image data URLs here - they're in IndexedDB only!
+    // BUT we DO store server URLs since those are lightweight strings
     const cartItem: CartItem = {
       // Product identification
       productId: item.productId,
@@ -210,10 +261,12 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       sku: item.sku,
       
       // Pricing (preserve all price fields)
+      // IMPORTANT: price should be PER-UNIT price (basePrice + optionsPrice), NOT total
+      // totalPrice already includes quantity, so we should NOT use it for price
       basePrice: item.basePrice,
       optionsPrice: item.optionsPrice,
-      price: item.price || item.totalPrice || item.basePrice,
-      totalPrice: item.totalPrice || (item.price * item.quantity),
+      price: item.price || ((item.basePrice || 0) + (item.optionsPrice || 0)) || item.basePrice,
+      totalPrice: item.totalPrice || ((item.price || ((item.basePrice || 0) + (item.optionsPrice || 0))) * item.quantity),
       quantity: item.quantity,
       
       // Product configuration (preserve full structure)
@@ -222,12 +275,25 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       options: item.options || cleanedOptions,  // Preserve original options array/object
       productImage: item.productImage || null,
       
-      // Custom image (IndexedDB reference ONLY - not data URLs!)
+      // Custom image references
       customImageId,
       customImageMetadata,
       
-      // DO NOT store image data URLs in localStorage - causes QuotaExceeded!
-      // Images are loaded from IndexedDB when displaying cart
+      // ✅ CRITICAL: Store server URLs for Cockpit3D order payload
+      // These are lightweight string URLs, NOT base64 data
+      customImage: item.customImage ? {
+        serverUrl: item.customImage.serverUrl,
+        originalServerUrl: item.customImage.originalServerUrl,
+        filename: item.customImage.filename,
+        mimeType: item.customImage.mimeType,
+        width: item.customImage.width,
+        height: item.customImage.height,
+        processedAt: item.customImage.processedAt,
+        maskId: item.customImage.maskId,
+        maskName: item.customImage.maskName,
+        tempOrderRef: item.customImage.tempOrderRef,
+        // DO NOT store dataUrl or originalDataUrl (base64) - causes QuotaExceeded!
+      } : undefined,
       
       // Custom text (preserve full object)
       customText: item.customText,
@@ -237,6 +303,25 @@ export async function addToCart(item: CartItem | any): Promise<void> {
       lastModified: item.lastModified || new Date().toISOString(),
       lineItemId: item.lineItemId
     }
+    
+    // ✅ Debug: Log what we're storing with clear visibility
+    console.log('📦 ===== ADD TO CART: CUSTOM IMAGE CHECK =====')
+    console.log('📦 Input item.customImage:', item.customImage ? {
+      hasServerUrl: !!item.customImage.serverUrl,
+      serverUrl: item.customImage.serverUrl,
+      hasOriginalServerUrl: !!item.customImage.originalServerUrl,
+      originalServerUrl: item.customImage.originalServerUrl,
+      tempOrderRef: item.customImage.tempOrderRef,
+      filename: item.customImage.filename
+    } : 'undefined')
+    console.log('📦 Stored cartItem.customImage:', cartItem.customImage ? {
+      hasServerUrl: !!cartItem.customImage.serverUrl,
+      serverUrl: cartItem.customImage.serverUrl,
+      hasOriginalServerUrl: !!cartItem.customImage.originalServerUrl,
+      originalServerUrl: cartItem.customImage.originalServerUrl,
+      tempOrderRef: cartItem.customImage.tempOrderRef
+    } : 'undefined')
+    console.log('📦 ===== END CUSTOM IMAGE CHECK =====')
     
     // ✅ BUSINESS DECISION: NEVER combine cart items - always add as separate line items
     // This ensures customers see each item distinctly, making it clear they're ordering multiple units
@@ -254,7 +339,8 @@ export async function addToCart(item: CartItem | any): Promise<void> {
     
     logger.success('Item added to cart', { 
       totalItems: cart.length,
-      hasImage: !!customImageId
+      hasImage: !!customImageId,
+      hasServerUrl: !!cartItem.customImage?.serverUrl
     })
   } catch (error) {
     logger.error('Failed to add item to cart', error)
@@ -277,21 +363,27 @@ export function getCart(): CartItem[] {
 
 /**
  * Get cart with images loaded from IndexedDB
+ * Falls back to server URLs if IndexedDB is unavailable
  */
 export async function getCartWithImages(): Promise<Array<CartItem & { 
   customImage?: { 
-    dataUrl: string
-    thumbnail: string
+    dataUrl?: string
+    thumbnail?: string
     rawImageDataUrl?: string
     rawImageThumbnail?: string
-    metadata: any
+    metadata?: any
+    // Server URLs (always available if uploaded)
+    serverUrl?: string
+    originalServerUrl?: string
+    tempOrderRef?: string
   } 
 }>> {
   const cart = getCart()
   
-  // Load images from IndexedDB
+  // Load images from IndexedDB (if available)
   const cartWithImages = await Promise.all(
     cart.map(async (item) => {
+      // If we have an IndexedDB reference, try to load it
       if (item.customImageId) {
         try {
           const imageRecord = await imageDB.getImage(item.customImageId)
@@ -299,22 +391,43 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
             return {
               ...item,
               customImage: {
+                // IndexedDB data
                 dataUrl: imageRecord.dataUrl, // Masked image
                 thumbnail: imageRecord.thumbnail, // Masked thumbnail
                 rawImageDataUrl: imageRecord.rawImageDataUrl, // Original uploaded image
                 rawImageThumbnail: imageRecord.rawImageThumbnail, // Original thumbnail
-                metadata: imageRecord.metadata
+                metadata: imageRecord.metadata,
+                // ✅ Preserve ALL server URLs and refs from cart item
+                serverUrl: item.customImage?.serverUrl,
+                originalServerUrl: item.customImage?.originalServerUrl,
+                tempOrderRef: item.customImage?.tempOrderRef
               }
             }
           }
         } catch (error) {
-          logger.warn(`Failed to load image for cart item`, { 
-            productId: item.productId,
-            imageId: item.customImageId,
-            error 
-          })
+          // IndexedDB failed - fall through to use server URLs
+          console.warn(`⚠️ IndexedDB unavailable for cart item ${item.productId}`)
         }
       }
+      
+      // ✅ If we have server URLs but no IndexedDB data, preserve all customImage fields
+      // This is the fallback for privacy mode browsers
+      if (item.customImage?.serverUrl || item.customImage?.tempOrderRef) {
+        return {
+          ...item,
+          customImage: {
+            // Use server URL as thumbnail fallback
+            thumbnail: item.customImage?.serverUrl || item.customImage?.dataUrl,
+            dataUrl: item.customImage?.dataUrl,
+            // ✅ Preserve ALL server data
+            serverUrl: item.customImage?.serverUrl,
+            originalServerUrl: item.customImage?.originalServerUrl,
+            tempOrderRef: item.customImage?.tempOrderRef,
+            metadata: item.customImageMetadata
+          }
+        }
+      }
+      
       return item
     })
   )
@@ -328,11 +441,33 @@ export async function getCartWithImages(): Promise<Array<CartItem & {
 export function saveCart(cart: CartItem[]): void {
   try {
     // Strip large image data URLs before saving to localStorage
+    // ONLY keep: serverUrl, originalServerUrl, filename, metadata references
     const cartForStorage = cart.map(item => {
       const cleaned = { ...item }
       // Remove image data URLs - only keep imageId references
       delete cleaned.rawImageUrl
       delete cleaned.maskedImageUrl
+      
+      // ✅ CRITICAL: Strip base64 from customImage - only keep server URLs!
+      if (cleaned.customImage) {
+        cleaned.customImage = {
+          // Keep server URLs (small strings)
+          serverUrl: cleaned.customImage.serverUrl,
+          originalServerUrl: cleaned.customImage.originalServerUrl,
+          // Keep metadata (small)
+          filename: cleaned.customImage.filename,
+          mimeType: cleaned.customImage.mimeType,
+          width: cleaned.customImage.width,
+          height: cleaned.customImage.height,
+          processedAt: cleaned.customImage.processedAt,
+          maskId: cleaned.customImage.maskId,
+          maskName: cleaned.customImage.maskName,
+          tempOrderRef: cleaned.customImage.tempOrderRef,
+          orderStartedAt: cleaned.customImage.orderStartedAt
+          // EXCLUDE: dataUrl, originalDataUrl (these are huge base64 strings!)
+        }
+      }
+      
       // Clean options object too
       if (cleaned.options) {
         cleaned.options = cleanOptions(cleaned.options)
@@ -525,8 +660,14 @@ export async function getImageStorageStats() {
       storageHealth: checkStorageHealth()
     }
   } catch (error) {
-    logger.error('Failed to get storage stats', error)
-    return null
+    // Don't log as error - this is expected when IndexedDB is unavailable
+    console.warn('⚠️ IndexedDB stats unavailable:', error)
+    return {
+      totalImages: 0,
+      estimatedSizeMB: 0,
+      isAvailable: false,
+      storageHealth: checkStorageHealth()
+    }
   }
 }
 

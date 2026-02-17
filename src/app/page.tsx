@@ -55,86 +55,133 @@ export default function HomePage() {
   const ctaRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Hero animations - NO DELAYS
-      gsap.from('.hero-content', {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        ease: 'power3.out'
+    // Wait for fonts and images to load
+    const initAnimations = () => {
+      const ctx = gsap.context(() => {
+        // Refresh ScrollTrigger to account for loaded content
+        ScrollTrigger.refresh()
+
+        // Hero animations - NO DELAYS
+        gsap.from('.hero-content', {
+          opacity: 0,
+          y: 50,
+          duration: 1,
+          ease: 'power3.out'
+        })
+
+        gsap.from('.hero-cta a', {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'power2.out'
+        })
+
+        gsap.from('.hero-swiper', {
+          opacity: 0,
+          scale: 0.9,
+          rotation: -5,
+          duration: 1,
+          ease: 'back.out(1.2)'
+        })
+
+        // Process cards - FIXED: Set initial state, then animate from 0
+        gsap.set('.process-step', { y: 0, opacity: 1 })
+        gsap.from('.process-step', {
+          scrollTrigger: {
+            trigger: processRef.current,
+            start: 'top 85%', // Changed from 75% for better mobile visibility
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+            // markers: true, // Uncomment to debug on mobile
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.12,
+          ease: 'power2.out'
+        })
+
+        // About section slide from left
+        gsap.from('.about-content', {
+          scrollTrigger: {
+            trigger: aboutRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+          },
+          x: -60,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
+        })
+
+        gsap.from('.about-image', {
+          scrollTrigger: {
+            trigger: aboutRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+          },
+          x: 60,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
+        })
+
+        // CTA zoom in
+        gsap.from('.cta-content', {
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+          },
+          scale: 0.95,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out'
+        })
       })
 
-      gsap.from('.hero-cta a', {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: 'power2.out'
-      })
+      return ctx
+    }
 
-      gsap.from('.hero-swiper', {
-        opacity: 0,
-        scale: 0.9,
-        rotation: -5,
-        duration: 1,
-        ease: 'back.out(1.2)'
-      })
+    // Initialize animations after a short delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      const ctx = initAnimations()
+      
+      // Refresh on window resize (important for mobile orientation changes)
+      const handleResize = () => {
+        ScrollTrigger.refresh()
+      }
+      
+      window.addEventListener('resize', handleResize)
+      
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        ctx.revert()
+      }
+    }, 100)
 
-      // Process cards - FIXED: Set initial state, then animate from 0
-      gsap.set('.process-step', { y: 0, opacity: 1 })
-      gsap.from('.process-step', {
-        scrollTrigger: {
-          trigger: processRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.12,
-        ease: 'power2.out'
-      })
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [])
 
-      // About section slide from left
-      gsap.from('.about-content', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        },
-        x: -60,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out'
-      })
+  // Add ScrollTrigger refresh on mount and after images load
+  useEffect(() => {
+    // Refresh ScrollTrigger after all images are loaded
+    const refreshOnLoad = () => {
+      ScrollTrigger.refresh()
+    }
 
-      gsap.from('.about-image', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        },
-        x: 60,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out'
-      })
-
-      // CTA zoom in
-      gsap.from('.cta-content', {
-        scrollTrigger: {
-          trigger: ctaRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        },
-        scale: 0.95,
-        opacity: 0,
-        duration: 0.6,
-        ease: 'power2.out'
-      })
-    })
-
-    return () => ctx.revert()
+    if (document.readyState === 'complete') {
+      refreshOnLoad()
+    } else {
+      window.addEventListener('load', refreshOnLoad)
+      return () => window.removeEventListener('load', refreshOnLoad)
+    }
   }, [])
 
   return (
@@ -143,7 +190,7 @@ export default function HomePage() {
       {/* Hero - Dark with Green Accent */}
       <section 
         ref={heroRef} 
-        className="hero flex items-center relative overflow-hidden min-h-[75vh] bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
+        className="hero flex items-center relative overflow-hidden bg-[#0a0a0a] py-16 sm:py-20 lg:py-28"
         style={{
           background: `linear-gradient(
             45deg, 
@@ -185,7 +232,7 @@ export default function HomePage() {
                 cardsEffect={{
                   slideShadows: false,
                   rotate: true,
-                  perSlideRotate: 2,
+                  perSlideRotate: 1,
                   perSlideOffset: 8,
                 }}
                 initialSlide={0}

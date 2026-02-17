@@ -1,18 +1,21 @@
 /**
  * Stripe Checkout Integration
- * @version 3.0.0
- * @date 2025-11-10
+ * @version 4.0.0
+ * @date 2025-12-25
  * @description Stripe Checkout handles payment, address, shipping, tax
+ * 
+ * ONLY uses these env variables:
+ * - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (frontend)
+ * - STRIPE_SECRET_KEY (backend/PHP)
+ * - STRIPE_WEBHOOK_SECRET (backend/PHP)
  */
 
 import { loadStripe } from '@stripe/stripe-js'
 import { logger } from '@/utils/logger'
 import { CartItem } from '@/lib/cartUtils'
 
-// Get publishable key
-const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-  ? process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY!
-  : process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY!
+// Get publishable key - ONLY from NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
 let stripePromise: ReturnType<typeof loadStripe> | null = null
 
@@ -20,7 +23,7 @@ export const getStripe = () => {
   if (!stripePromise) {
     if (!STRIPE_PUBLISHABLE_KEY) {
       logger.error('Stripe publishable key not found', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
-      throw new Error('Stripe publishable key not configured')
+      throw new Error('Stripe publishable key not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY')
     }
     stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY)
     logger.success('Stripe initialized', { mode: process.env.NEXT_PUBLIC_ENV_MODE })
@@ -67,6 +70,7 @@ export async function createPaymentIntent(
     logger.payment('Order totals', totals)
 
     // Send to PHP - PHP will VERIFY these amounts
+    // ✅ USE UNIFIED ORDER ID - passed in from caller (checkout page)
     const requestBody = {
       cartItems: cartItems.map(item => ({
         name: item.name,
@@ -77,7 +81,7 @@ export async function createPaymentIntent(
       })),
       cockpitOrder, 
       fullCartItems: fullCartItems || cartItems,
-      orderNumber: orderNumber || `ORD-${Date.now()}`,
+      orderNumber: orderNumber, // Must be provided by caller (unified order ID)
       shippingMethod: shippingMethod,
       // Send calculated totals (PHP will verify)
       subtotal: totals.subtotal,

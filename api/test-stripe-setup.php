@@ -41,20 +41,15 @@ $results['checks']['env_mode'] = [
     'status' => $mode !== 'not_set' ? 'PASS' : 'FAIL'
 ];
 
-// Check 4: Stripe keys
-if ($mode === 'production') {
-    $secretKey = getEnvVar('STRIPE_SECRET_KEY');
-    $keyType = 'STRIPE_SECRET_KEY (live)';
-} else {
-    $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
-    $keyType = 'STRIPE_DEVELOPMENT_SECRET_KEY (test)';
-}
+// Check 4: Stripe key - ONLY uses STRIPE_SECRET_KEY
+$secretKey = getEnvVar('STRIPE_SECRET_KEY');
+$keyType = strpos($secretKey, 'sk_live_') === 0 ? 'LIVE' : 'TEST';
 
 $results['checks']['stripe_key'] = [
     'name' => 'Stripe Secret Key',
-    'type' => $keyType,
+    'type' => "STRIPE_SECRET_KEY ($keyType)",
     'configured' => !empty($secretKey),
-    'starts_with' => $secretKey ? substr($secretKey, 0, 7) : 'NOT_SET',
+    'starts_with' => $secretKey ? substr($secretKey, 0, 12) : 'NOT_SET',
     'status' => !empty($secretKey) ? 'PASS' : 'FAIL'
 ];
 

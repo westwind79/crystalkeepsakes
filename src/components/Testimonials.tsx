@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -34,57 +34,66 @@ const testimonials = [
 
 export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted || !sectionRef.current) return
+
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
-      if (!sectionRef.current) return
-
       const ctx = gsap.context(() => {
         // Set initial visibility to ensure elements are visible by default
         gsap.set('.testimonial-card', { opacity: 1, y: 0 })
         gsap.set('.star-icon', { opacity: 1, scale: 1 })
 
-        // Animate testimonial cards sliding in - FASTER
+        // Animate testimonial cards sliding in
         const cards = gsap.utils.toArray('.testimonial-card')
         if (cards.length > 0) {
           gsap.from(cards, {
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 75%',
-              toggleActions: 'play none none none'
+              start: 'top 85%', // Changed from 75% for better mobile triggering
+              toggleActions: 'play none none none',
+              // markers: true, // Uncomment to debug
             },
             y: 40,
             opacity: 0,
-            duration: 0.5,
-            stagger: 0.1,
+            duration: 0.6,
+            stagger: 0.12,
             ease: 'power2.out'
           })
         }
 
-        // Animate stars fading in - MUCH FASTER
+        // Animate stars fading in
         const stars = gsap.utils.toArray('.star-icon')
         if (stars.length > 0) {
           gsap.from(stars, {
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 75%',
-              toggleActions: 'play none none none'
+              start: 'top 85%',
+              toggleActions: 'play none none none',
             },
             scale: 0,
             opacity: 0,
-            duration: 0.45,
-            stagger: 0.085,
+            duration: 0.5,
+            stagger: 0.08,
             ease: 'back.out(1.7)'
           })
         }
+
+        // Single refresh after animation setup
+        ScrollTrigger.refresh()
       }, sectionRef)
 
       return () => ctx.revert()
-    }, 100)
+    }, 150)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [mounted])
 
   return (
     <section ref={sectionRef} className="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-16 md:py-20 relative overflow-hidden">

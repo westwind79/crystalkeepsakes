@@ -8,7 +8,7 @@ const configs = {
   test: {
     targetOut: 'out-test',
     env: '.env.production.test',
-    htaccess: '_htaccess.production.test',  // ✅ Your actual file
+    htaccess: '.htaccess.production.test',  // ✅ Your actual file
     basePath: '/test',
     stripeKeys: 'TEST (sk_test_...)',
     uploadTo: '/public_html/crystalkeepsakes.com/test/',
@@ -17,7 +17,7 @@ const configs = {
   prod: {
     targetOut: 'out-prod',
     env: '.env.production',
-    htaccess: '_htaccess.production',  // ✅ Your actual file
+    htaccess: '.htaccess.production',  // ✅ Your actual file
     basePath: '',
     stripeKeys: 'LIVE (sk_live_...)',
     uploadTo: '/public_html/crystalkeepsakes.com/',
@@ -26,7 +26,7 @@ const configs = {
   local: {
     targetOut: 'out',
     env: '.env',
-    htaccess: '_htaccess.local',  // ✅ Your actual file
+    htaccess: '.htaccess.local',  // ✅ Your actual file
     basePath: '',
     stripeKeys: 'TEST (sk_test_...)',
     uploadTo: 'N/A - Served by MAMP',
@@ -90,17 +90,6 @@ try {
     console.log(`  ⚠️  ${config.htaccess} not found - build will work without it`);
   }
 
-  // Step 4: Copy vendor/ folder (for PHP dependencies)
-  const vendorSource = 'vendor';
-  const vendorDest = path.join(config.targetOut, 'vendor');
-  
-  if (fs.existsSync(vendorSource)) {
-    fs.copySync(vendorSource, vendorDest, { overwrite: true });
-    console.log(`  ✅ Copied vendor/ → ${config.targetOut}/vendor/`);
-  } else if (mode !== 'local') {
-    console.log(`  ⚠️  vendor/ folder not found - run 'composer install' if using Stripe`);
-  }
-
   // Step 5: Copy .env file to build output
   // This .env will be used by the PHP backend on the server
   if (fs.existsSync(config.env)) {
@@ -109,12 +98,19 @@ try {
     fs.copyFileSync(config.env, envDest);
     console.log(`  ✅ Copied ${config.env} → ${config.targetOut}/.env`);
     
-    // Also create .env.example for reference
-    const envExample = path.join(config.targetOut, '.env.example');
-    fs.copyFileSync(config.env, envExample);
-    console.log(`  ✅ Created .env.example (backup reference)`);
   } else {
     console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
+  }
+
+  // Step 5b: Copy composer.json for PHP dependencies
+  // This allows running 'composer install' on the server if vendor folder is missing
+  const composerSource = 'composer.json';
+  if (fs.existsSync(composerSource)) {
+    const composerDest = path.join(config.targetOut, 'composer.json');
+    fs.copyFileSync(composerSource, composerDest);
+    console.log(`  ✅ Copied composer.json → ${config.targetOut}/composer.json`);
+  } else {
+    console.log(`  ⚠️  composer.json not found - PHP dependencies may not work`);
   }
 
   // Step 6: Create deployment instructions
@@ -162,6 +158,13 @@ try {
    ☐ Check contact form works
    ☐ Verify order confirmation email
    ${mode === 'prod' ? '☐ Check SSL certificate is valid' : '☐ Verify /test is password protected (optional)'}
+
+📦 PHP DEPENDENCIES (Stripe):
+   ☐ composer.json is included in build
+   ☐ If vendor/ folder is missing on server, run:
+      cd ${config.uploadTo}
+      composer install
+   ☐ Verify vendor/autoload.php exists
 
 ⚠️  SAFETY REMINDERS:
    ${mode === 'prod' ? '• Using LIVE Stripe keys - real charges will occur!' : '• Using TEST Stripe keys - no real charges'}

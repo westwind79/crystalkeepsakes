@@ -19,8 +19,8 @@ export default function Footer() {
             <h5 className="text-text-primary text-lg font-semibold mb-4">
               CrystalKeepsakes
             </h5>
-            <p className="text-text-tertiary text-sm">
-              Preserving memories in crystal since 2020
+            <p className="text-text-tertiary text-sm leading-relaxed">
+              We transform your most treasured photographs into stunning 3D laser-engraved crystal keepsakes. Each piece is precision-crafted to preserve life's precious moments—weddings, memorials, pets, and milestones—in timeless optical crystal.
             </p>
           </div>
           

@@ -1,271 +1,777 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { buildCockpit3DOrder, validateCockpit3DOrder, type Cockpit3DOrder } from '@/lib/cockpit3d-order-builder'
-import { getCartWithImages } from '@/lib/cartUtils'
+/**
+ * DEBUG OVERLAY - Single Source of Truth
+ * =====================================
+ * Shows ALL system state, order IDs, cart data, environment, storage, etc.
+ * 
+ * Tabs:
+ * - Order IDs: Unified session, localStorage, sessionStorage state
+ * - Environment: All env variables, Stripe key type, Cockpit3D config
+ * - Storage: localStorage, sessionStorage, IndexedDB stats
+ * - Cart: All cart items with image URLs and order refs
+ * - Cockpit3D: Full order preview and test submission
+ * - Logs: Real-time activity log
+ * 
+ * Enable: ?debug=true OR development/testing mode
+ */
 
-interface DebugStep {
-  id: string
-  label: string
-  status: 'pending' | 'active' | 'complete' | 'error'
-  data?: any
-  timestamp?: string
-  error?: string
+import { useState, useEffect, useCallback } from 'react'
+import { getImageStorageStats, checkStorageHealth, getCartWithImages, getCart } from '@/lib/cartUtils'
+import { buildCockpit3DOrder, validateCockpit3DOrder, type Cockpit3DOrder } from '@/lib/cockpit3d-order-builder'
+import { getCurrentOrderSession, getOrCreateOrderSession, clearOrderSession, type OrderSession } from '@/lib/unifiedOrderId'
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface OrderIdState {
+  unifiedSession: OrderSession | null
+  localStorage: {
+    pending_order_number: string | null
+    ck_order_session: string | null
+    ck_order_counter: string | null
+  }
+  sessionStorage: {
+    pendingOrder: any | null
+  }
+  cartItems: Array<{
+    productId: string
+    tempOrderRef?: string
+    serverUrl?: string
+  }>
+  mismatchWarnings: string[]
 }
 
-type TabType = 'activity' | 'order' | 'env'
+interface EnvironmentState {
+  mode: string
+  basePath: string
+  phpBackendUrl: string
+  stripePublishableKey: string
+  stripeKeyType: 'LIVE' | 'TEST' | 'NOT SET'
+  cockpit3dRetailerId: string
+  cockpit3dApiUrl: string
+  nodeEnv: string
+  buildTime: string
+}
+
+interface StorageState {
+  localStorage: {
+    used: number
+    limit: number
+    percentUsed: number
+    keys: string[]
+  }
+  sessionStorage: {
+    used: number
+    keys: string[]
+  }
+  indexedDB: {
+    available: boolean
+    totalImages: number
+    estimatedSizeMB: number
+  }
+}
+
+interface CartState {
+  itemCount: number
+  totalQuantity: number
+  totalPrice: number
+  items: Array<{
+    productId: string
+    name: string
+    sku: string
+    quantity: number
+    price: number
+    hasCustomImage: boolean
+    serverUrl?: string
+    originalServerUrl?: string
+    tempOrderRef?: string
+    options: any[]
+  }>
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 export default function DebugOverlay() {
   const [isOpen, setIsOpen] = useState(false)
-  const [steps, setSteps] = useState<DebugStep[]>([])
+  const [isMinimized, setIsMinimized] = useState(false)
+  const [activeTab, setActiveTab] = useState<'order-ids' | 'env' | 'storage' | 'cart' | 'cockpit3d' | 'logs'>('order-ids')
   const [mounted, setMounted] = useState(false)
-  const [shouldShowDebug, setShouldShowDebug] = useState(false)
-  const [activeTab, setActiveTab] = useState<TabType>('activity')
-  const [orderPreview, setOrderPreview] = useState<Cockpit3DOrder | null>(null)
-  const [orderValidation, setOrderValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
-  const [cartItems, setCartItems] = useState<any[]>([])
-  const [isLoadingOrder, setIsLoadingOrder] = useState(false)
+  const [shouldShow, setShouldShow] = useState(false)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  
+  // State for each section
+  const [orderIdState, setOrderIdState] = useState<OrderIdState | null>(null)
+  const [envState, setEnvState] = useState<EnvironmentState | null>(null)
+  const [storageState, setStorageState] = useState<StorageState | null>(null)
+  const [cartState, setCartState] = useState<CartState | null>(null)
+  const [cockpit3dOrder, setCockpit3dOrder] = useState<Cockpit3DOrder | null>(null)
+  const [cockpit3dValidation, setCockpit3dValidation] = useState<{ isValid: boolean; errors: string[] } | null>(null)
+  const [logs, setLogs] = useState<Array<{ time: string; type: string; message: string }>>([])
+  
+  // Test submission state
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitResult, setSubmitResult] = useState<any>(null)
+
+  // ============================================================================
+  // DATA GATHERING FUNCTIONS
+  // ============================================================================
+
+  const gatherOrderIdState = useCallback(async (): Promise<OrderIdState> => {
+    const session = getCurrentOrderSession()
+    const cart = getCart()
+    
+    // Check localStorage
+    const pending_order_number = localStorage.getItem('pending_order_number')
+    const ck_order_session = localStorage.getItem('ck_order_session')
+    const ck_order_counter = localStorage.getItem('ck_order_counter')
+    
+    // Check sessionStorage
+    let pendingOrder = null
+    try {
+      const stored = sessionStorage.getItem('pendingOrder')
+      pendingOrder = stored ? JSON.parse(stored) : null
+    } catch (e) {}
+    
+    // Extract cart item order refs
+    const cartItems = cart.map(item => ({
+      productId: item.productId,
+      tempOrderRef: item.customImage?.tempOrderRef,
+      serverUrl: item.customImage?.serverUrl
+    }))
+    
+    // Check for mismatches
+    const mismatchWarnings: string[] = []
+    const uniqueRefs = new Set(cartItems.map(i => i.tempOrderRef).filter(Boolean))
+    
+    if (session && pending_order_number && session.orderId !== pending_order_number) {
+      mismatchWarnings.push(`⚠️ Session ID (${session.orderId}) != localStorage pending_order_number (${pending_order_number})`)
+    }
+    
+    if (pendingOrder?.orderNumber && session && pendingOrder.orderNumber !== session.orderId) {
+      mismatchWarnings.push(`⚠️ Session ID (${session.orderId}) != sessionStorage pendingOrder.orderNumber (${pendingOrder.orderNumber})`)
+    }
+    
+    if (uniqueRefs.size > 1) {
+      mismatchWarnings.push(`⚠️ Multiple different order refs in cart: ${Array.from(uniqueRefs).join(', ')}`)
+    }
+    
+    if (session && uniqueRefs.size === 1) {
+      const cartRef = Array.from(uniqueRefs)[0]
+      if (cartRef && cartRef !== session.orderId) {
+        mismatchWarnings.push(`⚠️ Cart item ref (${cartRef}) != Session ID (${session.orderId})`)
+      }
+    }
+    
+    return {
+      unifiedSession: session,
+      localStorage: {
+        pending_order_number,
+        ck_order_session,
+        ck_order_counter
+      },
+      sessionStorage: {
+        pendingOrder
+      },
+      cartItems,
+      mismatchWarnings
+    }
+  }, [])
+
+  const gatherEnvState = useCallback((): EnvironmentState => {
+    const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
+    let stripeKeyType: 'LIVE' | 'TEST' | 'NOT SET' = 'NOT SET'
+    if (stripeKey.startsWith('pk_live_')) stripeKeyType = 'LIVE'
+    else if (stripeKey.startsWith('pk_test_')) stripeKeyType = 'TEST'
+    
+    return {
+      mode: process.env.NEXT_PUBLIC_ENV_MODE || 'development',
+      basePath: process.env.NEXT_PUBLIC_BASE_PATH || '(root)',
+      phpBackendUrl: process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'NOT SET',
+      stripePublishableKey: stripeKey 
+        ? `${stripeKey.substring(0, 12)}...${stripeKey.slice(-4)}`
+        : 'NOT SET',
+      stripeKeyType,
+      cockpit3dRetailerId: process.env.NEXT_PUBLIC_COCKPIT3D_RETAILER_ID || 'NOT SET',
+      cockpit3dApiUrl: process.env.NEXT_PUBLIC_COCKPIT3D_API_URL || 'NOT SET',
+      nodeEnv: process.env.NODE_ENV || 'unknown',
+      buildTime: process.env.NEXT_PUBLIC_BUILD_TIME || 'unknown'
+    }
+  }, [])
+
+  const gatherStorageState = useCallback(async (): Promise<StorageState> => {
+    // localStorage
+    let lsUsed = 0
+    const lsKeys: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key) {
+        lsKeys.push(key)
+        lsUsed += (localStorage.getItem(key)?.length || 0) + key.length
+      }
+    }
+    
+    // sessionStorage
+    let ssUsed = 0
+    const ssKeys: string[] = []
+    try {
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i)
+        if (key) {
+          ssKeys.push(key)
+          ssUsed += (sessionStorage.getItem(key)?.length || 0) + key.length
+        }
+      }
+    } catch (e) {}
+    
+    // IndexedDB
+    let idbStats = { totalImages: 0, estimatedSizeMB: 0, isAvailable: false }
+    try {
+      const stats = await getImageStorageStats()
+      idbStats = {
+        totalImages: stats?.totalImages || 0,
+        estimatedSizeMB: stats?.estimatedSizeMB || 0,
+        isAvailable: stats?.isAvailable ?? false
+      }
+    } catch (e) {}
+    
+    return {
+      localStorage: {
+        used: lsUsed,
+        limit: 5242880,
+        percentUsed: (lsUsed / 5242880) * 100,
+        keys: lsKeys
+      },
+      sessionStorage: {
+        used: ssUsed,
+        keys: ssKeys
+      },
+      indexedDB: {
+        available: idbStats.isAvailable,
+        totalImages: idbStats.totalImages,
+        estimatedSizeMB: idbStats.estimatedSizeMB
+      }
+    }
+  }, [])
+
+  const gatherCartState = useCallback(async (): Promise<CartState> => {
+    const cart = await getCartWithImages()
+    
+    return {
+      itemCount: cart.length,
+      totalQuantity: cart.reduce((sum, item) => sum + item.quantity, 0),
+      totalPrice: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+      items: cart.map(item => ({
+        productId: item.productId,
+        name: item.name,
+        sku: item.sku,
+        quantity: item.quantity,
+        price: item.price,
+        hasCustomImage: !!(item.customImage?.serverUrl || item.customImage?.dataUrl),
+        serverUrl: item.customImage?.serverUrl,
+        originalServerUrl: item.customImage?.originalServerUrl,
+        tempOrderRef: item.customImage?.tempOrderRef,
+        options: item.options || []
+      }))
+    }
+  }, [])
+
+  const gatherCockpit3dOrder = useCallback(async () => {
+    const cart = await getCartWithImages()
+    if (!cart || cart.length === 0) {
+      setCockpit3dOrder(null)
+      setCockpit3dValidation(null)
+      return
+    }
+    
+    const session = getCurrentOrderSession()
+    const orderNumber = session?.orderId || `TEST-${Date.now()}`
+    
+    const mockCustomer = {
+      email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'Customer',
+      phone: '555-0123',
+      shippingAddress: {
+        street1: '123 Test Street',
+        city: 'Test City',
+        state: 'CA',
+        zipCode: '90210',
+        country: 'US'
+      }
+    }
+    
+    const order = buildCockpit3DOrder(orderNumber, cart, mockCustomer)
+    const validation = validateCockpit3DOrder(order)
+    
+    setCockpit3dOrder(order)
+    setCockpit3dValidation(validation)
+  }, [])
+
+  const addLog = useCallback((type: string, message: string) => {
+    setLogs(prev => [{
+      time: new Date().toLocaleTimeString(),
+      type,
+      message
+    }, ...prev].slice(0, 100))
+  }, [])
+
+  const refreshAll = useCallback(async () => {
+    setLastRefresh(new Date())
+    const [orderIds, env, storage, cart] = await Promise.all([
+      gatherOrderIdState(),
+      gatherEnvState(),
+      gatherStorageState(),
+      gatherCartState()
+    ])
+    setOrderIdState(orderIds)
+    setEnvState(env)
+    setStorageState(storage)
+    setCartState(cart)
+    await gatherCockpit3dOrder()
+  }, [gatherOrderIdState, gatherEnvState, gatherStorageState, gatherCartState, gatherCockpit3dOrder])
+
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
 
   useEffect(() => {
     setMounted(true)
-    
-    // Check if debug should be enabled
     const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
-    const isDev = envMode === 'development'
-    const isTest = envMode === 'testing'
-    
-    // Check URL parameter
     const urlParams = new URLSearchParams(window.location.search)
     const hasDebugParam = urlParams.get('debug') === 'true'
+    setShouldShow(envMode !== 'production' || hasDebugParam)
     
-    // Show debug if: (dev OR test) OR has ?debug=true parameter
-    setShouldShowDebug(isDev || isTest || hasDebugParam)
-    
-    // Listen for debug events
-    const handleDebugEvent = (e: CustomEvent) => {
-      setSteps(prev => {
-        const newSteps = [...prev]
-        const existingIndex = newSteps.findIndex(s => s.id === e.detail.id)
-        
-        if (existingIndex >= 0) {
-          newSteps[existingIndex] = {
-            ...newSteps[existingIndex],
-            ...e.detail,
-            timestamp: new Date().toISOString()
-          }
-        } else {
-          newSteps.push({
-            ...e.detail,
-            timestamp: new Date().toISOString()
-          })
-        }
-        
-        return newSteps
-      })
-    }
-
-    window.addEventListener('debug-step' as any, handleDebugEvent)
-    return () => window.removeEventListener('debug-step' as any, handleDebugEvent)
-  }, [])
-
-  // Load order preview when Order tab is selected
-  const loadOrderPreview = useCallback(async () => {
-    setIsLoadingOrder(true)
-    try {
-      const cart = await getCartWithImages()
-      setCartItems(cart || [])
-      
-      if (cart && cart.length > 0) {
-        // Generate test order number
-        const testOrderNumber = `TEST-${Date.now()}`
-        
-        // Mock customer info for preview
-        const mockCustomer = {
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'Customer',
-          phone: '555-0123',
-          shippingAddress: {
-            street1: '123 Test Street',
-            city: 'Test City',
-            state: 'CA',
-            zipCode: '90210',
-            country: 'US'
-          }
-        }
-        
-        // Build preview order
-        const order = buildCockpit3DOrder(testOrderNumber, cart, mockCustomer)
-        setOrderPreview(order)
-        
-        // Validate
-        const validation = validateCockpit3DOrder(order)
-        setOrderValidation(validation)
-      } else {
-        setOrderPreview(null)
-        setOrderValidation(null)
-      }
-    } catch (err) {
-      console.error('Failed to load order preview:', err)
-    } finally {
-      setIsLoadingOrder(false)
-    }
-  }, [])
+    refreshAll()
+  }, [refreshAll])
 
   useEffect(() => {
-    if (isOpen && activeTab === 'order') {
-      loadOrderPreview()
-    }
-  }, [isOpen, activeTab, loadOrderPreview])
+    if (!autoRefresh || !isOpen) return
+    const interval = setInterval(refreshAll, 3000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, isOpen, refreshAll])
 
-  // Don't render at all if debug is not enabled
-  if (!mounted || !shouldShowDebug) return null
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const handleCreateNewSession = () => {
+    clearOrderSession()
+    const newSession = getOrCreateOrderSession()
+    addLog('ACTION', `Created new order session: ${newSession.orderId}`)
+    refreshAll()
+  }
+
+  const handleClearAllStorage = () => {
+    if (confirm('Clear ALL localStorage, sessionStorage, and order session?')) {
+      localStorage.clear()
+      sessionStorage.clear()
+      addLog('ACTION', 'Cleared all storage')
+      refreshAll()
+    }
+  }
+
+  const [sendTestEmail, setSendTestEmail] = useState(false)
+
+  const handleTestSubmit = async () => {
+    if (!cockpit3dOrder) return
+    
+    setIsSubmitting(true)
+    setSubmitResult(null)
+    addLog('TEST', `Submitting test order to Cockpit3D... (Email: ${sendTestEmail ? 'YES' : 'NO'})`)
+    
+    try {
+      const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
+      const response = await fetch(`${phpBackendUrl}/api/cockpit3d/submit-order.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...cockpit3dOrder,
+          testMode: true,
+          sendTestEmail: sendTestEmail  // ✅ Send test email to orders@crystalkeepsakes.com
+        })
+      })
+      
+      const result = await response.json()
+      setSubmitResult(result)
+      
+      // Log email result if applicable
+      if (result.email) {
+        addLog(result.email.sent ? 'SUCCESS' : 'INFO', 
+          `Email: ${result.email.sent ? '✅ Sent to ' + result.email.to : result.email.message}`)
+      }
+      
+      addLog(result.success ? 'SUCCESS' : 'ERROR', `Test order result: ${result.success ? 'OK' : result.error}`)
+    } catch (error: any) {
+      setSubmitResult({ success: false, error: error.message })
+      addLog('ERROR', `Test order failed: ${error.message}`)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
+  if (!mounted || !shouldShow) return null
+
+  // Minimized badge
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-4 right-4 z-[9999] bg-slate-900 text-white px-3 py-2 rounded-lg shadow-lg hover:bg-slate-800 flex items-center gap-2 text-sm font-mono"
+      >
+        <span className="text-green-400">●</span>
+        DEBUG
+        {orderIdState?.mismatchWarnings && orderIdState.mismatchWarnings.length > 0 && (
+          <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+            {orderIdState.mismatchWarnings.length}
+          </span>
+        )}
+      </button>
+    )
+  }
+
+  const tabs = [
+    { id: 'order-ids', label: '🆔 Order IDs', warning: orderIdState?.mismatchWarnings?.length },
+    { id: 'env', label: '⚙️ Environment' },
+    { id: 'storage', label: '💾 Storage' },
+    { id: 'cart', label: '🛒 Cart', count: cartState?.itemCount },
+    { id: 'cockpit3d', label: '📦 Cockpit3D' },
+    { id: 'logs', label: '📋 Logs', count: logs.length }
+  ]
 
   return (
-    <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 z-50 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 font-mono text-sm"
-      >
-        {isOpen ? '✕ Close' : '🐛 Debug'}
-      </button>
+    <div className={`fixed ${isMinimized ? 'bottom-4 right-4 w-auto' : 'bottom-4 right-4 w-[600px] max-h-[80vh]'} z-[9999] bg-slate-900 text-white rounded-lg shadow-2xl border border-slate-700 overflow-hidden font-mono text-xs`}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 bg-slate-800 border-b border-slate-700">
+        <div className="flex items-center gap-2">
+          <span className="text-green-400">●</span>
+          <span className="font-bold">DEBUG PANEL</span>
+          <span className="text-slate-400">|</span>
+          <span className="text-slate-400">{envState?.mode || '...'}</span>
+          {envState?.stripeKeyType && (
+            <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+              envState.stripeKeyType === 'LIVE' ? 'bg-red-600' : 
+              envState.stripeKeyType === 'TEST' ? 'bg-green-600' : 'bg-yellow-600'
+            }`}>
+              {envState.stripeKeyType}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-slate-500 text-[10px]">
+            {lastRefresh.toLocaleTimeString()}
+          </span>
+          <button onClick={refreshAll} className="p-1 hover:bg-slate-700 rounded" title="Refresh">
+            🔄
+          </button>
+          <button onClick={() => setAutoRefresh(!autoRefresh)} className={`p-1 rounded ${autoRefresh ? 'bg-green-600' : 'hover:bg-slate-700'}`} title="Auto-refresh">
+            ⏱️
+          </button>
+          <button onClick={() => setIsMinimized(!isMinimized)} className="p-1 hover:bg-slate-700 rounded">
+            {isMinimized ? '⬆️' : '⬇️'}
+          </button>
+          <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-red-600 rounded">
+            ✕
+          </button>
+        </div>
+      </div>
 
-      {/* Overlay */}
-      {isOpen && (
-        <div className="fixed inset-y-0 right-0 w-[450px] bg-gray-900 text-white shadow-2xl z-40 overflow-hidden flex flex-col">
-          {/* Header with Tabs */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-xl font-bold">🐛 Debug Panel</h2>
+      {!isMinimized && (
+        <>
+          {/* Tabs */}
+          <div className="flex border-b border-slate-700 overflow-x-auto">
+            {tabs.map(tab => (
               <button
-                onClick={() => setSteps([])}
-                className="text-xs bg-red-600 px-2 py-1 rounded hover:bg-red-700"
-              >
-                Clear
-              </button>
-            </div>
-            
-            {/* Tab Navigation */}
-            <div className="flex gap-1 bg-gray-800 p-1 rounded">
-              <button
-                onClick={() => setActiveTab('activity')}
-                className={`flex-1 px-3 py-1.5 text-xs rounded transition-colors ${
-                  activeTab === 'activity' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-3 py-2 whitespace-nowrap border-b-2 transition-colors ${
+                  activeTab === tab.id 
+                    ? 'border-blue-500 bg-slate-800' 
+                    : 'border-transparent hover:bg-slate-800'
                 }`}
               >
-                📋 Activity
+                {tab.label}
+                {tab.warning && tab.warning > 0 && (
+                  <span className="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                    {tab.warning}
+                  </span>
+                )}
+                {tab.count !== undefined && tab.count > 0 && !tab.warning && (
+                  <span className="ml-1 bg-slate-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                    {tab.count}
+                  </span>
+                )}
               </button>
-              <button
-                onClick={() => setActiveTab('order')}
-                className={`flex-1 px-3 py-1.5 text-xs rounded transition-colors ${
-                  activeTab === 'order' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                }`}
-              >
-                📦 Order Preview
-              </button>
-              <button
-                onClick={() => setActiveTab('env')}
-                className={`flex-1 px-3 py-1.5 text-xs rounded transition-colors ${
-                  activeTab === 'env' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                }`}
-              >
-                🔧 Environment
-              </button>
-            </div>
+            ))}
           </div>
 
-          {/* Tab Content */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {/* Activity Tab */}
-            {activeTab === 'activity' && (
-              <div>
-                {steps.length === 0 && (
-                  <p className="text-gray-400 text-sm">No activity yet. Add items to cart and proceed to checkout to see debug events.</p>
+          {/* Content */}
+          <div className="overflow-y-auto max-h-[60vh] p-3">
+            {/* ORDER IDS TAB */}
+            {activeTab === 'order-ids' && orderIdState && (
+              <div className="space-y-4">
+                {/* Warnings */}
+                {orderIdState.mismatchWarnings.length > 0 && (
+                  <div className="bg-red-900/50 border border-red-600 rounded p-2">
+                    <div className="font-bold text-red-400 mb-1">⚠️ ID MISMATCHES DETECTED</div>
+                    {orderIdState.mismatchWarnings.map((w, i) => (
+                      <div key={i} className="text-red-300 text-[11px]">{w}</div>
+                    ))}
+                  </div>
                 )}
 
-                {steps.map((step, i) => (
-                  <div key={i} className="mb-4 border-l-4 pl-3 border-gray-700">
-                    <div className="flex items-center gap-2 mb-1">
-                      {step.status === 'complete' && <span className="text-green-400">✓</span>}
-                      {step.status === 'active' && <span className="text-yellow-400">⟳</span>}
-                      {step.status === 'error' && <span className="text-red-400">✕</span>}
-                      {step.status === 'pending' && <span className="text-gray-500">○</span>}
-                      
-                      <span className="font-semibold text-sm">{step.label}</span>
+                {/* Unified Session */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-blue-400 mb-2">🆔 Unified Order Session</div>
+                  {orderIdState.unifiedSession ? (
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Order ID:</span>
+                        <span className="text-green-400 font-bold">{orderIdState.unifiedSession.orderId}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Status:</span>
+                        <span>{orderIdState.unifiedSession.status}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Created:</span>
+                        <span>{new Date(orderIdState.unifiedSession.createdAt).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Masked Image:</span>
+                        <span className={orderIdState.unifiedSession.images.masked ? 'text-green-400' : 'text-slate-500'}>
+                          {orderIdState.unifiedSession.images.masked ? '✓ Uploaded' : '✗ None'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Raw Image:</span>
+                        <span className={orderIdState.unifiedSession.images.raw ? 'text-green-400' : 'text-slate-500'}>
+                          {orderIdState.unifiedSession.images.raw ? '✓ Uploaded' : '✗ None'}
+                        </span>
+                      </div>
                     </div>
-                    
-                    {step.timestamp && (
-                      <p className="text-xs text-gray-500 mb-1">
-                        {new Date(step.timestamp).toLocaleTimeString()}
-                      </p>
-                    )}
+                  ) : (
+                    <div className="text-yellow-400">No session - will be created when image is saved</div>
+                  )}
+                </div>
 
-                    {step.error && (
-                      <p className="text-xs text-red-400 bg-red-900/20 p-2 rounded mb-2">
-                        {step.error}
-                      </p>
-                    )}
+                {/* localStorage Order Data */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-purple-400 mb-2">💾 localStorage Order Data</div>
+                  <div className="space-y-1 text-[11px]">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">pending_order_number:</span>
+                      <span className="text-slate-200">{orderIdState.localStorage.pending_order_number || '(not set)'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">ck_order_counter:</span>
+                      <span className="text-slate-200">{orderIdState.localStorage.ck_order_counter || '(not set)'}</span>
+                    </div>
+                  </div>
+                </div>
 
-                    {step.data && (
-                      <details className="text-xs">
-                        <summary className="cursor-pointer text-blue-400 hover:text-blue-300">
-                          View Data
-                        </summary>
-                        <pre className="bg-black/30 p-2 rounded mt-1 overflow-x-auto text-[10px]">
-                          {JSON.stringify(step.data, null, 2)}
-                        </pre>
-                      </details>
-                    )}
+                {/* sessionStorage Order Data */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-orange-400 mb-2">📦 sessionStorage pendingOrder</div>
+                  {orderIdState.sessionStorage.pendingOrder ? (
+                    <pre className="text-[10px] overflow-x-auto">
+                      {JSON.stringify(orderIdState.sessionStorage.pendingOrder, null, 2)}
+                    </pre>
+                  ) : (
+                    <div className="text-slate-500">(not set - created during checkout)</div>
+                  )}
+                </div>
+
+                {/* Cart Item Refs */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-cyan-400 mb-2">🛒 Cart Item Order Refs</div>
+                  {orderIdState.cartItems.length > 0 ? (
+                    <div className="space-y-1">
+                      {orderIdState.cartItems.map((item, i) => (
+                        <div key={i} className="flex justify-between text-[11px]">
+                          <span className="text-slate-400">{item.productId}:</span>
+                          <span className={item.tempOrderRef ? 'text-green-400' : 'text-slate-500'}>
+                            {item.tempOrderRef || '(no ref)'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-slate-500">Cart is empty</div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCreateNewSession}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm"
+                  >
+                    🆕 Create New Session
+                  </button>
+                  <button
+                    onClick={handleClearAllStorage}
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm"
+                  >
+                    🗑️ Clear All Storage
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ENVIRONMENT TAB */}
+            {activeTab === 'env' && envState && (
+              <div className="space-y-2">
+                {Object.entries(envState).map(([key, value]) => (
+                  <div key={key} className="flex justify-between py-1 border-b border-slate-700">
+                    <span className="text-slate-400">{key}:</span>
+                    <span className={`${
+                      key === 'stripeKeyType' 
+                        ? value === 'LIVE' ? 'text-red-400 font-bold' : 'text-green-400'
+                        : value === 'NOT SET' ? 'text-yellow-400' : 'text-slate-200'
+                    }`}>
+                      {String(value)}
+                    </span>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Order Preview Tab */}
-            {activeTab === 'order' && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-blue-400">Cockpit3D Order Structure</h3>
-                  <button
-                    onClick={loadOrderPreview}
-                    disabled={isLoadingOrder}
-                    className="text-xs bg-blue-600 px-2 py-1 rounded hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {isLoadingOrder ? '⟳ Loading...' : '🔄 Refresh'}
-                  </button>
-                </div>
-
-                {/* Cart Items Count */}
-                <div className="mb-4 p-3 bg-gray-800 rounded text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Cart Items:</span>
-                    <span className={cartItems.length > 0 ? 'text-green-400' : 'text-yellow-400'}>
-                      {cartItems.length} item(s)
-                    </span>
+            {/* STORAGE TAB */}
+            {activeTab === 'storage' && storageState && (
+              <div className="space-y-4">
+                {/* localStorage */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-purple-400 mb-2">
+                    💾 localStorage ({(storageState.localStorage.used / 1024).toFixed(1)} KB / 5 MB)
+                  </div>
+                  <div className="w-full bg-slate-700 rounded h-2 mb-2">
+                    <div 
+                      className={`h-2 rounded ${storageState.localStorage.percentUsed > 80 ? 'bg-red-500' : 'bg-green-500'}`}
+                      style={{ width: `${Math.min(storageState.localStorage.percentUsed, 100)}%` }}
+                    />
+                  </div>
+                  <div className="text-[10px] text-slate-400">
+                    Keys: {storageState.localStorage.keys.join(', ')}
                   </div>
                 </div>
 
-                {/* Validation Status */}
-                {orderValidation && (
-                  <div className={`mb-4 p-3 rounded text-xs ${
-                    orderValidation.isValid 
-                      ? 'bg-green-900/30 border border-green-500' 
-                      : 'bg-red-900/30 border border-red-500'
-                  }`}>
-                    <div className="font-bold mb-1">
-                      {orderValidation.isValid ? '✅ Order Valid' : '❌ Validation Errors'}
+                {/* sessionStorage */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-orange-400 mb-2">
+                    📦 sessionStorage ({(storageState.sessionStorage.used / 1024).toFixed(1)} KB)
+                  </div>
+                  <div className="text-[10px] text-slate-400">
+                    Keys: {storageState.sessionStorage.keys.join(', ') || '(empty)'}
+                  </div>
+                </div>
+
+                {/* IndexedDB */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-cyan-400 mb-2">🗄️ IndexedDB</div>
+                  <div className="space-y-1 text-[11px]">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Available:</span>
+                      <span className={storageState.indexedDB.available ? 'text-green-400' : 'text-red-400'}>
+                        {storageState.indexedDB.available ? '✓ Yes' : '✗ No'}
+                      </span>
                     </div>
-                    {orderValidation.errors.length > 0 && (
-                      <ul className="list-disc list-inside text-red-400">
-                        {orderValidation.errors.map((err, i) => (
-                          <li key={i}>{err}</li>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Images stored:</span>
+                      <span>{storageState.indexedDB.totalImages}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Estimated size:</span>
+                      <span>{storageState.indexedDB.estimatedSizeMB.toFixed(2)} MB</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CART TAB */}
+            {activeTab === 'cart' && cartState && (
+              <div className="space-y-4">
+                {/* Summary */}
+                <div className="bg-slate-800 rounded p-2">
+                  <div className="font-bold text-green-400 mb-2">🛒 Cart Summary</div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-slate-700 rounded p-2">
+                      <div className="text-2xl font-bold">{cartState.itemCount}</div>
+                      <div className="text-[10px] text-slate-400">Items</div>
+                    </div>
+                    <div className="bg-slate-700 rounded p-2">
+                      <div className="text-2xl font-bold">{cartState.totalQuantity}</div>
+                      <div className="text-[10px] text-slate-400">Quantity</div>
+                    </div>
+                    <div className="bg-slate-700 rounded p-2">
+                      <div className="text-2xl font-bold">${cartState.totalPrice.toFixed(2)}</div>
+                      <div className="text-[10px] text-slate-400">Total</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items */}
+                {cartState.items.map((item, i) => (
+                  <div key={i} className="bg-slate-800 rounded p-2">
+                    <div className="font-bold text-blue-400">{item.name}</div>
+                    <div className="grid grid-cols-2 gap-x-4 text-[11px] mt-1">
+                      <div className="text-slate-400">Product ID: <span className="text-slate-200">{item.productId}</span></div>
+                      <div className="text-slate-400">SKU: <span className="text-slate-200">{item.sku}</span></div>
+                      <div className="text-slate-400">Qty: <span className="text-slate-200">{item.quantity}</span></div>
+                      <div className="text-slate-400">Price: <span className="text-slate-200">${item.price.toFixed(2)}</span></div>
+                      <div className="text-slate-400">Custom Image: 
+                        <span className={item.hasCustomImage ? 'text-green-400' : 'text-slate-500'}>
+                          {item.hasCustomImage ? ' ✓' : ' ✗'}
+                        </span>
+                      </div>
+                      <div className="text-slate-400">Order Ref: 
+                        <span className={item.tempOrderRef ? 'text-green-400' : 'text-yellow-400'}>
+                          {item.tempOrderRef ? ` ${item.tempOrderRef.substring(0, 20)}...` : ' (none)'}
+                        </span>
+                      </div>
+                    </div>
+                    {item.serverUrl && (
+                      <div className="mt-1 text-[10px]">
+                        <div className="text-slate-400">Server URL:</div>
+                        <div className="text-blue-400 break-all">{item.serverUrl}</div>
+                      </div>
+                    )}
+                    {item.options.length > 0 && (
+                      <div className="mt-1 text-[10px]">
+                        <div className="text-slate-400">Options: {item.options.length}</div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {cartState.items.length === 0 && (
+                  <div className="text-center text-slate-500 py-4">Cart is empty</div>
+                )}
+              </div>
+            )}
+
+            {/* COCKPIT3D TAB */}
+            {activeTab === 'cockpit3d' && (
+              <div className="space-y-4">
+                {/* Validation */}
+                {cockpit3dValidation && (
+                  <div className={`rounded p-2 ${cockpit3dValidation.isValid ? 'bg-green-900/50 border border-green-600' : 'bg-red-900/50 border border-red-600'}`}>
+                    <div className="font-bold">
+                      {cockpit3dValidation.isValid ? '✅ Order Valid' : '❌ Order Invalid'}
+                    </div>
+                    {cockpit3dValidation.errors.length > 0 && (
+                      <ul className="mt-1 text-[11px]">
+                        {cockpit3dValidation.errors.map((e, i) => (
+                          <li key={i} className="text-red-300">• {e}</li>
                         ))}
                       </ul>
                     )}
@@ -273,221 +779,86 @@ export default function DebugOverlay() {
                 )}
 
                 {/* Order Preview */}
-                {orderPreview ? (
-                  <div className="space-y-4">
-                    {/* Order Header */}
-                    <div className="p-3 bg-gray-800 rounded text-xs space-y-2">
-                      <div className="font-bold text-blue-400 mb-2">📋 Order Info</div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Order ID:</span>
-                        <span className="text-white font-mono">{orderPreview.order_id}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Retailer ID:</span>
-                        <span className="text-white font-mono">{orderPreview.retailer_id}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Total:</span>
-                        <span className="text-green-400 font-bold">${orderPreview.total?.toFixed(2)}</span>
-                      </div>
-                    </div>
-
-                    {/* Shipping Address */}
-                    <div className="p-3 bg-gray-800 rounded text-xs space-y-1">
-                      <div className="font-bold text-blue-400 mb-2">📍 Shipping Address</div>
-                      <div>{orderPreview.address.firstname} {orderPreview.address.lastname}</div>
-                      <div>{orderPreview.address.street}</div>
-                      <div>{orderPreview.address.city}, {orderPreview.address.region} {orderPreview.address.postcode}</div>
-                      <div>{orderPreview.address.country}</div>
-                      <div className="text-gray-400 mt-2">{orderPreview.address.email}</div>
-                      <div className="text-gray-400">{orderPreview.address.telephone}</div>
-                    </div>
-
-                    {/* Line Items */}
-                    <div className="p-3 bg-gray-800 rounded text-xs">
-                      <div className="font-bold text-blue-400 mb-2">🛒 Line Items ({orderPreview.items.length})</div>
-                      {orderPreview.items.map((item, idx) => (
-                        <div key={idx} className="border-t border-gray-700 pt-2 mt-2 first:border-0 first:pt-0 first:mt-0">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <div className="font-bold text-white">{item.sku}</div>
-                              <div className="text-gray-400">Qty: {item.qty}</div>
-                              <div className="text-gray-400 font-mono text-[10px]">ID: {item.client_item_id}</div>
-                            </div>
-                            <div className="text-green-400">${item.price.toFixed(2)}</div>
-                          </div>
-                          
-                          {/* Item Options */}
-                          {item.options.length > 0 && (
-                            <div className="mt-2 pl-2 border-l-2 border-gray-600">
-                              <div className="text-gray-500 text-[10px] mb-1">Options:</div>
-                              {item.options.map((opt, optIdx) => (
-                                <div key={optIdx} className="text-[10px] text-gray-400">
-                                  • ID: {opt.id} {opt.qty && `(qty: ${opt.qty})`} {opt.value && `= ${JSON.stringify(opt.value)}`}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {/* Special Instructions */}
-                          {item.special_instructions && (
-                            <div className="mt-2 p-2 bg-yellow-900/20 rounded text-[10px] text-yellow-400">
-                              📝 {item.special_instructions}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Raw JSON */}
-                    <details className="text-xs">
-                      <summary className="cursor-pointer text-blue-400 hover:text-blue-300 font-bold p-2 bg-gray-800 rounded">
-                        📄 View Raw JSON
-                      </summary>
-                      <div className="mt-2 relative">
-                        <button
-                          onClick={() => navigator.clipboard.writeText(JSON.stringify(orderPreview, null, 2))}
-                          className="absolute top-2 right-2 text-[10px] bg-blue-600 px-2 py-0.5 rounded hover:bg-blue-700"
-                        >
-                          Copy
-                        </button>
-                        <pre className="bg-black/50 p-3 rounded overflow-x-auto text-[10px] max-h-[300px] overflow-y-auto">
-                          {JSON.stringify(orderPreview, null, 2)}
-                        </pre>
-                      </div>
-                    </details>
+                {cockpit3dOrder ? (
+                  <div className="bg-slate-800 rounded p-2">
+                    <div className="font-bold text-orange-400 mb-2">📦 Cockpit3D Order Preview</div>
+                    <pre className="text-[10px] overflow-x-auto max-h-[300px] overflow-y-auto bg-slate-900 p-2 rounded">
+                      {JSON.stringify(cockpit3dOrder, null, 2)}
+                    </pre>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <div className="text-4xl mb-2">🛒</div>
-                    <p>Add items to your cart to preview the Cockpit3D order structure</p>
+                  <div className="text-center text-slate-500 py-4">Add items to cart to preview order</div>
+                )}
+
+                {/* Test Submit */}
+                {cockpit3dOrder && (
+                  <div className="space-y-2">
+                    {/* Email option */}
+                    <label className="flex items-center gap-2 text-[11px] text-slate-400 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={sendTestEmail}
+                        onChange={(e) => setSendTestEmail(e.target.checked)}
+                        className="rounded bg-slate-700 border-slate-600"
+                      />
+                      <span>📧 Send test email to orders@crystalkeepsakes.com</span>
+                    </label>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleTestSubmit}
+                        disabled={isSubmitting}
+                        className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-slate-600 rounded text-sm"
+                      >
+                        {isSubmitting ? '⏳ Submitting...' : '🧪 Test Submit (No Charge)'}
+                      </button>
+                    </div>
+                    
+                    <div className="text-[10px] text-slate-500">
+                      ✓ Validates order structure<br/>
+                      ✓ Checks image URLs<br/>
+                      {sendTestEmail ? '✓ Sends notification email' : '✗ Email not enabled'}
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Result */}
+                {submitResult && (
+                  <div className={`rounded p-2 ${submitResult.success ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                    <div className="font-bold mb-1">
+                      {submitResult.success ? '✅ Test Successful' : '❌ Test Failed'}
+                    </div>
+                    <pre className="text-[10px] overflow-x-auto">
+                      {JSON.stringify(submitResult, null, 2)}
+                    </pre>
                   </div>
                 )}
               </div>
             )}
 
-            {/* Environment Tab */}
-            {activeTab === 'env' && (
-              <div className="space-y-4">
-                <div className="p-3 bg-gray-800 rounded text-xs space-y-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="font-bold text-blue-400">🔧 Environment Info</div>
-                    <button
-                      onClick={() => {
-                        const envInfo = {
-                          mode: process.env.NEXT_PUBLIC_ENV_MODE || 'development',
-                          basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/',
-                          backend: process.env.NEXT_PUBLIC_PHP_BACKEND_URL,
-                          stripeKey: process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-                            ? process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY?.substring(0, 20)
-                            : process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY?.substring(0, 20),
-                          stripeMode: process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? 'LIVE' : 'TEST'
-                        }
-                        navigator.clipboard.writeText(JSON.stringify(envInfo, null, 2))
-                      }}
-                      className="text-[10px] bg-blue-600 px-2 py-0.5 rounded hover:bg-blue-700"
-                    >
-                      Copy
-                    </button>
+            {/* LOGS TAB */}
+            {activeTab === 'logs' && (
+              <div className="space-y-1">
+                {logs.length === 0 && (
+                  <div className="text-center text-slate-500 py-4">No logs yet</div>
+                )}
+                {logs.map((log, i) => (
+                  <div key={i} className="flex gap-2 text-[11px] py-1 border-b border-slate-800">
+                    <span className="text-slate-500 w-20">{log.time}</span>
+                    <span className={`w-16 ${
+                      log.type === 'ERROR' ? 'text-red-400' :
+                      log.type === 'SUCCESS' ? 'text-green-400' :
+                      log.type === 'ACTION' ? 'text-blue-400' :
+                      'text-slate-400'
+                    }`}>[{log.type}]</span>
+                    <span className="flex-1">{log.message}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Mode:</span>
-                    <span className={
-                      process.env.NEXT_PUBLIC_ENV_MODE === 'production' 
-                        ? 'text-red-400 font-bold'
-                        : process.env.NEXT_PUBLIC_ENV_MODE === 'testing'
-                        ? 'text-yellow-400 font-bold'
-                        : 'text-blue-400 font-bold'
-                    }>
-                      {process.env.NEXT_PUBLIC_ENV_MODE || 'development'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Base Path:</span>
-                    <span className="text-white">{process.env.NEXT_PUBLIC_BASE_PATH || '/'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Backend:</span>
-                    <span className="text-white truncate max-w-[200px]" title={process.env.NEXT_PUBLIC_PHP_BACKEND_URL}>
-                      {process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'Not set'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Stripe Key:</span>
-                    <span className="text-white font-mono text-[10px]">
-                      {process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-                        ? (process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'
-                        : (process.env.NEXT_PUBLIC_STRIPE_DEVELOPMENT_PUBLISHABLE_KEY || 'NOT SET').substring(0, 20) + '...'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Stripe Mode:</span>
-                    <span className={
-                      process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-                        ? 'text-red-400 font-bold'
-                        : 'text-green-400 font-bold'
-                    }>
-                      {process.env.NEXT_PUBLIC_ENV_MODE === 'production' ? '🔴 LIVE' : '✓ TEST'}
-                    </span>
-                  </div>
-                  
-                  {/* Warning if production mode detected */}
-                  {process.env.NEXT_PUBLIC_ENV_MODE === 'production' && (
-                    <div className="mt-2 p-2 bg-red-900/30 border border-red-500 rounded">
-                      <div className="text-red-400 font-bold text-[10px]">⚠️ PRODUCTION MODE</div>
-                      <div className="text-red-300 text-[10px]">Using LIVE Stripe keys!</div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Cockpit3D Config */}
-                <div className="p-3 bg-gray-800 rounded text-xs space-y-1">
-                  <div className="font-bold text-blue-400 mb-2">🏭 Cockpit3D Config</div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Shop ID:</span>
-                    <span className="text-white font-mono">
-                      {process.env.NEXT_PUBLIC_COCKPIT3D_SHOP_ID || '256568874'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">API Status:</span>
-                    <span className="text-yellow-400">Not Connected</span>
-                  </div>
-                </div>
-
-                {/* Debug Tips */}
-                <div className="p-3 bg-blue-900/20 border border-blue-500 rounded text-xs">
-                  <div className="font-bold text-blue-400 mb-2">💡 Debug Tips</div>
-                  <ul className="space-y-1 text-gray-300">
-                    <li>• Add <code className="bg-black/30 px-1 rounded">?debug=true</code> to URL to show this panel in production</li>
-                    <li>• Check "Order Preview" tab to see Cockpit3D order structure</li>
-                    <li>• Activity tab shows real-time checkout events</li>
-                  </ul>
-                </div>
+                ))}
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
-    </>
+    </div>
   )
-}
-
-// Helper to emit debug events
-export function debugStep(id: string, label: string, status: DebugStep['status'], data?: any, error?: string) {
-  if (typeof window !== 'undefined') {
-    // Check if debug is enabled
-    const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
-    const isDev = envMode === 'development'
-    const isTest = envMode === 'testing'
-    const urlParams = new URLSearchParams(window.location.search)
-    const hasDebugParam = urlParams.get('debug') === 'true'
-    
-    // Only emit events if debug is enabled
-    if (isDev || isTest || hasDebugParam) {
-      window.dispatchEvent(new CustomEvent('debug-step', {
-        detail: { id, label, status, data, error }
-      }))
-    }
-  }
 }

@@ -82,9 +82,9 @@ const buildModes = {
     NEXT_PUBLIC_ENV_MODE: 'production',
     NODE_ENV: 'production'
   },
-  local: {
-    envFile: '.env.local',
-    BUILD_MODE: 'local',
+  development: {
+    envFile: '.env',
+    BUILD_MODE: 'dev',
     NEXT_PUBLIC_BASE_PATH: '',
     NEXT_PUBLIC_ENV_MODE: 'development',
     NODE_ENV: 'development'
@@ -149,22 +149,71 @@ console.log('');
 console.log('📋 Step 3: Running Next.js build...\n');
 
 try {
-  // Build command - Next.js will automatically load the correct .env file
-  // For test mode: .env.production.test
-  // For prod mode: .env.production
-  // For local mode: .env.local
+  // Clear .next cache to ensure clean build
+  const nextCacheDir = path.join(__dirname, '..', '.next');
+  if (fs.existsSync(nextCacheDir)) {
+    console.log('   🧹 Clearing .next cache...');
+    fs.rmSync(nextCacheDir, { recursive: true, force: true });
+  }
+  
+  // WINDOWS-COMPATIBLE FIX: Temporarily swap env files
+  // Next.js ONLY reads .env.production when NODE_ENV=production
+  // So we temporarily copy our target env file to .env.production
+  const envProductionPath = path.join(__dirname, '..', '.env.production');
+  const envBackupPath = path.join(__dirname, '..', '.env.production.backup');
+  const targetEnvPath = path.join(__dirname, '..', config.envFile);
+  
+  let needsRestore = false;
+  
+  if (mode === 'test' && fs.existsSync(targetEnvPath)) {
+    console.log('   🔄 Swapping env files for test build...');
+    
+    // Backup existing .env.production if it exists
+    if (fs.existsSync(envProductionPath)) {
+      fs.copyFileSync(envProductionPath, envBackupPath);
+      console.log('      → Backed up .env.production');
+      needsRestore = true;
+    }
+    
+    // Copy .env.production.test to .env.production
+    fs.copyFileSync(targetEnvPath, envProductionPath);
+    console.log('      → Copied .env.production.test → .env.production');
+    
+    // Verify the content
+    const envContent = fs.readFileSync(envProductionPath, 'utf8');
+    const stripeKeyMatch = envContent.match(/NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=([^\n\r]*)/);
+    if (stripeKeyMatch) {
+      console.log(`      → Stripe Key in .env.production: ${stripeKeyMatch[1].substring(0, 15)}...`);
+    }
+  }
   
   const buildCmd = 'next build';
   
-  console.log(`   Command: ${buildCmd}`);
+  console.log(`\n   Command: ${buildCmd}`);
   console.log(`   Environment: ${process.env.NODE_ENV}`);
   console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
   
-  execSync(buildCmd, {
-    stdio: 'inherit',
-    shell: true,
-    env: process.env  // Pass current environment with loaded vars
-  });
+  try {
+    execSync(buildCmd, {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } finally {
+    // ALWAYS restore original .env.production
+    if (needsRestore && fs.existsSync(envBackupPath)) {
+      console.log('\n   🔄 Restoring original .env.production...');
+      fs.copyFileSync(envBackupPath, envProductionPath);
+      fs.unlinkSync(envBackupPath);
+      console.log('      → Restored .env.production');
+    } else if (mode === 'test' && !needsRestore) {
+      // Remove the temporary .env.production we created
+      if (fs.existsSync(envProductionPath)) {
+        fs.unlinkSync(envProductionPath);
+        console.log('\n   🧹 Removed temporary .env.production');
+      }
+    }
+  }
   
   console.log('\n✅ Build completed successfully!\n');
   
@@ -223,21 +272,6 @@ try {
   process.exit(1);
 }
 
-// Step 4: Run prepare-build script
-console.log('📋 Step 4: Preparing build output...\n');
-
-try {
-  execSync(`node scripts/prepare-build.js ${mode}`, {
-    stdio: 'inherit',
-    shell: true
-  });
-  
-  console.log('\n✅ Build preparation complete!\n');
-  
-} catch (err) {
-  console.error('\n⚠️  Build preparation had issues, but build files exist.\n');
-}
-
 // Step 5: Summary
 const distDirs = {
   test: 'out-test',
@@ -248,11 +282,11 @@ const distDirs = {
 const distDir = distDirs[mode];
 
 console.log('╔════════════════════════════════════════════════════╗');
-console.log('║              BUILD COMPLETE                         ║');
+console.log('║              BUILD COMPLETE                        ║');
 console.log('╠════════════════════════════════════════════════════╣');
-console.log(`║ Mode:         ${mode.toUpperCase().padEnd(38)} ║`);
-console.log(`║ Output Dir:   ${distDir.padEnd(38)} ║`);
-console.log(`║ Files Ready:  ✅${' '.repeat(37)}║`);
+console.log(`║ Mode:        ${mode.toUpperCase().padEnd(38)} ║`);
+console.log(`║ Output Dir:  ${distDir.padEnd(38)}  ║`);
+console.log(`║ Files Ready: ✅${' '.repeat(37)}║`);
 console.log('╚════════════════════════════════════════════════════╝');
 console.log('');
 

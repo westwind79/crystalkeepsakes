@@ -14,7 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const PRODUCTS_FILE = path.join(__dirname, '../public/data/final-products.json');
+const PRODUCTS_FILE = path.join(__dirname, '/public/data/final-products.json');
 
 // ============================================
 // MASTER PRICING FOR SHARED OPTIONS
@@ -22,16 +22,16 @@ const PRODUCTS_FILE = path.join(__dirname, '../public/data/final-products.json')
 // ============================================
 
 const SHARED_PRICING = {
-  // Light Bases - prices sync to all products that have these options
+  
   lightBases: {
-    'none': null,  // No base option
+    'none': null,
     'lightbase-rectangle': 25.00,
     'lightbase-square': 25.00,
     'lightbase-wood-small': 35.00,
     'lightbase-wood-medium': 45.00,
     'lightbase-wood-long': 35.00,
     'rotating-led-lightbase': 19.99,
-    'wooden-premium-base-mini': 60.00,
+    'wooden-premium-base-mini': 45.00,
     'concave-lightbase': 39.00,
     'ornament-stand': 25.00,
   },

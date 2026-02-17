@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { clearCart } from '@/lib/cartUtils'
+import { getCurrentOrderSession, markOrderCompleted, clearOrderSession } from '@/lib/unifiedOrderId'
 import { logger } from '@/utils/logger'
 
 function OrderConfirmationContent() {
@@ -51,9 +52,23 @@ function OrderConfirmationContent() {
         logger.warn('No pending order found in sessionStorage')
       }
 
-      // Generate order number
-      const orderNumber = pendingOrder?.orderNumber || `CK-${Date.now()}`
-      console.log('🔢 [ORDER CONFIRMATION] Order Number:', orderNumber)
+      // ✅ USE UNIFIED ORDER ID - get from session, pendingOrder, or localStorage
+      let orderNumber = pendingOrder?.orderNumber
+      if (!orderNumber) {
+        // Try unified order session
+        const orderSession = getCurrentOrderSession()
+        orderNumber = orderSession?.orderId
+      }
+      if (!orderNumber) {
+        // Try localStorage fallback
+        orderNumber = localStorage.getItem('pending_order_number')
+      }
+      if (!orderNumber) {
+        // Last resort fallback (shouldn't happen)
+        orderNumber = `CK_FALLBACK_${Date.now()}`
+        console.warn('⚠️ [ORDER CONFIRMATION] No order ID found anywhere, using fallback:', orderNumber)
+      }
+      console.log('🔢 [ORDER CONFIRMATION] Order Number (unified):', orderNumber)
       
       // Process the order (Cockpit3D + Email)
       if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
@@ -68,11 +83,13 @@ function OrderConfirmationContent() {
             receipt_email: pendingOrder.receipt_email
           }
           
-          console.log('📤 [ORDER CONFIRMATION] Sending to /api/process-order')
+          // Use PHP backend for order processing
+          const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
+          console.log('📤 [ORDER CONFIRMATION] Sending to PHP backend: ' + phpBackendUrl + '/api/orders/process-order.php')
           console.log('📤 [ORDER CONFIRMATION] Payload:', JSON.stringify(orderPayload, null, 2))
           logger.info('Processing order with Cockpit3D and email notification')
           
-          const processResponse = await fetch('/api/process-order', {
+          const processResponse = await fetch(`${phpBackendUrl}/api/orders/process-order.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderPayload)
@@ -125,7 +142,13 @@ function OrderConfirmationContent() {
       // Clear the cart and sessionStorage after successful order
       await clearCart()
       sessionStorage.removeItem('pendingOrder')
-      logger.success('Order confirmed, cart cleared')
+      localStorage.removeItem('pending_order_number')
+      
+      // Mark order as completed and clear session for next order
+      markOrderCompleted(orderNumber)
+      clearOrderSession()
+      
+      logger.success('Order confirmed, cart and session cleared')
       
       setLoading(false)
       

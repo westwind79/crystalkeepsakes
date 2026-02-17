@@ -47,15 +47,20 @@ try {
     $mode = getEnvVar('NEXT_PUBLIC_ENV_MODE') ?? 'development';
     error_log("Mode: $mode");
     
-    // Get Stripe key
-    if ($mode === 'production') {
-        $secretKey = getEnvVar('STRIPE_SECRET_KEY');
-    } else {
-        $secretKey = getEnvVar('STRIPE_DEVELOPMENT_SECRET_KEY');
-    }
+    // Get Stripe key - ONLY uses STRIPE_SECRET_KEY
+    $secretKey = getEnvVar('STRIPE_SECRET_KEY');
     
     if (!$secretKey) {
-        throw new Exception("Stripe secret key not found");
+        throw new Exception("Stripe secret key not found. Set STRIPE_SECRET_KEY in .env");
+    }
+    
+    // Log key type for debugging (safe - only shows prefix)
+    $keyType = strpos($secretKey, 'sk_live_') === 0 ? 'LIVE' : 'TEST';
+    error_log("Stripe key type: $keyType");
+    
+    // SAFETY CHECK: Warn if using live keys in non-production mode
+    if ($keyType === 'LIVE' && $mode !== 'production') {
+        error_log("⚠️ WARNING: Using LIVE Stripe key in $mode mode!");
     }
     
     // Load Stripe
@@ -129,17 +134,35 @@ try {
     $baseUrl = '';
     $subDirectory = '';
     
-    // Check if client explicitly sent base_path (most reliable)
-    if (!empty($data->basePath)) {
+    // BEST: Use explicit frontendUrl from client (most reliable)
+    if (!empty($data->frontendUrl)) {
+        $baseUrl = rtrim($data->frontendUrl, '/');
+        error_log("Using explicit frontendUrl from client: $baseUrl");
+    }
+    // Check if client explicitly sent base_path
+    elseif (!empty($data->basePath)) {
         $subDirectory = '/' . trim($data->basePath, '/');
         error_log("Using explicit basePath from client: $subDirectory");
+        
+        // Still need to determine the host
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            $parsedUrl = parse_url($_SERVER['HTTP_REFERER']);
+            $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+            if (isset($parsedUrl['port'])) {
+                $baseUrl .= ':' . $parsedUrl['port'];
+            }
+            $baseUrl .= $subDirectory;
+        }
     }
     
-    // FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
-    if (isset($_SERVER['HTTP_REFERER'])) {
+    // Fallback: FIRST check HTTP_REFERER for subdirectory detection (more reliable for path)
+    if (empty($baseUrl) && isset($_SERVER['HTTP_REFERER'])) {
         $referer = $_SERVER['HTTP_REFERER'];
         $parsedUrl = parse_url($referer);
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+        if (isset($parsedUrl['port'])) {
+            $baseUrl .= ':' . $parsedUrl['port'];
+        }
         
         // Handle subdirectory paths (e.g., /test, /crystalkeepsakes)
         if (isset($parsedUrl['path']) && empty($subDirectory)) {
@@ -154,22 +177,17 @@ try {
         error_log("Using HTTP_REFERER: $baseUrl (subdir: '$subDirectory')");
     }
     // Fallback to HTTP_ORIGIN (doesn't include path)
-    elseif (isset($_SERVER['HTTP_ORIGIN'])) {
+    elseif (empty($baseUrl) && isset($_SERVER['HTTP_ORIGIN'])) {
         $baseUrl = $_SERVER['HTTP_ORIGIN'] . $subDirectory;
         error_log("Using HTTP_ORIGIN: $baseUrl");
     } 
     // Fallback to environment-based detection
-    else {
+    elseif (empty($baseUrl)) {
         if ($mode === 'production') {
             $baseUrl = 'https://crystalkeepsakes.com' . $subDirectory;
         } else {
-            // Check if running in MAMP subdirectory
-            $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-            if (strpos($docRoot, 'MAMP') !== false || strpos($docRoot, 'htdocs') !== false) {
-                $baseUrl = 'http://localhost:8888/crystalkeepsakes';
-            } else {
-                $baseUrl = 'http://localhost:3000';
-            }
+            // Default to localhost:3000 for Next.js dev server
+            $baseUrl = 'http://localhost:3000' . $subDirectory;
         }
         error_log("Using fallback URL: $baseUrl");
     }
@@ -179,7 +197,8 @@ try {
     
     error_log("Final URLs - Success: $successUrl | Cancel: $cancelUrl");
     
-    // Store FULL cart data for webhook processing (includes image URLs)
+
+    // Store cart for webhook (limited to 500 chars per metadata field)
     // Stripe metadata is limited to 500 chars, so we save full data to file
     $cartDataDir = dirname(__DIR__) . '/order-data/';
     if (!file_exists($cartDataDir)) {

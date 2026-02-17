@@ -5,8 +5,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCartWithImages } from '@/lib/cartUtils'
+import { getCurrentOrderSession, getOrCreateOrderSession } from '@/lib/unifiedOrderId'
 import { logger, isDevelopment } from '@/utils/logger'
-import { uploadCustomerImages } from '@/lib/customerImageUpload'
 
 export default function CheckoutHostedPage() {
   const router = useRouter()
@@ -28,96 +28,69 @@ export default function CheckoutHostedPage() {
       
       if (!cart || cart.length === 0) {
         setError('Your cart is empty')
-        setTimeout(() => router.push('/cart'), 2000)
+        // Preserve test path prefix when redirecting
+        const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+        const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+        const isTestEnv = currentPath.startsWith('/test') || currentHref.includes('/test/')
+        const cartUrl = isTestEnv ? '/test/cart' : '/cart'
+        setTimeout(() => router.push(cartUrl), 2000)
         return
       }
 
       logger.info('Initiating Stripe Checkout', { items: cart.length })
 
-      // Generate order number ONCE for entire checkout process
-      const orderNumber = `CK-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`
-      console.log('🎫 Generated Order Number:', orderNumber)
+      // ✅ USE UNIFIED ORDER ID - same ID used for images, Stripe, Cockpit3D, emails
+      // Try to get existing session (created when image was saved), or create new one
+      let orderSession = getCurrentOrderSession()
+      if (!orderSession) {
+        // Fallback: create new session if none exists (shouldn't happen normally)
+        orderSession = getOrCreateOrderSession()
+        console.log('⚠️ No existing order session, created new one:', orderSession.orderId)
+      }
+      const orderNumber = orderSession.orderId
+      console.log('🎫 Using Unified Order ID:', orderNumber)
       localStorage.setItem('pending_order_number', orderNumber)
 
       // STEP 1: Upload images to server BEFORE creating checkout session
       logger.info('📤 Uploading customer images to server...')
       console.log('=== CHECKOUT DEBUG ===')
       console.log('Cart items:', cart.length)
-      console.log('Order number:', orderNumber)
+      console.log('Order number (unified):', orderNumber)
+      console.log('Order session:', orderSession)
+      // ✅ Images should already be uploaded when adding to cart
+      // Just use the server URLs that are already stored in customImage
       cart.forEach((item, idx) => {
-        console.log(`Item ${idx}:`, {
-          productId: item.productId,
+        console.log(`🔍 Item ${idx} (${item.productId}):`, {
           hasCustomImage: !!item.customImage,
-          dataUrlLength: item.customImage?.dataUrl?.length,
-          dataUrlStart: item.customImage?.dataUrl?.substring(0, 50),
-          rawImageLength: item.customImage?.rawImageDataUrl?.length
+          serverUrl: item.customImage?.serverUrl,
+          originalServerUrl: item.customImage?.originalServerUrl,
+          tempOrderRef: item.customImage?.tempOrderRef
         })
       })
       
-      const cartWithServerUrls = await Promise.all(
-        cart.map(async (item, idx) => {
-          // Check if this item has images in IndexedDB
-          if (item.customImage?.dataUrl) {
-            console.log(`📤 Uploading images for item ${idx}: ${item.productId}`)
-            console.log('  - Masked image length:', item.customImage.dataUrl.length)
-            console.log('  - Masked image starts with:', item.customImage.dataUrl.substring(0, 50))
-            
-            logger.info(`Uploading images for item: ${item.productId}`)
-            
-            try {
-              const uploadResult = await uploadCustomerImages(
-                item.customImage.dataUrl, // Masked image from IndexedDB
-                item.customImage.rawImageDataUrl, // Raw image from IndexedDB
-                item.productId,
-                orderNumber // Pass order number for folder structure
-              )
-              
-              console.log('  - Upload result:', uploadResult)
-              
-              if (uploadResult.errors.length > 0) {
-                console.error('  - Upload errors:', uploadResult.errors)
-                logger.error('Image upload errors:', uploadResult.errors)
-              }
-              
-              // Replace base64 with server URLs
-              return {
-                ...item,
-                maskedImageUrl: uploadResult.maskedUrl,
-                rawImageUrl: uploadResult.rawUrl,
-                imageUploadErrors: uploadResult.errors
-              }
-            } catch (error) {
-              console.error('  - Upload exception:', error)
-              return item
-            }
-          }
-          
-          console.log(`⏭️  Item ${idx} has no custom image, skipping upload`)
-          return item
-        })
-      )
-
-      logger.info('✅ Images uploaded, preparing checkout...')
-      console.log('=== AFTER UPLOAD ===')
-      cartWithServerUrls.forEach((item, idx) => {
-        console.log(`Item ${idx}:`, {
-          productId: item.productId,
-          maskedImageUrl: item.maskedImageUrl,
-          rawImageUrl: item.rawImageUrl,
-          errors: item.imageUploadErrors
-        })
-      })
-
-      // Prepare cart items for checkout (now with server URLs)
-      const cartForCheckout = cartWithServerUrls.map(item => {
-        const { customImage, ...itemWithoutImage } = item as any
+      // Prepare cart items for checkout with server URLs
+      const cartForCheckout = cart.map(item => {
         return {
-          ...itemWithoutImage,
-          customImageId: item.customImageId,
+          productId: item.productId,
+          cockpit3d_id: item.cockpit3d_id,
+          name: item.name,
+          sku: item.sku,
+          price: item.price,
+          quantity: item.quantity,
+          
+          // Size & Options for Cockpit3D
+          sizeDetails: item.sizeDetails,
+          options: item.options,
+          customText: item.customText,
+          
+          // ✅ Use server URLs from cart (already uploaded when adding to cart)
+          maskedImageUrl: item.customImage?.serverUrl,
+          rawImageUrl: item.customImage?.originalServerUrl,
           customImageMetadata: item.customImageMetadata,
-          // Include image URLs for webhook/Cockpit3D
-          maskedImageUrl: item.maskedImageUrl,
-          rawImageUrl: item.rawImageUrl
+          tempOrderRef: item.customImage?.tempOrderRef,
+          
+          // Product image (for items without custom images)
+          productImage: item.productImage
         }
       })
 
@@ -132,13 +105,28 @@ export default function CheckoutHostedPage() {
       const apiUrl = `${phpBackendUrl}/api/stripe/create-checkout-session.php`
       
       // Get base path for proper redirect URLs (e.g., /test for test environment)
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+      // ✅ FIX: Detect test environment from URL path AND full URL, not just env variable
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+      const isTestEnv = currentPath.startsWith('/test') || 
+                        currentHref.includes('/test/') || 
+                        currentHref.includes('crystalkeepsakes.com/test')
+      const basePath = isTestEnv ? '/test' : (process.env.NEXT_PUBLIC_BASE_PATH || '')
+      
+      // ✅ FIX: Explicitly send the frontend URL for Stripe redirects
+      // This ensures correct redirect back to the correct domain with /test prefix
+      const frontendUrl = typeof window !== 'undefined' 
+        ? `${window.location.protocol}//${window.location.host}${basePath}`
+        : `http://localhost:3000${basePath}`
+      
+      console.log('🌐 Checkout URL config:', { currentPath, currentHref, isTestEnv, basePath, frontendUrl })
       
       const payload = {
         cartItems: cartForCheckout,
         subtotal: subtotal,
         orderNumber: orderNumber, // Use the same order number
-        basePath: basePath // Tell PHP which subdirectory we're in
+        basePath: basePath, // Tell PHP which subdirectory we're in
+        frontendUrl: frontendUrl // Explicit frontend URL for Stripe redirects
       }
 
       logger.info('Making API call', { 
@@ -258,7 +246,13 @@ export default function CheckoutHostedPage() {
               )}
               
               <button
-                onClick={() => router.push('/cart')}
+                onClick={() => {
+                  // Preserve test path prefix when returning to cart
+                  const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+                  const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+                  const isTestEnv = currentPath.startsWith('/test') || currentHref.includes('/test/')
+                  router.push(isTestEnv ? '/test/cart' : '/cart')
+                }}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Return to Cart

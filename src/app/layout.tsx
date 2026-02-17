@@ -6,7 +6,7 @@ import './css/navigation.css'
 import './css/modal.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import EnhancedDebugOverlay from '@/components/EnhancedDebugOverlay'
+import DebugOverlay from '@/components/DebugOverlay'
 import { assetPath } from '@/lib/assetPath'
 
 // Font Theme: Option 3 - Refined Luxury
@@ -107,7 +107,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
-        <EnhancedDebugOverlay />
+        <DebugOverlay />
       </body>
     </html>
   )

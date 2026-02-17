@@ -32,11 +32,24 @@ interface CartItem {
   options: any
   sizeDetails?: any
   customImage?: {
+<<<<<<< HEAD
     dataUrl: string
     thumbnail: string
     rawImageDataUrl?: string
     rawImageThumbnail?: string
     metadata: any
+=======
+    dataUrl?: string // Masked image base64 (for local display)
+    thumbnail?: string // Masked thumbnail
+    rawImageDataUrl?: string // Original uploaded image
+    rawImageThumbnail?: string // Original thumbnail
+    metadata?: any
+    // ✅ Server URLs for Cockpit3D order payload
+    serverUrl?: string // URL on the server for the masked image
+    originalServerUrl?: string // URL on the server for the original image
+    originalDataUrl?: string // Base64 for original image (fallback)
+    tempOrderRef?: string // Order reference for image folder
+>>>>>>> localchanges
   }
   customImageMetadata?: {
     filename?: string
@@ -139,35 +152,61 @@ export default function CartPage() {
   const getDetailedOptions = (item: CartItem) => {
     const options: Array<{ name: string; value: string; price: number }> = []
     
-    if (!item.options || !Array.isArray(item.options)) {
-      return options
+    // 1. SIZE - Check sizeDetails first (used by ProductDetailClient)
+    if (item.sizeDetails && item.sizeDetails.sizeName) {
+      options.push({
+        name: 'Size',
+        value: item.sizeDetails.sizeName,
+        price: item.sizeDetails.basePrice || 0
+      })
     }
     
-    item.options.forEach((opt: any) => {
-      if (opt.category === 'size' && opt.name) {
-        options.push({
-          name: 'Size',
-          value: opt.name,
-          price: opt.price || 0
-        })
-      } else if (opt.category === 'lightBase' && opt.name) {
-        options.push({
-          name: 'Light Base',
-          value: opt.name,
-          price: opt.priceModifier || 0
-        })
-      } else if (opt.category === 'background' && opt.name) {
-        options.push({
-          name: 'Background',
-          value: opt.name,
-          price: opt.priceModifier || 0
-        })
-      }
-    })
+    // 2. Process options array for all Cockpit3D required fields
+    if (item.options && Array.isArray(item.options)) {
+      item.options.forEach((opt: any) => {
+        // Light Base
+        if (opt.category === 'lightBase' && opt.name) {
+          options.push({
+            name: 'Light Base',
+            value: opt.name || opt.value,
+            price: opt.priceModifier || opt.price || 0
+          })
+        }
+        // Background
+        else if (opt.category === 'background' && opt.name) {
+          options.push({
+            name: 'Background',
+            value: opt.name || opt.value,
+            price: opt.priceModifier || opt.price || 0
+          })
+        }
+        // Faces (for multi-face products) - HIDDEN until pricing set
+        else if (opt.category === 'faces' && opt.name) {
+          options.push({
+            name: 'Faces',
+            value: opt.name || opt.value,
+            price: opt.priceModifier || opt.price || 0
+          })
+        }
+        // Custom Text (when in options array)
+        else if (opt.category === 'customText' && (opt.line1 || opt.line2)) {
+          // Skip - handled by getCustomTextDetails below
+        }
+        // Size in options (fallback if no sizeDetails)
+        else if (opt.category === 'size' && opt.name && !item.sizeDetails) {
+          options.push({
+            name: 'Size',
+            value: opt.name || opt.value,
+            price: opt.price || opt.basePrice || 0
+          })
+        }
+      })
+    }
     
     return options
   }
 
+<<<<<<< HEAD
   const ContinueShoppingBtn = () => (
     <div className="text-center mt-10">
       <Link 
@@ -180,7 +219,22 @@ export default function CartPage() {
     </div>
   )
 
+=======
+>>>>>>> localchanges
   const getCustomTextDetails = (item: CartItem) => {
+    // First check if custom text is in the options array
+    if (item.options && Array.isArray(item.options)) {
+      const textOpt = item.options.find((opt: any) => opt.category === 'customText')
+      if (textOpt && (textOpt.line1 || textOpt.line2)) {
+        return {
+          line1: textOpt.line1 || '',
+          line2: textOpt.line2 || '',
+          price: textOpt.priceModifier || 0
+        }
+      }
+    }
+    
+    // Fallback to direct customText property
     if (item.customText) {
       const line1 = item.customText.line1 || ''
       const line2 = item.customText.line2 || ''
@@ -189,7 +243,7 @@ export default function CartPage() {
         let textPrice = 0
         if (Array.isArray(item.options)) {
           const textOpt = item.options.find((opt: any) => 
-            opt.category === 'textOption' || opt.name?.toLowerCase().includes('text')
+            opt.category === 'customText' || opt.name?.toLowerCase().includes('text')
           )
           if (textOpt && textOpt.priceModifier) {
             textPrice = textOpt.priceModifier
@@ -206,11 +260,64 @@ export default function CartPage() {
     return null
   }
 
+  /**
+   * Continue Shopping Button Component
+   */
+  const ContinueShoppingBtn = () => (
+    <div className="text-center mt-10">
+      <Link 
+        href="/products" 
+        className="cursor-pointer inline-flex items-center gap-2 text-[#8DC63F] hover:text-[#7AB82F] font-semibold text-lg transition-colors"
+      >
+        <span>←</span>
+        <span>Continue Shopping</span>
+      </Link>
+    </div>
+  )
+
   async function proceedToCheckout() {
     setCheckoutLoading(true)
     
     try {
+<<<<<<< HEAD
       window.location.href = '/checkout'
+=======
+      // Detect test environment from multiple sources
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const currentHref = typeof window !== 'undefined' ? window.location.href : ''
+      
+      // Check for /test in path OR in full URL (handles various URL structures)
+      const isTestEnv = currentPath.startsWith('/test/') || 
+                        currentPath === '/test' || 
+                        currentPath.startsWith('/test?') ||
+                        currentHref.includes('/test/') ||
+                        currentHref.includes('crystalkeepsakes.com/test')
+      
+      // Build the checkout URL - use full URL to avoid any relative path issues
+      let checkoutUrl: string
+      if (isTestEnv) {
+        // For test environment, use absolute path
+        if (typeof window !== 'undefined') {
+          const origin = window.location.origin
+          checkoutUrl = `${origin}/test/checkout`
+        } else {
+          checkoutUrl = '/test/checkout'
+        }
+      } else {
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+        checkoutUrl = basePath ? `${basePath}/checkout` : '/checkout'
+      }
+      
+      console.log('🛒 Proceeding to checkout:', { 
+        currentPath, 
+        currentHref,
+        isTestEnv, 
+        checkoutUrl
+      })
+      
+      window.location.href = checkoutUrl
+      
+>>>>>>> localchanges
     } catch (error) {
       console.error('❌ Checkout error:', error)
       alert('Failed to proceed to checkout. Please try again.')
@@ -265,6 +372,11 @@ export default function CartPage() {
           </button>
         </div>
 
+<<<<<<< HEAD
+=======
+
+        {/* 2-column layout */}
+>>>>>>> localchanges
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             {cart.map((item, index) => {
@@ -277,6 +389,7 @@ export default function CartPage() {
                     
                     <div className="flex-shrink-0 space-y-3">
                       <div className="text-center">
+<<<<<<< HEAD
                         <img 
                           src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
                           alt={item.name}
@@ -297,6 +410,49 @@ export default function CartPage() {
                             title="Click to view full size"
                           />
                           <span className="text-xs text-green-600 font-medium mt-1">Final Engraved</span>
+=======
+                        <a href={item.productImage || '#'} target="_blank" rel="noopener noreferrer">
+                          <img 
+                            src={item.productImage || 'https://placehold.co/800x800?text=No+Image'}
+                            alt={item.name}
+                            className="w-65 h-65 object-cover rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            title="Click to view full size"
+                          />
+                        </a>
+                        <span className="text-xs text-gray-600 font-medium mt-1 block">Product Image</span>
+                      </div>
+                      
+                      {/* Final Masked Image (if available) - LARGER & BETTER QUALITY */}
+                      {(item.customImage?.serverUrl || item.customImage?.thumbnail || item.customImage?.dataUrl) && (
+                        <div className="text-center">
+                          {/* Use server URL for link, thumbnail/dataUrl for display */}
+                          <a 
+                            href={item.customImage.serverUrl || '#'} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            title={item.customImage.serverUrl ? "Click to view full size on server" : "Server URL not available"}
+                          >
+                            <img 
+                              src={item.customImage.thumbnail || item.customImage.dataUrl || item.customImage.serverUrl}
+                              alt="Final Engraved Version"
+                              className="w-65 h-65 object-cover rounded-lg border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                            />
+                          </a>
+                          <span className="text-xs text-green-600 font-medium mt-1 block">Final Engraved</span>
+                          {/* Show server URL status */}
+                          {item.customImage.serverUrl ? (
+                            <a 
+                              href={item.customImage.serverUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-500 hover:text-blue-700 underline block mt-1"
+                            >
+                              View on Server ↗
+                            </a>
+                          ) : (
+                            <span className="text-xs text-orange-500 block mt-1">⚠️ No server URL</span>
+                          )}
+>>>>>>> localchanges
                         </div>
                       )}
                     </div>
@@ -399,6 +555,7 @@ export default function CartPage() {
                             </div>
                           </div>
                         )}
+<<<<<<< HEAD
 
                         <div className="flex justify-between items-center mt-4 pt-4 border-t-2 border-green-300">
                           <span className="text-base font-bold text-gray-900">Item Total:</span>
@@ -406,22 +563,39 @@ export default function CartPage() {
                             ${item.price.toFixed(2)}
                           </span>
                         </div>
+=======
+>>>>>>> localchanges
                       </div>
 
                       {item.customImageMetadata?.hasImage && (
                         <div className="text-sm bg-emerald-50 rounded px-3 py-2 mb-3">
                           <span className="text-emerald-700 font-medium">Custom Image: </span>
-                          {item.customImage?.rawImageDataUrl ? (
+                          {/* Prefer server URL over base64 */}
+                          {(item.customImage?.serverUrl || item.customImage?.dataUrl) ? (
                             <a 
-                              href={item.customImage.rawImageDataUrl} 
+                              href={item.customImage.serverUrl || item.customImage.dataUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
                             >
-                              {item.customImageMetadata.filename || 'View Image'}
+                              {item.customImageMetadata.filename || 'View Masked Image'}
                             </a>
                           ) : (
                             <span className="text-emerald-600">{item.customImageMetadata.filename}</span>
+                          )}
+                          {/* Also show original if available */}
+                          {(item.customImage?.originalServerUrl || item.customImage?.originalDataUrl) && (
+                            <>
+                              <span className="mx-2 text-gray-400">|</span>
+                              <a 
+                                href={item.customImage.originalServerUrl || item.customImage.originalDataUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                              >
+                                View Original
+                              </a>
+                            </>
                           )}
                         </div>
                       )}

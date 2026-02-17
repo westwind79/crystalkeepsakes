@@ -1,153 +1,167 @@
 <analysis>**original_problem_statement:**
-The user's primary goal is to implement a fully functional order submission process to a service called Cockpit3D. The initial implementation was incorrect because it targeted the wrong API.
+The user's e-commerce store, built with Next.js and a PHP backend, has a critically non-functional shopping cart for custom products. The initial problem of missing product options and incorrect pricing evolved into a larger set of requirements focused on fixing the entire custom order lifecycle.
 
-The main requirements are:
-1.  **Correct the API Integration:** Refactor the order submission logic to match the correct **Cockpit3D Retailer Order API** documentation provided by the user.
-2.  **Collect Customer Data:** Modify the Stripe checkout process to collect the customer's shipping address and phone number, as these are required fields for the Cockpit3D order payload.
-3.  **Implement Order Submission:** The order should be automatically sent to the Cockpit3D API after a successful Stripe payment. This should be handled via a Stripe webhook.
-4.  **Testing:** The entire flow should target a specific development/test API endpoint provided by the user ().
-5.  **Fix Git Issue:** The user reported a merge conflict in a project metadata file and asked for it to be resolved and untracked.
+The primary goals are:
+1.  **Fix Image Uploads:** A recurring and critical issue where customized product images are saved with an incorrect server file path, making them inaccessible to the frontend. The upload script must place images in a shared  directory, with separate subfolders for test () and production () environments. Each order must have its own unique subfolder.
+2.  **Resolve Masked Image Failure:** The masked (final, engraved-look) image is consistently failing to upload, while the raw (original) image succeeds. This breaks the user experience as customers cannot see their final product in the cart or on the order confirmation.
+3.  **Implement a Unified Order ID:** Create a single, consistent Order ID ( format) that is generated when a user starts customizing a product. This ID must be used for the image upload folder, cart data, Stripe session, Cockpit3D payload, and all email notifications to ensure data integrity.
+4.  **Fix Environment-Specific Bugs:** The  environment was incorrectly using live production Stripe keys due to a flaw in the build process. The fix for this needs verification.
+5.  **Create an Order Processing & Notification Flow:** Upon successful payment, a new backend process should trigger that sends the final order payload to an external Cockpit3D service and sends a comprehensive order confirmation email to .
+6.  **Enhance Debugging:** Implement a comprehensive debug panel that displays all critical state information (unified order ID, cart data, environment variables, etc.) to help diagnose issues faster.
+7.  **Address LocalStorage Bloat:** Prevent large base64 image data from being stored in  to avoid browser storage limits.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a static Next.js project with a PHP backend. The agent has successfully refactored the order submission logic. The Stripe checkout session creation () is now configured to collect shipping address and phone number. The Stripe webhook handler () has been rewritten to receive this data after a successful payment, build a correctly formatted payload, and send it to the user's specified Cockpit3D development API endpoint. The corresponding TypeScript builder () and environment files have also been updated.
+The application is a Next.js 14 e-commerce store with a standalone PHP backend for handling image uploads, Stripe payments, and order processing. The state is managed on the client-side. The user deploys the application by manually FTPing the build output ( folder) from their local MAMP server to a production server, which has been the source of numerous environment-related issues.
+
+Recent significant additions include:
+- A new Unified Order ID system ().
+- A new comprehensive debug panel component ().
+- A new central order processing endpoint () which handles Cockpit3D submission and triggers an enhanced email notification script.
+- A completely rewritten PHP image upload script () designed to handle pathing correctly across test and production environments.
 
 **Last working item**:
-*   **Last item agent was working:** The agent finished updating the entire order submission pipeline, from Stripe data collection to the final API call via the webhook. This also included advising the user on how to resolve a merge conflict in  and ignore the directory.
-*   **Status:** USER VERIFICATION PENDING
-*   **Agent Testing Done:** N
-*   **Which testing method agent to use?** Manual testing by the user. The user needs to perform a full, end-to-end test: add a product to the cart, complete the Stripe checkout (entering address and phone), and then verify in their Cockpit3D dev environment that the order was created successfully.
-*   **User Testing Done:** N
+-   **Last item agent was working:** The agent was debugging why the **masked image** is not being uploaded, which results in it being missing from the cart and the final Cockpit3D order payload. The raw image uploads correctly, but the  (masked image URL) is absent from the final data. The agent also noticed that an **old, stale Order ID** was being reused across sessions, which is a critical data integrity problem.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent to simulate the full user flow: load product page, upload an image, save it in the editor, add to cart, and proceed to checkout. The agent must inspect the browser's console logs and network requests to validate the new logging and check for errors during the masked image upload.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1 (P0): Cockpit3D Order Submission Verification.**
-*   **Issue 2 (P1): Fix  merge conflict and add to .**
-*   **Issue 3 (P2): Admin Save does not write to server.**
-*   **Issue 4 (P3): Edited flag UI does not persist on refresh.**
+-   **Issue 1 (P0):** Masked image is not being uploaded or saved.
+-   **Issue 2 (P1):** A stale, old Order ID is being reused across different user sessions.
+-   **Issue 3 (P2):** The fix for incorrect Stripe keys in the  environment has not been verified by the user.
+-   **Issue 4 (P3):** The fix for high LocalStorage usage has not been verified by the user.
 
 **Issues Detail:**
-*   **Issue 1: Cockpit3D Order Submission Verification**
-    *   **Attempted fixes:** The entire flow was rewritten to match the correct API spec and data requirements. The logic now resides in the Stripe webhook.
-    *   **Next debug checklist:** The user needs to perform a test purchase. If it fails, the agent should examine the Stripe webhook logs and PHP error logs for any issues during the  event. The agent must also ensure the user has set the  and  credentials.
-    *   **Why fix this issue and what will be achieved with the fix?** This is the core feature the user requested and will complete the primary business logic of the application.
-    *   **Status:** USER VERIFICATION PENDING
-    *   **Is recurring issue?** N
-    *   **Should Test frontend/backend/both after fix?** Both (User-led e2e test).
-    *   **Blocked on other issue:** None.
-*   **Issue 2: Fix  merge conflict and add to .**
-    *   **Attempted fixes:** The agent provided verbal instructions to the user.
-    *   **Next debug checklist:** The agent should add  to the  file to prevent the file from being tracked in the future. The user was already instructed on how to manually fix the local merge conflict.
-    *   **Why fix this issue and what will be achieved with the fix?** To resolve git conflicts and prevent non-essential, environment-specific metadata from being version-controlled.
-    *   **Status:** NOT STARTED
-    *   **Is recurring issue?** Y
-    *   **Should Test frontend/backend/both after fix?** NA
-    *   **Blocked on other issue:** None.
-*   **Issue 3: Admin Save does not write to server.**
-    *   **Attempted fixes:** None.
-    *   **Next debug checklist:** Create a new PHP endpoint (e.g., ) that accepts a JSON payload and writes it to . Then, modify the  call in  to use this new endpoint.
-    *   **Why fix this issue and what will be achieved with the fix?** This is a critical workflow issue for the user, as the current Save button only triggers a file download, forcing a manual update process.
-    *   **Status:** NOT STARTED
-    *   **Is recurring issue?** Y
-    *   **Should Test frontend/backend/both after fix?** Both.
-    *   **Blocked on other issue:** None.
-*   **Issue 4: Edited flag UI does not persist on refresh.**
-    *   **Attempted fixes:** The previous agent added UI logic, but it seems insufficient.
-    *   **Next debug checklist:** In , debug the initial state of the products loaded from JSON to ensure the  flag is present, and verify the component's JSX correctly renders the Edited badge based on this flag during the initial render.
-    *   **Why fix this issue and what will be achieved with the fix?** Provides correct visual feedback to the user in the admin panel.
-    *   **Status:** IN PROGRESS
-    *   **Is recurring issue?** Y
-    *   **Should Test frontend/backend/both after fix?** Frontend.
-    *   **Blocked on other issue:** None.
+-   **Issue 1: Masked image is not being uploaded or saved**
+    -   **Attempted fixes:** The agent refactored the PHP upload script multiple times, unified the Order ID system, and added extensive logging to both the frontend (, ) and the PHP backend to trace the data flow. A user-facing alert was also added to notify if the masked upload fails.
+    -   **Next debug checklist:**
+        1.  Confirm the user has rebuilt (
+> crystalkeepsakes@0.1.0 build:test
+> node scripts/safe-build.js test
+
+
+🔨 Starting SAFE build for TEST mode
+
+📋 Step 1: Checking for locked files...
+
+✅ No recently modified files found
+
+📋 Step 2: Setting build environment...) and deployed the latest code to activate the new, detailed logging.
+        2.  Request the **full browser developer console output** when the user saves an image. This is crucial to see the  data URL from the new logs in .
+        3.  Request the **Network tab details** for the  call corresponding to the masked image, checking its payload and server response.
+        4.  Investigate why  is  when an item is added to the cart, as this is the direct cause of the image not appearing.
+    -   **Why fix this issue and what will be achieved with the fix?** This is the primary blocker for the entire custom product workflow. Fixing it will allow customers to see their final customized product in the cart and enable complete orders to be sent to production.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both.
+
+-   **Issue 2: A stale, old Order ID is being reused**
+    -   **Attempted fixes:** None. The agent only just identified this from the user's last message.
+    -   **Next debug checklist:**
+        1.  Review  to ensure the  function is being called reliably after an order is completed.
+        2.  Examine  to understand how the session is stored (e.g., ) and cleared.
+        3.  Add logging to  to track when it finds an existing session versus creating a new one.
+    -   **Why fix this issue and what will be achieved with the fix?** Prevents new orders from overwriting the image files of previous orders and ensures data integrity across the system. Each customization session must have a unique ID.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend.
 
 **In progress Task List**:
-None. The main task is implemented and pending verification.
+None. All current work is focused on fixing the critical P0 and P1 issues.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **P0: Database Integration:** Implement the MySQL schema from  to store orders and customers, creating necessary PHP CRUD endpoints.
-    *   **P1: Email Integration:** Integrate  into the order flow to send confirmation emails.
+    *   **(P1)** Verify the end-to-end order flow after fixing the masked image and stale ID issues.
+    *   **(P2)** Implement the hidden faces option (1-10) in .
 *   **Future Tasks:**
-    *   **P1: Image Background Removal:** Plan and implement a service for automatic background removal from user-uploaded images.
-    *   **P2: Privacy Policy Page:** Create a static page for the privacy policy.
+    *   **(P3)** Conduct a codebase audit to identify and remove unused files.
+    *   **(P4)** Create a static Privacy Policy page.
 
 **Completed work in this session**
-- **Cockpit3D Order Submission Refactored:** Rewrote the entire order submission logic in the Stripe webhook () to use the correct Cockpit3D Retailer Order API structure.
-- **Stripe Checkout Enhanced:** Modified  to collect shipping address and phone number.
-- **Test Environment Configured:** Updated all relevant files and environment variables to point to the user's provided test API URL ().
-- **TypeScript Definitions Updated:** Aligned the order interfaces in  with the new API specification.
-- **Gitignore Guidance Provided:** Instructed the user on how to resolve a merge conflict and untrack the  directory.
+-   **Unified Order ID System:** Created  and refactored the application to use a single, consistent order ID () from product customization through checkout.
+-   **PHP Image Upload Path Fix:** Rewrote  to reliably save images to a shared  directory, with unique subfolders per order ID.
+-   **Comprehensive Debug Overlay:** Implemented a new, detailed debug panel () to show all critical session and environment data.
+-   **Email Notification System:** Created a new endpoint () that handles Cockpit3D submission and sends a detailed HTML email on successful order confirmation.
 
 **Earlier issues found/mentioned but not fixed**
-*   **Issue 1: Admin Save functionality.** The admin panel save button still triggers a file download instead of saving directly to the server. This is a high-priority workflow issue for the user.
-*   **Issue 2: Edited flag UI persistence.** The admin UI does not show the Edited status of a product on page load, even when it's saved in the data file.
-*   **Issue 3: User's local branch merge conflicts.** The user has been advised on how to fix this, but it may persist as a source of local errors if not resolved.
+-   **Issue 1: Stripe keys in  environment.** A fix was implemented in the build script, but it requires user verification after a rebuild and deploy to confirm it's resolved.
+-   **Issue 2: High LocalStorage usage.** A fix to strip base64 data before saving to localStorage was implemented in  but awaits user verification.
 
 **Known issue recurrence from previous fork**
-N/A
+-   The incorrect image upload path has been a persistent, central theme. While the pathing logic is believed to be correct now, the failure of the masked image upload is a manifestation of this recurring problem area.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Stripe Webhooks:** The order submission logic has been correctly moved to the  webhook. This is a robust, asynchronous pattern for handling actions after a successful payment.
-*   **Hybrid Architecture:** The separation between the Next.js static frontend and the PHP backend remains. The frontend initiates payment, and the backend handles fulfillment securely via the webhook.
+-   **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS.
+-   **Backend:** Standalone PHP scripts.
+-   **State Management:** Client-side via , , and .
+-   **Build Process:** A custom Node.js script () that manages environment variables for test vs. production builds.
+-   **Deployment:** Manual FTP of the  directory.
 
 **key DB schema**
-- A  file exists for a future MySQL database implementation, but it has not been integrated.
+-    (or ) stores the unified order session object, e.g., .
 
 **changes in tech stack**
-- None.
+-   None.
 
 **All files of reference**
-*   **/app/api/stripe/stripe-webhook.php**: Core file for the new order submission logic.
-*   **/app/api/stripe/create-checkout-session.php**: Modified to collect required customer data.
-*   **/app/api/cockpit3d/submit-order.php**: Rewritten to serve as a valid manual test endpoint.
-*   **/app/src/lib/cockpit3d-order-builder.ts**: Interfaces updated to match the API.
-*   **/app/.env.production** & **.env.production.test**: Updated with .
-*   **/app/src/app/admin/page.tsx**: Location of the broken Save functionality.
-
-**Areas that need refactoring**:
-*   The admin panel's Save Products feature is the most critical area needing a rewrite. It should use a PHP endpoint for a direct server-side save instead of forcing a file download.
-
-**key api endpoints**
-*   : Listens for the  event to trigger the Cockpit3D order submission.
-*   : Initiates the Stripe payment flow.
+-   **Core of current bug:**
+    -   : Orchestrates the image upload via .
+    -   : Generates the masked image data.
+    -   : Receives and saves the uploaded image files.
+-   **Stale ID issue:**
+    -   : Source of truth for order IDs.
+    -   : Location where the session should be cleared.
+-   **New Features:**
+    -   : The new debug panel.
+    -   : The new order processing endpoint.
 
 **Critical Info for New Agent**
-*   **Verification is the next step.** The main task is implemented but unverified. Guide the user through a test purchase and be prepared to debug the webhook.
-*   **Credentials Needed:** The user must provide  and  in the  files for the submission to authenticate.  is also required.
-*   **Test Endpoint:** All submissions are directed to .
-*   **Prioritize User Workflow:** The broken admin Save function is a major pain point and should be addressed after the order submission is verified.
-*   **Be Concise:** The user is mindful of token usage.
+-   Your absolute first priority is to resolve the **failing masked image upload (P0)**. Do not attempt other changes until you get diagnostic data for this.
+-   Your second priority is to fix the **stale Order ID issue (P1)**. This is a critical data integrity bug.
+-   **You MUST get diagnostic data from the user.** The previous agent added extensive logging. Instruct the user to rebuild and deploy the latest code, then capture and share the browser's developer console output and network tab details during an image save attempt. You cannot debug this blind.
+-   Reinforce the user's manual deployment workflow: any code change requires 
+> crystalkeepsakes@0.1.0 build:test
+> node scripts/safe-build.js test
 
-**documents created in this job**
-- None.
 
-**Last 10 User Messages and any pending user messages**
-1.  **User:** Provided detailed Cockpit3D API documentation, pointing out that the agent's current implementation was targeting the wrong API. (COMPLETED - Agent has now fixed this).
-2.  **User:** Specified a dev URL for testing, confirmed that shipping address and phone are required, and asked the agent to be mindful of token limits. (COMPLETED - Agent has implemented these requirements).
-3.  **User:** Sent a snippet of a file with a Git merge conflict () and asked how to resolve it and stop tracking the file. (PENDING - Agent has provided instructions but not executed the  change).
+🔨 Starting SAFE build for TEST mode
+
+📋 Step 1: Checking for locked files...
+
+✅ No recently modified files found
+
+📋 Step 2: Setting build environment... followed by FTPing the **entire  directory** to their server.
+
+**Last 10 User Messages and any pending HUMAN messages**
+-   User is frustrated that the masked image is missing from the final order payload and not showing in the cart debug panel, stating it was working.
+-   User provided a Cockpit3D JSON payload showing  exists but  (the masked image) is missing.
+-   User provided another screenshot showing the cart is not displaying the masked image.
+-   User confirmed the email address for notifications is .
+-   User reported an ID mismatch between the image folder (), the test order ID (), and the Stripe session ID (), which was a critical clue that led to the creation of the unified ID system.
 
 **Project Health Check:**
-*   **Broken:**
-    *   Admin panel's Save Products feature forces a file download instead of saving to the server.
-*   **Mocked:** None.
-*   **In Verification:**
-    *   The entire checkout-to-order-submission pipeline via the Stripe webhook is complete but needs end-to-end testing by the user.
+-   **Broken:** The core user flow for custom products is critically broken because the masked image is not being saved or displayed.
+-   **Mocked:** None.
 
 **3rd Party Integrations**
-*   **Stripe:** Used for payments. The checkout is now configured to collect shipping address and phone number. The webhook is used to trigger order submission.
-*   **Cockpit3D:** Integrated for order submission. It targets the user's dev API endpoint. Requires , , and  credentials.
+-   **Stripe:** For payment processing.
+-   **Cockpit3D:** An external service that receives the final order payload.
 
 **Testing status**
-*   **Testing agent used after significant changes:** NO
-*   **Troubleshoot agent used after agent stuck in loop:** NO
-*   **Test files created:** None.
-*   **Known regressions:** None.
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None.
+-   **Known regressions:** The masked image upload was allegedly working at some point but is now broken again.
 
 **Credentials to test flow:**
-*   User must provide , , and  in the  files for the order submission to authenticate successfully.
+-   N/A. All testing must be performed by the user in their own environments.
 
 **What agent forgot to execute**
-*   The agent provided instructions to add the  directory to  but did not perform the file edit. This should be done to prevent future merge conflicts for the user.</analysis>
+-   The agent correctly identified the stale Order ID issue as a major problem but has not yet attempted a fix. This must be prioritized right after getting debug info for the masked image failure.
+-   Verification for the Stripe key and LocalStorage fixes is still pending from the user.</analysis>

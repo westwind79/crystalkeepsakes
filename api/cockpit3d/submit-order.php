@@ -27,10 +27,14 @@ ini_set('error_log', __DIR__ . '/cockpit3d_orders.log');
 // Load environment
 require_once __DIR__ . '/../env-loader.php';
 
+// Constants - Cockpit3D Retailer API (dev URL for testing)
+define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://c3d-profit-dev.host.alva.tools');
+
 // Constants - Cockpit3D Retailer API
 // Production: https://profit.cockpit3d.com
 // Development: https://c3d-profit-dev.host.alva.tools
-define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com');
+//define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com');
+
 define('COCKPIT3D_USERNAME', getenv('COCKPIT3D_USERNAME') ?: '');
 define('COCKPIT3D_PASSWORD', getenv('COCKPIT3D_PASSWORD') ?: '');
 define('COCKPIT3D_RETAILER_ID', getenv('COCKPIT3D_RETAILER_ID') ?: '');
@@ -352,9 +356,33 @@ try {
     $cockpit3DOrder = buildCockpit3DOrder($orderId, $cartItems, $customer, $shippingInfo, $billingInfo);
     logOrder('📋 Built Cockpit3D order', $cockpit3DOrder);
     
-    // In test mode, skip actual submission
+    // In test mode, skip actual submission but optionally send email
     if ($testMode) {
         logOrder('🧪 TEST MODE - Order built but NOT submitted to Cockpit3D');
+        
+        // ✅ NEW: Send test email notification if requested
+        $emailResult = null;
+        $sendTestEmail = $data['sendTestEmail'] ?? false;
+        
+        if ($sendTestEmail) {
+            logOrder('📧 Sending TEST order notification email');
+            
+            // Build email data from test order
+            $emailData = [
+                'orderId' => $orderId,
+                'orderNumber' => $orderId,
+                'testMode' => true,
+                'cartItems' => $cartItems,
+                'customer' => $customer,
+                'shippingInfo' => $shippingInfo,
+                'cockpit3dOrder' => $cockpit3DOrder
+            ];
+            
+            // Include notification script and send
+            require_once __DIR__ . '/send-order-notification.php';
+            $emailResult = sendOrderNotification($emailData);
+            logOrder('📧 Test email result', $emailResult);
+        }
         
         $response = [
             'success' => true,
@@ -369,6 +397,14 @@ try {
                     'testMode' => true,
                     'message' => 'Order structure validated - ready for production submission'
                 ]
+            ],
+            'email' => $emailResult ? [
+                'sent' => $emailResult['success'] ?? false,
+                'to' => $emailResult['to'] ?? 'orders@crystalkeepsakes.com',
+                'message' => $emailResult['message'] ?? 'Email not sent'
+            ] : [
+                'sent' => false,
+                'message' => 'Email not requested (set sendTestEmail: true to send)'
             ],
             'config' => [
                 'cockpit3d_configured' => !empty(COCKPIT3D_USERNAME) && !empty(COCKPIT3D_PASSWORD),

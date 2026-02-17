@@ -233,6 +233,8 @@ export default function ProductsPage() {
   /**
    * Main Products View - Always renders structure
    */
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
+  
   return (
     <div className="products min-h-screen relative">
       
@@ -240,24 +242,87 @@ export default function ProductsPage() {
       <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
       <div className="container-full bg-slate-100 px-4 py-6 relative">        
-        <div className="flex flex-row gap-2 sm:gap-4">
-          <div className="md:basis-1/3 lg:basis-1/4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                {selectedCategory === 'all' ? 'Filter by Category' : PRODUCT_CATEGORIES.find(c => c.value === selectedCategory)?.label}
+              </span>
+              <svg className={`w-5 h-5 transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            
+            {/* Mobile Filter Panel */}
+            {showMobileFilters && (
+              <div className="mt-2 bg-white border border-gray-200 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-2">
+                  {selectedCategory !== 'all' && (
+                    <button
+                      onClick={() => { handleCategoryChange('all'); setShowMobileFilters(false); }}
+                      className="col-span-2 px-3 py-2 rounded-lg text-sm bg-red-50 text-red-600 border border-red-200 flex items-center justify-center gap-1"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                      Clear
+                    </button>
+                  )}
+                  {PRODUCT_CATEGORIES
+                    .filter(cat => cat.value !== 'all')
+                    .map(category => {
+                      const count = filterProductsByCategory(products, category.value).length
+                      const isActive = selectedCategory === category.value
+                      return (
+                        <button
+                          key={category.value}
+                          onClick={() => { handleCategoryChange(isActive ? 'all' : category.value); setShowMobileFilters(false); }}
+                          disabled={count === 0}
+                          className={`px-3 py-2 rounded-lg text-sm flex items-center justify-between ${
+                            isActive
+                              ? 'bg-[#72B01D] text-white'
+                              : count > 0
+                              ? 'bg-gray-50 text-gray-700 border border-gray-200'
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <span className="flex items-center gap-1">
+                            <span>{getCategoryIcon(category.value)}</span>
+                            <span>{category.label}</span>
+                          </span>
+                          <span className="text-xs opacity-75">{count}</span>
+                        </button>
+                      )
+                    })}
+                </div>
+              </div>
+            )}
+          </div>
 
-            {/* Category Filter Section */}            
-            <section className="relative">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-
-                <h5 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          {/* Desktop Sidebar - Sticky */}
+          <div className="hidden lg:block lg:w-64 flex-shrink-0">
+            <div className="sticky top-24">
+              <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                <h5 className="text-lg tracking-wide text-gray-900 mb-5 flex items-center gap-2" style={{ fontFamily: 'var(--font-heading)', fontVariant: 'small-caps' }}>
                   <svg className="w-5 h-5 text-[#72B01D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                   </svg>
                   Categories
                 </h5>
 
-                <div className="space-y-2">{selectedCategory !== 'all' && (
+                <div className="space-y-1.5">
+                  {selectedCategory !== 'all' && (
                     <button
                       onClick={() => handleCategoryChange('all')}
-                      className="cursor-pointer w-full mt-4 px-4 py-3 rounded-lg font-medium text-sm bg-white text-red-600 hover:bg-red-50 border-2 border-red-200 hover:border-red-300 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="w-full px-3 py-2 rounded-lg text-sm bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
@@ -266,7 +331,7 @@ export default function ProductsPage() {
                     </button>
                   )}
                   {PRODUCT_CATEGORIES
-                    .filter(cat => cat.value !== 'all') // Filter out only 'all'
+                    .filter(cat => cat.value !== 'all')
                     .map(category => {
                       const count = filterProductsByCategory(products, category.value).length
                       const isActive = selectedCategory === category.value
@@ -276,24 +341,22 @@ export default function ProductsPage() {
                           key={category.value}
                           onClick={() => handleCategoryChange(isActive ? 'all' : category.value)}
                           disabled={count === 0}
-                          className={`w-full px-4 py-2 rounded-lg font-medium transition-all duration-200 text-left flex items-center justify-between group ${
+                          className={`w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 text-left flex items-center justify-between group ${
                             isActive
-                              ? 'bg-[#72B01D] text-white shadow-md'
+                              ? 'bg-[#72B01D] text-white shadow-sm'
                               : count > 0
-                              ? 'bg-white text-gray-700 hover:bg-gray-100 hover:text-[#72B01D] hover:shadow-sm border border-gray-200 cursor-pointer'
-                              : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                              ? 'bg-gray-50 text-gray-700 hover:bg-[#72B01D]/10 hover:text-[#72B01D] border border-gray-100'
+                              : 'bg-gray-50 text-gray-400 cursor-not-allowed'
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-lg">{getCategoryIcon(category.value)}</span>
-                            <span className="font-medium">{category.label}</span>
+                            <span>{getCategoryIcon(category.value)}</span>
+                            <span>{category.label}</span>
                           </span>
-                          <span className={`text-sm px-2 py-1 rounded-full ${
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${
                             isActive 
-                              ? 'bg-white/20 text-white' 
-                              : count > 0
-                              ? 'bg-gray-100 text-gray-600 group-hover:bg-[#72B01D]/10 group-hover:text-[#72B01D]'
-                              : 'bg-gray-200 text-gray-400'
+                              ? 'bg-white/20' 
+                              : 'bg-gray-200/50'
                           }`}>
                             {count}
                           </span>
@@ -302,10 +365,11 @@ export default function ProductsPage() {
                     })}               
                 </div>
               </div>
-            </section>
+            </div>
           </div>
 
-          <div className="md:basis-2/3 lg:basis-3/4"> 
+          {/* Products Grid */}
+          <div className="flex-1 min-w-0"> 
             {/* Products Grid Section */}
             <section className="product-grid">
               

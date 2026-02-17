@@ -56,15 +56,23 @@ if (file_exists(__DIR__ . '/db-connect.php')) {
     }
 }
 
-// Get environment variables
+// Get environment variables - ONLY uses standardized names
 $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
 
-if ($mode === 'production') {
-    $stripeSecretKey = getEnvVariable('STRIPE_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_WEBHOOK_SECRET');
-} else {
-    $stripeSecretKey = getEnvVariable('STRIPE_DEVELOPMENT_SECRET_KEY');
-    $webhookSecret = getEnvVariable('STRIPE_DEVELOPMENT_WEBHOOK_SECRET');
+// ONLY use STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET
+$stripeSecretKey = getEnvVariable('STRIPE_SECRET_KEY');
+$webhookSecret = getEnvVariable('STRIPE_WEBHOOK_SECRET');
+
+if (!$stripeSecretKey) {
+    error_log('ERROR: STRIPE_SECRET_KEY not found in .env');
+    http_response_code(500);
+    exit('Stripe secret key not configured');
+}
+
+if (!$webhookSecret) {
+    error_log('ERROR: STRIPE_WEBHOOK_SECRET not found in .env');
+    http_response_code(500);
+    exit('Stripe webhook secret not configured');
 }
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
@@ -208,6 +216,7 @@ function loadFullCartData($orderNumber) {
 
 /**
  * Build Cockpit3D order payload from Stripe session
+ * Matches: POST https://api.cockpit3d.com/rest/V2/orders
  * POST https://profit.cockpit3d.com/rest/V2/orders (or dev URL)
  */
 function buildCockpit3DOrder($session, $orderNumber) {
@@ -264,7 +273,6 @@ function buildCockpit3DOrder($session, $orderNumber) {
         
         // Get SKU - prefer full data, then metadata, then fallback
         $sku = $fullItem['sku'] ?? $metaItem['sku'] ?? 'PRODUCT-' . $lineItem->price->product;
-        
         $item = [
             'sku' => $sku,
             'qty' => (string) $lineItem->quantity,
@@ -381,7 +389,7 @@ function sendToCockpit3D($orderData) {
     // Production: https://profit.cockpit3d.com
     // Development: https://c3d-profit-dev.host.alva.tools
     $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://profit.cockpit3d.com';
-    
+
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
     
@@ -409,6 +417,7 @@ function sendToCockpit3D($orderData) {
     $auth = base64_encode($username . ':' . $password);
     
     $ch = curl_init($apiUrl);
+
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
