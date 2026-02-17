@@ -44,6 +44,7 @@ interface Size {
   id: string
   name: string
   price: number
+  enabled?: boolean
 }
 
 interface LightBase {
@@ -51,6 +52,7 @@ interface LightBase {
   name: string
   price: number | null
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface BackgroundOption {
@@ -58,6 +60,7 @@ interface BackgroundOption {
   name: string
   price: number
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface TextOption {
@@ -65,6 +68,7 @@ interface TextOption {
   name: string
   price: number
   cockpit3d_id?: string
+  enabled?: boolean
 }
 
 interface ProductImage {
