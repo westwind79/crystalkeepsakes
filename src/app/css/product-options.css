@@ -3,38 +3,40 @@
 .crystal-radio {
   cursor: pointer;
   display: flex;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
   align-items: center;
   justify-items: stretch;
   position: relative; 
   border-radius: 8px;
   border: 2px solid #d1d5db;
   background: #FEFEFE;
-  color: #1f2937; 
+  color: var(--surface-900); /* #1f2937 */
   transition: all 0.2s ease;
-  font-weight: 500;
   overflow: hidden;
 }
 
 .crystal-radio .product-faces {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  margin-right: 0.75em;
-  padding: 2px 8px;
+  text-align: center;
+  gap: 4px;  
   background: rgba(114, 176, 29, 0.1);
   border-radius: 4px;
   font-size: 0.85em;
-  color: #72B01D;
+  color: var(--brand-500);
 }
 
 .crystal-radio:has(input[type="radio"]:checked) .product-faces {
   background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--surface-50);
 }
 
 .crystal-radio .product-faces .faces-count {
-  font-weight: 600;
+  font-weight: 600; 
+  letter-spacing: 1px;
+}
+.crystal-radio .product-faces .lucide {
+  margin:auto;
 }
 
 /* Hide default radio button */
@@ -50,27 +52,27 @@
 /* Hover effect - unselected */
 .custom-checkbox-label:hover,
 .crystal-radio:hover {
-  border-color: #72B01D;
+  border-color: var(--brand-500);
   background: #f0fdf4;
   color: #1f2937;
 }
 
 /* Selected state */
 /*.crystal-radio:has(input[type="radio"]:checked) {
-  border-color: #72B01D;
-  background: linear-gradient(-5deg,  #72B01D, #5a9216);
+  border-color: var(--brand-500);
+  background: linear-gradient(-5deg,  var(--brand-500), #5a9216);
   color: #ffffff;
   animation: gradientShift 1.5s ease forwards;
 }
 */
 .crystal-radio:has(input[type="radio"]:checked) {
-  border-color: #72B01D;
+  border-color: var(--brand-500);
 
   background: linear-gradient(
     -5deg,
-    #72B01D,
+    var(--brand-500),
     #5a9216,
-    #72B01D
+    var(--brand-500)
   );
 
   background-size: 400% 200%;     /* makes room for movement */
@@ -90,18 +92,20 @@
   top: 0;
   left: 0; 
 }
-
+.crystal-radio .size-option-name {
+  font-size: 1.25em;
+}
 /* Selected state hover */
 .crystal-radio:has(input[type="radio"]:checked):hover {
   border-color: #5a9216;
-  background: linear-gradient(-5deg,  #72B01D, #5a9216);
+  background: linear-gradient(-5deg,  var(--brand-500), #5a9216);
 }
 
 /* Price tag styling */
 .crystal-radio .option-price {
-  font-size: 0.9em;
-  color: #6b7280;
-  margin-left: 8px;
+  font-size: 1em; 
+  margin-left: auto;
+  color: var(--surface-800);
 }
 
 .crystal-radio:has(input[type="radio"]:checked) .option-price {
@@ -113,11 +117,6 @@
   border-bottom: 1px solid var(--palette2-color4);
 }
 
-.crystal-radio .product-faces {
-  float: left;
-  text-align: center;
-  font-weight: normal;
-}
 /*.custom-checkbox-label:focus-within,
 .crystal-radio:focus-within {
   box-shadow: 0 0 0 2px rgba(114,176,29,0.25);

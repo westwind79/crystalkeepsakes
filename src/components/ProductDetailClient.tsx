@@ -25,7 +25,7 @@ import ProductGallery from '@/components/ProductGallery'
 import ProductBadges from '@/components/ProductBadges'
 import gsap from 'gsap';
 
-import { ArrowBigLeft, ArrowLeft, CornerRightDown, Users } from 'lucide-react'; 
+import { ArrowBigLeft, ArrowLeft, CornerRightDown, Users, User } from 'lucide-react'; 
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
@@ -947,10 +947,10 @@ export default function ProductDetailClient() {
               {/* Image Upload */}
               {product.requiresImage && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <p className="h2 block text-lg font-bold text-gray-800 mb-1">
                     Upload your image <span className="text-red-500">*</span>
-                  </label>
-                  <label className="cursor-pointer flex justify-center rounded border-2 border-dashed border-gray-300 px-4 py-6 hover:border-gray-400 transition-colors">
+                  </p>
+                  <label className="cursor-pointer flex justify-center rounded border-3 border-dashed border-gray-300 px-4 py-6 hover:border-gray-400 transition-colors">
                     <div className="text-center">
                       <svg className="mx-auto h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
@@ -976,32 +976,37 @@ export default function ProductDetailClient() {
               {product.sizes && product.sizes.filter(s => s.enabled !== false).length > 0 && (
                 <div className="product-option mb-3">
                   <fieldset>
-                    <legend className="h5">Select Size <span className="text-red-500">*</span></legend>
+                    <legend className="h2 text-lg">Select Size <span className="text-red-500">*</span></legend>
                     {errors.size && <div className="text-red-500 small">{errors.size}</div>}
                     {product.sizes.filter(s => s.enabled !== false).map((size) => (
-                      <label key={size.id} className="crystal-radio mb-2 px-8 py-2">
+                      <label key={size.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
                         {/* Show faces indicator for products that require images */}
                         {product.requiresImage && size.faces && (
-                          <span className="product-faces">
-                            <Users size={18} />
-                            <span className="faces-count">{size.faces && size.faces > 1 ? `1–${size.faces}` : "1"}</span>
+                          <span className="product-faces mr-2 px-2 py-1">                            
+                            <span className="faces-count">
+                              {size.faces > 1 ? (
+                                <>
+                                  <Users size={18} />
+                                  {" "}1&ndash;{size.faces}
+                                </>
+                              ) : (
+                                <>
+                                  <User size={18} />
+                                  {" "}1
+                                </>
+                              )}
+                            </span>
                           </span>
                         )}
-                        <span className="">{size.name}</span>
+                        <span className="size-option-name">{size.name}</span>
                         <span className="option-price">
                           <span className="option-price__wrapper">
-                            {size.price === 0 ? (
-                              <span className="option-price__included">
-                                <span className="option-price__paren">(</span>
-                                <span className="option-price__text">Included</span>
-                                <span className="option-price__paren">)</span>
-                              </span>
-                            ) : (
+                             
                               <span className="option-price__additional">
                                 <span className="option-price__currency">$</span>
                                 <span className="option-price__value">{size.price}</span>
                               </span>
-                            )}
+                            
                           </span>
                         </span>
                         <input
@@ -1021,12 +1026,12 @@ export default function ProductDetailClient() {
               {product.backgroundOptions && product.backgroundOptions.filter(bg => bg.enabled !== false).length > 0 && (
                 <div className="product-option mb-3">
                   <fieldset>
-                    <legend className="h5">Background Style <span className="text-red-500">*</span></legend>
+                    <legend className="h2 text-lg">Background Style <span className="text-red-500">*</span></legend>
                     {product.backgroundOptions.filter(bg => bg.enabled !== false).map((bg) => (
-                      <label key={bg.id} className="crystal-radio mb-2 px-8 py-2">
+                      <label key={bg.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
                         {bg.name}
                         <span className="option-price">
-                          {bg.price === 0 ? '' : `(+$${bg.price.toFixed(2)})`}
+                          {bg.price === 0 ? '' : `+$${bg.price.toFixed(2)}`}
                         </span>
                         <input
                           type="radio"
@@ -1043,14 +1048,14 @@ export default function ProductDetailClient() {
 
               {/* Light Base */}
               {product.lightBases && product.lightBases.filter(lb => lb.enabled !== false).length > 0 && (
-                <div className="product-option mb-3">
+                <div className="product-option mb-4">
                   <fieldset>
-                    <legend className="h5">Light Base <span className="text-red-500">*</span></legend>
+                    <legend className="h2 text-lg">Light Base <span className="text-red-500">*</span></legend>
                     {product.lightBases.filter(lb => lb.enabled !== false).map((base) => (
-                      <label key={base.id} className="crystal-radio mb-2 pl-8 pr-4 py-2">
+                      <label key={base.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
                         {base.name}
                         <span className="option-price">
-                          {base.price && base.price > 0 ? `(+$${base.price.toFixed(2)})` : ''}
+                          {base.price && base.price > 0 ? `+$${base.price.toFixed(2)}` : ''}
                         </span>
                         <input
                           type="radio"
@@ -1067,7 +1072,7 @@ export default function ProductDetailClient() {
 
               {/* Custom Text Checkbox Option */}
               {product.textOptions && product.textOptions.filter(t => t.enabled !== false).length > 0 && (
-                <div className="product-option pt-2 mt-2">
+                <div className="product-option mb-2">
                   <div className="flex items-center">
                     <input
                       id="add-custom-text"
@@ -1082,12 +1087,12 @@ export default function ProductDetailClient() {
                       }}
                       className="w-4 h-4 rounded border-gray-300 text-[#72B01D] focus:ring-[#72B01D] mr-2"
                     />
-                    <label htmlFor="add-custom-text" className="h5 mb-0 cursor-pointer">
+                    <label htmlFor="add-custom-text" className="h4 mb-0 cursor-pointer">
                       {(() => {
                         const enabledTextOptions = product.textOptions.filter(t => t.enabled !== false);
                         const textPrice = (enabledTextOptions.find(t => t.price > 0) || enabledTextOptions[1])?.price || 0;
                         return textPrice > 0 
-                          ? `Add Custom Text (+$${textPrice.toFixed(2)})`
+                          ? `Add Custom Text ( +$${textPrice.toFixed(2)} )`
                           : 'Add Custom Text (No Extra Cost)';
                       })()}
                     </label>

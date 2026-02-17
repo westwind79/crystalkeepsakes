@@ -591,7 +591,7 @@
     "name": "Prestige Crystal",
     "slug": "prestige-crystal",
     "sku": "Prestige_Crystal",
-    "basePrice": 199,
+    "basePrice": 149,
     "description": "Premium Prestige 3D crystal - elegant memorial gift for distinguished veterans and VIP tributes. Three sizes available. Museum-quality engraving.",
     "longDescription": "<p class=\"mb-4\"> Present the ultimate tribute with our <span class=\"font-semibold\">Prestige Crystal</span>, a distinguished memorial piece designed for honoring high-ranking veterans, significant life achievements, and VIP commemorations. This premium crystal represents our finest craftsmanship, combining elegant design with museum-quality 3D laser engraving that befits prestigious occasions and important memorial tributes. </p><p class=\"mb-4\"> The Prestige Crystal features a sophisticated architectural design that commands respect and attention. Available in three substantial sizes, this crystal is perfect for executive gifts, military retirement ceremonies, memorial services for distinguished individuals, and occasions where only the finest tribute will do. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestigious Memorial Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">High-ranking military veteran tributes</li><li class=\"text-gray-900\">Executive retirement gifts</li><li class=\"text-gray-900\">Distinguished service awards</li><li class=\"text-gray-900\">Memorial services for VIPs</li><li class=\"text-gray-900\">Presidential and congressional gifts</li><li class=\"text-gray-900\">Significant lifetime achievement recognition</li><li class=\"text-gray-900\">Museum and institution memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestige Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Elegant architectural design</li><li class=\"text-gray-900\">Three substantial sizes (13x9cm, 16x13cm, 19x15cm)</li><li class=\"text-gray-900\">Museum-quality 3D laser engraving</li><li class=\"text-gray-900\">Premium crystal clarity and weight</li><li class=\"text-gray-900\">Sophisticated presentation</li><li class=\"text-gray-900\">Multiple luxury light base options</li><li class=\"text-gray-900\">Suitable for formal displays</li></ul><p class=\"mb-4\"> The larger size options make this crystal ideal for prominent display in corporate offices, memorial halls, military installations, or home libraries where significant tributes deserve prominent placement. The weight and clarity of the crystal immediately communicate quality and importance. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">General and Admiral retirements</li><li class=\"text-gray-900\">Congressional Medal of Honor recipients</li><li class=\"text-gray-900\">Presidential tributes</li><li class=\"text-gray-900\">CEO and executive memorials</li><li class=\"text-gray-900\">University and institution honors</li><li class=\"text-gray-900\">Significant anniversary celebrations</li><li class=\"text-gray-900\">High-profile memorial services</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization for Prestige:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Formal portraits and official photos</li><li class=\"text-gray-900\">Military rank, awards, and insignia</li><li class=\"text-gray-900\">Service records and achievements</li><li class=\"text-gray-900\">Formal epitaphs and citations</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Premium custom text placement</li><li class=\"text-gray-900\">Background removal service</li></ul><p class=\"mb-4\"> This Prestige Crystal is frequently chosen for military change-of-command ceremonies, retirement celebrations for senior officers, and memorial services where the individual's significance merits exceptional recognition. The crystal's substantial presence and elegant design communicate respect, honor, and lasting appreciation. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Investment in Honor:</h4><p class=\"mb-4\"> Starting at $235, the Prestige Crystal represents a significant investment appropriate for significant individuals and occasions. This is not a casual gift—it's a statement of profound respect and lasting tribute that reflects the importance of the person being honored. </p>",
     "images": [
@@ -613,21 +613,24 @@
         "name": "Prestige Small (13x9cm)",
         "price": 149,
         "cockpit3d_id": "367",
-        "cost": 69.75
+        "cost": 69.75,
+        "faces": "1"
       },
       {
         "id": "368",
         "name": "Prestige Medium (16x13cm)",
         "price": 199,
         "cockpit3d_id": "368",
-        "cost": 99.75
+        "cost": 99.75,
+        "faces": "4"
       },
       {
         "id": "369",
         "name": "Prestige Large (19x15cm)",
         "price": 399,
         "cockpit3d_id": "369",
-        "cost": 124.75
+        "cost": 124.75,
+        "faces": "6"
       }
     ],
     "lightBases": [
@@ -637,46 +640,58 @@
         "price": null
       },
       {
-        "id": "371",
-        "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "371"
-      },
-      {
-        "id": "373",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "373"
-      },
-      {
-        "id": "374",
-        "name": "Lightbase Wood Long",
-        "price": 35,
-        "cockpit3d_id": "374"
-      },
-      {
-        "id": "478",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "478"
-      },
-      {
-        "id": "844",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "844"
-      },
-      {
-        "id": "845",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "845"
-      },
-      {
-        "id": "370",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "370"
+        "enabled": true
+      },
+      {
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -716,7 +731,7 @@
     "maskImageUrl": "/img/masks/prestige-mask.png",
     "cost": 99.75,
     "edited": true,
-    "editedAt": "2026-01-13T20:18:27.203Z",
+    "editedAt": "2026-02-17T21:01:13.112Z",
     "featured": true
   },
   {
