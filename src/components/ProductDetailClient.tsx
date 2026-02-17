@@ -25,7 +25,7 @@ import ProductGallery from '@/components/ProductGallery'
 import ProductBadges from '@/components/ProductBadges'
 import gsap from 'gsap';
 
-import { ArrowBigLeft, ArrowLeft, CornerRightDown } from 'lucide-react'; 
+import { ArrowBigLeft, ArrowLeft, CornerRightDown, Users } from 'lucide-react'; 
 
 import '../app/css/modal.css'
 import '../app/css/product-options.css'
