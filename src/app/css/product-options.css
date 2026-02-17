@@ -2,13 +2,14 @@
 .custom-checkbox-label,
 .crystal-radio {
   cursor: pointer;
-  display: block;
-  position: relative;
-  padding: 10px 12px 10px 32px;
-  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: stretch;
+  position: relative; 
   border-radius: 8px;
   border: 2px solid #d1d5db;
-  background: #ffffff;
+  background: #FEFEFE;
   color: #1f2937; 
   transition: all 0.2s ease;
   font-weight: 500;
@@ -55,10 +56,29 @@
 }
 
 /* Selected state */
+/*.crystal-radio:has(input[type="radio"]:checked) {
+  border-color: #72B01D;
+  background: linear-gradient(-5deg,  #72B01D, #5a9216);
+  color: #ffffff;
+  animation: gradientShift 1.5s ease forwards;
+}
+*/
 .crystal-radio:has(input[type="radio"]:checked) {
   border-color: #72B01D;
-  background: #72B01D;
+
+  background: linear-gradient(
+    -5deg,
+    #72B01D,
+    #5a9216,
+    #72B01D
+  );
+
+  background-size: 400% 200%;     /* makes room for movement */
+  background-position: 0% 50%;
+
   color: #ffffff;
+  transition: border-color 250ms ease, color 250ms ease;
+  animation: gradientShift 5s ease infinite;
 }
 
 .crystal-radio:has(input[type="radio"]:checked)::before {
@@ -74,7 +94,7 @@
 /* Selected state hover */
 .crystal-radio:has(input[type="radio"]:checked):hover {
   border-color: #5a9216;
-  background: #5a9216;
+  background: linear-gradient(-5deg,  #72B01D, #5a9216);
 }
 
 /* Price tag styling */
@@ -97,4 +117,19 @@
   float: left;
   text-align: center;
   font-weight: normal;
+}
+/*.custom-checkbox-label:focus-within,
+.crystal-radio:focus-within {
+  box-shadow: 0 0 0 2px rgba(114,176,29,0.25);
+}*/
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

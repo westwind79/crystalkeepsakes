@@ -179,21 +179,24 @@
         "name": "Cut Corner Diamond (5x5cm)",
         "price": 50,
         "cockpit3d_id": "202",
-        "cost": 24.75
+        "cost": 24.75,
+        "faces": "1"
       },
       {
         "id": "549",
         "name": "Cut Corner Diamond (6x6cm)",
         "price": 60,
         "cockpit3d_id": "549",
-        "cost": 39.75
+        "cost": 39.75,
+        "faces": "2"
       },
       {
         "id": "550",
         "name": "Cut Corner Diamond (8x8cm)",
         "price": 70,
         "cockpit3d_id": "550",
-        "cost": 49.75
+        "cost": 49.75,
+        "faces": "3"
       }
     ],
     "lightBases": [
@@ -297,8 +300,15 @@
     "sale": true,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2026-02-17T18:54:40.244Z",
-    "salePercent": 10
+    "editedAt": "2026-02-17T20:32:44.857Z",
+    "salePercent": 10,
+    "occasions": [
+      "holiday",
+      "wedding",
+      "birthday",
+      "anniversary",
+      "custom"
+    ]
   },
   {
     "id": "105",

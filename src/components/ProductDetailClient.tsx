@@ -974,22 +974,22 @@ export default function ProductDetailClient() {
 
               {/* Size */}
               {product.sizes && product.sizes.filter(s => s.enabled !== false).length > 0 && (
-                <div className="product-option pt-2 mt-2">
+                <div className="product-option mb-3">
                   <fieldset>
                     <legend className="h5">Select Size <span className="text-red-500">*</span></legend>
                     {errors.size && <div className="text-red-500 small">{errors.size}</div>}
                     {product.sizes.filter(s => s.enabled !== false).map((size) => (
-                      <label key={size.id} className="crystal-radio">
+                      <label key={size.id} className="crystal-radio mb-2 px-8 py-2">
                         {/* Show faces indicator for products that require images */}
                         {product.requiresImage && size.faces && (
                           <span className="product-faces">
                             <Users size={18} />
-                            <span className="faces-count">{size.faces}</span>
+                            <span className="faces-count">{size.faces && size.faces > 1 ? `1–${size.faces}` : "1"}</span>
                           </span>
                         )}
-                        <span className="h5">{size.name}</span>
+                        <span className="">{size.name}</span>
                         <span className="option-price">
-                          <span className="option-price__wrapper h5">
+                          <span className="option-price__wrapper">
                             {size.price === 0 ? (
                               <span className="option-price__included">
                                 <span className="option-price__paren">(</span>
@@ -1011,7 +1011,6 @@ export default function ProductDetailClient() {
                           checked={selectedSize?.id === size.id}
                           onChange={() => setSelectedSize(size)}
                         />
-                        <span className="radio-checkmark"></span>
                       </label>
                     ))}
                   </fieldset>
@@ -1020,11 +1019,11 @@ export default function ProductDetailClient() {
 
               {/* Background Options */}
               {product.backgroundOptions && product.backgroundOptions.filter(bg => bg.enabled !== false).length > 0 && (
-                <div className="product-option pt-2 mt-2">
+                <div className="product-option mb-3">
                   <fieldset>
                     <legend className="h5">Background Style <span className="text-red-500">*</span></legend>
                     {product.backgroundOptions.filter(bg => bg.enabled !== false).map((bg) => (
-                      <label key={bg.id} className="crystal-radio">
+                      <label key={bg.id} className="crystal-radio mb-2 px-8 py-2">
                         {bg.name}
                         <span className="option-price">
                           {bg.price === 0 ? '' : `(+$${bg.price.toFixed(2)})`}
@@ -1036,7 +1035,6 @@ export default function ProductDetailClient() {
                           checked={selectedBackground?.id === bg.id}
                           onChange={() => setSelectedBackground(bg)}
                         />
-                        <span className="radio-checkmark"></span>
                       </label>
                     ))}
                   </fieldset>
@@ -1045,11 +1043,11 @@ export default function ProductDetailClient() {
 
               {/* Light Base */}
               {product.lightBases && product.lightBases.filter(lb => lb.enabled !== false).length > 0 && (
-                <div className="product-option pt-2 mt-2">
+                <div className="product-option mb-3">
                   <fieldset>
                     <legend className="h5">Light Base <span className="text-red-500">*</span></legend>
                     {product.lightBases.filter(lb => lb.enabled !== false).map((base) => (
-                      <label key={base.id} className="crystal-radio">
+                      <label key={base.id} className="crystal-radio mb-2 pl-8 pr-4 py-2">
                         {base.name}
                         <span className="option-price">
                           {base.price && base.price > 0 ? `(+$${base.price.toFixed(2)})` : ''}
@@ -1060,8 +1058,7 @@ export default function ProductDetailClient() {
                           value={base.id}
                           checked={selectedLightBase?.id === base.id}
                           onChange={() => setSelectedLightBase(base)}
-                        />
-                        <span className="radio-checkmark"></span>
+                        /> 
                       </label>
                     ))}
                   </fieldset>
