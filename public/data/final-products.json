@@ -408,7 +408,7 @@
     "name": "Rectangle Vertical Crystals",
     "slug": "rectangle-vertical-crystals",
     "sku": "Rectangle_Vertical_Crystals",
-    "basePrice": 79,
+    "basePrice": 59,
     "description": "Premium vertical rectangle 3D photo crystal - ideal memorial gift for veterans and loved ones. 8 sizes available. Personalized laser engraving with custom text options.",
     "longDescription": "<p class=\"mb-4\"> Create a lasting tribute with our <span class=\"font-semibold\">Rectangle Vertical Crystal</span>, a sophisticated 3D laser-engraved keepsake that honors veterans, celebrates memories, and makes the perfect Christmas gift. Available in 8 sizes ranging from small (6x4cm) to presidential (27x18cm), this elegant crystal transforms your treasured photographs into stunning works of art. </p><p class=\"mb-4\"> Our advanced 3D laser engraving technology captures incredible depth and detail, making every memory vivid and lifelike. Whether you're commemorating a fallen soldier, celebrating a milestone, or creating a meaningful Christmas ornament, this vertical rectangle crystal provides a timeless way to preserve life's most precious moments. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military tribute displays</li><li class=\"text-gray-900\">Memorial keepsakes for family members</li><li class=\"text-gray-900\">Retirement and service recognition awards</li><li class=\"text-gray-900\">Christmas photo ornaments and decorations</li><li class=\"text-gray-900\">Wedding anniversary and milestone celebrations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Size Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Small: 6x4cm – Perfect desk size</li><li class=\"text-gray-900\">Medium: 8x5cm – Popular choice</li><li class=\"text-gray-900\">Large: 9x6cm – Impressive detail</li><li class=\"text-gray-900\">XLarge: 12x8cm – Statement piece</li><li class=\"text-gray-900\">Mini Mantel: 15x10cm – Mantel display</li><li class=\"text-gray-900\">Mantel: 18x12cm – Family showcase</li><li class=\"text-gray-900\">Mini Presidential: 22x16cm – Executive display</li><li class=\"text-gray-900\">Presidential: 27x18cm – Premium memorial</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Custom text engraving for names, dates, and messages</li><li class=\"text-gray-900\">2D or 3D backdrop options for enhanced depth</li><li class=\"text-gray-900\">Multiple premium light base selections</li><li class=\"text-gray-900\">Professional background removal service</li></ul><p class=\"mb-4\"> Each crystal is crafted with precision and care, ensuring your memorial gift or Christmas keepsake becomes a cherished family heirloom. The vertical orientation is perfect for portrait photos and creates an elegant display on any mantel, desk, or memorial shelf.</p>",
     "images": [
@@ -435,56 +435,64 @@
         "name": "Rectangle Small (6x4cm)",
         "price": 59,
         "cockpit3d_id": "1975",
-        "cost": 19.75
+        "cost": 19.75,
+        "faces": "1"
       },
       {
         "id": "230",
         "name": "Rectangle Medium (8x5cm)",
         "price": 79,
         "cockpit3d_id": "230",
-        "cost": 24.75
+        "cost": 24.75,
+        "faces": "2"
       },
       {
         "id": "362",
         "name": "Rectangle Large (9x6cm)",
         "price": 119,
         "cockpit3d_id": "362",
-        "cost": 39.75
+        "cost": 39.75,
+        "faces": "3"
       },
       {
         "id": "363",
         "name": "Rectangle XLarge (12x8cm)",
         "price": 169,
         "cockpit3d_id": "363",
-        "cost": 59.75
+        "cost": 59.75,
+        "faces": "4"
       },
       {
         "id": "745",
         "name": "Rectangle Mini Mantel (15x10cm)",
         "price": 325,
         "cockpit3d_id": "745",
-        "cost": 89.75
+        "cost": 89.75,
+        "faces": "6"
       },
       {
         "id": "747",
         "name": "Rectangle Mantel (18x12cm)",
         "price": 375,
         "cockpit3d_id": "747",
-        "cost": 109.75
+        "cost": 109.75,
+        "faces": "8"
       },
       {
         "id": "748",
         "name": "Rectangle Mini Presidential (22x16cm)",
         "price": 595,
         "cockpit3d_id": "748",
-        "cost": 149.75
+        "cost": 149.75,
+        "faces": "10"
       },
       {
         "id": "749",
         "name": "Rectangle Presidential (27x18cm)",
         "price": 1000,
         "cockpit3d_id": "749",
-        "cost": 349.75
+        "cost": 349.75,
+        "faces": "12"
       }
     ],
     "lightBases": [
@@ -585,7 +593,7 @@
     "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2026-02-17T22:55:12.218Z",
+    "editedAt": "2026-02-18T01:26:52.788Z",
     "occasions": [
       "graduation",
       "wedding",

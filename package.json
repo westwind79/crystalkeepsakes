@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    
     "prebuild": "node scripts/fetch-cockpit3d-products.js",
-    "fetch-products": "node scripts/fetch-cockpit3d-products.js",
-    "copy-products": "node scripts/copy-products.js",
+    "build": "next build",
+    
     "build:test": "node scripts/safe-build.js test",
     "build:prod": "node scripts/safe-build.js prod",
+    
+    "fetch-products": "node scripts/fetch-cockpit3d-products.js",
+    "masks": "node scripts/generate-masks-list.js",
+    
     "clean": "rimraf out out-test out-prod .next",
-    "build": "next build",
-    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
