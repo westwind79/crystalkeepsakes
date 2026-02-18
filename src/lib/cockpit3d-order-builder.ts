@@ -296,9 +296,19 @@ function buildCockpit3DOptions(item: any): Array<{
       }
 
       // Get Cockpit3D option ID
-      const optionId = opt.cockpit3d_option_id || opt.optionId || opt.id
+      let optionId = opt.cockpit3d_option_id || opt.cockpit3d_id || opt.optionId || opt.id
       
-      if (optionId) {
+      // For lightBase, try mapping if no cockpit3d ID
+      if (opt.category === 'lightBase' && !opt.cockpit3d_option_id && !opt.cockpit3d_id) {
+        const mappedId = LIGHTBASE_COCKPIT3D_MAP[opt.optionId]
+        if (mappedId) {
+          optionId = mappedId
+          console.log(`📦 Mapped lightBase '${opt.optionId}' -> Cockpit3D ID '${mappedId}'`)
+        }
+      }
+      
+      // Skip 'none' options
+      if (optionId && optionId !== 'none') {
         options.push({
           id: String(optionId),
           qty: '1',
@@ -327,9 +337,14 @@ function buildCockpit3DOptions(item: any): Array<{
         ? item.options.lightBase
         : item.options.lightBase.name || item.options.lightBase.id
       
-      // Use cockpit3d_id if available
-      const lbId = item.options.lightBase.cockpit3d_id || lbValue
-      options.push({ id: String(lbId), qty: '1' })
+      // Use cockpit3d_id if available, otherwise try mapping
+      let lbId = item.options.lightBase.cockpit3d_id || item.options.lightBase.cockpit3d_option_id
+      if (!lbId) {
+        lbId = LIGHTBASE_COCKPIT3D_MAP[lbValue] || lbValue
+      }
+      if (lbId && lbId !== 'none') {
+        options.push({ id: String(lbId), qty: '1' })
+      }
     }
   }
 
