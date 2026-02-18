@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Paths
-const DATA_DIR = path.join(__dirname, '..', 'src', 'data');
+const DATA_DIR = path.join(__dirname, '..', 'app', 'src', 'data');
 const STATIC_PRODUCTS_PATH = path.join(DATA_DIR, 'static-products.js');
 const RAW_PRODUCTS_PATH = path.join(DATA_DIR, 'cockpit3d-raw-products.js');
 const RAW_CATALOG_PATH = path.join(DATA_DIR, 'cockpit3d-raw-catalog.js');
