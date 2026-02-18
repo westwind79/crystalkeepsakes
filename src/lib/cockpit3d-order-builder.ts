@@ -83,6 +83,22 @@ const OPTION_ID_MAP: Record<string, string> = {
 }
 
 /**
+ * Light base ID to Cockpit3D product ID mapping
+ * Maps user-friendly IDs to Cockpit3D catalog IDs
+ */
+const LIGHTBASE_COCKPIT3D_MAP: Record<string, string> = {
+  'lightbase-rectangle': '105',
+  'lightbase-square': '106',
+  'lightbase-wood-small': '107',
+  'lightbase-wood-medium': '108',
+  'lightbase-wood-long': '119',
+  'rotating-led-lightbase': '160',
+  'concave-lightbase': '276',
+  'ornament-stand': '279',
+  'wooden-premium-base-mini': '107',
+}
+
+/**
  * Build a Cockpit3D order from cart items and customer info
  */
 export function buildCockpit3DOrder(
