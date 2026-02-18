@@ -240,7 +240,7 @@
         "id": "rotating-led-lightbase",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "enabled": false
+        "enabled": true
       },
       {
         "id": "wooden-premium-base-mini",
@@ -301,7 +301,7 @@
     "sale": true,
     "cost": 39.75,
     "edited": true,
-    "editedAt": "2026-02-17T20:32:44.857Z",
+    "editedAt": "2026-02-18T00:44:33.174Z",
     "salePercent": 10,
     "occasions": [
       "holiday",
@@ -1640,6 +1640,60 @@
         "id": "none",
         "name": "No Base",
         "price": null
+      },
+      {
+        "id": "lightbase-rectangle",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -1680,7 +1734,7 @@
     "featured": true,
     "cost": 109.75,
     "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
+    "editedAt": "2026-02-18T00:43:27.704Z",
     "occasions": [
       "pet",
       "memorial",
@@ -3622,7 +3676,7 @@
     "name": "3D Crystal Circle",
     "slug": "3d-crystal-circle",
     "sku": "3D_Crystal_Circle",
-    "basePrice": 199,
+    "basePrice": 209,
     "description": "From portraits of loved ones and military veterans to pets and special life moments, each image is rendered with clarity and depth—creating a beautiful visual effect from every viewing angle.",
     "longDescription": "<p class=\"mb-4\"> Celebrate life’s unbreakable connections with our <span class=\"font-semibold\">3D Crystal Circle</span>, a timeless keepsake that captures your most cherished photos in a perfectly symmetrical crystal form. The circular design symbolizes unity, eternity, and wholeness—making it an ideal choice for memorial tributes, family keepsakes, and commemorative gifts that honor love without end. </p><p class=\"mb-4\"> Our advanced 3D laser engraving technology creates detailed, lifelike images suspended within the center of the crystal.</p><p class=\"mb-4\"> Whether displayed on a lighted base or placed on a memory shelf, the 3D Crystal Circle adds emotional warmth and artistic sophistication to any memorial or celebration setting. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Key Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Polished circular crystal design (symbol of eternity and unity)</li><li class=\"text-gray-900\">Premium 3D laser engraving with floating image effect</li><li class=\"text-gray-900\">Ideal for single subjects, couples, or small groups</li><li class=\"text-gray-900\">Works beautifully with light bases for added brilliance</li><li class=\"text-gray-900\">Smooth edges and balanced shape for any display location</li><li class=\"text-gray-900\">Optional personalization with custom text or insignia</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorials honoring loved ones or pets</li><li class=\"text-gray-900\">Military tribute displays</li><li class=\"text-gray-900\">Celebration of life centerpieces</li><li class=\"text-gray-900\">Anniversary or wedding keepsakes</li><li class=\"text-gray-900\">Christmas and holiday remembrance gifts</li><li class=\"text-gray-900\">Spiritual or symbolic gifts of connection</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">3D photo engraving (portrait, couple, or trio)</li><li class=\"text-gray-900\">Names, dates, short quotes, or service info</li><li class=\"text-gray-900\">Background removal for focused presentation</li><li class=\"text-gray-900\">Optional 3D or 2D backdrop enhancement</li><li class=\"text-gray-900\">Lighted base recommendations available</li></ul>",
     "images": [
@@ -3638,13 +3692,15 @@
         "id": "2057",
         "name": "3D Crystal Circle Small l  4.75” x 5 x 1.25 / 12 x 12.5 x 3cm",
         "price": 209,
-        "cockpit3d_id": "2057"
+        "cockpit3d_id": "2057",
+        "faces": "1"
       },
       {
         "id": "2056",
         "name": "3D Crystal Circle Medium  6” x 5.75 x 1.25 / 15 x 14.5 x 3cm",
         "price": 209,
-        "cockpit3d_id": "2056"
+        "cockpit3d_id": "2056",
+        "faces": "3"
       }
     ],
     "lightBases": [
@@ -3654,52 +3710,58 @@
         "price": null
       },
       {
-        "id": "2059",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "2059"
-      },
-      {
-        "id": "2060",
-        "name": "Rotating LED Lightbase",
-        "price": null,
-        "cockpit3d_id": "2060"
-      },
-      {
-        "id": "2061",
-        "name": "Concave Lightbase",
-        "price": null,
-        "cockpit3d_id": "2061"
-      },
-      {
-        "id": "2062",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "2062"
-      },
-      {
-        "id": "2063",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
-        "price": null,
-        "cockpit3d_id": "2063"
+        "price": 25,
+        "enabled": true
       },
       {
-        "id": "2064",
+        "id": "lightbase-square",
         "name": "Lightbase Square",
-        "price": null,
-        "cockpit3d_id": "2064"
+        "price": 20,
+        "enabled": true
       },
       {
-        "id": "2065",
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
-        "price": null,
-        "cockpit3d_id": "2065"
+        "price": 35,
+        "enabled": true
       },
       {
-        "id": "2066",
+        "id": "lightbase-wood-medium",
         "name": "Lightbase Wood Medium",
-        "price": null,
-        "cockpit3d_id": "2066"
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3745,7 +3807,7 @@
       "birthday"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:17:54.210Z"
   },
   {
     "id": "472",
@@ -3770,52 +3832,58 @@
         "price": null
       },
       {
-        "id": "1897",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "1897"
-      },
-      {
-        "id": "1898",
-        "name": "Lightbase Wood Small",
-        "price": null,
-        "cockpit3d_id": "1898"
-      },
-      {
-        "id": "1899",
-        "name": "Rotating LED Lightbase",
-        "price": null,
-        "cockpit3d_id": "1899"
-      },
-      {
-        "id": "1900",
-        "name": "Lightbase Wood Long",
-        "price": null,
-        "cockpit3d_id": "1900"
-      },
-      {
-        "id": "1901",
-        "name": "Lightbase Wood Medium",
-        "price": null,
-        "cockpit3d_id": "1901"
-      },
-      {
-        "id": "1902",
-        "name": "Lightbase Square",
-        "price": null,
-        "cockpit3d_id": "1902"
-      },
-      {
-        "id": "1903",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
-        "price": null,
-        "cockpit3d_id": "1903"
+        "price": 25,
+        "enabled": false
       },
       {
-        "id": "2110",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "2110"
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3855,6 +3923,6 @@
     "maskImageUrl": "/img/masks/3d-crystal-oval_mask.png",
     "cost": 89.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T00:44:16.139Z"
   }
 ]

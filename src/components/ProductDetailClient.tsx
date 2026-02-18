@@ -983,7 +983,7 @@ export default function ProductDetailClient() {
                         {/* Show faces indicator for products that require images */}
                         {product.requiresImage && size.faces && (
                           <span className="product-faces mr-2 px-2 py-1">                            
-                            <span className="faces-count">
+                            <span className="faces-count w-8">
                               {size.faces > 1 ? (
                                 <>
                                   <Users size={18} />
@@ -1000,13 +1000,11 @@ export default function ProductDetailClient() {
                         )}
                         <span className="size-option-name">{size.name}</span>
                         <span className="option-price">
-                          <span className="option-price__wrapper">
-                             
-                              <span className="option-price__additional">
-                                <span className="option-price__currency">$</span>
-                                <span className="option-price__value">{size.price}</span>
-                              </span>
-                            
+                          <span className="option-price__wrapper">  
+                            <span className="option-price__additional">
+                              <span className="option-price__currency">$</span>
+                              <span className="option-price__value">{size.price}</span>
+                            </span>                            
                           </span>
                         </span>
                         <input

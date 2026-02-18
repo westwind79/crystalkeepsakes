@@ -169,18 +169,6 @@ export const OCCASION_CATEGORIES = [
 ];
 
 /**
- * Product type definitions for filtering
- */
-export const PRODUCT_TYPES = {
-  CRYSTAL: 'crystal',
-  LIGHTBASE: 'lightbase',
-  ACCESSORY: 'accessory',
-  FEATURED: 'featured',
-  SALE: 'sale',
-  ALL: 'all'
-};
-
-/**
  * Helper function to determine if a product is a lightbase
  * Based on product ID, name, or other characteristics
  * FIXED: Excludes Ornament Stand (ID 279) which is an accessory, not a lightbase
