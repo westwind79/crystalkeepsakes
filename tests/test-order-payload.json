@@ -1,0 +1,70 @@
+{
+  "testMode": true,
+  "sendTestEmail": true,
+  "orderNumber": "CK_TEST_1771382046929",
+  "cartItems": [
+    {
+      "productId": "104",
+      "cockpit3d_id": "104",
+      "name": "Cut Corner Diamond",
+      "sku": "Cut_Corner_Diamond",
+      "price": 92.5,
+      "quantity": 1,
+      "sizeDetails": {
+        "sizeId": "202",
+        "sizeName": "Cut Corner Diamond (5x5cm)",
+        "cockpit3d_id": "202",
+        "basePrice": 50
+      },
+      "options": [
+        {
+          "category": "lightBase",
+          "optionId": "lightbase-rectangle",
+          "name": "Lightbase Rectangle",
+          "value": "Lightbase Rectangle",
+          "priceModifier": 25
+        },
+        {
+          "category": "background",
+          "optionId": "2d",
+          "cockpit3d_option_id": "154",
+          "name": "2D Backdrop",
+          "value": "2D Backdrop",
+          "priceModifier": 8
+        },
+        {
+          "category": "customText",
+          "optionId": "custom-text",
+          "cockpit3d_option_id": "199",
+          "name": "Custom Text",
+          "value": "Custom Text Added",
+          "priceModifier": 9.5,
+          "line1": "In Loving Memory",
+          "line2": "Forever in Our Hearts"
+        }
+      ],
+      "customText": {
+        "text": "In Loving Memory\nForever in Our Hearts"
+      },
+      "maskedImageUrl": "https://crystalkeepsakes.com/crystal-data/orders/CK_0000001_1766640024369/masked.jpg",
+      "rawImageUrl": "https://crystalkeepsakes.com/crystal-data/orders/CK_0000001_1766640024369/original.jpg",
+      "tempOrderRef": "CK_0000001_1766640024369",
+      "productImage": null
+    }
+  ],
+  "customer": {
+    "email": "test@crystalkeepsakes.com",
+    "firstName": "Test",
+    "lastName": "Customer",
+    "phone": "555-123-4567"
+  },
+  "shippingInfo": {
+    "address": "123 Test Street",
+    "city": "Test City",
+    "state": "CA",
+    "zipCode": "90210",
+    "country": "US",
+    "shippingMethod": "air",
+    "destination": "customer_home"
+  }
+}
