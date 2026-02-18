@@ -983,7 +983,7 @@ export default function ProductDetailClient() {
                         {/* Show faces indicator for products that require images */}
                         {product.requiresImage && size.faces && (
                           <span className="product-faces mr-2 px-2 py-1">                            
-                            <span className="faces-count w-8">
+                            <span className="faces-count w-10">
                               {size.faces > 1 ? (
                                 <>
                                   <Users size={18} />
