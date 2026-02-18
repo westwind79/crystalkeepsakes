@@ -10,9 +10,6 @@ import { assetPath } from '@/lib/assetPath'
 import { getProducts } from '@/lib/products'
 
 import { 
-  isLightbaseProduct, 
-  isFeaturedProduct,
-  isOnSale,
   PRODUCT_CATEGORIES,
   filterProductsByCategory,
   getCategoryIcon
@@ -21,15 +18,6 @@ import {
 // Environment logging
 const ENV_MODE = process.env.NEXT_PUBLIC_ENV_MODE || 'development'
 const shouldLog = ENV_MODE === 'development' || ENV_MODE === 'testing'
-
-// Product Type Constants
-const PRODUCT_TYPES = {
-  ALL: 'all',
-  CRYSTALS: 'crystals',
-  LIGHTBASES: 'lightbases'
-} as const
-
-type ProductType = typeof PRODUCT_TYPES[keyof typeof PRODUCT_TYPES]
 
 // Product interface
 interface Product {

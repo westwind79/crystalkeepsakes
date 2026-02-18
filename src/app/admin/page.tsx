@@ -197,54 +197,55 @@ export default function EnhancedProductAdminPage() {
   const getProductData = (productId: string): Product => {
     const sourceProduct = sourceProducts.find((p) => p.id === productId);
     const customizations = editedProducts[productId] || {};
+    
     const merged = { ...sourceProduct, ...customizations } as Product;
-     const isOrnamentProduct = sourceProduct?.name?.toLowerCase().includes('ornament');
+    const isOrnamentProduct = sourceProduct?.name?.toLowerCase().includes('ornament') 
+      && !sourceProduct?.name?.toLowerCase().includes('ornament stand');
 
-    // Ensure all master light bases are present if product has ANY lightBases
-    // This prevents options from disappearing when unchecked
-   
-    if (sourceProduct?.lightBases && sourceProduct.lightBases.length > 0 && !isOrnamentProduct) {
+    // Ornaments get only the ornament stand option (no full lightbase list)
+    if (isOrnamentProduct) {
       const existingLBs = merged.lightBases || [];
-      const existingIds = new Set(existingLBs.map(lb => lb.id));
-      
-      // Get prices from standalone lightbase products for syncing
+      const standPrice = (() => {
+        const standProduct = sourceProducts.find(p => p.id === LIGHTBASE_PRODUCT_MAP['ornament-stand']);
+        const customPrice = editedProducts[LIGHTBASE_PRODUCT_MAP['ornament-stand']]?.basePrice;
+        return customPrice ?? standProduct?.basePrice ?? 25;
+      })();
+      const ORNAMENT_BASES: LightBase[] = [
+        { id: 'none', name: 'No Stand', price: null, enabled: true },
+        { id: 'ornament-stand', name: 'Ornament Stand', price: standPrice, cockpit3d_id: 'ornament_stand', enabled: true }
+      ];
+      merged.lightBases = ORNAMENT_BASES.map(base => {
+        const existing = existingLBs.find(lb => lb.id === base.id);
+        return existing ? { ...base, ...existing, price: base.id === 'ornament-stand' ? standPrice : existing.price } : base;
+      });
+    } else if (sourceProduct?.lightBases && sourceProduct.lightBases.length > 0) {
+      // Crystals: expand to full MASTER_LIGHTBASES list
+      const existingLBs = merged.lightBases || [];
       const lightbasePrices: { [key: string]: number | null } = {};
-      Object.entries(LIGHTBASE_PRODUCT_MAP).forEach(([lbId, productId]) => {
-        const lbProduct = sourceProducts.find(p => p.id === productId);
-        const customPrice = editedProducts[productId]?.basePrice;
+      Object.entries(LIGHTBASE_PRODUCT_MAP).forEach(([lbId, prodId]) => {
+        const lbProduct = sourceProducts.find(p => p.id === prodId);
+        const customPrice = editedProducts[prodId]?.basePrice;
         if (customPrice !== undefined) {
           lightbasePrices[lbId] = customPrice;
         } else if (lbProduct) {
           lightbasePrices[lbId] = lbProduct.basePrice;
         }
       });
-      
-      // Merge existing LBs with master list
       const fullLightBases = MASTER_LIGHTBASES.map(masterLB => {
         const existing = existingLBs.find(lb => lb.id === masterLB.id);
         if (existing) {
-          // Use synced price from standalone product, or master price if existing is null/0
           const syncedPrice = lightbasePrices[masterLB.id];
           const finalPrice = syncedPrice !== undefined ? syncedPrice 
             : (existing.price !== null && existing.price !== 0) ? existing.price 
             : masterLB.price;
-          return {
-            ...existing,
-            price: finalPrice
-          };
+          return { ...existing, price: finalPrice };
         }
-        // Not in product's list - add as disabled
         const syncedPrice = lightbasePrices[masterLB.id];
-        return { 
-          ...masterLB, 
-          price: syncedPrice !== undefined ? syncedPrice : masterLB.price,
-          enabled: false 
-        };
+        return { ...masterLB, price: syncedPrice !== undefined ? syncedPrice : masterLB.price, enabled: false };
       });
-      
       merged.lightBases = fullLightBases;
     }
-    
+
     return merged;
   };
 
@@ -1455,7 +1456,9 @@ export default function EnhancedProductAdminPage() {
                         {selectedProductData.lightBases && selectedProductData.lightBases.length > 0 && (
                           <div className="pt-4 border-t border-slate-200">
                             <h4 className="section-title">
-                              {selectedProduct.name.toLowerCase().includes('ornament') ? 'Stand Options' : 'Light Bases'}
+                              {selectedProduct?.name?.toLowerCase().includes('ornament') && !selectedProduct?.name?.toLowerCase().includes('ornament stand') 
+                                ? 'Stand Options' 
+                                : 'Light Bases'}
                             </h4>
                             <div className="space-y-1.5">
                               {selectedProductData.lightBases.map((lb, index) => (
