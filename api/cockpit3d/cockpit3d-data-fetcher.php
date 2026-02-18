@@ -734,7 +734,14 @@ class CockPit3DFetcher {
         console_log("Ã°Å¸â€Â Detected crystal product", $productName);
         return false;
     }
-
+    private function isOrnament($productName) {
+        $name = strtolower($productName);
+        $keywords = ['ornament'];
+        foreach ($keywords as $keyword) {
+            if (strpos($name, $keyword) !== false) return true;
+        }
+        return false;
+    }
     /**
      * Check if a product is a keychain, ornament, or necklace (no lightbase needed)
      * Version: 1.0.0 - 2025-11-06
@@ -753,6 +760,38 @@ class CockPit3DFetcher {
             if (strpos($name, $keyword) !== false) {
                 console_log("🔑 Detected keychain/ornament - NO lightbase needed", $name);
                 return true;
+            } elseif ($this->isOrnament($rawProduct['name'])) {
+                // Ornaments get ornament stand as their only base option
+                $ornamentStandPrice = 25.00; // Default fallback
+                // Try to look up actual price from products list
+                foreach ($rawProducts as $p) {
+                    if (isset($p['sku']) && (
+                        strtolower($p['sku']) === 'ornament_stand' || 
+                        strtolower($p['sku']) === 'ornament stand' ||
+                        stripos($p['name'], 'ornament stand') !== false
+                    )) {
+                        $ornamentStandPrice = (float)$p['price'];
+                        break;
+                    }
+                }
+                $transformed['lightBases'] = [
+                    [
+                        'id' => 'none',
+                        'name' => 'No Stand',
+                        'price' => null,
+                        'cockpit3d_id' => null
+                    ],
+                    [
+                        'id' => 'ornament-stand',
+                        'name' => 'Ornament Stand',
+                        'price' => $ornamentStandPrice,
+                        'cockpit3d_id' => 'ornament_stand'
+                    ]
+                ];
+                console_log("🎄 Ornament - added ornament stand option", $ornamentStandPrice);
+            } else {
+                $transformed['lightBases'] = [];
+                console_log("🔑 Keychain/Necklace - NO lightbases");
             }
         }
         

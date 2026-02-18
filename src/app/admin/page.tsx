@@ -111,7 +111,8 @@ const MASTER_LIGHTBASES: LightBase[] = [
   { id: 'rotating-led-lightbase', name: 'Rotating LED Lightbase', price: 19.99, enabled: true },
   { id: 'wooden-premium-base-mini', name: 'Wooden Premium Base Mini', price: 45, enabled: true },
   { id: 'concave-lightbase', name: 'Concave Lightbase', price: 39, enabled: true },
-  { id: 'ornament-stand', name: 'Ornament Stand', price: 25, enabled: true },
+  { id: "ornament-stand", name: "Ornament Stand", price: 25, enabled: true  },
+
 ];
 
 // Mapping from lightbase option ID to standalone product ID
@@ -123,6 +124,7 @@ const LIGHTBASE_PRODUCT_MAP: { [key: string]: string } = {
   'lightbase-wood-long': '119',
   'rotating-led-lightbase': '160',
   'concave-lightbase': '276',
+  'ornament-stand': '279',
 };
 
 export default function EnhancedProductAdminPage() {
@@ -196,10 +198,12 @@ export default function EnhancedProductAdminPage() {
     const sourceProduct = sourceProducts.find((p) => p.id === productId);
     const customizations = editedProducts[productId] || {};
     const merged = { ...sourceProduct, ...customizations } as Product;
-    
+     const isOrnamentProduct = sourceProduct?.name?.toLowerCase().includes('ornament');
+
     // Ensure all master light bases are present if product has ANY lightBases
     // This prevents options from disappearing when unchecked
-    if (sourceProduct?.lightBases && sourceProduct.lightBases.length > 0) {
+   
+    if (sourceProduct?.lightBases && sourceProduct.lightBases.length > 0 && !isOrnamentProduct) {
       const existingLBs = merged.lightBases || [];
       const existingIds = new Set(existingLBs.map(lb => lb.id));
       
@@ -1450,7 +1454,9 @@ export default function EnhancedProductAdminPage() {
                         {/* Lightbase Prices */}
                         {selectedProductData.lightBases && selectedProductData.lightBases.length > 0 && (
                           <div className="pt-4 border-t border-slate-200">
-                            <h4 className="section-title">Light Bases</h4>
+                            <h4 className="section-title">
+                              {selectedProduct.name.toLowerCase().includes('ornament') ? 'Stand Options' : 'Light Bases'}
+                            </h4>
                             <div className="space-y-1.5">
                               {selectedProductData.lightBases.map((lb, index) => (
                                 <div key={lb.id} className="flex items-center gap-3">
