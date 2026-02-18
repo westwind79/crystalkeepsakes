@@ -1,60 +1,115 @@
-# Crystal Keepsakes - Admin Panel Enhancement PRD
+# Crystal Keepsakes - Order Payload Documentation
 
-## Original Problem Statement
-User reported 3 issues with Admin Panel:
-1. Light bases disappearing when unchecked in 3D Crystal Urn/Candles - options should remain visible
-2. Price sync between standalone light base products and product options not working
-3. Products with multiple sizes (like Cut Corner Diamond) only showing ONE base price instead of price range
+## Project Overview
+E-commerce platform for custom crystal engravings with Cockpit3D integration.
 
-## Architecture & Implementation
+## Repository
+- Source: https://github.com/westwind79/crystalkeepsakes
+- Branch: `localchanges`
 
-### Changes Made (Jan 29, 2026)
-1. **MASTER_LIGHTBASES constant** - Added master list of all available light bases to ensure options never disappear
-2. **LIGHTBASE_PRODUCT_MAP** - Maps lightbase option IDs to standalone product IDs for price syncing
-3. **Enhanced getProductData()** - Ensures all master light bases are present with proper enabled state and synced prices
-4. **Enhanced updateProduct()** - Syncs lightbase prices bidirectionally when standalone product prices change
-5. **Price Range Display** - Product list now shows "$min - $max" for products with multiple sizes
+## Order Payload Flow
 
-### Key Files Modified
-- `/app/src/app/admin/page.tsx` - Main admin panel component
+### 1. Frontend (checkout/page.tsx)
+Cart items are prepared with:
+```javascript
+{
+  productId, cockpit3d_id, name, sku, price, quantity,
+  sizeDetails: { sizeId, sizeName, cockpit3d_id, basePrice },
+  options: [
+    { category: 'lightBase', optionId: 'lightbase-rectangle', cockpit3d_option_id: null, ... },
+    { category: 'background', optionId: '2d', cockpit3d_option_id: '154', ... },
+    { category: 'customText', optionId: 'custom-text', cockpit3d_option_id: '199', line1, line2, ... }
+  ],
+  maskedImageUrl, rawImageUrl, customText
+}
+```
 
-## What's Been Implemented
+### 2. PHP Backend (create-checkout-session.php)
+Saves full cart data to `/api/order-data/{orderNumber}.json` before Stripe checkout.
 
-### Issue 1: Light Bases Never Disappear ✅
-- All 10 light base options always visible
-- Unchecked options remain with empty checkbox
-- Options: No Base, Lightbase Rectangle, Lightbase Square, Lightbase Wood Small/Medium/Long, Rotating LED, Wooden Premium Base Mini, Concave Lightbase, Ornament Stand
+### 3. Stripe Webhook (stripe-webhook.php)
+After payment:
+1. Loads cart data from `/api/order-data/{orderNumber}.json`
+2. Builds Cockpit3D order with `buildCockpit3DItemOptions()`
+3. Submits to Cockpit3D API
 
-### Issue 2: Price Sync ✅
-- Changing standalone lightbase product price syncs to all products using that lightbase
-- Bidirectional sync when changing option price in product
+### 4. Cockpit3D Order Structure
+```json
+{
+  "retailer_id": 123456,
+  "address": { order_id, email, firstname, lastname, street, city, ... },
+  "items": [{
+    "sku": "CCD-001",
+    "qty": "1",
+    "client_item_id": "CK_ORDER_001-1",
+    "original_photo": "https://...",
+    "cropped_photo": "https://...",
+    "options": [
+      { "id": "202", "qty": "1" },           // Size
+      { "id": "105", "qty": "1" },           // Light base
+      { "id": "154", "qty": "1" },           // Background
+      { "id": "199", "value": ["Line1", "Line2"] }  // Custom text
+    ],
+    "special_instructions": "Custom Text: ..."
+  }]
+}
+```
 
-### Issue 3: Size-Based Pricing ✅
-- Product list shows price range (e.g., "$50 - $70") for products with sizes
-- Individual size prices editable
-- Base Price auto-calculated from smallest enabled size
+## Fixes Applied (2025-02-18)
 
-## Core Requirements (Static)
-- Next.js application for crystal keepsake e-commerce
-- Admin panel for product management
-- Price management with size options
-- Light base options with global price sync
+### Light Base Mapping Fix
+**Problem:** Frontend sends `optionId: "lightbase-rectangle"` but Cockpit3D needs numeric IDs like `"105"`.
 
-## P0/P1/P2 Features Remaining
+**Solution:** Added `$LIGHTBASE_COCKPIT3D_MAP` to:
+- `/api/stripe/stripe-webhook.php`
+- `/api/cockpit3d/submit-order.php`
+- `/api/orders/process-order.php`
+- `/src/lib/cockpit3d-order-builder.ts`
 
-### P0 (Critical) - Complete
-- ✅ Light base options visibility
-- ✅ Price synchronization
-- ✅ Size-based pricing display
+```php
+$LIGHTBASE_COCKPIT3D_MAP = [
+    'lightbase-rectangle' => '105',
+    'lightbase-square' => '106',
+    'lightbase-wood-small' => '107',
+    'lightbase-wood-medium' => '108',
+    'lightbase-wood-long' => '119',
+    'rotating-led-lightbase' => '160',
+    'concave-lightbase' => '276',
+    'ornament-stand' => '279',
+];
+```
 
-### P1 (High Priority) - Backlog
-- None identified
+### Field Name Fix
+**Problem:** Frontend sends `cockpit3d_option_id` but some PHP code looked for `cockpit3d_id`.
 
-### P2 (Nice to Have) - Future
-- Batch editing for multiple products
-- Price history tracking
-- Export/import functionality
+**Solution:** PHP now checks both: `$opt['cockpit3d_id'] ?? $opt['cockpit3d_option_id']`
 
-## Next Tasks
-- User testing of all 3 fixes
-- Consider adding undo functionality for price changes
+## Environment Variables Required
+```
+COCKPIT3D_USERNAME=your_email
+COCKPIT3D_PASSWORD=your_password
+COCKPIT3D_RETAILER_ID=your_retailer_id
+COCKPIT3D_API_URL=https://c3d-profit-dev.host.alva.tools
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+## Testing
+
+### Test Mode Submission
+```bash
+curl -X POST http://localhost:8888/crystalkeepsakes/api/cockpit3d/submit-order.php \
+  -H "Content-Type: application/json" \
+  -d '{"testMode": true, "sendTestEmail": true, "orderNumber": "TEST_001", ...}'
+```
+
+### Files for Testing
+- `/tests/test-order-payload.js` - Node.js test script
+- `/api/test-order-flow.php` - PHP test script
+- `/tests/test-order-payload.json` - Sample payload
+
+## Backlog
+- [ ] Add cockpit3d_id to light bases in final-products.json
+- [ ] Test full checkout flow with Stripe test mode
+- [ ] Test email notification delivery
+- [ ] Test Cockpit3D API submission (dev environment)
