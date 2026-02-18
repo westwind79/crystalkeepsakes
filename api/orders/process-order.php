@@ -156,12 +156,26 @@ function buildCockpit3DPayload($orderData, $retailerId) {
         // Add options
         if (!empty($item['options'])) {
             foreach ($item['options'] as $opt) {
-                if (is_array($opt) && !empty($opt['cockpit3d_id'])) {
-                    $cockpitItem['options'][] = [
-                        'id' => $opt['cockpit3d_id'],
-                        'qty' => '1',
-                        'value' => $opt['value'] ?? $opt['name'] ?? ''
-                    ];
+                if (is_array($opt)) {
+                    $category = $opt['category'] ?? '';
+                    
+                    // Get cockpit3d ID from various fields
+                    $cockpitId = $opt['cockpit3d_id'] ?? $opt['cockpit3d_option_id'] ?? null;
+                    
+                    // For lightBase, try mapping from optionId if no cockpit3d ID
+                    if ($category === 'lightBase' && empty($cockpitId) && !empty($opt['optionId'])) {
+                        global $LIGHTBASE_COCKPIT3D_MAP;
+                        $cockpitId = $LIGHTBASE_COCKPIT3D_MAP[$opt['optionId']] ?? null;
+                    }
+                    
+                    // Skip 'none' options
+                    if (!empty($cockpitId) && $cockpitId !== 'none') {
+                        $cockpitItem['options'][] = [
+                            'id' => (string)$cockpitId,
+                            'qty' => '1',
+                            'value' => $opt['value'] ?? $opt['name'] ?? ''
+                        ];
+                    }
                 }
             }
         }
