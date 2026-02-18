@@ -824,7 +824,7 @@
     "name": "Rectangle Horizontal Crystals",
     "slug": "rectangle-horizontal-crystals",
     "sku": "Rectangle_Horizontal_Crystals",
-    "basePrice": 100,
+    "basePrice": 59,
     "description": "Horizontal rectangle 3D photo crystal in 8 sizes. Landscape orientation ideal for family photos, military groups, and veteran tributes. Premium memorial gift.",
     "longDescription": "<p class=\"mb-4\"> Capture life's most important moments in landscape orientation with our <span class=\"font-semibold\">Rectangle Horizontal Crystal</span>, designed specifically for family groups, military units, and wide-format photographs. Available in 8 sizes from small (6x4cm) to presidential (27x18cm), this horizontal crystal orientation is perfect for commemorating group photos, military formations, family gatherings, and scenic memorial tributes. </p><p class=\"mb-4\"> The landscape format makes this crystal ideal for photographs that tell broader stories—military units standing together, families gathered for holidays, veterans with their brothers-in-arms, or scenic locations that held special meaning. Our 3D laser engraving captures every person, every detail, creating memorial pieces that honor not just individuals but the relationships and bonds that defined their lives. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal for Landscape Photos:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Military unit and platoon photos</li><li class=\"text-gray-900\">Family gathering and reunion photos</li><li class=\"text-gray-900\">Veteran brothers-in-arms tributes</li><li class=\"text-gray-900\">Scenic memorial locations</li><li class=\"text-gray-900\">Horizontal portrait compositions</li><li class=\"text-gray-900\">Christmas family traditions</li><li class=\"text-gray-900\">Wide-format memorial displays</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Size Options <span class=\"text-base font-normal\">(all at $85 base):</span></h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Small: 6x4cm - Desk size</li><li class=\"text-gray-900\">Medium: 8x5cm - Popular choice</li><li class=\"text-gray-900\">Large: 9x6cm - Enhanced detail</li><li class=\"text-gray-900\">XLarge: 12x8cm - Statement size</li><li class=\"text-gray-900\">Mini Mantel: 15x10cm - Mantel perfect</li><li class=\"text-gray-900\">Mantel: 18x12cm - Family showcase</li><li class=\"text-gray-900\">Mini Presidential: 22x16cm - Executive display</li><li class=\"text-gray-900\">Presidential: 27x18cm - Premium memorial</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Rectangle Horizontal Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Landscape orientation for wide photos</li><li class=\"text-gray-900\">3D laser engraving with depth</li><li class=\"text-gray-900\">8 size options for any budget</li><li class=\"text-gray-900\">Perfect for group photographs</li><li class=\"text-gray-900\">Military formation appropriate</li><li class=\"text-gray-900\">Multiple light base options</li><li class=\"text-gray-900\">Professional display quality</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran unit reunion tributes</li><li class=\"text-gray-900\">Family Christmas traditions</li><li class=\"text-gray-900\">Military change-of-command gifts</li><li class=\"text-gray-900\">Retirement ceremony displays</li><li class=\"text-gray-900\">Memorial service group photos</li><li class=\"text-gray-900\">Anniversary celebration gifts</li><li class=\"text-gray-900\">Christmas family keepsakes</li></ul><p class=\"mb-4\"> The horizontal format is particularly effective for military formations, showing entire units or squads together—honoring not just individual service but the bonds of brotherhood forged in service. Many veteran organizations use these crystals for reunion gifts, retirement presents, and memorial tributes to fallen comrades. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Unit designation and service dates</li><li class=\"text-gray-900\">Military insignia and branch</li><li class=\"text-gray-900\">\"Never Forget\" memorial text</li><li class=\"text-gray-900\">Family names and occasions</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">Custom memorial inscriptions</li></ul><p class=\"mb-4\"> This crystal is also perfect for Christmas family traditions—many families create annual crystals featuring their holiday gatherings, building collections that document family growth and celebrate togetherness across generations. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Versatility:</h4><p class=\"mb-4\"> The horizontal orientation suits modern design aesthetics and fits beautifully on mantel displays, horizontal shelving, and contemporary memorial arrangements. The wide format draws the eye across the composition, inviting viewers to study details and remember stories.</p>",
     "images": [
@@ -856,56 +856,64 @@
         "name": "Rectangle Small (6x4cm)",
         "price": 59,
         "cockpit3d_id": "1976",
-        "cost": 19.75
+        "cost": 19.75,
+        "faces": "1"
       },
       {
         "id": "690",
         "name": "Rectangle Wide Medium (8x5cm)",
         "price": 100,
         "cockpit3d_id": "690",
-        "cost": 24.75
+        "cost": 24.75,
+        "faces": "2"
       },
       {
         "id": "691",
         "name": "Rectangle Wide Large (9x6cm)",
         "price": 170,
         "cockpit3d_id": "691",
-        "cost": 39.75
+        "cost": 39.75,
+        "faces": "3"
       },
       {
         "id": "692",
         "name": "Rectangle Wide XLarge (12x8cm)",
         "price": 285,
         "cockpit3d_id": "692",
-        "cost": 59.75
+        "cost": 59.75,
+        "faces": "4"
       },
       {
         "id": "746",
         "name": "Rectangle Wide Mini Mantel (15x10cm)",
         "price": 325,
         "cockpit3d_id": "746",
-        "cost": 89.75
+        "cost": 89.75,
+        "faces": "6"
       },
       {
         "id": "750",
         "name": "Rectangle Wide Mantel (18x12cm)",
         "price": 375,
         "cockpit3d_id": "750",
-        "cost": 109.75
+        "cost": 109.75,
+        "faces": "8"
       },
       {
         "id": "751",
         "name": "Rectangle Wide Mini Presidential (22x16cm)",
         "price": 595,
         "cockpit3d_id": "751",
-        "cost": 149.75
+        "cost": 149.75,
+        "faces": "10"
       },
       {
         "id": "752",
         "name": "Rectangle Wide Presidential (27x18cm)",
         "price": 1000,
         "cockpit3d_id": "752",
-        "cost": 349.75
+        "cost": 349.75,
+        "faces": "12"
       }
     ],
     "lightBases": [
@@ -1000,7 +1008,7 @@
     "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
     "cost": 24.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
+    "editedAt": "2026-02-18T01:21:35.688Z",
     "occasions": [
       "anniversary",
       "wedding",
@@ -1816,28 +1824,58 @@
         "price": null
       },
       {
-        "id": "719",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "719"
-      },
-      {
-        "id": "957",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "957"
+        "enabled": true
       },
       {
-        "id": "718",
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "718"
+        "enabled": false
       },
       {
-        "id": "897",
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
         "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "897"
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -1877,7 +1915,7 @@
     "maskImageUrl": "/img/masks/notched-vertical-mask.png",
     "cost": 95,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:20:56.046Z"
   },
   {
     "id": "266",
@@ -1945,7 +1983,7 @@
         "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "enabled": true
+        "enabled": false
       },
       {
         "id": "lightbase-wood-medium",
@@ -2028,7 +2066,7 @@
       "birthday"
     ],
     "edited": true,
-    "editedAt": "2026-02-17T22:59:46.036Z"
+    "editedAt": "2026-02-18T01:21:05.718Z"
   },
   {
     "id": "276",
@@ -2093,28 +2131,58 @@
         "price": null
       },
       {
-        "id": "785",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "785"
-      },
-      {
-        "id": "879",
-        "name": "Wooden Premium Base Mini",
-        "price": 45,
-        "cockpit3d_id": "879"
-      },
-      {
-        "id": "880",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "880"
+        "enabled": true
       },
       {
-        "id": "784",
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
         "name": "Concave Lightbase",
-        "price": 39,
-        "cockpit3d_id": "784"
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -2160,7 +2228,7 @@
       "wedding"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:18:58.207Z"
   },
   {
     "id": "279",
@@ -2214,16 +2282,58 @@
         "price": null
       },
       {
-        "id": "1029",
-        "name": "Wooden Premium Base Mini",
-        "price": 35,
-        "cockpit3d_id": "1029"
+        "id": "lightbase-rectangle",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "enabled": false
       },
       {
-        "id": "1517",
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": true
+      },
+      {
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "1517"
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -2267,7 +2377,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "editedAt": "2026-02-18T01:20:31.747Z"
   },
   {
     "id": "288",
@@ -2292,16 +2402,57 @@
         "price": null
       },
       {
-        "id": "940",
-        "name": "Lightbase Wood Medium",
-        "price": 30,
-        "cockpit3d_id": "940"
+        "id": "lightbase-rectangle",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "enabled": true
       },
       {
-        "id": "1433",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "1433",
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": true
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
         "enabled": false
       }
     ],
@@ -2346,7 +2497,7 @@
       "memorial"
     ],
     "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "editedAt": "2026-02-18T01:20:21.727Z"
   },
   {
     "id": "290",
@@ -2368,7 +2519,62 @@
       {
         "id": "none",
         "name": "No Base",
-        "price": null
+        "price": null,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-rectangle",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-square",
+        "name": "Lightbase Square",
+        "price": 20,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-small",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-medium",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "lightbase-wood-long",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "enabled": false
+      },
+      {
+        "id": "rotating-led-lightbase",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "enabled": false
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -2412,7 +2618,7 @@
       "retirement"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:19:23.763Z"
   },
   {
     "id": "440",
@@ -3457,64 +3663,58 @@
         "price": null
       },
       {
-        "id": "2087",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "2087"
-      },
-      {
-        "id": "2088",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "2088"
-      },
-      {
-        "id": "2089",
-        "name": "Concave Lightbase",
-        "price": 39,
-        "cockpit3d_id": "2089"
-      },
-      {
-        "id": "2090",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "2090"
-      },
-      {
-        "id": "2091",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "2091"
+        "enabled": true
       },
       {
-        "id": "2092",
+        "id": "lightbase-square",
         "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "2092"
+        "price": 20,
+        "enabled": false
       },
       {
-        "id": "2093",
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "2093"
+        "enabled": true
       },
       {
-        "id": "2094",
+        "id": "lightbase-wood-medium",
         "name": "Lightbase Wood Medium",
         "price": 45,
-        "cockpit3d_id": "2094"
+        "enabled": false
       },
       {
-        "id": "2095",
+        "id": "lightbase-wood-long",
         "name": "Lightbase Wood Long",
         "price": 35,
-        "cockpit3d_id": "2095"
+        "enabled": false
       },
       {
-        "id": "2096",
+        "id": "rotating-led-lightbase",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "2096"
+        "enabled": true
+      },
+      {
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": false
+      },
+      {
+        "id": "concave-lightbase",
+        "name": "Concave Lightbase",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
+        "enabled": false
       }
     ],
     "backgroundOptions": [
@@ -3554,7 +3754,7 @@
     "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
     "cost": 99.75,
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:19:55.241Z"
   },
   {
     "id": "468",
@@ -3579,46 +3779,57 @@
         "price": null
       },
       {
-        "id": "2030",
+        "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "2030"
+        "enabled": false
       },
       {
-        "id": "2031",
+        "id": "lightbase-square",
         "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "2031"
+        "price": 20,
+        "enabled": true
       },
       {
-        "id": "2032",
+        "id": "lightbase-wood-small",
         "name": "Lightbase Wood Small",
         "price": 35,
-        "cockpit3d_id": "2032"
+        "enabled": false
       },
       {
-        "id": "2033",
+        "id": "lightbase-wood-medium",
         "name": "Lightbase Wood Medium",
         "price": 45,
-        "cockpit3d_id": "2033"
+        "enabled": true
       },
       {
-        "id": "2034",
+        "id": "lightbase-wood-long",
         "name": "Lightbase Wood Long",
         "price": 35,
-        "cockpit3d_id": "2034"
+        "enabled": false
       },
       {
-        "id": "2035",
+        "id": "rotating-led-lightbase",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "2035"
+        "enabled": false
       },
       {
-        "id": "2036",
+        "id": "wooden-premium-base-mini",
+        "name": "Wooden Premium Base Mini",
+        "price": 45,
+        "enabled": true
+      },
+      {
+        "id": "concave-lightbase",
         "name": "Concave Lightbase",
-        "price": 39,
-        "cockpit3d_id": "2036",
+        "price": 28,
+        "enabled": false
+      },
+      {
+        "id": "ornament-stand",
+        "name": "Ornament Stand",
+        "price": 25,
         "enabled": false
       }
     ],
@@ -3669,7 +3880,7 @@
       "holiday"
     ],
     "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "editedAt": "2026-02-18T01:19:12.281Z"
   },
   {
     "id": "469",
@@ -3835,7 +4046,7 @@
         "id": "lightbase-rectangle",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "enabled": false
+        "enabled": true
       },
       {
         "id": "lightbase-square",
@@ -3923,6 +4134,6 @@
     "maskImageUrl": "/img/masks/3d-crystal-oval_mask.png",
     "cost": 89.75,
     "edited": true,
-    "editedAt": "2026-02-18T00:44:16.139Z"
+    "editedAt": "2026-02-18T01:20:00.813Z"
   }
 ]
