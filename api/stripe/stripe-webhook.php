@@ -321,9 +321,27 @@ function buildCockpit3DOrder($session, $orderNumber) {
 }
 
 /**
+ * Light base ID to Cockpit3D product ID mapping
+ * These map the user-friendly IDs used in the frontend to Cockpit3D catalog IDs
+ */
+$LIGHTBASE_COCKPIT3D_MAP = [
+    'lightbase-rectangle' => '105',
+    'lightbase-square' => '106',
+    'lightbase-wood-small' => '107',
+    'lightbase-wood-medium' => '108',
+    'lightbase-wood-long' => '119',
+    'rotating-led-lightbase' => '160',
+    'concave-lightbase' => '276',
+    'ornament-stand' => '279',
+    'wooden-premium-base-mini' => '107',
+];
+
+/**
  * Build Cockpit3D options array from cart item
  */
 function buildCockpit3DItemOptions($item) {
+    global $LIGHTBASE_COCKPIT3D_MAP;
+    
     if (!$item) return [];
     
     $options = [];
@@ -341,12 +359,26 @@ function buildCockpit3DItemOptions($item) {
         foreach ($item['options'] as $opt) {
             $category = $opt['category'] ?? '';
             
-            // Light base option
-            if ($category === 'lightBase' && !empty($opt['cockpit3d_id'])) {
-                $options[] = [
-                    'id' => (string) $opt['cockpit3d_id'],
-                    'qty' => '1'
-                ];
+            // Light base option - check both cockpit3d_id and cockpit3d_option_id
+            // Also use the mapping if only optionId is available
+            if ($category === 'lightBase') {
+                $lbId = $opt['cockpit3d_id'] ?? $opt['cockpit3d_option_id'] ?? null;
+                
+                // If no cockpit3d ID, try to map from optionId
+                if (empty($lbId) && !empty($opt['optionId'])) {
+                    $lbId = $LIGHTBASE_COCKPIT3D_MAP[$opt['optionId']] ?? null;
+                    if ($lbId) {
+                        error_log("📦 Mapped lightBase '{$opt['optionId']}' -> Cockpit3D ID '$lbId'");
+                    }
+                }
+                
+                // Skip 'none' option
+                if (!empty($lbId) && $lbId !== 'none') {
+                    $options[] = [
+                        'id' => (string) $lbId,
+                        'qty' => '1'
+                    ];
+                }
             }
             
             // Background option
