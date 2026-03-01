@@ -82,9 +82,9 @@ const buildModes = {
     NEXT_PUBLIC_ENV_MODE: 'production',
     NODE_ENV: 'production'
   },
-  local: {
-    envFile: '.env.local',
-    BUILD_MODE: 'local',
+  development: {
+    envFile: '.env',
+    BUILD_MODE: 'dev',
     NEXT_PUBLIC_BASE_PATH: '',
     NEXT_PUBLIC_ENV_MODE: 'development',
     NODE_ENV: 'development'
@@ -270,21 +270,6 @@ try {
   }
   
   process.exit(1);
-}
-
-// Step 4: Run prepare-build script
-console.log('📋 Step 4: Preparing build output...\n');
-
-try {
-  execSync(`node scripts/prepare-build.js ${mode}`, {
-    stdio: 'inherit',
-    shell: true
-  });
-  
-  console.log('\n✅ Build preparation complete!\n');
-  
-} catch (err) {
-  console.error('\n⚠️  Build preparation had issues, but build files exist.\n');
 }
 
 // Step 5: Summary

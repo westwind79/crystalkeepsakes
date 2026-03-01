@@ -1,5 +1,5 @@
 <?php
-// api/cockpit3d-data-fetcher.php
+// api/cockpit3d/cockpit3d-data-fetcher.php
 // Version: 2.2.0 - 2025-11-06 - FIXED OPTIONS LOGIC FOR ALL PRODUCT TYPES
 // Fixed: Crystals get lightbases FROM PRODUCT OPTIONS (not catalog)
 // Fixed: Keychains/Ornaments get NO lightbases
@@ -123,7 +123,7 @@ class CockPit3DFetcher {
         console_log("Retailer ID", $this->retailerId ? 'SET' : 'MISSING');
         
         // Set up caching in src/data
-        $this->cacheDir = dirname(__DIR__) . '/src/data/';
+        $this->cacheDir = dirname(dirname(dirname(__FILE__))) . '/src/data/';
         $this->cacheMaxAge = 3600; // 1 hour
         
         console_log("Cache directory", $this->cacheDir);

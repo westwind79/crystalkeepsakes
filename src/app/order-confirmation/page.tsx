@@ -85,11 +85,11 @@ function OrderConfirmationContent() {
           
           // Use PHP backend for order processing
           const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
-          console.log('📤 [ORDER CONFIRMATION] Sending to PHP backend: ' + phpBackendUrl + '/api/process-order.php')
+          console.log('📤 [ORDER CONFIRMATION] Sending to PHP backend: ' + phpBackendUrl + '/api/orders/process-order.php')
           console.log('📤 [ORDER CONFIRMATION] Payload:', JSON.stringify(orderPayload, null, 2))
           logger.info('Processing order with Cockpit3D and email notification')
           
-          const processResponse = await fetch(`${phpBackendUrl}/api/process-order.php`, {
+          const processResponse = await fetch(`${phpBackendUrl}/api/orders/process-order.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderPayload)

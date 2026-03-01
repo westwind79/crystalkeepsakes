@@ -1,5 +1,5 @@
 <?php
-// api/upload-image.php
+// api/images/upload-image.php
 // Handles customer image uploads for product customization
 
 header('Content-Type: application/json');
@@ -168,8 +168,9 @@ try {
     // MAMP Setup: Document root is /MAMP/htdocs/, project is /MAMP/htdocs/crystalkeepsakes/
     // Images should go in: /MAMP/htdocs/crystalkeepsakes/public/img/products/cockpit3d/{id}/
     
-    // Get the project root (where this api folder is)
-    $projectRoot = dirname(__DIR__); // Go up one level from /api to project root
+    // Get the project root (where the api folder is located)
+    // From /api/images/ we need to go up two levels
+    $projectRoot = dirname(dirname(__DIR__)); // Go up two levels from /api/images to project root
     $uploadDir = $projectRoot . '/public/img/products/cockpit3d/' . $productId . '/';
     
     // Create directory if it doesn't exist
