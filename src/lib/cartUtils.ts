@@ -49,6 +49,7 @@ export interface CartItem {
     maskId?: string
     maskName?: string
     tempOrderRef?: string
+    orderStartedAt?: string // Preserved with tempOrderRef for order/session recovery.
     // For backward compatibility / display fallback
     thumbnail?: string
     dataUrl?: string

@@ -56,7 +56,7 @@ interface CartItem {
     line1?: string
     line2?: string
   }
-  productImage?: string
+  productImage?: string | null // Cart storage uses null when no product image is available.
   cockpit3d_id?: string
   // Sale information
   onSale?: boolean
@@ -366,6 +366,8 @@ export default function CartPage() {
             {cart.map((item, index) => {
               const detailedOptions = getDetailedOptions(item)
               const customTextDetails = getCustomTextDetails(item)
+              // Normalize optional sale math once so JSX never calls methods on undefined.
+              const discountAmount = item.discountAmount ?? 0
               
               return (
                 <div key={index} className="bg-white shadow-lg rounded-xl p-6 border border-green-100 hover:shadow-xl transition-shadow">
@@ -486,7 +488,7 @@ export default function CartPage() {
                         </div>
                         
                         {/* Sale/Discount Information */}
-                        {item.onSale && (item.discountAmount ?? 0) > 0 && (
+                        {item.onSale && discountAmount > 0 && (
                           <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
                             <div className="flex items-center justify-between text-sm">
                               <span className="text-red-700 font-semibold">
@@ -497,7 +499,7 @@ export default function CartPage() {
                                     : '💰 On Sale'}
                               </span>
                               <span className="text-red-700 font-bold">
-                                -${item.discountAmount.toFixed(2)}
+                                -${discountAmount.toFixed(2)}
                               </span>
                             </div>
                             {item.originalPrice && (

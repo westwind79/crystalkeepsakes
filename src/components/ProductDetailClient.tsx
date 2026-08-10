@@ -94,12 +94,16 @@ interface Product {
   categories?: string[]
   maskImageUrl?: string
   cockpit3d_id?: string
+  // Product data includes optional sale metadata used by cart line items.
+  salePrice?: number
+  salePercent?: number
 }
 
 export default function ProductDetailClient() {
   const params = useParams()
   const router = useRouter()
-  const textRef = useRef(null);
+  // GSAP targets spans inside this heading, so type the ref as an element.
+  const textRef = useRef<HTMLElement | null>(null);
   // Product State
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -141,6 +145,40 @@ export default function ProductDetailClient() {
 
   // File input ref for resetting
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const convertUploadedImageToBlackAndWhite = async (dataUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth || img.width
+        canvas.height = img.naturalHeight || img.height
+
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
+        if (!ctx) {
+          reject(new Error('Could not prepare image for engraving'))
+          return
+        }
+
+        ctx.drawImage(img, 0, 0)
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        const pixels = imageData.data
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          const gray = Math.round(0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2])
+          pixels[i] = gray
+          pixels[i + 1] = gray
+          pixels[i + 2] = gray
+        }
+
+        ctx.putImageData(imageData, 0, 0)
+        resolve(canvas.toDataURL('image/png', 1.0))
+      }
+      img.onerror = () => reject(new Error('Could not load uploaded image'))
+      img.src = dataUrl
+    })
+  }
 
   useEffect(() => {
     // Only run animation if textRef exists (for products that require images)
@@ -271,15 +309,28 @@ export default function ProductDetailClient() {
     clearOrderSession()
 
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const dataUrl = e.target?.result as string
       setRawUploadedImage(dataUrl) // Store original raw image
-      setUploadedImage(dataUrl)
-      setShowEditor(true)
-      
-      // ✅ FIX: Reset file input so same file can be selected again
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
+
+      try {
+        console.log('[IMAGE UPLOAD] Converting uploaded image to black and white immediately')
+        const blackAndWhiteImage = await convertUploadedImageToBlackAndWhite(dataUrl)
+        setUploadedImage(blackAndWhiteImage)
+        setShowEditor(true)
+      } catch (error) {
+        console.error('[IMAGE UPLOAD] Black and white conversion failed:', error)
+        setUploadedImage(dataUrl)
+        setShowEditor(true)
+        setErrors(prev => ({
+          ...prev,
+          image: 'Image loaded, but black and white conversion failed. You can still edit and save.'
+        }))
+      } finally {
+        // ✅ FIX: Reset file input so same file can be selected again
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
       }
     }
     reader.readAsDataURL(file)
@@ -596,7 +647,7 @@ export default function ProductDetailClient() {
         customImage = {
           // ✅ Keep base64 for thumbnail generation (IndexedDB storage)
           dataUrl: finalMaskedImage, // Always keep base64 for local processing
-          originalDataUrl: uploadedImage, // Always keep base64 for local processing
+          originalDataUrl: uploadedImage || undefined, // Convert null state to optional payload field.
           // ✅ Use server URLs that were uploaded on Save
           serverUrl: maskedImageServerUrl || undefined,
           originalServerUrl: rawImageServerUrl || undefined,
@@ -872,9 +923,10 @@ export default function ProductDetailClient() {
                     </button>
                   </div>
                 </div>
-              ) : product.images && product.images.length > 1 ? (
+                ) : product.images && product.images.length > 1 ? (
                 <div className={`${isPageLoaded ? 'fade-in' : 'opacity-0'}`}>
-                  <ProductGallery images={product.images} productName={product.name} />
+                  {/* ProductGallery derives alt text internally and only accepts images. */}
+                  <ProductGallery images={product.images} />
                   <ProductBadges product={product} position="gallery" />
                 </div>
               ) : (
@@ -978,16 +1030,20 @@ export default function ProductDetailClient() {
                   <fieldset>
                     <legend className="h2 text-lg">Select Size <span className="text-red-500">*</span></legend>
                     {errors.size && <div className="text-red-500 small">{errors.size}</div>}
-                    {product.sizes.filter(s => s.enabled !== false).map((size) => (
+                    {product.sizes.filter(s => s.enabled !== false).map((size) => {
+                      // Faces arrive from product data as strings, but the UI compares counts numerically.
+                      const faceCount = Number(size.faces || 0)
+
+                      return (
                       <label key={size.id} className="crystal-radio mb-1 pl-8 pr-4 py-2">
                         {/* Show faces indicator for products that require images */}
-                        {product.requiresImage && size.faces && (
+                        {product.requiresImage && faceCount > 0 && (
                           <span className="product-faces mr-2 px-2 py-1">                            
                             <span className="faces-count w-10">
-                              {size.faces > 1 ? (
+                              {faceCount > 1 ? (
                                 <>
                                   <Users size={18} />
-                                  {" "}1&ndash;{size.faces}
+                                  {" "}1&ndash;{faceCount}
                                 </>
                               ) : (
                                 <>
@@ -1015,7 +1071,8 @@ export default function ProductDetailClient() {
                           onChange={() => setSelectedSize(size)}
                         />
                       </label>
-                    ))}
+                      )
+                    })}
                   </fieldset>
                 </div>
               )}

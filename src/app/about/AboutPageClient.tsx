@@ -134,8 +134,9 @@ export default function AboutPageClient() {
           <div className="spacer-gradient my-5"></div>
 
               {/* Janell Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-            <div md={4} className="order-1 order-md-2 mb-4 mb-md-0">
+          {/* Use Tailwind grid sizing instead of invalid Bootstrap-style md props. */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
+            <div className="order-1 md:order-2 mb-4 md:mb-0">
               <div className="text-center about-photo">
                 <Image
                   src={getImagePath('img/janell-clipboard.jpg')}
@@ -149,7 +150,7 @@ export default function AboutPageClient() {
                 />
               </div>
             </div>
-            <div md={8} className="order-2 order-md-1">
+            <div className="order-2 md:order-1">
               <h2 className="mb-1 text-2xl">Janell</h2>
               <p className="lead mb-4">Sales Maven and Customer Service Enthusiast</p>
               <p className="mb-4">

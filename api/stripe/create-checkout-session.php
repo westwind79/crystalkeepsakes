@@ -123,11 +123,9 @@ try {
         ];
     }
     
-    // Generate order number
+    // Keep the browser-generated order number identical across images, Stripe,
+    // fulfillment, and email references. Environment is tracked in metadata.
     $orderNumber = $data->orderNumber ?? ('ORD-' . time());
-    if ($mode === 'test' || $mode === 'development') {
-        $orderNumber = 'TEST_' . $orderNumber;
-    }
     
     // ✅ FIX: Dynamic URL detection based on request origin
     // Supports localhost, /test subdirectory, and production
@@ -205,24 +203,54 @@ try {
         mkdir($cartDataDir, 0755, true);
     }
     
-    // Build full cart items array with all data needed for Cockpit3D
+    // Build full cart items array with all data needed for Cockpit3D.
+    // Pricing is intentionally sourced from our checkout/cart data because Profit
+    // does not currently return account-specific cost or retail pricing.
     $fullCartItems = [];
     foreach ($data->cartItems as $item) {
+        $quantity = intval($item->quantity ?? 1);
+        $unitPrice = round(floatval($item->price ?? 0), 2);
+        $lineSubtotal = round($unitPrice * $quantity, 2);
+        $selectedOptions = [];
+
+        if (!empty($item->options) && is_array($item->options)) {
+            foreach ($item->options as $option) {
+                $selectedOptions[] = [
+                    'category' => $option->category ?? null,
+                    'optionId' => $option->optionId ?? $option->id ?? null,
+                    'cockpit3d_id' => $option->cockpit3d_id ?? null,
+                    'cockpit3d_option_id' => $option->cockpit3d_option_id ?? null,
+                    'name' => $option->name ?? null,
+                    'value' => $option->value ?? null,
+                    'priceModifier' => isset($option->priceModifier) ? round(floatval($option->priceModifier), 2) : 0,
+                    'line1' => $option->line1 ?? null,
+                    'line2' => $option->line2 ?? null,
+                ];
+            }
+        }
+
         $fullCartItems[] = [
             'sku' => $item->sku ?? 'UNKNOWN',
             'name' => $item->name ?? 'Product',
-            'qty' => $item->quantity ?? 1,
-            'price' => $item->price ?? 0,
+            'qty' => $quantity,
+            'quantity' => $quantity,
+            'price' => $unitPrice,
+            'unitPrice' => $unitPrice,
+            'lineSubtotal' => $lineSubtotal,
+            'basePrice' => isset($item->basePrice) ? round(floatval($item->basePrice), 2) : null,
+            'optionsPrice' => isset($item->optionsPrice) ? round(floatval($item->optionsPrice), 2) : null,
+            'totalPrice' => isset($item->totalPrice) ? round(floatval($item->totalPrice), 2) : $lineSubtotal,
             'productId' => $item->productId ?? null,
             'cockpit3d_id' => $item->cockpit3d_id ?? null,
             // IMAGE URLs - critical for Cockpit3D
             'maskedImageUrl' => $item->maskedImageUrl ?? null,
             'rawImageUrl' => $item->rawImageUrl ?? null,
             // Options for Cockpit3D
-            'options' => $item->options ?? [],
+            'options' => $selectedOptions,
             'sizeDetails' => $item->sizeDetails ?? null,
             'customText' => $item->customText ?? null,
             'customImageId' => $item->customImageId ?? null,
+            'pricingSource' => 'crystalkeepsakes_checkout',
         ];
     }
     
@@ -232,7 +260,8 @@ try {
         'orderNumber' => $orderNumber,
         'items' => $fullCartItems,
         'subtotal' => $data->subtotal ?? 0,
-        'customerEmail' => $data->customerEmail ?? null,
+        'pricingSource' => 'crystalkeepsakes_checkout',
+        'pricingNote' => 'Profit API does not currently provide account-specific pricing; these are the site checkout prices charged by Stripe.',
         'created_at' => date('c')
     ], JSON_PRETTY_PRINT));
     error_log("✓ Saved full cart data to: $cartDataFile");

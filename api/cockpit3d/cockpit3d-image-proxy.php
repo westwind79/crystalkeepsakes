@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 // Function to get .env variables
 function getEnvVariable($key) {
-    $envFile = dirname(__DIR__) . '/.env';
+    $envFile = dirname(dirname(__DIR__)) . '/.env';
     if (!file_exists($envFile)) {
         return null;
     }
@@ -110,14 +110,16 @@ class CockPit3DImageProxy extends CockPit3DFetcher {
         
         if ($stripeMode === 'live') {
             // Production: check img folder
+            $projectRoot = dirname(dirname(__DIR__));
             $this->localImagePaths = [
-                dirname(__DIR__) . '/img/products/cockpit3d/',
+                $projectRoot . '/img/products/cockpit3d/',
             ];
         } else {
             // Development: check both dist and public folders
+            $projectRoot = dirname(dirname(__DIR__));
             $this->localImagePaths = [
-                dirname(__DIR__) . '/dist/img/products/cockpit3d/',
-                dirname(__DIR__) . '/public/img/products/cockpit3d/',
+                $projectRoot . '/dist/img/products/cockpit3d/',
+                $projectRoot . '/public/img/products/cockpit3d/',
             ];
         }
         

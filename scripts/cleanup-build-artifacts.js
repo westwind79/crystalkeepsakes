@@ -14,6 +14,7 @@ const path = require('path');
 
 const envMode = process.env.NEXT_PUBLIC_ENV_MODE || 'development';
 const buildMode = process.env.BUILD_MODE || envMode;
+const verbose = process.argv.includes('--verbose');
 
 // Determine output directory
 let distDir = 'out';
@@ -50,8 +51,11 @@ function removeNextJsArtifacts(dir) {
         // Remove any __next.* or __next_* file
         try {
           fs.unlinkSync(filePath);
-          const relativePath = path.relative(distPath, filePath);
-          console.log(`   ✅ Removed: ${relativePath}`);
+          // Keep normal builds readable; use --verbose when individual files matter.
+          if (verbose) {
+            const relativePath = path.relative(distPath, filePath);
+            console.log(`   ✅ Removed: ${relativePath}`);
+          }
           count++;
         } catch (error) {
           console.log(`   ⚠️  Could not remove ${file}: ${error.message}`);
@@ -71,7 +75,10 @@ const vendorPath = path.join(distPath, 'vendor');
 if (fs.existsSync(vendorPath)) {
   try {
     fs.rmSync(vendorPath, { recursive: true, force: true });
-    console.log(`   ✅ Removed: vendor/ (Composer dependencies - install on server)`);
+    // Vendor is server-installed for this deployment; one summary line is enough.
+    if (verbose) {
+      console.log(`   ✅ Removed: vendor/ (Composer dependencies - install on server)`);
+    }
     removedCount++;
   } catch (error) {
     console.log(`   ⚠️  Could not remove vendor/: ${error.message}`);

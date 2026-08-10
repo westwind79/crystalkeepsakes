@@ -10,7 +10,6 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react'
-import imageCompression from 'browser-image-compression'
 
 // TypeScript interfaces
 interface ImageEditorProps {
@@ -57,16 +56,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
   const isTest = process.env.NEXT_PUBLIC_ENV_MODE === 'testing'
   const isProd = process.env.NEXT_PUBLIC_ENV_MODE === 'production'
-
-  // Compression settings based on environment
-  // PNG for transparency support, higher resolution for laser engraving
-  const compressionSettings = {
-    maxSizeMB: 2, // Allow larger files for high-res PNG
-    maxWidthOrHeight: 2400, // Higher resolution for engraving
-    useWebWorker: true,
-    fileType: 'image/png' as const, // PNG for transparency
-    initialQuality: 0.95 // High quality for engraving
-  }
 
   // Log only in dev/test
   const log = (...args: any[]) => {
@@ -133,44 +122,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     ctx.putImageData(imageData, 0, 0)
     
     log('Grayscale conversion complete')
-  }
-
-  /**
-   * Compress image to reduce file size
-   */
-  const compressImage = async (dataUrl: string): Promise<string> => {
-    try {
-      // Convert data URL to blob
-      const base64Data = dataUrl.split(',')[1]
-      const mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0]
-      const byteCharacters = atob(base64Data)
-      const byteNumbers = new Array(byteCharacters.length)
-      
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i)
-      }
-      
-      const byteArray = new Uint8Array(byteNumbers)
-      const blob = new Blob([byteArray], { type: mimeType })
-      
-      log(`Original size: ${(blob.size / 1024 / 1024).toFixed(2)}MB`)
-      
-      // Compress the blob
-      const compressedFile = await imageCompression(blob, compressionSettings)
-      
-      log(`Compressed size: ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`)
-      
-      // Convert back to data URL
-      return new Promise((resolve) => {
-        const reader = new FileReader()
-        reader.onloadend = () => resolve(reader.result as string)
-        reader.readAsDataURL(compressedFile)
-      })
-      
-    } catch (error) {
-      logError('Compression failed:', error)
-      return dataUrl // Return original if compression fails
-    }
   }
 
   /**
@@ -477,12 +428,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         throw new Error('Generated data URL is invalid')
       }
 
-      // Compress final image
-      log('Compressing final image...')
-      const compressedDataUrl = await compressImage(dataUrl)
-
       log('Save complete!')
-      onSave(compressedDataUrl)
+      onSave(dataUrl)
       onHide()
 
     } catch (error) {
@@ -636,8 +583,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                       >
                         <span className="sr-only">Processing...</span>
                       </div>
-                      <div className="font-semibold">Converting to Black & White...</div>
-                      <div className="text-sm text-gray-300 mt-1">Compressing and saving...</div>
+                      <div className="font-semibold">Preparing engraving image...</div>
+                      <div className="text-sm text-gray-300 mt-1">Saving your masked preview...</div>
                     </div>
                   </div>
                 )}

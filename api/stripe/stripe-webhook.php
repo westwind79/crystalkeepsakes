@@ -6,7 +6,28 @@
  * @description Handles Stripe Checkout sessions and sends orders to Cockpit3D
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
+$possibleVendorPaths = [
+    dirname(dirname(__DIR__)) . '/vendor/autoload.php',
+    dirname(__DIR__) . '/vendor/autoload.php',
+    dirname(dirname(dirname(__DIR__))) . '/vendor/autoload.php',
+    $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php',
+    $_SERVER['DOCUMENT_ROOT'] . '/crystalkeepsakes/vendor/autoload.php',
+];
+
+$vendorLoaded = false;
+foreach ($possibleVendorPaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $vendorLoaded = true;
+        break;
+    }
+}
+
+if (!$vendorLoaded) {
+    error_log('ERROR: Stripe library not found. Checked: ' . implode(', ', $possibleVendorPaths));
+    http_response_code(500);
+    exit('Stripe library not found');
+}
 
 // Load environment helper
 function getEnvVariable($key) {
@@ -46,16 +67,6 @@ function getEnvVariable($key) {
     return $envCache[$key] ?? null;
 }
 
-// Get database connection if available
-$conn = null;
-if (file_exists(__DIR__ . '/db-connect.php')) {
-    try {
-        $conn = require_once __DIR__ . '/db-connect.php';
-    } catch (Exception $e) {
-        error_log('DB connection failed: ' . $e->getMessage());
-    }
-}
-
 // Get environment variables - ONLY uses standardized names
 $mode = getEnvVariable('NEXT_PUBLIC_ENV_MODE') ?? 'development';
 
@@ -76,6 +87,45 @@ if (!$webhookSecret) {
 }
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
+
+// Local diagnostic mode: build the same Cockpit3D payload without requiring a
+// Stripe signature and without submitting an external order.
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['dry_run_order'])) {
+    $orderNumber = sanitizeOrderNumber($_GET['dry_run_order']);
+    if (!$orderNumber) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Missing or invalid dry_run_order']);
+        exit;
+    }
+
+    try {
+        $session = buildDryRunCheckoutSession($orderNumber);
+        $cockpit3dOrder = buildCockpit3DOrder($session, $orderNumber);
+        $cockpit3dResult = sendToCockpit3D($cockpit3dOrder, true);
+
+        echo json_encode([
+            'success' => true,
+            'dry_run' => true,
+            'order_number' => $orderNumber,
+            'cockpit3d' => $cockpit3dResult,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'dry_run' => true, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// Get database connection if available. Skip this for diagnostics so dry runs
+// do not log unrelated local database connection errors.
+$conn = null;
+if (file_exists(__DIR__ . '/db-connect.php')) {
+    try {
+        $conn = require_once __DIR__ . '/db-connect.php';
+    } catch (Exception $e) {
+        error_log('DB connection failed: ' . $e->getMessage());
+    }
+}
 
 // Get webhook payload
 $payload = @file_get_contents('php://input');
@@ -177,7 +227,7 @@ function handleCheckoutCompleted($session) {
             }
             
             // Send order notification email
-            if (file_exists(__DIR__ . '/send-order-notification.php')) {
+            if (file_exists(dirname(__DIR__) . '/cockpit3d/send-order-notification.php')) {
                 sendOrderNotification($orderNumber, $fullSession);
             }
             
@@ -195,8 +245,13 @@ function handleCheckoutCompleted($session) {
  * Load full cart data from server storage
  * This contains image URLs and all options needed for Cockpit3D
  */
+function sanitizeOrderNumber($orderNumber) {
+    return preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $orderNumber);
+}
+
 function loadFullCartData($orderNumber) {
-    $cartDataFile = dirname(__DIR__) . '/order-data/' . $orderNumber . '.json';
+    $safeOrderNumber = sanitizeOrderNumber($orderNumber);
+    $cartDataFile = dirname(__DIR__) . '/order-data/' . $safeOrderNumber . '.json';
     
     if (!file_exists($cartDataFile)) {
         error_log("⚠️  No cart data file found: $cartDataFile");
@@ -222,6 +277,9 @@ function loadFullCartData($orderNumber) {
 function buildCockpit3DOrder($session, $orderNumber) {
     $customerDetails = $session->customer_details;
     $shippingDetails = $session->shipping_details ?? $session->shipping;
+    if (!$shippingDetails || empty($shippingDetails->address)) {
+        throw new Exception('Missing Stripe shipping details; Cockpit3D requires a shipping address');
+    }
     
     // Parse name from shipping or customer details
     $fullName = $shippingDetails->name ?? $customerDetails->name ?? '';
@@ -242,7 +300,7 @@ function buildCockpit3DOrder($session, $orderNumber) {
             'firstname' => $firstName,
             'lastname' => $lastName,
             'telephone' => $phone,
-            'street' => $shippingDetails->address->line1 . ($shippingDetails->address->line2 ? "\n" . $shippingDetails->address->line2 : ''),
+            'street' => ($shippingDetails->address->line1 ?? '') . (!empty($shippingDetails->address->line2) ? "\n" . $shippingDetails->address->line2 : ''),
             'city' => $shippingDetails->address->city ?? '',
             'region' => $shippingDetails->address->state ?? '',
             'postcode' => $shippingDetails->address->postal_code ?? '',
@@ -277,6 +335,9 @@ function buildCockpit3DOrder($session, $orderNumber) {
             'sku' => $sku,
             'qty' => (string) $lineItem->quantity,
             'client_item_id' => $orderNumber . '-' . ($index + 1),
+            'price' => isset($fullItem['unitPrice'])
+                ? (float) $fullItem['unitPrice']
+                : (($lineItem->amount_subtotal ?? $lineItem->amount_total ?? 0) / max(1, $lineItem->quantity) / 100),
         ];
         
         // ADD IMAGE URLs for Cockpit3D (critical for custom products!)
@@ -311,6 +372,11 @@ function buildCockpit3DOrder($session, $orderNumber) {
         if (!empty($specialInstructions)) {
             $item['special_instructions'] = implode('. ', $specialInstructions);
         }
+
+        $pricingDetails = buildPricingSnapshot($fullItem, $lineItem);
+        if (!empty($pricingDetails)) {
+            $item['_pricing'] = $pricingDetails;
+        }
         
         $order['items'][] = $item;
     }
@@ -334,6 +400,21 @@ function buildCockpit3DItemOptions($item) {
             'id' => (string) $item['sizeDetails']['cockpit3d_id'],
             'qty' => '1'
         ];
+    } elseif (!empty($item['sizeDetails']['sizeId'])) {
+        $options[] = [
+            'id' => (string) $item['sizeDetails']['sizeId'],
+            'qty' => '1'
+        ];
+    } elseif (!empty($item['size']['cockpit3d_id'])) {
+        $options[] = [
+            'id' => (string) $item['size']['cockpit3d_id'],
+            'qty' => '1'
+        ];
+    } elseif (!empty($item['size']['sizeId'])) {
+        $options[] = [
+            'id' => (string) $item['size']['sizeId'],
+            'qty' => '1'
+        ];
     }
     
     // Process options array from cart item
@@ -342,17 +423,33 @@ function buildCockpit3DItemOptions($item) {
             $category = $opt['category'] ?? '';
             
             // Light base option
-            if ($category === 'lightBase' && !empty($opt['cockpit3d_id'])) {
+            if ($category === 'lightBase' && (!empty($opt['cockpit3d_id']) || !empty($opt['cockpit3d_option_id']) || !empty($opt['optionId']))) {
                 $options[] = [
-                    'id' => (string) $opt['cockpit3d_id'],
+                    'id' => (string) ($opt['cockpit3d_id'] ?? $opt['cockpit3d_option_id'] ?? $opt['optionId']),
                     'qty' => '1'
                 ];
             }
             
             // Background option
-            if ($category === 'background' && !empty($opt['cockpit3d_option_id'])) {
+            if ($category === 'background') {
+                $backgroundId = $opt['cockpit3d_option_id'] ?? null;
+                if (!$backgroundId) {
+                    $backgroundKey = strtolower((string) ($opt['optionId'] ?? $opt['value'] ?? $opt['name'] ?? ''));
+                    $backgroundMap = [
+                        'rm' => '154',
+                        'remove backdrop' => '154',
+                        '2d' => '154',
+                        '2d backdrop' => '154',
+                        '3d' => '155',
+                        '3d backdrop' => '155',
+                    ];
+                    $backgroundId = $backgroundMap[$backgroundKey] ?? null;
+                }
+            }
+
+            if ($category === 'background' && !empty($backgroundId)) {
                 $options[] = [
-                    'id' => (string) $opt['cockpit3d_option_id'],
+                    'id' => (string) $backgroundId,
                     'qty' => '1'
                 ];
             }
@@ -384,11 +481,79 @@ function buildCockpit3DItemOptions($item) {
  * POST https://profit.cockpit3d.com/rest/V2/orders (production)
  * POST https://c3d-profit-dev.host.alva.tools/rest/V2/orders (dev)
  */
-function sendToCockpit3D($orderData) {
+function getCockpit3DBaseUrl() {
+    return getEnvVariable('COCKPIT3D_API_URL')
+        ?? getEnvVariable('COCKPIT3D_BASE_URL')
+        ?? 'https://profit.cockpit3d.com';
+}
+
+function validateCockpit3DOrder($orderData) {
+    $errors = [];
+    if (empty($orderData['retailer_id'])) $errors[] = 'Missing retailer_id';
+    if (empty($orderData['address']['email'])) $errors[] = 'Missing address.email';
+    if (empty($orderData['address']['street'])) $errors[] = 'Missing address.street';
+    if (empty($orderData['address']['city'])) $errors[] = 'Missing address.city';
+    if (empty($orderData['address']['region'])) $errors[] = 'Missing address.region';
+    if (empty($orderData['address']['postcode'])) $errors[] = 'Missing address.postcode';
+    if (empty($orderData['address']['order_id'])) $errors[] = 'Missing address.order_id';
+    if (empty($orderData['items']) || !is_array($orderData['items'])) $errors[] = 'Missing items';
+
+    foreach ($orderData['items'] ?? [] as $idx => $item) {
+        if (empty($item['sku'])) $errors[] = "Missing items[$idx].sku";
+        if (empty($item['qty'])) $errors[] = "Missing items[$idx].qty";
+    }
+
+    return $errors;
+}
+
+function getCockpit3DAccessToken($baseUrl, $username, $password) {
+    $loginUrl = rtrim($baseUrl, '/') . (getEnvVariable('COCKPIT3D_LOGIN_PATH') ?: '/rest/V2/login');
+    $ch = curl_init($loginUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS => json_encode([
+            'username' => $username,
+            'password' => $password,
+        ]),
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_SSL_VERIFYPEER => true,
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlError) {
+        throw new Exception("Cockpit3D login CURL error: $curlError");
+    }
+    if ($httpCode < 200 || $httpCode >= 300) {
+        throw new Exception("Cockpit3D login failed with HTTP $httpCode: $response");
+    }
+
+    $decoded = json_decode($response, true);
+    if (is_string($decoded)) {
+        $token = $decoded;
+    } elseif (is_array($decoded)) {
+        $token = $decoded['token'] ?? $decoded['data']['token'] ?? '';
+    } else {
+        $token = trim($response, "\" \t\n\r\0\x0B");
+    }
+
+    if (!$token) {
+        throw new Exception('Cockpit3D login returned an empty token');
+    }
+
+    return $token;
+}
+
+function sendToCockpit3D($orderData, $dryRun = false) {
     // Get API URL from environment
     // Production: https://profit.cockpit3d.com
     // Development: https://c3d-profit-dev.host.alva.tools
-    $baseUrl = getEnvVariable('COCKPIT3D_API_URL') ?? 'https://profit.cockpit3d.com';
+    $baseUrl = getCockpit3DBaseUrl();
 
     $username = getEnvVariable('COCKPIT3D_USERNAME');
     $password = getEnvVariable('COCKPIT3D_PASSWORD');
@@ -399,6 +564,30 @@ function sendToCockpit3D($orderData) {
     }
     
     $apiUrl = rtrim($baseUrl, '/') . '/rest/V2/orders';
+    $submissionData = stripInternalFields($orderData);
+    $validationErrors = validateCockpit3DOrder($submissionData);
+    if (!empty($validationErrors)) {
+        return [
+            'success' => false,
+            'submitted' => false,
+            'dry_run' => $dryRun,
+            'api_url' => $apiUrl,
+            'validation_errors' => $validationErrors,
+            'payload' => $submissionData,
+            'error' => 'Cockpit3D payload validation failed',
+        ];
+    }
+
+    if ($dryRun) {
+        return [
+            'success' => true,
+            'submitted' => false,
+            'dry_run' => true,
+            'api_url' => $apiUrl,
+            'payload' => $submissionData,
+            'message' => 'Dry run only; no Cockpit3D order was submitted',
+        ];
+    }
     error_log("🔐 Submitting to Cockpit3D: $apiUrl");
     error_log("📋 Retailer ID: " . ($orderData['retailer_id'] ?? 'NOT SET'));
     error_log("📦 Items count: " . count($orderData['items'] ?? []));
@@ -413,8 +602,17 @@ function sendToCockpit3D($orderData) {
         }
     }
     
-    // Use Basic Auth per API docs (email:password)
-    $auth = base64_encode($username . ':' . $password);
+    try {
+        $token = getCockpit3DAccessToken($baseUrl, $username, $password);
+    } catch (Exception $e) {
+        error_log('âŒ ' . $e->getMessage());
+        return [
+            'success' => false,
+            'submitted' => false,
+            'api_url' => $apiUrl,
+            'error' => $e->getMessage(),
+        ];
+    }
     
     $ch = curl_init($apiUrl);
 
@@ -423,9 +621,9 @@ function sendToCockpit3D($orderData) {
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
-            'Authorization: Basic ' . $auth
+            'Authorization: Bearer ' . $token
         ],
-        CURLOPT_POSTFIELDS => json_encode($orderData),
+        CURLOPT_POSTFIELDS => json_encode($submissionData),
         CURLOPT_TIMEOUT => 30,
         CURLOPT_SSL_VERIFYPEER => true
     ]);
@@ -532,7 +730,8 @@ function sendOrderNotification($orderNumber, $session) {
             ];
         }
         
-        $ch = curl_init('http://localhost/crystalkeepsakes/api/send-order-notification.php');
+        $backendUrl = rtrim(getEnvVariable('NEXT_PUBLIC_PHP_BACKEND_URL') ?? 'http://crystalkeepsakes:8888', '/');
+        $ch = curl_init($backendUrl . '/api/cockpit3d/send-order-notification.php');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -698,4 +897,99 @@ function updateOrderStatus($orderId, $updates) {
     $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $stmt->close();
+}
+
+function buildDryRunCheckoutSession($orderNumber) {
+    $cartData = loadFullCartData($orderNumber);
+    if (!$cartData) {
+        throw new Exception("No stored order data found for dry run: $orderNumber");
+    }
+
+    $session = new stdClass();
+    $session->id = 'dry_run_' . $orderNumber;
+    $session->payment_status = 'paid';
+    $session->amount_total = (int) round(($cartData['subtotal'] ?? 0) * 100);
+    $session->currency = 'usd';
+
+    $session->metadata = new stdClass();
+    $session->metadata->order_number = $orderNumber;
+    $session->metadata->cart_items = json_encode(array_map(function ($item) {
+        return [
+            'sku' => $item['sku'] ?? 'UNKNOWN',
+            'name' => $item['name'] ?? 'Product',
+            'qty' => $item['quantity'] ?? 1,
+        ];
+    }, $cartData['items'] ?? []));
+
+    $session->customer_details = (object) [
+        'email' => 'webhook-dry-run@example.com',
+        'name' => 'Webhook Dry Run',
+        'phone' => '555-0100',
+    ];
+    $session->shipping_details = (object) [
+        'name' => 'Webhook Dry Run',
+        'address' => (object) [
+            'line1' => '123 Test St',
+            'line2' => '',
+            'city' => 'Grass Valley',
+            'state' => 'CA',
+            'postal_code' => '95945',
+            'country' => 'US',
+        ],
+    ];
+
+    $lineItems = [];
+    foreach ($cartData['items'] ?? [] as $item) {
+        $lineItems[] = (object) [
+            'description' => $item['name'] ?? 'Product',
+            'quantity' => $item['quantity'] ?? 1,
+            'amount_subtotal' => (int) round(($item['lineSubtotal'] ?? $item['price'] ?? 0) * 100),
+            'amount_total' => (int) round(($item['totalPrice'] ?? $item['lineSubtotal'] ?? $item['price'] ?? 0) * 100),
+            'price' => (object) ['product' => $item['productId'] ?? $item['sku'] ?? 'dry-run-product'],
+        ];
+    }
+    $session->line_items = (object) ['data' => $lineItems];
+
+    return $session;
+}
+
+function stripInternalFields($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $clean = [];
+    foreach ($value as $key => $item) {
+        if (is_string($key) && strpos($key, '_') === 0) {
+            continue;
+        }
+        $clean[$key] = stripInternalFields($item);
+    }
+
+    return $clean;
+}
+
+/**
+ * Build local pricing snapshot for logs/internal review.
+ * This should not be treated as Profit-derived pricing.
+ */
+function buildPricingSnapshot($fullItem, $lineItem) {
+    $quantity = (int) ($fullItem['quantity'] ?? $fullItem['qty'] ?? $lineItem->quantity ?? 1);
+    $unitPrice = isset($fullItem['unitPrice'])
+        ? (float) $fullItem['unitPrice']
+        : (($lineItem->amount_subtotal ?? $lineItem->amount_total ?? 0) / max(1, $quantity) / 100);
+    $lineSubtotal = isset($fullItem['lineSubtotal'])
+        ? (float) $fullItem['lineSubtotal']
+        : round($unitPrice * $quantity, 2);
+
+    return [
+        'source' => $fullItem['pricingSource'] ?? 'crystalkeepsakes_checkout',
+        'unit_price' => round($unitPrice, 2),
+        'quantity' => $quantity,
+        'line_subtotal' => round($lineSubtotal, 2),
+        'base_price' => isset($fullItem['basePrice']) ? (float) $fullItem['basePrice'] : null,
+        'options_price' => isset($fullItem['optionsPrice']) ? (float) $fullItem['optionsPrice'] : null,
+        'total_price' => isset($fullItem['totalPrice']) ? (float) $fullItem['totalPrice'] : round($lineSubtotal, 2),
+        'note' => 'Local site/Stripe pricing; Profit API pricing is not authoritative for this account.',
+    ];
 }

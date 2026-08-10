@@ -137,7 +137,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           {isLightbase && (             
             <span
-                type="button"
+                // This stays a span because the whole card is already a link.
                // onClick={handleAddToCart}
                 // disabled={addingToCart}
                 className="cursor-pointer px-4 py-2 bg-[#72B01D] hover:bg-[#5A8E17] text-white text-sm font-semibold rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"

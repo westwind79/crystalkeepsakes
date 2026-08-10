@@ -1,22 +1,46 @@
 // components/ProductGallery.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { assetPath } from '@/lib/assetPath'
 
-export default function ProductGallery({ images = [] }) {
+type ProductGalleryImage = string | { src?: string }
+
+export default function ProductGallery({ images = [] }: { images?: ProductGalleryImage[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE === 'development'
+  const currentImage = images?.[activeIndex]
+  const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
+  const displaySrc = assetPath(imageSrc || '')
 
   if (isDev) {
-    console.log('🖼️ Gallery images:', images?.length || 0)
+    console.log('Gallery images:', images?.length || 0)
+    console.log('Image source:', imageSrc, '->', displaySrc)
   }
+
+  useEffect(() => {
+    if (isDev && typeof window !== 'undefined' && images.length > 0) {
+      window.dispatchEvent(new CustomEvent('debug-step', {
+        detail: {
+          id: 'gallery-display',
+          label: `Gallery displaying image ${activeIndex + 1}/${images.length}`,
+          status: 'active',
+          data: {
+            originalSrc: imageSrc,
+            displaySrc,
+            imageCount: images.length,
+            activeIndex,
+          },
+        },
+      }))
+    }
+  }, [activeIndex, displaySrc, imageSrc, images, isDev])
 
   if (!images || images.length === 0) {
     return (
       <div className="product-gallery">
-        <div 
-          className="placeholder-image d-flex align-items-center justify-content-center" 
+        <div
+          className="placeholder-image d-flex align-items-center justify-content-center"
           style={{ height: '400px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6' }}
         >
           <span className="text-muted">No image available</span>
@@ -25,99 +49,69 @@ export default function ProductGallery({ images = [] }) {
     )
   }
 
-  const currentImage = images[activeIndex]
-  const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src
-  
-  // ✅ Use assetPath for all images - works in dev and production
-  const displaySrc = assetPath(imageSrc || '')
-
-  if (isDev) {
-    console.log('📸 Image source:', imageSrc, '→', displaySrc)
-  }
-  
-  // 🐛 DEBUG: Emit debug event for gallery display
-  useEffect(() => {
-    if (isDev && typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('debug-step', {
-        detail: {
-          id: 'gallery-display',
-          label: `Gallery displaying image ${activeIndex + 1}/${images.length}`,
-          status: 'active',
-          data: {
-            originalSrc: imageSrc,
-            displaySrc: displaySrc,
-            imageCount: images.length,
-            activeIndex: activeIndex
-          }
-        }
-      }));
-    }
-  }, [isDev, imageSrc, displaySrc, activeIndex, images.length])
-
   return (
     <div className="product-gallery">
-      {/* Main Image - Use regular img tag to avoid Next.js optimization issues */}
       <div className="main-image mb-3">
         <img
           src={displaySrc || 'https://placehold.co/800x800?text=No+Image'}
           alt={`Product image ${activeIndex + 1}`}
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          onLoad={(e) => {
+          onLoad={(event) => {
             if (isDev) {
-              console.log('✅ Image loaded successfully:', displaySrc);
-              // 🐛 DEBUG: Success event
+              console.log('Image loaded successfully:', displaySrc)
               if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('debug-step', {
                   detail: {
                     id: 'gallery-display',
-                    label: `✅ Image loaded: ${displaySrc}`,
+                    label: `Image loaded: ${displaySrc}`,
                     status: 'complete',
-                    data: { src: displaySrc, naturalWidth: e.currentTarget.naturalWidth, naturalHeight: e.currentTarget.naturalHeight }
-                  }
-                }));
+                    data: {
+                      src: displaySrc,
+                      naturalWidth: event.currentTarget.naturalWidth,
+                      naturalHeight: event.currentTarget.naturalHeight,
+                    },
+                  },
+                }))
               }
             }
           }}
-          onError={(e) => {
+          onError={(event) => {
             if (isDev) {
-              console.log('❌ Image error:', displaySrc);
-              // 🐛 DEBUG: Error event
+              console.log('Image error:', displaySrc)
               if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('debug-step', {
                   detail: {
                     id: 'gallery-display',
-                    label: `❌ Image failed to load`,
+                    label: 'Image failed to load',
                     status: 'error',
                     error: `Failed to load: ${displaySrc}`,
-                    data: { attemptedSrc: displaySrc }
-                  }
-                }));
+                    data: { attemptedSrc: displaySrc },
+                  },
+                }))
               }
             }
-            e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+            event.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
           }}
         />
       </div>
 
-      {/* Thumbnails */}
       {images.length > 1 && (
         <div className="thumbnails">
           <div className="grid grid-cols-5 gap-4 align-center justify-center g-2">
-            
             {images.map((img, idx) => {
               const thumbSrc = typeof img === 'string' ? img : img?.src
               const thumbDisplaySrc = assetPath(thumbSrc || '')
-              
+
               return (
-                <div  
+                <div
                   key={idx}
                   className={`thumbnail ${idx === activeIndex ? 'active' : ''}`}
-                  style={{ 
+                  style={{
                     position: 'relative',
                     height: '80px',
                     cursor: 'pointer',
                     border: idx === activeIndex ? '2px solid var(--brand-400)' : '2px solid var(--surface-300)',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                   }}
                   onClick={() => setActiveIndex(idx)}
                 >
@@ -126,11 +120,11 @@ export default function ProductGallery({ images = [] }) {
                     alt={`Thumbnail ${idx + 1}`}
                     className="p-2"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
+                    onError={(event) => {
+                      event.currentTarget.src = 'https://placehold.co/800x800?text=No+Image'
                     }}
                   />
-                </div> 
+                </div>
               )
             })}
           </div>

@@ -102,16 +102,7 @@ try {
     console.log(`  ⚠️  ${config.env} not found - you'll need to create .env on server manually`);
   }
 
-  // Step 5b: Copy composer.json for PHP dependencies
-  // This allows running 'composer install' on the server if vendor folder is missing
-  const composerSource = 'composer.json';
-  if (fs.existsSync(composerSource)) {
-    const composerDest = path.join(config.targetOut, 'composer.json');
-    fs.copyFileSync(composerSource, composerDest);
-    console.log(`  ✅ Copied composer.json → ${config.targetOut}/composer.json`);
-  } else {
-    console.log(`  ⚠️  composer.json not found - PHP dependencies may not work`);
-  }
+  // Composer dependencies are managed on GoDaddy. Do not ship composer.json by default.
 
   // Step 6: Create deployment instructions
   const deployInstructions = `
@@ -160,11 +151,9 @@ try {
    ${mode === 'prod' ? '☐ Check SSL certificate is valid' : '☐ Verify /test is password protected (optional)'}
 
 📦 PHP DEPENDENCIES (Stripe):
-   ☐ composer.json is included in build
-   ☐ If vendor/ folder is missing on server, run:
-      cd ${config.uploadTo}
-      composer install
-   ☐ Verify vendor/autoload.php exists
+   ☐ Composer dependencies are managed on GoDaddy
+   ☐ Verify vendor/autoload.php exists on the server
+   ☐ Only upload Composer files intentionally when dependencies change
 
 ⚠️  SAFETY REMINDERS:
    ${mode === 'prod' ? '• Using LIVE Stripe keys - real charges will occur!' : '• Using TEST Stripe keys - no real charges'}

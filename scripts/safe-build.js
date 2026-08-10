@@ -5,8 +5,17 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const projectRoot = path.join(__dirname, '..');
 
 const mode = process.argv[2] || 'local'; // test, prod, or local
+const shouldExcludeAdmin = mode === 'test' || mode === 'prod';
+const excludedRouteMoves = [
+  {
+    label: 'admin page',
+    source: path.join(__dirname, '../src/app/admin'),
+    hidden: path.join(__dirname, '../.build-excluded/admin')
+  }
+];
 
 console.log(`\n🔨 Starting SAFE build for ${mode.toUpperCase()} mode\n`);
 
@@ -82,9 +91,9 @@ const buildModes = {
     NEXT_PUBLIC_ENV_MODE: 'production',
     NODE_ENV: 'production'
   },
-  development: {
+  local: {
     envFile: '.env',
-    BUILD_MODE: 'dev',
+    BUILD_MODE: 'local',
     NEXT_PUBLIC_BASE_PATH: '',
     NEXT_PUBLIC_ENV_MODE: 'development',
     NODE_ENV: 'development'
@@ -145,8 +154,58 @@ Object.keys(buildVars).forEach(key => {
 
 console.log('');
 
+function movePathForBuild(move) {
+  // Build-only exclusion: hide local admin routes before Next scans src/app.
+  if (!fs.existsSync(move.source)) return false;
+
+  // Keep hidden admin code outside src/app and outside TypeScript's build surface.
+  fs.mkdirSync(path.dirname(move.hidden), { recursive: true });
+
+  if (fs.existsSync(move.hidden)) {
+    throw new Error(`Cannot exclude ${move.label}: temporary path already exists at ${move.hidden}`);
+  }
+
+  fs.renameSync(move.source, move.hidden);
+  console.log(`   🔒 Excluded ${move.label} from build`);
+  return true;
+}
+
+function restorePathAfterBuild(move, wasMoved) {
+  // Always restore the source tree so local development keeps /admin available.
+  if (!wasMoved) return;
+
+  if (fs.existsSync(move.source)) {
+    throw new Error(`Cannot restore ${move.label}: source path already exists at ${move.source}`);
+  }
+
+  fs.renameSync(move.hidden, move.source);
+  console.log(`   🔓 Restored ${move.label}`);
+}
+
+function removeEmptyBuildExclusionDir() {
+  // Remove the temporary parent when all excluded routes have been restored.
+  const tempRoot = path.join(__dirname, '../.build-excluded');
+  if (fs.existsSync(tempRoot) && fs.readdirSync(tempRoot).length === 0) {
+    fs.rmdirSync(tempRoot);
+  }
+}
+
+function runRequiredStep(label, command) {
+  // Production packaging steps are required; a failure must fail the build.
+  console.log(`   ${label}...`);
+  execSync(command, {
+    stdio: 'inherit',
+    shell: true,
+    env: process.env,
+    cwd: projectRoot
+  });
+}
+
 // Step 3: Run Next.js build
 console.log('📋 Step 3: Running Next.js build...\n');
+
+const movedRoutes = new Map();
+let buildFailed = false;
 
 try {
   // Clear .next cache to ensure clean build
@@ -156,107 +215,48 @@ try {
     fs.rmSync(nextCacheDir, { recursive: true, force: true });
   }
   
-  // WINDOWS-COMPATIBLE FIX: Temporarily swap env files
-  // Next.js ONLY reads .env.production when NODE_ENV=production
-  // So we temporarily copy our target env file to .env.production
-  const envProductionPath = path.join(__dirname, '..', '.env.production');
-  const envBackupPath = path.join(__dirname, '..', '.env.production.backup');
-  const targetEnvPath = path.join(__dirname, '..', config.envFile);
-  
-  let needsRestore = false;
-  
-  if (mode === 'test' && fs.existsSync(targetEnvPath)) {
-    console.log('   🔄 Swapping env files for test build...');
-    
-    // Backup existing .env.production if it exists
-    if (fs.existsSync(envProductionPath)) {
-      fs.copyFileSync(envProductionPath, envBackupPath);
-      console.log('      → Backed up .env.production');
-      needsRestore = true;
-    }
-    
-    // Copy .env.production.test to .env.production
-    fs.copyFileSync(targetEnvPath, envProductionPath);
-    console.log('      → Copied .env.production.test → .env.production');
-    
-    // Verify the content
-    const envContent = fs.readFileSync(envProductionPath, 'utf8');
-    const stripeKeyMatch = envContent.match(/NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=([^\n\r]*)/);
-    if (stripeKeyMatch) {
-      console.log(`      → Stripe Key in .env.production: ${stripeKeyMatch[1].substring(0, 15)}...`);
-    }
+  if (shouldExcludeAdmin) {
+    console.log('   🔒 Excluding local-only admin routes before build...');
+    excludedRouteMoves.forEach(move => {
+      movedRoutes.set(move.label, movePathForBuild(move));
+    });
   }
   
-  const buildCmd = 'next build';
+  runRequiredStep('Validating product data', 'node scripts/validate-product-data.js');
+
+  const nextBin = process.platform === 'win32'
+    ? path.join(projectRoot, 'node_modules', '.bin', 'next.cmd')
+    : path.join(projectRoot, 'node_modules', '.bin', 'next');
+  const buildCmd = `"${nextBin}" build`;
   
   console.log(`\n   Command: ${buildCmd}`);
   console.log(`   Environment: ${process.env.NODE_ENV}`);
   console.log(`   Mode: ${process.env.NEXT_PUBLIC_ENV_MODE}\n`);
   
-  try {
-    execSync(buildCmd, {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } finally {
-    // ALWAYS restore original .env.production
-    if (needsRestore && fs.existsSync(envBackupPath)) {
-      console.log('\n   🔄 Restoring original .env.production...');
-      fs.copyFileSync(envBackupPath, envProductionPath);
-      fs.unlinkSync(envBackupPath);
-      console.log('      → Restored .env.production');
-    } else if (mode === 'test' && !needsRestore) {
-      // Remove the temporary .env.production we created
-      if (fs.existsSync(envProductionPath)) {
-        fs.unlinkSync(envProductionPath);
-        console.log('\n   🧹 Removed temporary .env.production');
-      }
-    }
-  }
+  execSync(buildCmd, {
+    stdio: 'inherit',
+    shell: true,
+    env: process.env,
+    cwd: projectRoot
+  });
   
   console.log('\n✅ Build completed successfully!\n');
   
   // Step 4: Run post-build cleanup scripts
   console.log('📋 Step 4: Running post-build cleanup...\n');
   
-  // 4a. Remove admin panel (security)
-  try {
-    console.log('   🔒 Removing admin panel...');
-    execSync('node scripts/remove-admin-from-build.js', {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } catch (err) {
-    console.error('   ⚠️  Admin removal failed:', err.message);
-  }
+  // 4a. Verify admin panel was never emitted into production/test output.
+  runRequiredStep('🔒 Verifying admin routes are absent', 'node scripts/verify-admin-excluded.js');
   
   // 4b. Clean up Next.js internal artifacts
-  try {
-    console.log('   🧹 Cleaning build artifacts...');
-    execSync('node scripts/cleanup-build-artifacts.js', {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } catch (err) {
-    console.error('   ⚠️  Artifact cleanup failed:', err.message);
-  }
+  runRequiredStep('🧹 Cleaning build artifacts', 'node scripts/cleanup-build-artifacts.js');
   
   // 4c. Prepare final deployment
-  try {
-    console.log('   📦 Preparing deployment files...');
-    execSync(`node scripts/prepare-build.js ${mode}`, {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } catch (err) {
-    console.error('   ⚠️  Deployment prep failed:', err.message);
-  }
+  runRequiredStep('📦 Preparing deployment files', `node scripts/prepare-build.js ${mode}`);
   
 } catch (err) {
+  buildFailed = true;
+  console.error(`   ${err.message}\n`);
   console.error('\n❌ Build failed!\n');
   
   // Check if it's a file lock error
@@ -268,7 +268,18 @@ try {
     console.error('3. Don\'t build immediately after uploading files in the admin panel\n');
     console.error('4. Run this command to retry: node scripts/safe-build.js ' + mode + '\n');
   }
-  
+} finally {
+  if (shouldExcludeAdmin) {
+    console.log('\n📋 Restoring build-excluded source routes...\n');
+    [...excludedRouteMoves].reverse().forEach(move => {
+      restorePathAfterBuild(move, movedRoutes.get(move.label));
+    });
+    removeEmptyBuildExclusionDir();
+  }
+}
+
+if (buildFailed) {
+  // Exit only after finally restores any temporarily hidden source routes.
   process.exit(1);
 }
 

@@ -7,12 +7,12 @@
 ## 🔒 Security Features
 
 ### 1. **Build Exclusion**
-The admin panel is automatically removed from production/test builds:
+The admin panel is automatically excluded from production/test builds:
 - `yarn build:prod` → Admin excluded ✅
 - `yarn build:test` → Admin excluded ✅
 - `yarn build:local` → Admin included (for local testing)
 
-Script: `/scripts/remove-admin-from-build.js`
+Script: `/scripts/safe-build.js`
 
 ### 2. **Runtime Protection**
 Client-side safeguard redirects non-localhost visitors to homepage.
@@ -76,7 +76,7 @@ Click "Save All Products" button to write changes to:
 ## ⚠️ Important Notes
 
 1. **Never deploy `/admin` directory to production**
-   - Automated scripts remove it during build
+   - Automated scripts hide admin routes before production/test builds
    - Double-check before manual deployments
 
 2. **Product data location**
@@ -144,7 +144,7 @@ ls out-prod/img/products/  # Should exist
 **Admin appears in production build:**
 - Check build script ran successfully
 - Verify `NEXT_PUBLIC_ENV_MODE=production`
-- Manually run: `node scripts/remove-admin-from-build.js`
+- Run: `node scripts/verify-admin-excluded.js`
 
 ---
 

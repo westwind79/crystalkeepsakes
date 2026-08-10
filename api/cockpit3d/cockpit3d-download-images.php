@@ -39,15 +39,17 @@ class CockPit3DImageDownloader extends CockPit3DFetcher {
     private $imageBaseUrl = 'https://profit.cockpit3d.com/api/pub/media/catalog/product';
     private $localImageDir;
     private $environment;
+    private $forceRefresh = false;
     
     public function __construct() {
         parent::__construct();
         
         $stripeMode = getEnvVariable('VITE_STRIPE_MODE') ?: 'development';
         $this->environment = $stripeMode;
+        $this->forceRefresh = isset($_GET['refresh']) && $_GET['refresh'] === 'true';
         
         // Use public/img/products/cockpit3d/ for all environments
-        $projectRoot = dirname(__DIR__);
+        $projectRoot = dirname(dirname(__DIR__));
         $this->localImageDir = $projectRoot . '/public/img/products/cockpit3d/';
         
         console_log("🖼️ Image downloader initialized", [
@@ -105,7 +107,7 @@ class CockPit3DImageDownloader extends CockPit3DFetcher {
             ]);
             
             // Skip if file already exists
-            if (file_exists($localFilePath)) {
+            if (file_exists($localFilePath) && !$this->forceRefresh) {
                 console_log("⏭️ Skipping - file exists", $filename);
                 return [
                     'success' => true, 
@@ -116,6 +118,8 @@ class CockPit3DImageDownloader extends CockPit3DFetcher {
                     'environment' => $this->environment,
                     'skipped' => true
                 ];
+            } elseif (file_exists($localFilePath)) {
+                console_log("Refreshing existing file", $filename);
             }
             
             // Construct the full image URL
@@ -441,7 +445,7 @@ try {
         case 'status':
             // Get status of downloaded images
             $environment = getEnvVariable('VITE_STRIPE_MODE') ?: 'development';
-            $imageDir = dirname(__DIR__) . '/public/img/products/cockpit3d/';
+            $imageDir = dirname(dirname(__DIR__)) . '/public/img/products/cockpit3d/';
             
             $productDirs = [];
             if (file_exists($imageDir)) {

@@ -50,10 +50,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   transpilePackages: ["swiper"],
-  typescript: { ignoreBuildErrors: true },
+  // Production builds should fail on TypeScript errors instead of hiding them.
+  typescript: { ignoreBuildErrors: false },
   
-  // Note: rewrites/redirects don't work with output: 'export'
-  // Admin panel is excluded at build time via remove-admin-from-build.js script
+  // Note: rewrites/redirects don't work with output: 'export'.
+  // Admin routes are hidden before prod/test builds so they are never emitted.
   
   images: {
     unoptimized: true,

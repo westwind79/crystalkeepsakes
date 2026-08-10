@@ -28,16 +28,16 @@ ini_set('error_log', __DIR__ . '/cockpit3d_orders.log');
 require_once __DIR__ . '/../env-loader.php';
 
 // Constants - Cockpit3D Retailer API (dev URL for testing)
-define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://c3d-profit-dev.host.alva.tools');
+define('COCKPIT3D_API_URL', getEnvVar('COCKPIT3D_API_URL') ?: getEnvVar('COCKPIT3D_BASE_URL') ?: 'https://c3d-profit-dev.host.alva.tools');
 
 // Constants - Cockpit3D Retailer API
 // Production: https://profit.cockpit3d.com
 // Development: https://c3d-profit-dev.host.alva.tools
 //define('COCKPIT3D_API_URL', getenv('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com');
 
-define('COCKPIT3D_USERNAME', getenv('COCKPIT3D_USERNAME') ?: '');
-define('COCKPIT3D_PASSWORD', getenv('COCKPIT3D_PASSWORD') ?: '');
-define('COCKPIT3D_RETAILER_ID', getenv('COCKPIT3D_RETAILER_ID') ?: '');
+define('COCKPIT3D_USERNAME', getEnvVar('COCKPIT3D_USERNAME') ?: '');
+define('COCKPIT3D_PASSWORD', getEnvVar('COCKPIT3D_PASSWORD') ?: '');
+define('COCKPIT3D_RETAILER_ID', getEnvVar('COCKPIT3D_RETAILER_ID') ?: getEnvVar('COCKPIT3D_RETAIL_ID') ?: '');
 
 /**
  * Log helper
@@ -188,15 +188,16 @@ function buildCockpit3DOrder($orderId, $cartItems, $customer, $shippingInfo, $bi
             'sku' => $item['sku'] ?? $item['cockpit3d_id'] ?? 'unknown',
             'qty' => (string) ($item['quantity'] ?? 1),
             'client_item_id' => ($item['productId'] ?? $item['id'] ?? 'item') . '-' . ($index + 1),
-            'options' => buildItemOptions($item)
+            'options' => buildItemOptions($item),
+            'price' => round((float)($item['price'] ?? $item['unitPrice'] ?? 0), 2)
         ];
         
         // Add photo URLs if available
-        if (!empty($item['originalPhotoUrl'])) {
-            $lineItem['original_photo'] = $item['originalPhotoUrl'];
+        if (!empty($item['originalPhotoUrl']) || !empty($item['rawImageUrl']) || !empty($item['customImage']['originalServerUrl'])) {
+            $lineItem['original_photo'] = $item['originalPhotoUrl'] ?? $item['rawImageUrl'] ?? $item['customImage']['originalServerUrl'];
         }
-        if (!empty($item['croppedPhotoUrl'])) {
-            $lineItem['cropped_photo'] = $item['croppedPhotoUrl'];
+        if (!empty($item['croppedPhotoUrl']) || !empty($item['maskedImageUrl']) || !empty($item['customImage']['serverUrl'])) {
+            $lineItem['cropped_photo'] = $item['croppedPhotoUrl'] ?? $item['maskedImageUrl'] ?? $item['customImage']['serverUrl'];
         }
         
         // Special instructions
@@ -210,6 +211,19 @@ function buildCockpit3DOrder($orderId, $cartItems, $customer, $shippingInfo, $bi
         if (!empty($instructions)) {
             $lineItem['special_instructions'] = implode('. ', $instructions);
         }
+
+        $quantity = (int)($item['quantity'] ?? $item['qty'] ?? 1);
+        $unitPrice = (float)($item['price'] ?? $item['unitPrice'] ?? 0);
+        $lineItem['_pricing'] = [
+            'source' => $item['pricingSource'] ?? 'crystalkeepsakes_checkout',
+            'unit_price' => round($unitPrice, 2),
+            'quantity' => $quantity,
+            'line_subtotal' => round((float)($item['lineSubtotal'] ?? ($unitPrice * $quantity)), 2),
+            'base_price' => isset($item['basePrice']) ? round((float)$item['basePrice'], 2) : null,
+            'options_price' => isset($item['optionsPrice']) ? round((float)$item['optionsPrice'], 2) : null,
+            'total_price' => isset($item['totalPrice']) ? round((float)$item['totalPrice'], 2) : round($unitPrice * $quantity, 2),
+            'note' => 'Local site/Stripe pricing; Profit API pricing is not authoritative for this account.'
+        ];
         
         $items[] = $lineItem;
     }
@@ -261,6 +275,7 @@ function submitToCockpit3D($order) {
     }
     
     $url = COCKPIT3D_API_URL . '/rest/V2/orders';
+    $submissionOrder = stripInternalFields($order);
     $auth = base64_encode(COCKPIT3D_USERNAME . ':' . COCKPIT3D_PASSWORD);
     
     logOrder('📤 Submitting to Cockpit3D', [
@@ -277,7 +292,7 @@ function submitToCockpit3D($order) {
             'Content-Type: application/json',
             'Authorization: Basic ' . $auth
         ],
-        CURLOPT_POSTFIELDS => json_encode($order),
+        CURLOPT_POSTFIELDS => json_encode($submissionOrder),
         CURLOPT_TIMEOUT => 30
     ]);
     
@@ -307,6 +322,22 @@ function submitToCockpit3D($order) {
         'http_code' => $httpCode,
         'response' => $result
     ];
+}
+
+function stripInternalFields($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $clean = [];
+    foreach ($value as $key => $item) {
+        if (is_string($key) && strpos($key, '_') === 0) {
+            continue;
+        }
+        $clean[$key] = stripInternalFields($item);
+    }
+
+    return $clean;
 }
 
 /**

@@ -14,6 +14,11 @@ import { loadStripe } from '@stripe/stripe-js'
 import { logger } from '@/utils/logger'
 import { CartItem } from '@/lib/cartUtils'
 
+interface LegacyCheckoutStripe {
+  // Stripe.js still supports this checkout redirect in runtime integrations.
+  redirectToCheckout(options: { sessionId: string }): Promise<{ error?: unknown }>
+}
+
 // Get publishable key - ONLY from NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
@@ -240,7 +245,8 @@ export async function redirectToCheckout(sessionId: string) {
     throw new Error('Stripe not initialized')
   }
 
-  const { error } = await stripe.redirectToCheckout({ sessionId })
+  // Keep the legacy Checkout redirect typed locally without weakening getStripe().
+  const { error } = await (stripe as unknown as LegacyCheckoutStripe).redirectToCheckout({ sessionId })
   
   if (error) {
     logger.error('Redirect failed', error)

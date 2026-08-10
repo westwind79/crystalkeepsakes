@@ -77,6 +77,9 @@ function getEnvVar($key) {
                 $envValue = trim($envValue, " \t\n\r\x0B\"'");
                 
                 $envCache[$envKey] = $envValue;
+                $_ENV[$envKey] = $envValue;
+                $_SERVER[$envKey] = $envValue;
+                putenv($envKey . '=' . $envValue);
             }
             
             error_log("✓ Loaded " . count($envCache) . " environment variables");

@@ -9,149 +9,171 @@ import { clearCart } from '@/lib/cartUtils'
 import { getCurrentOrderSession, markOrderCompleted, clearOrderSession } from '@/lib/unifiedOrderId'
 import { logger } from '@/utils/logger'
 
+type SafeOrderInfo = {
+  success?: boolean
+  order?: {
+    order_number?: string
+    order_timestamp?: number | null
+    order_date?: string | null
+    status?: string
+    payment_status?: string
+    created_at?: string | null
+  }
+  stripe?: {
+    session_id?: string
+    payment_intent_id?: string | null
+    payment_status?: string
+    amount_total?: number | null
+    amount_subtotal?: number | null
+    amount_shipping?: number | null
+    amount_tax?: number | null
+    amount_discount?: number | null
+    currency?: string
+    mode?: string
+  }
+  line_items?: Array<{
+    description?: string
+    quantity?: number
+    amount_total?: number | null
+    amount_subtotal?: number | null
+  }>
+  fulfillment?: {
+    order_data_saved?: boolean
+    order_data_created_at?: string | null
+    webhook_expected?: boolean
+    external_order_status?: string
+  }
+  debug?: {
+    environment?: string
+    timestamp?: number
+    privacy?: string
+  }
+  error?: string
+}
+
+type OrderDetails = {
+  orderNumber: string
+  sessionId: string
+  status: string
+  message: string
+  info: SafeOrderInfo | null
+}
+
+function formatMoney(cents?: number | null, currency = 'usd') {
+  if (typeof cents !== 'number') return 'Pending'
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency.toUpperCase(),
+  }).format(cents / 100)
+}
+
+function formatDate(value?: string | number | null) {
+  if (!value) return 'Pending'
+
+  const date = typeof value === 'number' ? new Date(value * 1000) : new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Pending'
+
+  return date.toLocaleString()
+}
+
+function formatOrderTimestamp(orderNumber?: string) {
+  const match = orderNumber?.match(/CK_\d+_(\d+)/)
+  if (!match) return null
+
+  return formatDate(Number(match[1]) / 1000)
+}
+
+function StatusPill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-3 py-1 text-sm font-medium text-green-800">
+      {children}
+    </span>
+  )
+}
+
+function InfoRow({ label, value, mono = false }: { label: string; value: React.ReactNode; mono?: boolean }) {
+  return (
+    <div className="rounded-md border border-gray-200 bg-white p-4">
+      <dt className="text-sm font-medium text-gray-500">{label}</dt>
+      <dd className={mono ? 'mt-1 break-all font-mono text-sm text-gray-900' : 'mt-1 text-base font-semibold text-gray-900'}>
+        {value}
+      </dd>
+    </div>
+  )
+}
+
 function OrderConfirmationContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
-  
+
   const [loading, setLoading] = useState(true)
-  const [orderDetails, setOrderDetails] = useState<any>(null)
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (sessionId) {
       verifyPayment(sessionId)
     } else {
-      setError('No session ID found')
+      setError('No Stripe session ID was found for this confirmation page.')
       setLoading(false)
     }
   }, [sessionId])
 
-  async function verifyPayment(sessionId: string) {
+  async function verifyPayment(stripeSessionId: string) {
     try {
       setLoading(true)
-      
-      logger.info('Verifying payment and processing order', { sessionId })
-      console.log('🔍 [ORDER CONFIRMATION] Starting verification for session:', sessionId)
+      logger.info('Verifying payment session', { sessionId: stripeSessionId })
 
-      // Get pending order data from sessionStorage
-      let pendingOrder: any = null
+      let orderNumber = getCurrentOrderSession()?.orderId
+
+      if (!orderNumber) {
+        orderNumber = localStorage.getItem('pending_order_number') || undefined
+      }
+
+      let safeOrderInfo: SafeOrderInfo | null = null
+
       try {
-        const storedOrder = sessionStorage.getItem('pendingOrder')
-        if (storedOrder) {
-          pendingOrder = JSON.parse(storedOrder)
-          console.log('📥 [ORDER CONFIRMATION] Retrieved Pending Order:', {
-            orderNumber: pendingOrder.orderNumber,
-            itemCount: pendingOrder.cartItems?.length,
-            customer: pendingOrder.customer,
-            hasShippingInfo: !!pendingOrder.shippingInfo
-          })
-          logger.info('Retrieved pending order', { orderNumber: pendingOrder.orderNumber })
-        }
-      } catch (e) {
-        console.warn('⚠️ [ORDER CONFIRMATION] No pending order found in sessionStorage')
-        logger.warn('No pending order found in sessionStorage')
-      }
-
-      // ✅ USE UNIFIED ORDER ID - get from session, pendingOrder, or localStorage
-      let orderNumber = pendingOrder?.orderNumber
-      if (!orderNumber) {
-        // Try unified order session
-        const orderSession = getCurrentOrderSession()
-        orderNumber = orderSession?.orderId
-      }
-      if (!orderNumber) {
-        // Try localStorage fallback
-        orderNumber = localStorage.getItem('pending_order_number')
-      }
-      if (!orderNumber) {
-        // Last resort fallback (shouldn't happen)
-        orderNumber = `CK_FALLBACK_${Date.now()}`
-        console.warn('⚠️ [ORDER CONFIRMATION] No order ID found anywhere, using fallback:', orderNumber)
-      }
-      console.log('🔢 [ORDER CONFIRMATION] Order Number (unified):', orderNumber)
-      
-      // Process the order (Cockpit3D + Email)
-      if (pendingOrder && pendingOrder.cartItems && pendingOrder.cartItems.length > 0) {
-        try {
-          const orderPayload = {
-            orderNumber,
-            cartItems: pendingOrder.cartItems,
-            customer: pendingOrder.customer,
-            shippingInfo: pendingOrder.shippingInfo,
-            paymentIntentId: sessionId,
-            stripeSessionId: sessionId,
-            receipt_email: pendingOrder.receipt_email
-          }
-          
-          // Use PHP backend for order processing
-          const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || ''
-          console.log('📤 [ORDER CONFIRMATION] Sending to PHP backend: ' + phpBackendUrl + '/api/orders/process-order.php')
-          console.log('📤 [ORDER CONFIRMATION] Payload:', JSON.stringify(orderPayload, null, 2))
-          logger.info('Processing order with Cockpit3D and email notification')
-          
-          const processResponse = await fetch(`${phpBackendUrl}/api/orders/process-order.php`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderPayload)
-          })
-
-          const processResult = await processResponse.json()
-          console.log('📨 [ORDER CONFIRMATION] API Response:', JSON.stringify(processResult, null, 2))
-          logger.info('Order processing result', processResult)
-
-          if (!processResult.success) {
-            logger.warn('Order processing had issues', processResult)
-          } else {
-            logger.success('Order processed successfully', {
-              orderNumber,
-              cockpit3d: processResult.cockpit3d?.submitted,
-              email: processResult.email?.sent
-            })
-          }
-
-        } catch (processError: any) {
-          logger.error('Order processing failed', processError)
-          // Continue anyway - order was paid
-        }
-      }
-
-      // Get debug info from Stripe session
-      let debugInfo: any = null
-      try {
-        const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://localhost:8888/crystalkeepsakes'
+        const phpBackendUrl = process.env.NEXT_PUBLIC_PHP_BACKEND_URL || 'http://crystalkeepsakes:8888'
         const debugResponse = await fetch(`${phpBackendUrl}/api/stripe/verify-session-debug.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId })
+          body: JSON.stringify({ session_id: stripeSessionId }),
         })
-        debugInfo = await debugResponse.json()
-        console.log('🐛 [DEBUG] Complete order info:', debugInfo)
-      } catch (e) {
-        console.warn('Could not fetch debug info:', e)
+
+        safeOrderInfo = await debugResponse.json()
+
+        if (!debugResponse.ok || safeOrderInfo?.success === false) {
+          throw new Error(safeOrderInfo?.error || 'Stripe session verification failed')
+        }
+
+        orderNumber = safeOrderInfo?.order?.order_number || orderNumber
+      } catch (verificationError) {
+        logger.warn('Could not fetch safe Stripe order details', verificationError)
       }
 
-      // Set order details for display
+      if (!orderNumber) {
+        orderNumber = `CK_FALLBACK_${Date.now()}`
+        logger.warn('No unified order ID found for confirmation page', { orderNumber })
+      }
+
       setOrderDetails({
         orderNumber,
-        sessionId: sessionId,
+        sessionId: stripeSessionId,
         status: 'complete',
-        message: 'Your order has been confirmed!',
-        debug: debugInfo // Include debug info for display
+        message: 'Your order has been confirmed.',
+        info: safeOrderInfo,
       })
-      
-      // Clear the cart and sessionStorage after successful order
+
       await clearCart()
       sessionStorage.removeItem('pendingOrder')
       localStorage.removeItem('pending_order_number')
-      
-      // Mark order as completed and clear session for next order
+
       markOrderCompleted(orderNumber)
       clearOrderSession()
-      
-      logger.success('Order confirmed, cart and session cleared')
-      
+
+      logger.success('Order confirmed, cart and local session cleared')
       setLoading(false)
-      
     } catch (err: any) {
       logger.error('Payment verification error', err)
       setError(err.message || 'Failed to verify payment')
@@ -161,16 +183,12 @@ function OrderConfirmationContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full mx-auto p-6">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
-              Confirming Your Order
-            </h2>
-            <p className="text-gray-600">
-              Please wait while we verify your payment...
-            </p>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50">
+        <div className="mx-auto w-full max-w-md p-6">
+          <div className="rounded-lg bg-white p-8 text-center shadow-lg">
+            <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-4 border-blue-600"></div>
+            <h2 className="mb-2 text-xl font-bold text-gray-900">Confirming Your Order</h2>
+            <p className="text-gray-600">Please wait while we verify your payment...</p>
           </div>
         </div>
       </div>
@@ -179,22 +197,17 @@ function OrderConfirmationContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full mx-auto p-6">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <div className="text-red-500 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50">
+        <div className="mx-auto w-full max-w-md p-6">
+          <div className="rounded-lg bg-white p-8 text-center shadow-lg">
+            <div className="mb-4 text-red-500">
+              <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
-              Verification Error
-            </h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <Link
-              href="/products"
-              className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <h2 className="mb-2 text-xl font-bold text-gray-900">Verification Error</h2>
+            <p className="mb-6 text-gray-600">{error}</p>
+            <Link href="/products" className="inline-block rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700">
               Continue Shopping
             </Link>
           </div>
@@ -203,142 +216,116 @@ function OrderConfirmationContent() {
     )
   }
 
+  const info = orderDetails?.info
+  const stripe = info?.stripe
+  const fulfillment = info?.fulfillment
+  const currency = stripe?.currency || 'usd'
+  const createdAt = info?.order?.created_at || info?.order?.order_date || formatOrderTimestamp(orderDetails?.orderNumber)
+
   return (
     <div className="min-h-screen bg-gradient-to-tr from-green-50 via-blue-50 to-purple-50">
-      <div className="max-w-3xl mx-auto p-6 py-12">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          {/* Success Icon */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
-              <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mx-auto max-w-4xl p-6 py-12">
+        <div className="rounded-lg bg-white p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+              <svg className="h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Order Confirmed!
-            </h1>
-            <p className="text-lg text-gray-600">
-              Thank you for your purchase
-            </p>
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Order Confirmed</h1>
+            <p className="text-lg text-gray-600">Your payment was received and your order is queued for fulfillment review.</p>
           </div>
 
-          {/* Order Details */}
           {orderDetails && (
-            <div className="border-t border-gray-200 pt-6 mb-6">
-              <div className="grid grid-cols-1 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-500 text-lg mb-1">Order Number</p>
-                  <p className="font-semibold tex-12 text-lg text-gray-900">{orderDetails.orderNumber}</p>
-                  <hr className="my-3 text-[var(--brand-200)]/65"/>
-                  <p className="text-gray-500 text-lg mb-1">Session ID</p>
-                  <p className="font-mono text-xs text-gray-600 truncate">{orderDetails.sessionId}</p>
-                </div> 
+            <section className="mb-8">
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="text-xl font-bold text-gray-900">Order Summary</h2>
               </div>
-            </div>
+
+              <dl className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <InfoRow label="Order Number" value={orderDetails.orderNumber} />
+                <InfoRow label="Order Total" value={formatMoney(stripe?.amount_total, currency)} />
+                <InfoRow label="Received" value={formatDate(createdAt)} />
+                <InfoRow
+                  label="Fulfillment"
+                  value={fulfillment?.order_data_saved ? 'Order data saved for review' : 'Waiting for review'}
+                />
+              </dl>
+            </section>
           )}
 
-          {/* Debug Info (Only in development) */}
-          {orderDetails?.debug && process.env.NODE_ENV === 'development' && (
-            <details className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-6">
-              <summary className="font-bold text-gray-900 cursor-pointer hover:text-blue-600">
-                🐛 Debug Info (Development Only)
-              </summary>
-              <div className="mt-4 space-y-4">
-                {/* Order Info */}
-                <div className="bg-white p-4 rounded border">
-                  <h4 className="font-semibold mb-2">Order Details</h4>
-                  <div className="text-sm space-y-1 font-mono">
-                    <p><span className="text-gray-600">Order Number:</span> <strong>{orderDetails.debug.order?.order_number}</strong></p>
-                    <p><span className="text-gray-600">Timestamp:</span> {orderDetails.debug.order?.order_timestamp}</p>
-                    <p><span className="text-gray-600">Date:</span> {orderDetails.debug.order?.order_date}</p>
-                    <p><span className="text-gray-600">Status:</span> <span className="text-green-600">● {orderDetails.debug.order?.payment_status}</span></p>
-                  </div>
-                </div>
-
-                {/* Stripe Info */}
-                {orderDetails.debug.stripe && (
-                  <div className="bg-white p-4 rounded border">
-                    <h4 className="font-semibold mb-2">Stripe Info</h4>
-                    <div className="text-sm space-y-1 font-mono">
-                      <p><span className="text-gray-600">Session ID:</span> {orderDetails.debug.stripe.session_id}</p>
-                      <p><span className="text-gray-600">Payment Intent:</span> {orderDetails.debug.stripe.payment_intent_id}</p>
-                      <p><span className="text-gray-600">Customer ID:</span> {orderDetails.debug.stripe.customer_id}</p>
-                      <p><span className="text-gray-600">Amount:</span> ${(orderDetails.debug.stripe.amount_total / 100).toFixed(2)}</p>
+          {info?.line_items && info.line_items.length > 0 && (
+            <section className="mb-8">
+              <h2 className="mb-4 text-xl font-bold text-gray-900">Items</h2>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                {info.line_items.map((item, index) => (
+                  <div key={`${item.description}-${index}`} className="flex flex-col gap-2 border-b border-gray-200 p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{item.description || 'Crystal Keepsake item'}</p>
+                      <p className="text-sm text-gray-600">Qty {item.quantity || 1}</p>
                     </div>
+                    <p className="font-semibold text-gray-900">{formatMoney(item.amount_total, currency)}</p>
                   </div>
-                )}
-
-                {/* Cockpit3D Payload */}
-                {orderDetails.debug.cockpit3d_payload && (
-                  <div className="bg-white p-4 rounded border">
-                    <h4 className="font-semibold mb-2">Cockpit3D Payload (To Be Sent)</h4>
-                    <pre className="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">
-                      {JSON.stringify(orderDetails.debug.cockpit3d_payload, null, 2)}
-                    </pre>
-                    <p className="text-xs text-gray-600 mt-2">
-                      Status: <span className="font-semibold">{orderDetails.debug.cockpit3d_status}</span>
-                    </p>
-                  </div>
-                )}
-
-                {/* Customer Info */}
-                {orderDetails.debug.customer && (
-                  <div className="bg-white p-4 rounded border">
-                    <h4 className="font-semibold mb-2">Customer Info</h4>
-                    <div className="text-sm space-y-1">
-                      <p><span className="text-gray-600">Email:</span> {orderDetails.debug.customer.email}</p>
-                      <p><span className="text-gray-600">Name:</span> {orderDetails.debug.customer.name}</p>
-                      <p><span className="text-gray-600">Address:</span> {orderDetails.debug.customer.address?.line1}, {orderDetails.debug.customer.address?.city}, {orderDetails.debug.customer.address?.state} {orderDetails.debug.customer.address?.postal_code}</p>
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
+            </section>
+          )}
+
+          <section className="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
+            <h2 className="mb-3 text-lg font-bold text-gray-900">Technical References</h2>
+            <dl className="space-y-3 text-sm">
+              <div>
+                <dt className="font-medium text-gray-700">Stripe Session ID</dt>
+                <dd className="mt-1 break-all font-mono text-xs text-gray-700">{orderDetails?.sessionId}</dd>
+                <p className="mt-1 text-gray-600">This is Stripe's Checkout session reference. It is useful for payment lookup, but it is not the customer-facing order number.</p>
+              </div>
+              {stripe?.payment_intent_id && (
+                <div>
+                  <dt className="font-medium text-gray-700">Payment Intent</dt>
+                  <dd className="mt-1 break-all font-mono text-xs text-gray-700">{stripe.payment_intent_id}</dd>
+                </div>
+              )}
+              {stripe?.amount_subtotal !== undefined && (
+                <div className="grid grid-cols-1 gap-2 pt-2 sm:grid-cols-3">
+                  <p><span className="font-medium text-gray-700">Subtotal:</span> {formatMoney(stripe.amount_subtotal, currency)}</p>
+                  <p><span className="font-medium text-gray-700">Shipping:</span> {formatMoney(stripe.amount_shipping, currency)}</p>
+                  <p><span className="font-medium text-gray-700">Tax:</span> {formatMoney(stripe.amount_tax, currency)}</p>
+                </div>
+              )}
+            </dl>
+          </section>
+
+          <section className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
+            <h2 className="mb-3 text-lg font-bold text-gray-900">Privacy</h2>
+            <p className="text-sm text-gray-700">
+              This page intentionally does not display or keep name, email, phone, or shipping address. Stripe handles payment/customer details, and fulfillment receives required order data server-side.
+            </p>
+          </section>
+
+          <section className="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
+            <h2 className="mb-3 font-bold text-gray-900">What happens next?</h2>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>Your confirmation email will be sent shortly.</li>
+              <li>Your engraving image and order details are queued for production review.</li>
+              <li>Shipping updates will be sent by email when available.</li>
+              <li>For help, contact orders@crystalkeepsakes.com and include your order number.</li>
+            </ul>
+          </section>
+
+          {info && process.env.NODE_ENV === 'development' && (
+            <details className="mb-8 rounded-lg border border-gray-300 bg-gray-50 p-4">
+              <summary className="cursor-pointer font-bold text-gray-900 hover:text-blue-600">Safe Debug Info</summary>
+              <pre className="mt-4 overflow-x-auto rounded bg-gray-900 p-3 text-xs text-green-400">
+                {JSON.stringify(info, null, 2)}
+              </pre>
             </details>
           )}
 
-          {/* What's Next */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-            <h3 className="font-bold text-gray-900 mb-3">What happens next?</h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>You'll receive an order confirmation email shortly</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Your custom crystal will be carefully crafted</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>We'll send shipping updates to your email</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Any problems or need help with your order contact: orders@crystalkeepsakes.com</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/products"
-              className="px-8 py-3 bg-[var(--brand-500)] text-white rounded-lg hover:bg-[var(--brand-400)] transition-colors text-center font-medium"
-            >
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <Link href="/products" className="rounded-lg bg-[var(--brand-500)] px-8 py-3 text-center font-medium text-white transition-colors hover:bg-[var(--brand-400)]">
               Continue Shopping
             </Link>
-            <Link
-              href="/"
-              className="px-8 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors text-center font-medium"
-            >
+            <Link href="/" className="rounded-lg bg-gray-200 px-8 py-3 text-center font-medium text-gray-900 transition-colors hover:bg-gray-300">
               Return Home
             </Link>
           </div>
@@ -351,8 +338,8 @@ function OrderConfirmationContent() {
 export default function OrderConfirmationPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50">
+        <div className="h-16 w-16 animate-spin rounded-full border-b-4 border-blue-600"></div>
       </div>
     }>
       <OrderConfirmationContent />

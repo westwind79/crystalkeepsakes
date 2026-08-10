@@ -15,6 +15,11 @@
     "displayName": "3CRS portrait"
   },
   {
+    "filename": "square-mask.png",
+    "path": "/img/masks/square-mask.png",
+    "displayName": "Square"
+  },
+  {
     "filename": "3d-crystal-block-wide.png",
     "path": "/img/masks/3d-crystal-block-wide.png",
     "displayName": "3d crystal block wide"
@@ -127,41 +132,41 @@
   {
     "filename": "ornament-mask.png",
     "path": "/img/masks/ornament-mask.png",
-    "displayName": "ornament"
+    "displayName": "Ornament"
   },
   {
     "filename": "photo-crystal-ornament-with-a-hole.png",
     "path": "/img/masks/photo-crystal-ornament-with-a-hole.png",
-    "displayName": "photo crystal ornament with a hole.png"
+    "displayName": "Crystal Ornament with Hole"
   },
   {
     "filename": "prestige-mask.png",
     "path": "/img/masks/prestige-mask.png",
-    "displayName": "prestige"
+    "displayName": "Prestige"
   },
   {
     "filename": "rectangle-horizontal-mask.png",
     "path": "/img/masks/rectangle-horizontal-mask.png",
-    "displayName": "rectangle horizontal"
+    "displayName": "Rectangle - Horizontal"
   },
   {
     "filename": "rectangle-keychain-horizontal-mask.png",
     "path": "/img/masks/rectangle-keychain-horizontal-mask.png",
-    "displayName": "rectangle keychain horizontal"
+    "displayName": "Rectangle Keychain - Horizontal"
   },
   {
     "filename": "rectangle-keychain-vertical-mask.png",
     "path": "/img/masks/rectangle-keychain-vertical-mask.png",
-    "displayName": "rectangle keychain vertical"
+    "displayName": "Rectangle Keychain - Vertical"
   },
   {
     "filename": "rectangle-necklace-mask.png",
     "path": "/img/masks/rectangle-necklace-mask.png",
-    "displayName": "rectangle necklace"
+    "displayName": "Necklace - Rectangle "
   },
   {
     "filename": "rectangle-vertical-mask.png",
     "path": "/img/masks/rectangle-vertical-mask.png",
-    "displayName": "rectangle vertical"
+    "displayName": "Rectangle - Vertical"
   }
 ]

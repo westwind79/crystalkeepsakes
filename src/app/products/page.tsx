@@ -33,35 +33,54 @@ interface Product {
 }
 
 /**
- * Hero Component - Single source of truth
+ * Hero Component - reflects active category when browsing filtered product pages.
  */
-const ProductsHero = () => (
-  <section  
-    className="hero relative overflow-hidden bg-[#0a0a0a] pb-8 pt-16"
-    style={{
-      background: `linear-gradient(
-        45deg, 
-        rgba(17, 17, 17, 0.9) 30%,
-        rgba(28, 200, 28, 0.2) 125%
-      ), url('/img/flag-background-2.png') center/cover no-repeat`
-    }}
-  >
-    <div className="container mx-auto px-4 xl:max-w-7xl">
-      <div className="flex justify-center items-center">
+const ProductsHero = ({ selectedCategory }: { selectedCategory: string }) => {
+  const activeCategory = PRODUCT_CATEGORIES.find((category) => category.value === selectedCategory)
+  const isAllProducts = !activeCategory || activeCategory.value === 'all'
+  const title = isAllProducts ? 'Our Creations' : activeCategory.label
+  const description = isAllProducts
+    ? 'Transform your cherished photos into stunning 3D crystal art pieces. Our precision laser technology creates beautiful, lasting memories.'
+    : activeCategory.description
 
-        <div className="hero-content text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 leading-tight tracking-tight">Our <span className="text-[#8DC63F] font-normal">Creations</span>
-          </h1>
-          
-          <p className="text-lg sm:text-xl text-gray-100 mb-16 leading-relaxed max-w-xl mx-auto lg:mx-0">
-            Transform your cherished photos into stunning 3D crystal art pieces. 
-            Our precision laser technology creates beautiful, lasting memories.
-          </p>
-        </div>           
+  return (
+    <section
+      className="hero relative overflow-hidden bg-[#0a0a0a] pb-8 pt-16"
+      style={{
+        background: `linear-gradient(
+          45deg,
+          rgba(17, 17, 17, 0.9) 30%,
+          rgba(28, 200, 28, 0.2) 125%
+        ), url('/img/flag-background-2.png') center/cover no-repeat`
+      }}
+    >
+      <div className="container mx-auto px-4 xl:max-w-7xl">
+        <div className="flex justify-center items-center">
+          <div className="hero-content text-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-white mb-6 leading-tight tracking-tight">
+              {isAllProducts ? (
+                <>
+                  Our <span className="text-[#8DC63F] font-normal">Creations</span>
+                </>
+              ) : (
+                <>
+                  {title.split(' & ')[0]}
+                  {title.includes(' & ') && (
+                    <span className="text-[#8DC63F] font-normal"> & {title.split(' & ').slice(1).join(' & ')}</span>
+                  )}
+                </>
+              )}
+            </h1>
+
+            <p className="text-lg sm:text-xl text-gray-100 mb-16 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              {description}
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-)
+    </section>
+  )
+}
 
 /**
  * Breadcrumbs Component - Formats breadcrumb items
@@ -226,7 +245,7 @@ export default function ProductsPage() {
   return (
     <div className="products min-h-screen relative">
       
-      <ProductsHero />
+      <ProductsHero selectedCategory={selectedCategory} />
       <ProductsBreadcrumbs breadcrumbs={getBreadcrumbPath()} />
 
       <div className="container-full bg-slate-100 px-4 py-6 relative">        

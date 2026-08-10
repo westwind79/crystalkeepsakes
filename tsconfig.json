@@ -39,6 +39,10 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    // Archived experiments are not part of the production app type surface.
+    "archive",
+    // safe-build.js temporarily moves local-only admin code here for prod/test builds.
+    ".build-excluded"
   ]
 }

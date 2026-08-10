@@ -85,6 +85,7 @@ interface Product {
   backgroundOptions?: BackgroundOption[];
   textOptions?: TextOption[];
   requiresImage?: boolean;
+  visible?: boolean;
   featured?: boolean;
   sale?: boolean;
   salePrice?: number;  // LEGACY: Fixed sale price
@@ -276,7 +277,7 @@ export default function EnhancedProductAdminPage() {
               const existingLBs = [...(newState[p.id]?.lightBases || p.lightBases)];
               const matchIdx = existingLBs.findIndex((lb: LightBase) => lb.id === lbOptionId);
               if (matchIdx >= 0) {
-                existingLBs[matchIdx] = { ...existingLBs[matchIdx], price: updates.basePrice };
+                existingLBs[matchIdx] = { ...existingLBs[matchIdx], price: updates.basePrice ?? null };
                 newState[p.id] = {
                   ...newState[p.id],
                   lightBases: existingLBs,
@@ -326,7 +327,7 @@ export default function EnhancedProductAdminPage() {
           const matchIdx = p.lightBases.findIndex((lb: LightBase) => lb.id === lbId);
           if (matchIdx >= 0) {
             const pLightBases = [...(getProductData(p.id).lightBases || [])];
-            pLightBases[matchIdx] = { ...pLightBases[matchIdx], price: updates.price };
+            pLightBases[matchIdx] = { ...pLightBases[matchIdx], price: updates.price ?? null };
             updateProduct(p.id, { lightBases: pLightBases });
           }
         }
@@ -335,7 +336,7 @@ export default function EnhancedProductAdminPage() {
       // Sync to standalone lightbase product if exists
       const standaloneProductId = LIGHTBASE_PRODUCT_MAP[lbId];
       if (standaloneProductId && updates.price !== null) {
-        updateProduct(standaloneProductId, { basePrice: updates.price });
+        updateProduct(standaloneProductId, { basePrice: updates.price ?? 0 });
       }
     }
     
@@ -357,7 +358,7 @@ export default function EnhancedProductAdminPage() {
           const matchIdx = p.backgroundOptions.findIndex((bg: BackgroundOption) => bg.id === bgId);
           if (matchIdx >= 0) {
             const pBgOptions = [...(getProductData(p.id).backgroundOptions || [])];
-            pBgOptions[matchIdx] = { ...pBgOptions[matchIdx], price: updates.price };
+            pBgOptions[matchIdx] = { ...pBgOptions[matchIdx], price: updates.price ?? 0 };
             updateProduct(p.id, { backgroundOptions: pBgOptions });
           }
         }
@@ -382,7 +383,7 @@ export default function EnhancedProductAdminPage() {
           const matchIdx = p.textOptions.findIndex((t: TextOption) => t.id === textId);
           if (matchIdx >= 0) {
             const pTextOptions = [...(getProductData(p.id).textOptions || [])];
-            pTextOptions[matchIdx] = { ...pTextOptions[matchIdx], price: updates.price };
+            pTextOptions[matchIdx] = { ...pTextOptions[matchIdx], price: updates.price ?? 0 };
             updateProduct(p.id, { textOptions: pTextOptions });
           }
         }
@@ -426,8 +427,8 @@ export default function EnhancedProductAdminPage() {
       .filter(([id, data]) => {
         if (data.sale !== true) return false;
         const product = sourceProducts.find(p => p.id === id);
-        const hasSalePrice = (data.salePrice ?? product?.salePrice) > 0;
-        const hasSalePercent = (data.salePercent ?? product?.salePercent) > 0;
+        const hasSalePrice = (data.salePrice ?? product?.salePrice ?? 0) > 0;
+        const hasSalePercent = (data.salePercent ?? product?.salePercent ?? 0) > 0;
         return !hasSalePrice && !hasSalePercent;
       })
       .map(([id]) => {
@@ -1569,7 +1570,7 @@ export default function EnhancedProductAdminPage() {
                             <p className="font-semibold text-yellow-800 mb-1">⚠️ Unsaved Changes</p>
                             <p className="text-yellow-700">You have modified this product's images. Click "Save Products" to persist changes.</p>
                             <p className="text-yellow-600 mt-1">
-                              Changed images: {editedProducts[selectedProduct.id].images.length} 
+                              Changed images: {editedProducts[selectedProduct.id]?.images?.length || 0} 
                               {' vs Original: '}{sourceProducts.find(p => p.id === selectedProduct.id)?.images?.length || 0}
                             </p>
                           </div>

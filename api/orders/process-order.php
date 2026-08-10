@@ -46,13 +46,14 @@ function submitToCockpit3D($orderData) {
     try {
         // Build Cockpit3D order structure
         $cockpitOrder = buildCockpit3DPayload($orderData, $retailerId);
+        $submissionOrder = stripInternalFields($cockpitOrder);
         
         // Submit to Cockpit3D API
         $ch = curl_init($apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($cockpitOrder),
+            CURLOPT_POSTFIELDS => json_encode($submissionOrder),
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Accept: application/json'
@@ -95,6 +96,22 @@ function submitToCockpit3D($orderData) {
     }
 }
 
+function stripInternalFields($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $clean = [];
+    foreach ($value as $key => $item) {
+        if (is_string($key) && strpos($key, '_') === 0) {
+            continue;
+        }
+        $clean[$key] = stripInternalFields($item);
+    }
+
+    return $clean;
+}
+
 /**
  * Build Cockpit3D order payload
  */
@@ -134,7 +151,7 @@ function buildCockpit3DPayload($orderData, $retailerId) {
             'qty' => (string)($item['quantity'] ?? 1),
             'client_item_id' => $item['productId'] ?? $item['id'] ?? '',
             'options' => [],
-            'price' => $item['price'] ?? 0
+            'price' => round((float)($item['price'] ?? $item['unitPrice'] ?? 0), 2)
         ];
         
         // Add options
@@ -167,6 +184,19 @@ function buildCockpit3DPayload($orderData, $retailerId) {
                 $cockpitItem['special_instructions'] = "Custom Text: $text";
             }
         }
+
+        $quantity = (int)($item['quantity'] ?? $item['qty'] ?? 1);
+        $unitPrice = (float)($item['price'] ?? $item['unitPrice'] ?? 0);
+        $cockpitItem['_pricing'] = [
+            'source' => $item['pricingSource'] ?? 'crystalkeepsakes_checkout',
+            'unit_price' => round($unitPrice, 2),
+            'quantity' => $quantity,
+            'line_subtotal' => round((float)($item['lineSubtotal'] ?? ($unitPrice * $quantity)), 2),
+            'base_price' => isset($item['basePrice']) ? round((float)$item['basePrice'], 2) : null,
+            'options_price' => isset($item['optionsPrice']) ? round((float)$item['optionsPrice'], 2) : null,
+            'total_price' => isset($item['totalPrice']) ? round((float)$item['totalPrice'], 2) : round($unitPrice * $quantity, 2),
+            'note' => 'Local site/Stripe pricing; Profit API pricing is not authoritative for this account.'
+        ];
         
         $cockpitOrder['items'][] = $cockpitItem;
     }
@@ -179,7 +209,7 @@ function buildCockpit3DPayload($orderData, $retailerId) {
  */
 function sendOrderEmail($orderData) {
     // Get the send-order-notification.php path
-    $notificationScript = __DIR__ . '/cockpit3d/send-order-notification.php';
+    $notificationScript = dirname(__DIR__) . '/cockpit3d/send-order-notification.php';
     
     if (!file_exists($notificationScript)) {
         return [

@@ -1,7 +1,7 @@
 <?php
 /**
- * Verify Stripe Session + Show Debug Info
- * Returns complete order details + Cockpit3D payload for debugging
+ * Verify Stripe Session + Show Safe Order Info
+ * Returns non-PII order details for the confirmation page.
  */
 
 header('Content-Type: application/json');
@@ -38,7 +38,7 @@ try {
     // Retrieve session from Stripe
     $session = \Stripe\Checkout\Session::retrieve([
         'id' => $sessionId,
-        'expand' => ['line_items', 'payment_intent', 'customer']
+        'expand' => ['line_items', 'payment_intent']
     ]);
     
     // Get payment intent details
@@ -57,34 +57,19 @@ try {
     // Parse timestamp from order number
     $orderTimestamp = null;
     $orderDate = null;
-    if (preg_match('/CK-(\d+)-/', $orderNumber, $matches)) {
+    if (preg_match('/CK_\d+_(\d+)/', $orderNumber, $matches)) {
+        $orderTimestamp = (int) floor(((int) $matches[1]) / 1000);
+        $orderDate = date('Y-m-d H:i:s', $orderTimestamp);
+    } elseif (preg_match('/CK-(\d+)-/', $orderNumber, $matches)) {
         $orderTimestamp = (int)$matches[1];
         $orderDate = date('Y-m-d H:i:s', $orderTimestamp);
     }
     
-    // Build Cockpit3D payload (for debugging)
-    $cockpit3dPayload = [
-        'retailer_id' => getEnvVar('COCKPIT3D_RETAIL_ID') ?? '256568874',
-        'order_id' => $orderNumber,
-        'address' => [
-            'email' => $session->customer_details->email ?? '',
-            'firstname' => explode(' ', $session->customer_details->name ?? '')[0] ?? '',
-            'lastname' => explode(' ', $session->customer_details->name ?? '', 2)[1] ?? '',
-            'telephone' => $session->customer_details->phone ?? '',
-            'region' => $session->customer_details->address->state ?? '',
-            'country' => $session->customer_details->address->country ?? 'US',
-            'street' => $session->customer_details->address->line1 ?? '',
-            'city' => $session->customer_details->address->city ?? '',
-            'postcode' => $session->customer_details->address->postal_code ?? '',
-            'shipping_method' => 'standard',
-            'destination' => 'customer_home',
-        ],
-        'items' => [], // Would be populated from cart data
-        'total' => $session->amount_total / 100,
-        'subtotal' => $session->amount_subtotal / 100
-    ];
+    $orderDataFile = dirname(__DIR__) . '/order-data/' . preg_replace('/[^a-zA-Z0-9_-]/', '', $orderNumber) . '.json';
+    $orderDataExists = file_exists($orderDataFile);
+    $orderDataCreatedAt = $orderDataExists ? date('c', filemtime($orderDataFile)) : null;
     
-    // Build response with complete debug info
+    // Build response with no customer PII.
     $response = [
         'success' => true,
         
@@ -95,48 +80,40 @@ try {
             'order_date' => $orderDate,
             'status' => 'confirmed',
             'payment_status' => $session->payment_status,
+            'created_at' => $orderDataCreatedAt,
         ],
         
         // Stripe Session Info
         'stripe' => [
             'session_id' => $session->id,
             'payment_intent_id' => $paymentIntent ? $paymentIntent->id : null,
-            'customer_id' => is_string($session->customer) ? $session->customer : $session->customer->id ?? null,
             'payment_status' => $session->payment_status,
             'amount_total' => $session->amount_total,
             'amount_subtotal' => $session->amount_subtotal,
+            'amount_shipping' => $session->total_details->amount_shipping ?? null,
+            'amount_tax' => $session->total_details->amount_tax ?? null,
+            'amount_discount' => $session->total_details->amount_discount ?? null,
             'currency' => $session->currency,
             'mode' => $session->mode,
-        ],
-        
-        // Customer Info
-        'customer' => [
-            'email' => $session->customer_details->email ?? null,
-            'name' => $session->customer_details->name ?? null,
-            'phone' => $session->customer_details->phone ?? null,
-            'address' => [
-                'line1' => $session->customer_details->address->line1 ?? null,
-                'line2' => $session->customer_details->address->line2 ?? null,
-                'city' => $session->customer_details->address->city ?? null,
-                'state' => $session->customer_details->address->state ?? null,
-                'postal_code' => $session->customer_details->address->postal_code ?? null,
-                'country' => $session->customer_details->address->country ?? null,
-            ]
         ],
         
         // Line Items
         'line_items' => [],
         
-        // Cockpit3D Debug Info
-        'cockpit3d_payload' => $cockpit3dPayload,
-        'cockpit3d_status' => 'not_submitted', // Would check database
+        // Fulfillment status
+        'fulfillment' => [
+            'order_data_saved' => $orderDataExists,
+            'order_data_created_at' => $orderDataCreatedAt,
+            'webhook_expected' => true,
+            'external_order_status' => 'pending_webhook_or_review'
+        ],
         
         // Debug Info
         'debug' => [
             'environment' => $mode,
-            'webhook_fired' => false, // Would check database
             'timestamp' => time(),
             'php_version' => phpversion(),
+            'privacy' => 'Customer name, email, phone, and address are intentionally omitted.'
         ]
     ];
     

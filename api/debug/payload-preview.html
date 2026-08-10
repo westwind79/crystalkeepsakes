@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crystal Keepsakes Payload Preview</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    p {
+      color: #526071;
+      line-height: 1.5;
+    }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 6px;
+      background: #2563eb;
+      color: white;
+      font-weight: 700;
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    section {
+      background: white;
+      border: 1px solid #d9e0ea;
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+    }
+    pre {
+      margin: 0;
+      max-height: 640px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #0f172a;
+    }
+    .ok {
+      color: #047857;
+      font-weight: 700;
+    }
+    .warn {
+      color: #b45309;
+      font-weight: 700;
+    }
+    @media (max-width: 850px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Profit Payload Preview</h1>
+    <p>
+      This uses the local MAMP endpoint with <strong>testMode: true</strong>.
+      It builds the order payload and does not submit an external Profit order.
+    </p>
+    <button id="run">Build Test Payload</button>
+    <p id="status" class="warn">Ready.</p>
+
+    <div class="grid">
+      <section>
+        <h2>Request</h2>
+        <pre id="request"></pre>
+      </section>
+      <section>
+        <h2>Built Payload</h2>
+        <pre id="response"></pre>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const requestPayload = {
+      orderNumber: 'LOCAL_PAYLOAD_PREVIEW_' + Date.now(),
+      testMode: true,
+      cartItems: [
+        {
+          productId: '104',
+          sku: 'Cut_Corner_Diamond',
+          name: 'Cut Corner Diamond',
+          quantity: 1,
+          price: 94.50,
+          unitPrice: 94.50,
+          lineSubtotal: 94.50,
+          basePrice: 70.00,
+          optionsPrice: 24.50,
+          totalPrice: 94.50,
+          pricingSource: 'crystalkeepsakes_checkout',
+          maskedImageUrl: 'https://example.com/customer-image-masked.jpg',
+          rawImageUrl: 'https://example.com/customer-image-original.jpg',
+          sizeDetails: { cockpit3d_id: '202' },
+          options: [
+            { category: 'background', cockpit3d_option_id: '154', name: '2D Backdrop', priceModifier: 12.00 },
+            { category: 'customText', line1: 'Test Line 1', line2: 'Test Line 2', priceModifier: 9.50 }
+          ]
+        }
+      ],
+      customer: {
+        email: 'qa@example.com',
+        firstName: 'QA',
+        lastName: 'Tester',
+        phone: '555-0100'
+      },
+      shippingInfo: {
+        address: '123 Test St',
+        city: 'Grass Valley',
+        state: 'CA',
+        zipCode: '95945',
+        country: 'US'
+      }
+    };
+
+    const runButton = document.getElementById('run');
+    const statusEl = document.getElementById('status');
+    const requestEl = document.getElementById('request');
+    const responseEl = document.getElementById('response');
+
+    requestEl.textContent = JSON.stringify(requestPayload, null, 2);
+
+    runButton.addEventListener('click', async () => {
+      runButton.disabled = true;
+      statusEl.className = 'warn';
+      statusEl.textContent = 'Building payload...';
+      responseEl.textContent = '';
+
+      try {
+        const response = await fetch('/api/cockpit3d/submit-order.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestPayload)
+        });
+        const text = await response.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+          responseEl.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          responseEl.textContent = text;
+        }
+        statusEl.className = response.ok ? 'ok' : 'warn';
+        statusEl.textContent = response.ok
+          ? 'Payload built locally. No external order submitted.'
+          : 'Endpoint returned an error.';
+      } catch (error) {
+        statusEl.className = 'warn';
+        statusEl.textContent = error.message;
+      } finally {
+        runButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

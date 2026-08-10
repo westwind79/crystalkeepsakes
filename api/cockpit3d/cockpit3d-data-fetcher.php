@@ -103,7 +103,7 @@ class CockPit3DFetcher {
         $this->baseUrl   = rtrim((string)(getEnvVariable('COCKPIT3D_BASE_URL') ?: ''), '/');
         $this->username = getEnvVariable('COCKPIT3D_USERNAME');
         $this->password = getEnvVariable('COCKPIT3D_PASSWORD');
-        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID');
+        $this->retailerId = getEnvVariable('COCKPIT3D_RETAILER_ID') ?: getEnvVariable('COCKPIT3D_RETAIL_ID');
        
         // Fallbacks for safety
         if (!$this->baseUrl) {
@@ -556,7 +556,7 @@ class CockPit3DFetcher {
             $cleanName = substr($cleanName, 0, 50);
         }
         
-        $projectRoot = dirname(__DIR__);
+        $projectRoot = dirname(dirname(__DIR__));
         $imageDir = $projectRoot . '/public/img/products/cockpit3d/' . $productId . '/';
         $baseFilename = "cockpit3d_{$productId}_{$cleanName}";
         

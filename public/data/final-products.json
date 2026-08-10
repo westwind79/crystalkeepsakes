@@ -198,28 +198,13 @@
     "name": "Cut Corner Diamond",
     "slug": "cut-corner-diamond",
     "sku": "Cut_Corner_Diamond",
-    "basePrice": 50,
+    "basePrice": 39.75,
     "description": "Elegant cut corner diamond 3D crystal keepsake perfect for honoring veterans, memorial tributes, and Christmas gifts. Personalized laser engraving preserves cherished memories forever.",
     "longDescription": "<p class=\"mb-4\">Honor your loved ones with our stunning Cut Corner Diamond 3D Crystal, a timeless memorial keepsake that transforms precious photos into breathtaking laser-engraved art. Available in three sizes (5x5cm, 6x6cm, 8x8cm), this premium crystal diamond is perfect for veteran tributes, memorial gifts, or Christmas ornaments that last a lifetime. Each crystal is meticulously crafted using advanced 3D laser engraving technology, capturing every detail of your cherished photograph with stunning clarity. The unique cut corner design reflects light beautifully, creating a mesmerizing display that honors memories of loved ones, fallen heroes, or special moments.</p><p class=\"mb-4\"><strong>Perfect For:</strong> - Veteran memorial gifts and military tributes - Christmas ornaments with family photos - Memorial keepsakes for loved ones - Anniversary and wedding memories - Baby's first Christmas or milestone celebrations </p><p class=\"mb-4\"><strong>Customization Options:</strong> - Optional custom text engraving ($9.50) - 2D or 3D backdrop enhancement - Multiple light base options for elegant display - Background removal service available This personalized crystal gift comes with a satisfaction guarantee and makes a meaningful tribute that will be treasured for generations. Each piece is individually crafted with care, ensuring your memories are preserved with the highest quality and attention to detail. <strong>Dimensions</strong>: Available in 5x5cm, 6x6cm, and 8x8cm",
     "images": [
       {
         "src": "/img/products/cockpit3d/104/cockpit3d_104_Cut_Corner_Diamond.jpg",
-        "isMain": false
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1765702293537.png",
-        "isMain": true,
-        "alt": "noahs-keepsake-1.png"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1765702333519.jpg",
-        "isMain": false,
-        "alt": "product_104_1764053586512.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/104/product_104_1765702333550.jpg",
-        "isMain": false,
-        "alt": "product_104_1764053586543.jpg"
+        "isMain": true
       }
     ],
     "options": [],
@@ -228,26 +213,23 @@
       {
         "id": "202",
         "name": "Cut Corner Diamond (5x5cm)",
-        "price": 50,
+        "price": 24.75,
         "cockpit3d_id": "202",
-        "cost": 24.75,
-        "faces": "1"
+        "cost": 24.75
       },
       {
         "id": "549",
         "name": "Cut Corner Diamond (6x6cm)",
-        "price": 60,
+        "price": 39.75,
         "cockpit3d_id": "549",
-        "cost": 39.75,
-        "faces": "2"
+        "cost": 39.75
       },
       {
         "id": "550",
         "name": "Cut Corner Diamond (8x8cm)",
-        "price": 70,
+        "price": 49.75,
         "cockpit3d_id": "550",
-        "cost": 49.75,
-        "faces": "3"
+        "cost": 49.75
       }
     ],
     "lightBases": [
@@ -257,58 +239,28 @@
         "price": null
       },
       {
-        "id": "lightbase-rectangle",
+        "id": "207",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "enabled": true
+        "cockpit3d_id": "207"
       },
       {
-        "id": "lightbase-square",
-        "name": "Lightbase Square",
-        "price": 20,
-        "enabled": true
-      },
-      {
-        "id": "lightbase-wood-small",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "enabled": true
-      },
-      {
-        "id": "lightbase-wood-medium",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "enabled": true
-      },
-      {
-        "id": "lightbase-wood-long",
-        "name": "Lightbase Wood Long",
-        "price": 35,
-        "enabled": false
-      },
-      {
-        "id": "rotating-led-lightbase",
+        "id": "476",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "enabled": false
+        "cockpit3d_id": "476"
       },
       {
-        "id": "wooden-premium-base-mini",
+        "id": "857",
         "name": "Wooden Premium Base Mini",
-        "price": 45,
-        "enabled": false
+        "price": null,
+        "cockpit3d_id": "857"
       },
       {
-        "id": "concave-lightbase",
-        "name": "Concave Lightbase",
-        "price": 28,
-        "enabled": false
-      },
-      {
-        "id": "ornament-stand",
-        "name": "Ornament Stand",
+        "id": "206",
+        "name": "Lightbase Square",
         "price": 25,
-        "enabled": false
+        "cockpit3d_id": "206"
       }
     ],
     "backgroundOptions": [
@@ -322,8 +274,7 @@
         "id": "2d",
         "name": "2D Backdrop",
         "price": 8,
-        "cockpit3d_option_id": "154",
-        "enabled": false
+        "cockpit3d_option_id": "154"
       },
       {
         "id": "3d",
@@ -342,24 +293,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/3d-crystal-diamond-cut-corner-2.png",
-    "sale": false,
-    "cost": 39.75,
-    "edited": true,
-    "editedAt": "2026-02-18T03:10:23.818Z",
-    "occasions": [
-      "memorial",
-      "pet",
-      "wedding",
-      "birthday",
-      "baby",
-      "holiday",
-      "retirement"
-    ]
+    "cost": 39.75
   },
   {
     "id": "105",
@@ -380,17 +319,14 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "cost": 8.75,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "maskImageUrl": null
   },
   {
     "id": "106",
     "name": "Lightbase Square",
     "slug": "lightbase-square",
     "sku": "Lightbase_Square",
-    "basePrice": 20,
+    "basePrice": 25,
     "description": "Square LED base ideal for diamond-shaped and square crystals. Provides stable support with elegant illumination. Multiple color options create different moods for memorial displays.",
     "longDescription": "<h3 class=\"text-xl font-semibold text-gray-900 mt-6 mb-3\">Why Light Bases Matter:</h3><p class=\"mb-4\">The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.</p><h3 class=\"text-xl font-semibold text-gray-900 mt-6 mb-3\">Choosing Your Base:</h3><p class=\"mb-4\"><strong>For Traditional/Classic Decor:</strong> Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.</p><p class=\"mb-4\"><strong>For Modern/Contemporary Decor:</strong> LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.</p><p class=\"mb-4\"><strong>For Dynamic Displays:</strong> Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.</p><p class=\"mb-4\"><strong>For Ball Crystals:</strong> Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.</p><p class=\"mb-4\"><strong>Light Colors & Moods:</strong> Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.</p><p class=\"mb-4\"><strong>Professional Presentation:</strong> Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.</p><p class=\"mb-4\"><strong>Gift Considerations:</strong> When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>",
     "images": [
@@ -404,10 +340,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 8.75
+    "maskImageUrl": null
   },
   {
     "id": "107",
@@ -463,18 +396,8 @@
     "longDescription": "<p class=\"mb-4\"> Create a lasting tribute with our <span class=\"font-semibold\">Rectangle Vertical Crystal</span>, a sophisticated 3D laser-engraved keepsake that honors veterans, celebrates memories, and makes the perfect Christmas gift. Available in 8 sizes ranging from small (6x4cm) to presidential (27x18cm), this elegant crystal transforms your treasured photographs into stunning works of art. </p><p class=\"mb-4\"> Our advanced 3D laser engraving technology captures incredible depth and detail, making every memory vivid and lifelike. Whether you're commemorating a fallen soldier, celebrating a milestone, or creating a meaningful Christmas ornament, this vertical rectangle crystal provides a timeless way to preserve life's most precious moments. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military tribute displays</li><li class=\"text-gray-900\">Memorial keepsakes for family members</li><li class=\"text-gray-900\">Retirement and service recognition awards</li><li class=\"text-gray-900\">Christmas photo ornaments and decorations</li><li class=\"text-gray-900\">Wedding anniversary and milestone celebrations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Size Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Small: 6x4cm – Perfect desk size</li><li class=\"text-gray-900\">Medium: 8x5cm – Popular choice</li><li class=\"text-gray-900\">Large: 9x6cm – Impressive detail</li><li class=\"text-gray-900\">XLarge: 12x8cm – Statement piece</li><li class=\"text-gray-900\">Mini Mantel: 15x10cm – Mantel display</li><li class=\"text-gray-900\">Mantel: 18x12cm – Family showcase</li><li class=\"text-gray-900\">Mini Presidential: 22x16cm – Executive display</li><li class=\"text-gray-900\">Presidential: 27x18cm – Premium memorial</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Custom text engraving for names, dates, and messages</li><li class=\"text-gray-900\">2D or 3D backdrop options for enhanced depth</li><li class=\"text-gray-900\">Multiple premium light base selections</li><li class=\"text-gray-900\">Professional background removal service</li></ul><p class=\"mb-4\"> Each crystal is crafted with precision and care, ensuring your memorial gift or Christmas keepsake becomes a cherished family heirloom. The vertical orientation is perfect for portrait photos and creates an elegant display on any mantel, desk, or memorial shelf.</p>",
     "images": [
       {
-        "src": "/img/products/cockpit3d/114/cockpit3d_114_Rectangle_Vertical_Crystals.png",
+        "src": "/img/products/cockpit3d/114/cockpit3d_114_Rectangle_Vertical_Crystals.jpg",
         "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/114/product_114_1765702222843.jpg",
-        "isMain": false,
-        "alt": "3d-rectangle-tall.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/114/product_114_1765702222901.jpg",
-        "isMain": false,
-        "alt": "Rectangle-Tall.jpg"
       }
     ],
     "options": [],
@@ -576,7 +499,7 @@
       {
         "id": "765",
         "name": "Wooden Premium Base Mini",
-        "price": 45,
+        "price": null,
         "cockpit3d_id": "765"
       },
       {
@@ -588,7 +511,7 @@
       {
         "id": "1435",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": 55,
+        "price": null,
         "cockpit3d_id": "1435"
       }
     ],
@@ -622,161 +545,15 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
-    "cost": 24.75,
-    "edited": true,
-    "editedAt": "2025-12-20T21:54:59.111Z",
-    "occasions": [
-      "graduation",
-      "wedding",
-      "baby",
-      "holiday"
-    ]
-  },
-  {
-    "id": "118",
-    "name": "Prestige Crystal",
-    "slug": "prestige-crystal",
-    "sku": "Prestige_Crystal",
-    "basePrice": 199,
-    "description": "Premium Prestige 3D crystal - elegant memorial gift for distinguished veterans and VIP tributes. Three sizes available. Museum-quality engraving.",
-    "longDescription": "<p class=\"mb-4\"> Present the ultimate tribute with our <span class=\"font-semibold\">Prestige Crystal</span>, a distinguished memorial piece designed for honoring high-ranking veterans, significant life achievements, and VIP commemorations. This premium crystal represents our finest craftsmanship, combining elegant design with museum-quality 3D laser engraving that befits prestigious occasions and important memorial tributes. </p><p class=\"mb-4\"> The Prestige Crystal features a sophisticated architectural design that commands respect and attention. Available in three substantial sizes, this crystal is perfect for executive gifts, military retirement ceremonies, memorial services for distinguished individuals, and occasions where only the finest tribute will do. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestigious Memorial Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">High-ranking military veteran tributes</li><li class=\"text-gray-900\">Executive retirement gifts</li><li class=\"text-gray-900\">Distinguished service awards</li><li class=\"text-gray-900\">Memorial services for VIPs</li><li class=\"text-gray-900\">Presidential and congressional gifts</li><li class=\"text-gray-900\">Significant lifetime achievement recognition</li><li class=\"text-gray-900\">Museum and institution memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestige Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Elegant architectural design</li><li class=\"text-gray-900\">Three substantial sizes (13x9cm, 16x13cm, 19x15cm)</li><li class=\"text-gray-900\">Museum-quality 3D laser engraving</li><li class=\"text-gray-900\">Premium crystal clarity and weight</li><li class=\"text-gray-900\">Sophisticated presentation</li><li class=\"text-gray-900\">Multiple luxury light base options</li><li class=\"text-gray-900\">Suitable for formal displays</li></ul><p class=\"mb-4\"> The larger size options make this crystal ideal for prominent display in corporate offices, memorial halls, military installations, or home libraries where significant tributes deserve prominent placement. The weight and clarity of the crystal immediately communicate quality and importance. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">General and Admiral retirements</li><li class=\"text-gray-900\">Congressional Medal of Honor recipients</li><li class=\"text-gray-900\">Presidential tributes</li><li class=\"text-gray-900\">CEO and executive memorials</li><li class=\"text-gray-900\">University and institution honors</li><li class=\"text-gray-900\">Significant anniversary celebrations</li><li class=\"text-gray-900\">High-profile memorial services</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization for Prestige:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Formal portraits and official photos</li><li class=\"text-gray-900\">Military rank, awards, and insignia</li><li class=\"text-gray-900\">Service records and achievements</li><li class=\"text-gray-900\">Formal epitaphs and citations</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Premium custom text placement</li><li class=\"text-gray-900\">Background removal service</li></ul><p class=\"mb-4\"> This Prestige Crystal is frequently chosen for military change-of-command ceremonies, retirement celebrations for senior officers, and memorial services where the individual's significance merits exceptional recognition. The crystal's substantial presence and elegant design communicate respect, honor, and lasting appreciation. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Investment in Honor:</h4><p class=\"mb-4\"> Starting at $235, the Prestige Crystal represents a significant investment appropriate for significant individuals and occasions. This is not a casual gift—it's a statement of profound respect and lasting tribute that reflects the importance of the person being honored. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/118/cockpit3d_118_Prestige_Crystal.png",
-        "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/118/product_118_1765702190393.jpg",
-        "isMain": false,
-        "alt": "Prestige.jpg"
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "sizes": [
-      {
-        "id": "367",
-        "name": "Prestige Small (13x9cm)",
-        "price": 149,
-        "cockpit3d_id": "367",
-        "cost": 69.75
-      },
-      {
-        "id": "368",
-        "name": "Prestige Medium (16x13cm)",
-        "price": 199,
-        "cockpit3d_id": "368",
-        "cost": 99.75
-      },
-      {
-        "id": "369",
-        "name": "Prestige Large (19x15cm)",
-        "price": 399,
-        "cockpit3d_id": "369",
-        "cost": 124.75
-      }
-    ],
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      },
-      {
-        "id": "371",
-        "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "371"
-      },
-      {
-        "id": "373",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "373"
-      },
-      {
-        "id": "374",
-        "name": "Lightbase Wood Long",
-        "price": 35,
-        "cockpit3d_id": "374"
-      },
-      {
-        "id": "478",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "478"
-      },
-      {
-        "id": "844",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "844"
-      },
-      {
-        "id": "845",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "845"
-      },
-      {
-        "id": "370",
-        "name": "Lightbase Rectangle",
-        "price": 25,
-        "cockpit3d_id": "370"
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/prestige-mask.png",
-    "cost": 99.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:13.162Z",
+    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
     "featured": true,
-    "occasions": [
-      "holiday",
-      "pet",
-      "wedding",
-      "memorial",
-      "graduation",
-      "retirement"
-    ]
+    "edited": true,
+    "editedAt": "2026-07-18T03:27:24.680Z",
+    "cost": 24.75
   },
   {
     "id": "119",
@@ -847,20 +624,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-vertical-mask.png",
-    "cost": 9.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:52:50.473Z",
-    "occasions": [
-      "baby",
-      "graduation",
-      "retirement",
-      "birthday"
-    ]
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 9.75
   },
   {
     "id": "148",
@@ -873,22 +642,7 @@
     "images": [
       {
         "src": "/img/products/cockpit3d/148/cockpit3d_148_Rectangle_Horizontal_Crystals.jpg",
-        "isMain": false
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765702197575.png",
-        "isMain": false,
-        "alt": "180x120-horizondal-people-copy_8.png"
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765702201206.jpg",
-        "isMain": false,
-        "alt": "3d-rectangle-wide.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/148/product_148_1765702207317.jpg",
-        "isMain": true,
-        "alt": "lalena-gift.jpg"
+        "isMain": true
       }
     ],
     "options": [],
@@ -990,7 +744,7 @@
       {
         "id": "864",
         "name": "Wooden Premium Base Mini",
-        "price": 45,
+        "price": null,
         "cockpit3d_id": "864"
       },
       {
@@ -1002,7 +756,7 @@
       {
         "id": "1434",
         "name": "Wooden Light Base with Keepsake Drawer",
-        "price": 55,
+        "price": null,
         "cockpit3d_id": "1434"
       }
     ],
@@ -1036,20 +790,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
-    "cost": 24.75,
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
-    "occasions": [
-      "anniversary",
-      "wedding",
-      "birthday",
-      "baby"
-    ]
+    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png",
+    "cost": 24.75
   },
   {
     "id": "151",
@@ -1098,19 +844,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-keychain-horizontal-mask.png",
-    "cost": 9.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:52:39.822Z",
-    "occasions": [
-      "anniversary",
-      "graduation",
-      "birthday"
-    ]
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 9.75
   },
   {
     "id": "156",
@@ -1122,7 +861,7 @@
     "longDescription": "<p class=\"mb-4\">Keep your loved ones close to your heart—literally—with our Heart-Shaped 3D Crystal Photo Keychain. This miniature memorial masterpiece allows you to carry cherished memories of veterans, family members, or special moments wherever you go. Perfect as a remembrance gift, veteran tribute, or meaningful Christmas stocking stuffer.</p><p class=\"mb-4\">Despite its compact size, this heart crystal keychain features the same professional-quality 3D laser engraving found in our larger pieces. Your photograph is captured with stunning clarity and depth, creating a portable memorial or keepsake that travels with you through every day.</p><p class=\"mb-4\"><strong>Meaningful Memorial Keychain:</strong> - Veteran and military photo keepsakes - Memorial gifts for remembering loved ones - Pet memorial keepsakes - Anniversary and relationship gifts - Stocking stuffer with meaning - Daily reminder of loved ones</p><p class=\"mb-4\"><strong>Features:</strong> - Heart-shaped design symbolizes love and remembrance - Durable crystal construction (won't scratch or fade) - 3D laser engraving for depth and clarity - Optional custom text (names, dates, messages) - 2D or 3D backdrop options - Sturdy keychain attachment included - Compact and portable</p><p class=\"mb-4\">This heart crystal keychain makes an incredibly thoughtful gift for those grieving, celebrating a memory, or simply wanting to keep someone special close. Many of our customers purchase these as memorial gifts for funeral services, veteran commemorations, or as Christmas gifts that carry deep personal meaning.</p><p class=\"mb-4\">The heart shape is universally recognized as a symbol of love, making this the perfect way to show someone you care while honoring a cherished memory. Whether attached to car keys, a purse, or displayed on a small stand, this crystal keychain serves as a constant reminder of love that transcends time and distance.</p>",
     "images": [
       {
-        "src": "/img/products/cockpit3d/156/cockpit3d_156_Heart_Keychain.png",
+        "src": "/img/products/cockpit3d/156/cockpit3d_156_Heart_Keychain.jpg",
         "isMain": true
       }
     ],
@@ -1159,20 +898,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/heart-keychain-mask.png",
-    "cost": 14.75,
-    "occasions": [
-      "graduation",
-      "anniversary",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-13T20:17:37.527Z",
-    "featured": true
+    "cost": 14.75
   },
   {
     "id": "158",
@@ -1221,25 +952,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/heart-necklace-mask.png",
-    "cost": 17.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:54:54.322Z",
-    "featured": true,
-    "occasions": [
-      "memorial",
-      "graduation",
-      "retirement",
-      "anniversary",
-      "holiday",
-      "baby",
-      "wedding",
-      "birthday"
-    ]
+    "cost": 17.75
   },
   {
     "id": "160",
@@ -1264,257 +982,6 @@
     "cost": 9.75
   },
   {
-    "id": "166",
-    "name": "Ornament Crystal",
-    "slug": "ornament-crystal",
-    "sku": "Ornament_Crystal",
-    "basePrice": 35,
-    "description": "3D crystal Christmas ornament with personalized photo engraving. Perfect memorial gift for veterans and loved ones. Beautiful holiday keepsake that lasts forever.",
-    "longDescription": "<p class=\"mb-4\"> Transform your Christmas tree into a gallery of cherished memories with our <span class=\"font-semibold\">3D Crystal Christmas Ornament</span>. This personalized photo ornament is more than decoration—it's a heartfelt memorial gift that honors veterans, celebrates family, and preserves your most treasured moments in stunning laser-engraved crystal. </p><p class=\"mb-4\"> Each ornament is carefully crafted using state-of-the-art 3D laser engraving technology, capturing your photograph with remarkable depth and clarity. Whether you're commemorating a loved one who served, celebrating baby's first Christmas, or creating a memorial tribute, this crystal ornament becomes a meaningful tradition that grows more precious with each passing year. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Christmas & Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military memorial ornaments</li><li class=\"text-gray-900\">Family photo Christmas decorations</li><li class=\"text-gray-900\">Memorial tribute for loved ones passed</li><li class=\"text-gray-900\">Baby's first Christmas keepsake</li><li class=\"text-gray-900\">Pet memorial ornaments</li><li class=\"text-gray-900\">Wedding and anniversary commemorations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose Our Crystal Ornaments:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Unbreakable memories: Unlike glass, crystal is durable and long-lasting</li><li class=\"text-gray-900\">Professional 3D engraving captures incredible detail</li><li class=\"text-gray-900\">Optional custom text for personalization</li><li class=\"text-gray-900\">2D or 3D backdrop options available</li><li class=\"text-gray-900\">Comes ready to hang with premium ribbon</li><li class=\"text-gray-900\">Makes a thoughtful sympathy or memorial gift</li></ul><p class=\"mb-4\"> Our crystal ornaments are designed to be displayed year-round, not just during holidays. Many families create memorial displays featuring loved ones or military service members, making these ornaments a centerpiece of remembrance and celebration. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, or special messages</li><li class=\"text-gray-900\">Background removal for clean, professional look</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Custom text engraving</li></ul>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/166/cockpit3d_166_Ornament_Crystal.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/ornament-mask.png",
-    "featured": true,
-    "cost": 19.75,
-    "occasions": [
-      "holiday",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
-  },
-  {
-    "id": "171",
-    "name": "New Wide Heart",
-    "slug": "new-wide-heart",
-    "sku": "New_Wide_Heart",
-    "basePrice": 119,
-    "description": "New Wide Heart",
-    "longDescription": "",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/171/cockpit3d_171_New_Wide_Heart.jpg",
-        "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/171/product_171_1765702175885.jpg",
-        "isMain": false,
-        "alt": "3d_heart.jpg"
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "sizes": [
-      {
-        "id": "717",
-        "name": "Wide Heart small (80x70x40)",
-        "price": 89,
-        "cockpit3d_id": "717",
-        "cost": 39.75,
-        "enabled": false
-      },
-      {
-        "id": "527",
-        "name": "Wide Heart Medium (100x90x50)",
-        "price": 119,
-        "cockpit3d_id": "527",
-        "cost": 69.75
-      },
-      {
-        "id": "528",
-        "name": "Wide Heart Large (125x110x60)",
-        "price": 149,
-        "cockpit3d_id": "528",
-        "cost": 89.75
-      }
-    ],
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      },
-      {
-        "id": "531",
-        "name": "Lightbase Rectangle",
-        "price": 25,
-        "cockpit3d_id": "531"
-      },
-      {
-        "id": "532",
-        "name": "Rotating LED Lightbase",
-        "price": 19.99,
-        "cockpit3d_id": "532"
-      },
-      {
-        "id": "774",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "774"
-      },
-      {
-        "id": "775",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "775",
-        "enabled": false
-      },
-      {
-        "id": "530",
-        "name": "Lightbase Square",
-        "price": 25,
-        "cockpit3d_id": "530"
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/heart-mask.png",
-    "cost": 69.75,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "occasions": [
-      "anniversary",
-      "wedding",
-      "baby"
-    ]
-  },
-  {
-    "id": "173",
-    "name": "Rectangle Necklace 2D",
-    "slug": "rectangle-necklace-2d",
-    "sku": "Rectangle_Necklace_2D",
-    "basePrice": 75,
-    "description": "2D crystal photo necklaces - wearable memorial jewelry for veterans and loved ones. Heart and rectangle designs. Carry memories close to your heart daily.",
-    "longDescription": "<p class=\"mb-4\"> The traditional rectangular pendant offers classic elegance and maximum photo display area. Perfect for formal portraits, military photos, and designs where clear facial features take priority over shaped aesthetics. </p><p class=\"mb-4\"> Transform cherished photographs into elegant wearable art with our collection of <span class=\"font-semibold\">2D Crystal Photo Necklaces</span>. These memorial jewelry pieces allow you to carry images of veterans, loved ones, and precious memories close to your heart—literally. Unlike traditional lockets or engraved jewelry, our crystal necklaces feature actual photographs laser-engraved with clarity and precision. </p><p class=\"mb-4\"> Each necklace becomes more than jewelry—it's a statement of love, a memorial tribute, and a conversation piece that allows you to share stories about those who matter most. The crystal pendants catch light beautifully, creating subtle sparkle that draws attention while maintaining elegance appropriate for any occasion. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/173/cockpit3d_173_Rectangle_Necklace_2D.png",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png",
-    "occasions": [
-      "memorial",
-      "wedding",
-      "birthday",
-      "graduation",
-      "holiday"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:19.986Z",
-    "cost": 17.5
-  },
-  {
     "id": "248",
     "name": "3D Crystal Candle",
     "slug": "3d-crystal-candle",
@@ -1524,23 +991,8 @@
     "longDescription": "<p class=\"mb-4\"> Honor life's most precious memories with our <span class=\"font-semibold\">Premium 3D Crystal Urn</span>, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect. </p><p class=\"mb-4\"> This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Applications:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military memorial centerpieces</li><li class=\"text-gray-900\">Permanent home or altar tributes</li><li class=\"text-gray-900\">Celebration of life ceremonies</li><li class=\"text-gray-900\">Grave-side display alternatives</li><li class=\"text-gray-900\">Funeral service memorial presentations</li><li class=\"text-gray-900\">Legacy tributes for influential loved ones</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Premium Urn Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Large, prominent crystal urn silhouette</li><li class=\"text-gray-900\">Precision 3D laser engraving inside the crystal</li><li class=\"text-gray-900\">Polished edges and refined craftsmanship</li><li class=\"text-gray-900\">Available with optional LED base for illumination</li><li class=\"text-gray-900\">Exceptional clarity and depth for portraits</li><li class=\"text-gray-900\">Heavy and substantial for permanent display</li><li class=\"text-gray-900\">Custom engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Symbolism & Design:</h4><p class=\"mb-4\"> The urn is a long-standing symbol of respect and remembrance—used across cultures and centuries to honor the lives of the departed. Our crystal urn elevates this tradition, using modern engraving to preserve not ashes, but the memory, image, and essence of the person in stunning 3D clarity. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">3D photo engraving (single or multiple subjects)</li><li class=\"text-gray-900\">Custom text (name, rank, dates, epitaph)</li><li class=\"text-gray-900\">Military insignia or awards</li><li class=\"text-gray-900\">2D or 3D backdrop enhancements</li><li class=\"text-gray-900\">Optional background removal</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Placed on mantels or memory shelves</li><li class=\"text-gray-900\">Displayed on LED base for soft illumination</li><li class=\"text-gray-900\">Used as focal point in tribute tables</li><li class=\"text-gray-900\">Incorporated into permanent home memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">A Lasting Tribute:</h4><p class=\"mb-4\"> The <span class=\"font-semibold\">Premium 3D Crystal Urn</span> is more than a memorial—it’s a statement of love, gratitude, and reverence. It honors a legacy not with ashes, but with presence, form, and light—preserving a cherished image with stunning clarity and dignity for generations to come. </p>",
     "images": [
       {
-        "src": "/img/products/cockpit3d/248/cockpit3d_248_3D_Crystal_Candle.png",
-        "isMain": false
-      },
-      {
-        "src": "/img/products/cockpit3d/248/product_248_1765696809365.jpg",
-        "isMain": true,
-        "alt": "brooks-memorial.jpg"
-      },
-      {
-        "src": "/img/products/cockpit3d/248/product_248_1765696809396.png",
-        "isMain": false,
-        "alt": "brooks-promo-1.png"
-      },
-      {
-        "src": "/img/products/cockpit3d/248/product_248_1765702381196.jpg",
-        "isMain": false,
-        "alt": "3dc_candle_urn_small.jpg"
+        "src": "/img/products/cockpit3d/248/cockpit3d_248_3D_Crystal_Candle.jpg",
+        "isMain": true
       }
     ],
     "options": [],
@@ -1554,99 +1006,26 @@
       {
         "id": "876",
         "name": "Wooden Premium Base Mini",
-        "price": 45,
-        "cockpit3d_id": "876",
-        "enabled": true
+        "price": null,
+        "cockpit3d_id": "876"
       },
       {
         "id": "877",
         "name": "Lightbase Rectangle",
         "price": 25,
-        "cockpit3d_id": "877",
-        "enabled": true
+        "cockpit3d_id": "877"
       },
       {
         "id": "878",
         "name": "Lightbase Square",
         "price": 25,
-        "cockpit3d_id": "878",
-        "enabled": true
+        "cockpit3d_id": "878"
       },
       {
         "id": "666",
         "name": "Rotating LED Lightbase",
         "price": 19.99,
-        "cockpit3d_id": "666",
-        "enabled": true
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null,
-        "enabled": true
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/3d-crystal-urn-small-mask.png",
-    "featured": true,
-    "cost": 49.75,
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z",
-    "occasions": [
-      "holiday",
-      "pet",
-      "memorial"
-    ]
-  },
-  {
-    "id": "251",
-    "name": "3D Crystal Urn / Candles",
-    "slug": "3d-crystal-urn-candles",
-    "sku": "Urn_candles",
-    "basePrice": 150,
-    "description": "Large 3D crystal urn for memorial tributes. Premium keepsake for veteran and loved one memorials. Sophisticated remembrance display piece.",
-    "longDescription": "<p class=\"mb-4\">Honor life's most precious memories with our Premium 3D Crystal Urn, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect.</p><p class=\"mb-4\">This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design.</p><p class=\"mb-4\">Premium Memorial Tribute:</p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">- Veteran and military memorial centerpieces</li><li class=\"text-gray-900\">- Celebration of life displays</li><li class=\"text-gray-900\">- Funeral service commemorations</li><li class=\"text-gray-900\">- Memorial service keepsakes</li><li class=\"text-gray-900\">- Home memorial displays</li><li class=\"text-gray-900\">- Cemetery memorial alternatives</li><li class=\"text-gray-900\">- Significant tribute gifts</li></ul><strong>Crystal Urn Features:</strong><p class=\"mb-4\">- Large, substantial size commands presence - Museum-quality 3D laser engraving - Captures incredible depth and detail - Urn symbolism honors memorial traditions - Can include service photos, portraits, or scenes - Optional custom text and epitaphs - 2D or 3D backdrop enhancement available The 3D laser engraving technology used in this urn creates remarkable depth perception, making photographs appear almost holographic within the crystal. This is particularly effective for capturing military uniforms, medals, and formal portraits—details that matter in memorial tributes for veterans and service members.</p><strong>Ideal For:</strong><p class=\"mb-4\">- Veteran funeral services - Military retirement memorials - Significant life tributes - Cremation memorials - Alternative to traditional urns - Memorial sanctuary displays - Prominent remembrance gifts</p><strong>Customization Options:</strong><p class=\"mb-4\">- Full name, rank, and service dates - Military branch and insignia - Epitaphs and memorial verses - Service photos or formal portraits - 2D or 3D backdrop options - Background removal service - Custom text placement This crystal urn memorial is often chosen by families who want a visible, beautiful tribute that doesn't hide away in a cemetery but instead remains part of daily life at home. Unlike traditional urns, this crystal memorial celebrates life with light, transparency, and beauty—reflecting the spirit of those we remember rather than the sadness of loss. Many customers place these memorials in home sanctuaries, on mantels, or in dedicated memorial spaces where they can be appreciated daily. The crystal catches light beautifully, creating changing displays throughout the day as sunlight moves through your home.</p><strong>Investment Memorial:</strong><p class=\"mb-4\">At $360, this is a significant memorial investment, but customers consistently tell us it's worth every penny for the quality, presence, and emotional impact it provides. This is a museum-quality memorial piece that will be cherished and passed down through generations.</p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/251/cockpit3d_251_3D_Crystal_Urn_Candles.jpeg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
+        "cockpit3d_id": "666"
       }
     ],
     "backgroundOptions": [
@@ -1679,27 +1058,19 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
-    "featured": true,
-    "cost": 109.75,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "occasions": [
-      "pet",
-      "memorial",
-      "holiday"
-    ]
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 49.75
   },
   {
     "id": "252",
     "name": "Wooden Premium Base Mini",
     "slug": "wooden-premium-base-mini",
     "sku": "wooden_base_mini",
-    "basePrice": 45,
+    "basePrice": 60,
     "description": "Compact premium wooden base with high-quality finish and integrated LED. Perfect for smaller crystals, desk displays, and situations where space is limited but quality cannot be compromised.",
     "longDescription": "<h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Light Bases Matter:</h4><p class=\"mb-4\"> The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Choosing Your Base:</h4><h5 class=\"text-lg font-semibold text-gray-900 mb-1\">For Traditional/Classic Decor:</h5><p class=\"mb-4\"> Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics. </p><h5 class=\"text-lg font-semibold text-gray-900 mb-1\">For Modern/Contemporary Decor:</h5><p class=\"mb-4\"> LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects. </p><h5 class=\"text-lg font-semibold text-gray-900 mb-1\">For Dynamic Displays:</h5><p class=\"mb-4\"> Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention. </p><h5 class=\"text-lg font-semibold text-gray-900 mb-1\">For Ball Crystals:</h5><p class=\"mb-4\"> Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Light Colors & Moods:</h4><p class=\"mb-4\"> Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Professional Presentation:</h4><p class=\"mb-4\"> Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Gift Considerations:</h4><p class=\"mb-4\"> When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>",
     "images": [
@@ -1713,253 +1084,14 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 17.75
-  },
-  {
-    "id": "262",
-    "name": "Notched Crystal Tall",
-    "slug": "notched-crystal-tall",
-    "sku": "notched_crystal_tall_bundle",
-    "basePrice": 259,
-    "description": "Notched Crystal Tall",
-    "longDescription": "<p class=\"mb-4\">Our advanced 3D laser engraving technology captures incredible depth and detail, making every memory vivid and lifelike. Whether you're commemorating a fallen soldier, celebrating a milestone, or creating a meaningful Christmas ornament, this vertical rectangle crystal provides a timeless way to preserve life's most precious moments.</p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/262/cockpit3d_262_Notched_Crystal_Tall.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "sizes": [
-      {
-        "id": "901",
-        "name": "2D Notched Small Crystal Tall 6x4x1.2” / 15x10x3cm",
-        "price": 169,
-        "cockpit3d_id": "901"
-      },
-      {
-        "id": "900",
-        "name": "3D Notched Small Crystal Tall 6x4x1.2” / 15x10x3cm",
-        "price": 169,
-        "cockpit3d_id": "900"
-      },
-      {
-        "id": "727",
-        "name": "2D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
-        "price": 259,
-        "cockpit3d_id": "727",
-        "cost": 95
-      },
-      {
-        "id": "726",
-        "name": "3D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
-        "price": 259,
-        "cockpit3d_id": "726",
-        "cost": 95
-      }
-    ],
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      },
-      {
-        "id": "719",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "719"
-      },
-      {
-        "id": "957",
-        "name": "Lightbase Rectangle",
-        "price": 25,
-        "cockpit3d_id": "957"
-      },
-      {
-        "id": "718",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "718"
-      },
-      {
-        "id": "897",
-        "name": "Wooden Premium Base Mini",
-        "price": null,
-        "cockpit3d_id": "897"
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/notched-vertical-mask.png",
-    "cost": 95,
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:00.714Z",
-    "occasions": [
-      "holiday",
-      "retirement",
-      "graduation",
-      "anniversary",
-      "wedding"
-    ]
-  },
-  {
-    "id": "266",
-    "name": "Notched Crystal Wide",
-    "slug": "notched-crystal-wide",
-    "sku": "notched_crystal_wide",
-    "basePrice": 259,
-    "description": "Notched Crystal Wide",
-    "longDescription": "<p class=\"mb-4\">Capture life's most important moments in landscape orientation with our Rectangle Horizontal Crystal, designed specifically for family groups, military units, and wide-format photographs. Available in 8 sizes from small (6x4cm) to presidential (27x18cm), this horizontal crystal orientation is perfect for commemorating group photos, military formations, family gatherings, and scenic memorial tributes.</p><p class=\"mb-4\">The landscape format makes this crystal ideal for photographs that tell broader stories—military units standing together, families gathered for holidays, veterans with their brothers-in-arms, or scenic locations that held special meaning. Our 3D laser engraving captures every person, every detail, creating memorial pieces that honor not just individuals but the relationships and bonds that defined their lives.</p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/266/cockpit3d_266_Notched_Crystal_Wide.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "sizes": [
-      {
-        "id": "898",
-        "name": "2D Notched Small Crystal Wide 6x4x1.2” / 15x10x3cm",
-        "price": 169,
-        "cockpit3d_id": "898"
-      },
-      {
-        "id": "899",
-        "name": "3D Notched Small Crystal Wide 6x4x1.2” / 15x10x3cm",
-        "price": 169,
-        "cockpit3d_id": "899"
-      },
-      {
-        "id": "744",
-        "name": "2D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
-        "price": 259,
-        "cockpit3d_id": "744",
-        "cost": 95
-      },
-      {
-        "id": "743",
-        "name": "3D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
-        "price": 259,
-        "cockpit3d_id": "743",
-        "cost": 95
-      }
-    ],
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      },
-      {
-        "id": "741",
-        "name": "Lightbase Wood Medium",
-        "price": 45,
-        "cockpit3d_id": "741"
-      },
-      {
-        "id": "740",
-        "name": "Lightbase Wood Small",
-        "price": 35,
-        "cockpit3d_id": "740"
-      },
-      {
-        "id": "1436",
-        "name": "Wooden Light Base with Keepsake Drawer",
-        "price": null,
-        "cockpit3d_id": "1436"
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/notched-horizontal-mask.png",
-    "cost": 95,
-    "occasions": [
-      "anniversary",
-      "graduation",
-      "retirement",
-      "wedding",
-      "birthday"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "maskImageUrl": null
   },
   {
     "id": "276",
     "name": "Concave Lightbase",
     "slug": "concave-lightbase",
     "sku": "concave_lightbase",
-    "basePrice": 28,
+    "basePrice": 39,
     "description": "Specialized curved base designed specifically for ball crystals and spherical memorial pieces. The concave cradle provides secure positioning while illuminating spheres from optimal angles.",
     "longDescription": "<h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Light Bases Matter</h4><p class=\"mb-4\">The right illumination transforms crystal memorials from static objects into living tributes. LED lighting from below creates internal glow that makes laser-engraved photographs appear luminous and three-dimensional. The play of light through crystal creates changing displays throughout the day, ensuring memorial pieces remain engaging and dynamic rather than becoming invisible background objects.</p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Choosing Your Base:</h4><p class=\"mb-4\">For Traditional/Classic Decor:</p><p class=\"mb-4\">Wooden bases provide warmth and craftsmanship that complements traditional home interiors, furniture, and memorial aesthetics.</p><p class=\"mb-4\">For Modern/Contemporary Decor:</p><p class=\"mb-4\">LED bases offer sleek, minimal profiles that suit modern design while providing dramatic lighting effects.</p><p class=\"mb-4\">For Dynamic Displays:</p><p class=\"mb-4\">Rotating bases create movement and visual interest, perfect for public memorial displays, office tributes, or spaces where crystals should command attention.</p><p class=\"mb-4\">For Ball Crystals:</p><p class=\"mb-4\">Concave bases are essential for secure, stable positioning of spherical crystals while providing optimal lighting angles.</p><p class=\"mb-4\">Light Colors & Moods:</p><p class=\"mb-4\">Most LED bases offer multiple color options—soft white for elegant traditional displays, warm amber for cozy memorial warmth, or cycling colors that create dynamic visual effects for celebratory tributes rather than sorrowful memorials.</p><p class=\"mb-4\">Professional Presentation:</p><p class=\"mb-4\">Quality light bases elevate amateur memorial displays into professional-quality tributes. The difference between a crystal sitting on a shelf versus one properly illuminated on a quality base is dramatic—comparable to the difference between a snapshot in a drawer versus a professionally framed portrait on a wall.</p><p class=\"mb-4\">Gift Considerations:</p><p class=\"mb-4\">When gifting crystal memorials, including an appropriate light base demonstrates thoughtfulness and ensures the recipient can display their gift immediately without additional purchases. Many customers order \"complete memorial sets\" combining crystals with bases for turn-key presentation.</p>",
     "images": [
@@ -1973,10 +1105,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 12.75
+    "maskImageUrl": null
   },
   {
     "id": "277",
@@ -2025,7 +1154,7 @@
       {
         "id": "879",
         "name": "Wooden Premium Base Mini",
-        "price": 45,
+        "price": null,
         "cockpit3d_id": "879"
       },
       {
@@ -2071,20 +1200,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/globe-mask.png",
-    "cost": 59.75,
-    "occasions": [
-      "memorial",
-      "anniversary",
-      "baby",
-      "wedding"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 59.75
   },
   {
     "id": "279",
@@ -2105,15 +1226,7 @@
     "lightBases": [],
     "backgroundOptions": [],
     "textOptions": [],
-    "maskImageUrl": null,
-    "featured": false,
-    "occasions": [
-      "holiday",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 15
+    "maskImageUrl": null
   },
   {
     "id": "286",
@@ -2125,7 +1238,7 @@
     "longDescription": "<p class=\"mb-4\">Create the ultimate tribute to canine companions with our Large Dog Bone Crystal, a substantial memorial piece designed specifically for honoring beloved dogs and military K9 veterans. Available in vertical and horizontal orientations, this premium dog bone-shaped crystal represents our most significant pet memorial offering—perfect for those seeking to honor the unconditional love, loyalty, and service that dogs provide throughout their lives.</p><p class=\"mb-4\">This is not a small ornament—it's a substantial memorial display piece that commands attention and respect, appropriate for the incredible impact dogs have on our lives. Whether commemorating a family pet who was a beloved member of your household or honoring a military working dog who served alongside our troops, this crystal dog bone provides the dignity and recognition these faithful companions deserve.</p><p class=\"mb-4\"><strong>Premium Pet Memorial:</strong> - Large-scale dog memorial displays - Military K9 and working dog tributes - Police and service dog memorials - Therapy and emotional support dog honors - Significant pet loss tributes - Veterinary clinic memorial walls - Dog rescue and shelter tributes</p><p class=\"mb-4\"><strong>Dog Bone Crystal Features:</strong> - Substantial size (premium display piece) - Classic bone shape universally recognized - 3D laser engraving captures personality - Available vertical or horizontal orientation - Premium crystal clarity and weight - Optional wooden or LED light bases - Military K9 appropriate for tributes</p><p class=\"mb-4\"><strong>Vertical Dog Bone (ID: 286):</strong> Perfect for portrait-style dog photos, formal military K9 portraits, or sitting/standing poses. The vertical orientation creates an elegant upright display ideal for mantels, memorial shelves, or K9 veteran tribute walls.</p><p class=\"mb-4\"><strong>Horizontal Dog Bone (ID: 288):</strong> Ideal for action shots, running poses, or landscape-style compositions featuring dogs in their element. The horizontal orientation suits modern display aesthetics and creates visual interest in memorial arrangements.</p><p class=\"mb-4\"><strong>Military K9 Tributes:</strong> These dog bone crystals are specifically appropriate for honoring military working dogs, police K9s, and service dogs who have made sacrifices in the line of duty. Many military families, law enforcement agencies, and veterans organizations choose these crystals for formal K9 memorial ceremonies and tribute displays.</p><p class=\"mb-4\"><strong>Customization Options:</strong> - Dog's name, breed, and dates - Military rank or K9 unit designation - Service awards and commendations - Paw print designs - \"Until We Meet at the Rainbow Bridge\" messages - Military branch insignias for K9 units - 2D or 3D backdrop enhancement</p><p class=\"mb-4\">Dogs give us their entire lives—their puppyhood energy, their mature loyalty, their elderly devotion. This substantial crystal memorial ensures that their memory receives the honor and permanence they deserve. Unlike photographs that can fade or deteriorate, these crystals preserve your dog's image in pristine clarity for generations.</p><p class=\"mb-4\"><strong>Display Recommendations:</strong> - Mantel centerpiece with light base - Memorial shelf dedicated to pets - K9 veteran tribute walls - Veterinary clinic memorial displays - Dog rescue tribute galleries - Home memorial sanctuaries</p><p class=\"mb-4\"><strong>Perfect Gift For:</strong> - Families grieving pet loss - Military K9 handlers - Police K9 officers - Dog rescue organizations - Veterinary professionals - Service dog trainers - Dog breeders and enthusiasts</p><p class=\"mb-4\">At $300, these dog bone crystals represent a significant investment appropriate for the significant role dogs play in our lives—whether as family members who brought daily joy or as working dogs who served and sacrificed alongside military and law enforcement personnel.</p>",
     "images": [
       {
-        "src": "/img/products/cockpit3d/286/cockpit3d_286_Dog_Bone_Vertical.png",
+        "src": "/img/products/cockpit3d/286/cockpit3d_286_Dog_Bone_Vertical.jpg",
         "isMain": true
       }
     ],
@@ -2140,13 +1253,13 @@
       {
         "id": "1029",
         "name": "Wooden Premium Base Mini",
-        "price": 35,
+        "price": null,
         "cockpit3d_id": "1029"
       },
       {
         "id": "1517",
         "name": "Lightbase Wood Small",
-        "price": 35,
+        "price": null,
         "cockpit3d_id": "1517"
       }
     ],
@@ -2180,18 +1293,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-vertical-mask.png",
-    "cost": 89.75,
-    "occasions": [
-      "pet",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "cost": 89.75
   },
   {
     "id": "288",
@@ -2203,7 +1310,7 @@
     "longDescription": "<p class=\"mb-4\">Create the ultimate tribute to canine companions with our Large Dog Bone Crystal, a substantial memorial piece designed specifically for honoring beloved dogs and military K9 veterans. Available in vertical and horizontal orientations, this premium dog bone-shaped crystal represents our most significant pet memorial offering—perfect for those seeking to honor the unconditional love, loyalty, and service that dogs provide throughout their lives.</p><p class=\"mb-4\">This is not a small ornament—it's a substantial memorial display piece that commands attention and respect, appropriate for the incredible impact dogs have on our lives. Whether commemorating a family pet who was a beloved member of your household or honoring a military working dog who served alongside our troops, this crystal dog bone provides the dignity and recognition these faithful companions deserve.</p><p class=\"mb-4\"><strong>Premium Pet Memorial:</strong> - Large-scale dog memorial displays - Military K9 and working dog tributes - Police and service dog memorials - Therapy and emotional support dog honors - Significant pet loss tributes - Veterinary clinic memorial walls - Dog rescue and shelter tributes</p><p class=\"mb-4\"><strong>Dog Bone Crystal Features:</strong> - Substantial size (premium display piece) - Classic bone shape universally recognized - 3D laser engraving captures personality - Available vertical or horizontal orientation - Premium crystal clarity and weight - Optional wooden or LED light bases - Military K9 appropriate for tributes</p><p class=\"mb-4\"><strong>Vertical Dog Bone (ID: 286):</strong> Perfect for portrait-style dog photos, formal military K9 portraits, or sitting/standing poses. The vertical orientation creates an elegant upright display ideal for mantels, memorial shelves, or K9 veteran tribute walls.</p><p class=\"mb-4\"><strong>Horizontal Dog Bone (ID: 288):</strong> Ideal for action shots, running poses, or landscape-style compositions featuring dogs in their element. The horizontal orientation suits modern display aesthetics and creates visual interest in memorial arrangements.</p><p class=\"mb-4\"><strong>Military K9 Tributes:</strong> These dog bone crystals are specifically appropriate for honoring military working dogs, police K9s, and service dogs who have made sacrifices in the line of duty. Many military families, law enforcement agencies, and veterans organizations choose these crystals for formal K9 memorial ceremonies and tribute displays.</p><p class=\"mb-4\"><strong>Customization Options:</strong> - Dog's name, breed, and dates - Military rank or K9 unit designation - Service awards and commendations - Paw print designs - \"Until We Meet at the Rainbow Bridge\" messages - Military branch insignias for K9 units - 2D or 3D backdrop enhancement</p><p class=\"mb-4\">Dogs give us their entire lives—their puppyhood energy, their mature loyalty, their elderly devotion. This substantial crystal memorial ensures that their memory receives the honor and permanence they deserve. Unlike photographs that can fade or deteriorate, these crystals preserve your dog's image in pristine clarity for generations.</p><p class=\"mb-4\"><strong>Display Recommendations:</strong> - Mantel centerpiece with light base - Memorial shelf dedicated to pets - K9 veteran tribute walls - Veterinary clinic memorial displays - Dog rescue tribute galleries - Home memorial sanctuaries</p><p class=\"mb-4\"><strong>Perfect Gift For:</strong> - Families grieving pet loss - Military K9 handlers - Police K9 officers - Dog rescue organizations - Veterinary professionals - Service dog trainers - Dog breeders and enthusiasts</p><p class=\"mb-4\">At $300, these dog bone crystals represent a significant investment appropriate for the significant role dogs play in our lives—whether as family members who brought daily joy or as working dogs who served and sacrificed alongside military and law enforcement personnel.</p>",
     "images": [
       {
-        "src": "/img/products/cockpit3d/288/cockpit3d_288_Dog_Bone_Horizontal.png",
+        "src": "/img/products/cockpit3d/288/cockpit3d_288_Dog_Bone_Horizontal.jpg",
         "isMain": true
       }
     ],
@@ -2218,15 +1325,14 @@
       {
         "id": "940",
         "name": "Lightbase Wood Medium",
-        "price": 30,
+        "price": null,
         "cockpit3d_id": "940"
       },
       {
         "id": "1433",
         "name": "Wooden Light Base with Keepsake Drawer",
         "price": null,
-        "cockpit3d_id": "1433",
-        "enabled": false
+        "cockpit3d_id": "1433"
       }
     ],
     "backgroundOptions": [
@@ -2259,18 +1365,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "cost": 89.75,
-    "occasions": [
-      "pet",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "cost": 89.75
   },
   {
     "id": "290",
@@ -2325,350 +1425,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/desk-lamp-mask.png",
-    "cost": 175,
-    "occasions": [
-      "graduation",
-      "retirement"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
-  },
-  {
-    "id": "440",
-    "name": "2D Crystal Heart Ornament",
-    "slug": "2d-crystal-heart-ornament",
-    "sku": "Heart_Ornament_bundle",
-    "basePrice": 45,
-    "description": "2D heart crystal Christmas ornament with personalized photo. Elegant memorial gift for veterans and loved ones. Affordable keepsake ornament.",
-    "longDescription": "<p class=\"mb-4\"> Celebrate love and honor memories with our <span class=\"font-semibold\">2D Crystal Heart Ornament</span>, an affordable yet elegant way to transform your Christmas tree into a memorial of cherished moments. This heart-shaped crystal ornament is perfect for honoring veterans, remembering loved ones, or celebrating life's precious milestones during the holiday season and beyond. </p><p class=\"mb-4\"> Our 2D laser engraving process creates beautifully detailed images on high-quality crystal, offering exceptional clarity at an accessible price point. The heart shape makes this ornament ideal for expressing <span class=\"italic\">love, remembrance, and gratitude</span>—whether you're commemorating military service, celebrating family, or creating a memorial tribute. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Ornament For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran Christmas memorial ornaments</li><li class=\"text-gray-900\">\"In Loving Memory\" holiday tributes</li><li class=\"text-gray-900\">First Christmas as a family</li><li class=\"text-gray-900\">Memorial gifts for loss and sympathy</li><li class=\"text-gray-900\">Pet memorial ornaments</li><li class=\"text-gray-900\">Grandparent photo gifts</li><li class=\"text-gray-900\">Military family Christmas traditions</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Heart Ornament:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Budget-friendly memorial gift option</li><li class=\"text-gray-900\">Classic 2D engraving with sharp, clear detail</li><li class=\"text-gray-900\">Heart design conveys love and remembrance</li><li class=\"text-gray-900\">Durable crystal construction</li><li class=\"text-gray-900\">Ready to hang with premium attachment</li><li class=\"text-gray-900\">Personalization available with custom text</li><li class=\"text-gray-900\">Makes meaningful stocking stuffer</li></ul><p class=\"mb-4\"> This 2D heart ornament is part of our ornament collection designed specifically for those seeking affordable memorial gifts without compromising quality. While our 3D ornaments offer depth perception, this 2D version provides crisp, photograph-quality engraving that beautifully captures faces, insignias, and special moments. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Custom text engraving (names, dates, service branch)</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal for clean presentation</li><li class=\"text-gray-900\">Optional special messages</li></ul><p class=\"mb-4\"> Many families create ornament collections featuring different loved ones or military service members, making each Christmas tree a celebration of family history and military heritage. This ornament also makes a thoughtful sympathy gift or memorial present for those experiencing loss. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/440/cockpit3d_440_2D_Crystal_Heart_Ornament.jpg",
-        "isMain": true,
-        "alt": "heart ornament image"
-      },
-      {
-        "src": "/img/products/cockpit3d/440/product_440_1765696797206.webp",
-        "isMain": false,
-        "alt": "christam ornament graphic"
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/heart-necklace-mask.png",
-    "featured": true,
-    "edited": true,
-    "editedAt": "2026-01-30T23:54:00.756Z",
-    "occasions": [
-      "holiday",
-      "memorial",
-      "pet",
-      "anniversary"
-    ],
-    "cost": 24.75
-  },
-  {
-    "id": "441",
-    "name": "2D Crystal Flower Ornament",
-    "slug": "2d-crystal-flower-ornament",
-    "sku": "Flower_Ornament_bundle",
-    "basePrice": 45,
-    "description": "Flower-shaped 2D crystal ornament with custom photo engraving. Unique memorial gift for Christmas and remembrance. Elegant floral keepsake design.",
-    "longDescription": "<p class=\"mb-4\"> Honor loved ones with the beauty of nature through our <span class=\"font-semibold\">2D Crystal Flower Ornament</span>, a unique memorial keepsake that combines elegant floral design with personalized photo engraving. This distinctive flower-shaped crystal ornament is perfect for memorial tributes, veteran commemorations, and Christmas celebrations that honor life's most precious memories. </p><p class=\"mb-4\"> The flower symbolizes <span class=\"italic\">life, growth, and eternal beauty</span>—making this ornament especially meaningful for memorial gifts, sympathy presents, and tributes to those who have passed. Our precision 2D laser engraving captures your photograph with exceptional clarity, creating a touching remembrance piece that blooms with memories year after year. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Memorial & Gift Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial Christmas ornaments for loved ones</li><li class=\"text-gray-900\">Veteran and military tribute ornaments</li><li class=\"text-gray-900\">Sympathy and bereavement gifts</li><li class=\"text-gray-900\">Garden and nature lovers</li><li class=\"text-gray-900\">Mother's Day memorial gifts</li><li class=\"text-gray-900\">Celebration of life ceremonies</li><li class=\"text-gray-900\">Spring and holiday decorations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Flower Ornament Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Unique flower-shaped design stands out on any tree</li><li class=\"text-gray-900\">High-quality 2D crystal engraving</li><li class=\"text-gray-900\">Affordable memorial gift option</li><li class=\"text-gray-900\">Durable, long-lasting crystal construction</li><li class=\"text-gray-900\">Personalization with custom text available</li><li class=\"text-gray-900\">2D or 3D backdrop options</li><li class=\"text-gray-900\">Comes with hanging attachment</li></ul><p class=\"mb-4\"> The flower design offers a softer, more nature-inspired alternative to traditional ornaments, making it particularly appropriate for those who loved gardening, nature, or simply appreciated life's natural beauty. Many customers choose this ornament to honor mothers, grandmothers, or beloved family members who brought beauty into their lives. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Available:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, or memorial messages</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Special inscriptions and quotes</li></ul><p class=\"mb-4\"> This flower ornament also makes an excellent addition to memorial displays, celebration of life services, or as part of a memory tree dedicated to honoring those who have passed. Its unique shape and meaningful symbolism create conversations and provide comfort to those remembering loved ones. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/441/cockpit3d_441_2D_Crystal_Flower_Ornament.jpg",
-        "isMain": true,
-        "alt": "flower ornament image"
-      },
-      {
-        "src": "/img/products/cockpit3d/441/product_441_1765696789664.webp",
-        "isMain": false,
-        "alt": "christmas ornament graphic"
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/flower-ornament-mask.png",
-    "featured": false,
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:50.062Z",
-    "occasions": [
-      "holiday",
-      "anniversary",
-      "pet",
-      "memorial"
-    ],
-    "cost": 25.75
-  },
-  {
-    "id": "442",
-    "name": "2D Crystal Cat Ornament",
-    "slug": "2d-crystal-cat-ornament",
-    "sku": "Cat_Ornament_bundle",
-    "basePrice": 45,
-    "description": "Cat-shaped 2D crystal ornament with pet photo engraving. Perfect pet memorial gift and Christmas ornament. Honor your beloved feline friend forever.",
-    "longDescription": "<p class=\"mb-4\"> Celebrate your beloved feline companion with our <span class=\"font-semibold\">2D Crystal Cat Ornament</span>, a heartwarming pet memorial keepsake designed specifically for cat lovers. This adorable cat-shaped crystal ornament transforms your favorite pet photo into a permanent tribute that honors the unconditional love and joy your cat brought to your life. </p><p class=\"mb-4\"> Whether your furry friend is still purring by your side or has crossed the rainbow bridge, this crystal cat ornament makes a touching memorial gift for <span class=\"italic\">Christmas</span>, <span class=\"italic\">sympathy occasions</span>, or any time you want to celebrate the special bond between human and cat. Our <span class=\"font-medium\">2D laser engraving</span> captures every whisker, every expression, creating a crystal-clear memory you'll treasure forever. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Pet Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Cat memorial Christmas ornaments</li><li class=\"text-gray-900\">Rainbow Bridge sympathy gifts</li><li class=\"text-gray-900\">Pet loss and bereavement presents</li><li class=\"text-gray-900\">Cat lover holiday decorations</li><li class=\"text-gray-900\">Veterinarian thank-you gifts</li><li class=\"text-gray-900\">Pet adoption celebrations</li><li class=\"text-gray-900\">Cat's first Christmas keepsake</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Cat Ornament Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Adorable cat-shaped crystal design</li><li class=\"text-gray-900\">Professional 2D photo engraving</li><li class=\"text-gray-900\">Captures pet personality and details</li><li class=\"text-gray-900\">Durable crystal construction</li><li class=\"text-gray-900\">Personalization with pet's name available</li><li class=\"text-gray-900\">2D or 3D backdrop options</li><li class=\"text-gray-900\">Includes premium hanging attachment</li></ul><p class=\"mb-4\"> Many pet owners create <span class=\"italic\">memorial displays</span> or \"<span class=\"italic\">Pet Memory Trees</span>\" featuring crystal ornaments of current and past pets, making this cat ornament part of a larger tribute to the animals who have enriched their lives. This ornament is equally meaningful whether celebrating a living cat's presence or honoring a cat's memory. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add your cat's name and dates</li><li class=\"text-gray-900\">Include memorial verse or message</li><li class=\"text-gray-900\">Background removal for clean look</li><li class=\"text-gray-900\">Optional \"In Loving Memory\" text</li></ul><p class=\"mb-4\"> The cat-shaped design makes this ornament instantly recognizable and particularly special for feline enthusiasts. Unlike photos that fade or frames that break, this <span class=\"font-medium\">crystal cat ornament</span> preserves your pet's image permanently in beautiful, light-catching crystal. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Thoughtful Gift Ideas:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sympathy gift for pet loss</li><li class=\"text-gray-900\">Christmas gift for cat owners</li><li class=\"text-gray-900\">Memorial service keepsake</li><li class=\"text-gray-900\">Cat adoption celebration</li><li class=\"text-gray-900\">Veterinary clinic thank-you</li><li class=\"text-gray-900\">Cat café or rescue support</li></ul><p class=\"mb-4\"> Your cat gave you years of love, companionship, and memories. Our <span class=\"font-semibold\">crystal cat ornament</span> ensures those memories shine bright for years to come. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/442/cockpit3d_442_2D_Crystal_Cat_Ornament.jpg",
-        "isMain": true
-      },
-      {
-        "src": "/img/products/cockpit3d/442/product_442_1765696720046.webp",
-        "isMain": false,
-        "alt": "xmas.webp"
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": false,
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:34.591Z",
-    "occasions": [
-      "holiday",
-      "memorial",
-      "pet"
-    ],
-    "cost": 25.75
-  },
-  {
-    "id": "443",
-    "name": "2D Crystal Dog Bone Ornament",
-    "slug": "2d-crystal-dog-bone-ornament",
-    "sku": "Dog_Bone_Ornament_bundle",
-    "basePrice": 45,
-    "description": "Dog bone shaped crystal ornament with pet photo. Memorial gift for dogs, veteran K9 units, and Christmas. Honor your loyal companion forever.",
-    "longDescription": "<p class=\"mb-4\"> Pay tribute to man's best friend with our <span class=\"font-semibold\">2D Crystal Dog Bone Ornament</span>, a touching memorial keepsake designed to honor dogs, military K9 units, and the loyal companions who gave us unconditional love. This dog bone-shaped crystal ornament is perfect for pet memorials, veteran K9 tributes, and Christmas celebrations that remember our four-legged heroes. </p><p class=\"mb-4\"> Our dog bone design is universally recognized and beloved by dog owners everywhere. Whether honoring a family pet, commemorating a military working dog, or celebrating your current canine companion, this crystal ornament captures the essence of <span class=\"italic\">loyalty, love</span>, and the special bond between dogs and their humans. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Memorial & Gift Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Dog memorial Christmas ornaments</li><li class=\"text-gray-900\">Military K9 and working dog tributes</li><li class=\"text-gray-900\">Pet loss sympathy gifts</li><li class=\"text-gray-900\">Rainbow Bridge remembrance</li><li class=\"text-gray-900\">Service dog appreciation</li><li class=\"text-gray-900\">Dog's first Christmas</li><li class=\"text-gray-900\">Veteran K9 memorial gifts</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Dog Bone Ornament Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Classic bone shape beloved by dog lovers</li><li class=\"text-gray-900\">Professional 2D laser photo engraving</li><li class=\"text-gray-900\">Captures your dog's unique personality</li><li class=\"text-gray-900\">Military K9 appropriate for veteran tributes</li><li class=\"text-gray-900\">Durable crystal construction</li><li class=\"text-gray-900\">Custom text personalization available</li><li class=\"text-gray-900\">Includes quality hanging attachment</li></ul><p class=\"mb-4\"> This ornament holds special significance for military families, as it's ideal for honoring K9 veterans and working dogs who served alongside our troops. The dog bone shape, combined with options to add service dates and military insignias, creates a meaningful tribute to these brave animals. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Dog's name, dates, and breed</li><li class=\"text-gray-900\">Military rank or K9 unit designation</li><li class=\"text-gray-900\">Memorial messages and quotes</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">\"Forever in Our Hearts\" inscription</li></ul><p class=\"mb-4\"> Many customers create comprehensive pet memorial displays featuring multiple dog ornaments representing different pets throughout their lives, or military families honor K9 service members alongside human veterans on their memorial trees. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Pet parents grieving loss</li><li class=\"text-gray-900\">Military families honoring K9 veterans</li><li class=\"text-gray-900\">Dog lovers at Christmas</li><li class=\"text-gray-900\">Sympathy gifts for pet loss</li><li class=\"text-gray-900\">Veterinary clinic gifts</li><li class=\"text-gray-900\">Dog rescue and shelter support</li><li class=\"text-gray-900\">Service dog retirement tributes</li></ul><p class=\"mb-4\"> Dogs give us their entire lives. Our <span class=\"font-semibold\">crystal dog bone ornament</span> ensures their memory lives on forever, sparkling with the same joy and loyalty they brought to our days. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/443/cockpit3d_443_2D_Crystal_Dog_Bone_Ornament.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "featured": false,
-    "occasions": [
-      "holiday",
-      "anniversary",
-      "pet",
-      "memorial"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:45.322Z",
-    "cost": 25.75
-  },
-  {
-    "id": "444",
-    "name": "2D Crystal Cat Necklace",
-    "slug": "2d-crystal-cat-necklace",
-    "sku": "Cat_Necklace_bundle",
-    "basePrice": 49,
-    "description": "Celebrate feline companions with this adorable cat-shaped crystal pendant. Perfect for cat lovers, pet memorial jewelry, and honoring beloved cats who crossed the rainbow bridge.",
-    "longDescription": "<p class=\"mb-4\"> Transform cherished photographs into elegant wearable art with our collection of <span class=\"font-semibold\">2D Crystal Photo Necklaces</span>. These memorial jewelry pieces allow you to carry images of veterans, loved ones, and precious memories close to your heart—literally. Unlike traditional lockets or engraved jewelry, our crystal necklaces feature actual photographs laser-engraved with clarity and precision. </p><p class=\"mb-4\"> Each necklace becomes more than jewelry—it's a <span class=\"italic\">statement of love</span>, a <span class=\"italic\">memorial tribute</span>, and a <span class=\"italic\">conversation piece</span> that allows you to share stories about those who matter most. The crystal pendants catch light beautifully, creating subtle sparkle that draws attention while maintaining elegance appropriate for any occasion.</p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/444/cockpit3d_444_2D_Crystal_Cat_Necklace.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "featured": false,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "occasions": [
-      "memorial",
-      "holiday",
-      "graduation",
-      "retirement",
-      "birthday"
-    ],
-    "cost": 20.5
+    "cost": 175
   },
   {
     "id": "445",
@@ -2717,19 +1479,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "cost": 15.75,
-    "occasions": [
-      "pet",
-      "memorial",
-      "anniversary"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "cost": 15.75
   },
   {
     "id": "446",
@@ -2778,21 +1533,11 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/dogbone-horizontal-mask.png",
-    "occasions": [
-      "anniversary",
-      "graduation",
-      "birthday",
-      "wedding",
-      "pet"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-30T23:53:38.607Z",
-    "cost": 15.75
+    "maskImageUrl": "/img/masks/dogbone-vertical-mask.png"
   },
   {
     "id": "447",
@@ -2847,163 +1592,11 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/heart-necklace-mask.png",
-    "occasions": [
-      "anniversary",
-      "graduation",
-      "birthday",
-      "baby"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-30T03:30:21.264Z",
-    "featured": true,
-    "cost": 20.5
-  },
-  {
-    "id": "448",
-    "name": "2D Medium Plaque Vertical",
-    "slug": "2d-medium-plaque-vertical",
-    "sku": "2D_Medium_Plaque_Vertical_bundle",
-    "basePrice": 169,
-    "description": "Portrait orientation perfect for individual photos, military headshots, formal portraits, and vertical compositions. The upright format creates elegant displays suitable for mantels, desks, and memorial shelves.",
-    "longDescription": "<p class=\"mb-4\"> Create professional memorial tributes without premium pricing through our <span class=\"font-semibold\">2D Medium Plaque Crystal</span> collection, offering both vertical and horizontal orientations for versatile display options. These medium-sized crystals provide the perfect balance of visibility, affordability, and professional presentation—ideal for memorial gifts, veteran tributes, and Christmas keepsakes that honor memories without straining budgets. </p><p class=\"mb-4\"> Our 2D laser engraving technology delivers photograph-quality clarity in these plaques, creating sharp, detailed images that capture faces, uniforms, and special moments with precision. While 3D engraving offers depth perception, 2D engraving provides crisp, clear imagery that many prefer for formal portraits, military photos, and situations where facial clarity takes priority. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Professional Memorial Plaques:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran memorial plaques</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Memorial service tributes</li><li class=\"text-gray-900\">Corporate memorial displays</li><li class=\"text-gray-900\">Academic achievement recognition</li><li class=\"text-gray-900\">Military promotion gifts</li><li class=\"text-gray-900\">Christmas family plaques</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">2D Plaque Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Medium size for prominent display</li><li class=\"text-gray-900\">2D laser engraving (photo-quality clarity)</li><li class=\"text-gray-900\">Both vertical and horizontal options</li><li class=\"text-gray-900\">Affordable memorial option</li><li class=\"text-gray-900\">Professional presentation quality</li><li class=\"text-gray-900\">Optional light bases available</li><li class=\"text-gray-900\">Custom text engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Over 3D:</h4><p class=\"mb-4\"> While 3D engraving creates depth perception and dimensional effects, 2D engraving offers advantages for certain applications: </p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sharper facial features and details</li><li class=\"text-gray-900\">Better for very detailed photos</li><li class=\"text-gray-900\">Clearer text and insignias</li><li class=\"text-gray-900\">More affordable pricing</li><li class=\"text-gray-900\">Traditional memorial aesthetic</li><li class=\"text-gray-900\">Photograph-like quality</li></ul><p class=\"mb-4\"> These medium plaques strike an excellent balance between size and affordability—large enough to command presence in displays but priced accessibly for broader audiences. At $169, they offer significant value for families seeking professional memorial pieces without luxury pricing. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial service giveaways</li><li class=\"text-gray-900\">Funeral program tributes</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Corporate memorial walls</li><li class=\"text-gray-900\">Academic memorial displays</li><li class=\"text-gray-900\">Christmas family traditions</li><li class=\"text-gray-900\">Veteran organization tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, and service information</li><li class=\"text-gray-900\">Military rank, branch, and insignia</li><li class=\"text-gray-900\">Memorial verses and epitaphs</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">Custom text placement</li></ul><p class=\"mb-4\"> The medium size makes these plaques versatile for various display locations—substantial enough for mantel centerpieces yet appropriate for office desks, bedside tables, or memorial shelves. Many organizations purchase multiple plaques to create tribute walls honoring multiple veterans or service members. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Pair with wooden or LED light bases</li><li class=\"text-gray-900\">Create memorial groupings with multiple plaques</li><li class=\"text-gray-900\">Mix vertical and horizontal orientations for visual interest</li><li class=\"text-gray-900\">Combine with other memorial pieces for comprehensive displays</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Affordability Advantage:</h4><p class=\"mb-4\"> The medium plaque is professional quality memorial gifts at prices accessible to broader audiences. This makes them ideal for:</p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Multiple family member purchases</li><li class=\"text-gray-900\">Organizational memorial projects</li><li class=\"text-gray-900\">Funeral service commemorative gifts</li><li class=\"text-gray-900\">Christmas gift exchanges</li><li class=\"text-gray-900\">Budget-conscious memorial tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Quality Without Compromise:</h4><p class=\"mb-4\"> While more affordable than our premium offerings, these 2D medium plaques maintain professional quality standards. The 2D engraving is sharp and permanent, the crystal is premium quality, and the overall presentation is dignified and appropriate for any memorial occasion. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/448/cockpit3d_448_2D_Medium_Plaque_Vertical.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "occasions": [
-      "anniversary",
-      "graduation",
-      "retirement",
-      "baby",
-      "birthday",
-      "wedding"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 49.75
-  },
-  {
-    "id": "449",
-    "name": "2D Medium Plaque Horizontal",
-    "slug": "2d-medium-plaque-horizontal",
-    "sku": "2D_Medium_Plaque_Horizontal_bundle",
-    "basePrice": 169,
-    "description": "Landscape orientation ideal for group photos, family gatherings, military units, and horizontal compositions. The wide format suits modern display aesthetics and contemporary memorial presentations.",
-    "longDescription": "<p class=\"mb-4\"> Create professional memorial tributes without premium pricing through our <span class=\"font-semibold\">2D Medium Plaque Crystal</span> collection, offering both vertical and horizontal orientations for versatile display options. These medium-sized crystals provide the perfect balance of visibility, affordability, and professional presentation—ideal for memorial gifts, veteran tributes, and Christmas keepsakes that honor memories without straining budgets. </p><p class=\"mb-4\"> Our 2D laser engraving technology delivers photograph-quality clarity in these plaques, creating sharp, detailed images that capture faces, uniforms, and special moments with precision. While 3D engraving offers depth perception, 2D engraving provides crisp, clear imagery that many prefer for formal portraits, military photos, and situations where facial clarity takes priority. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Professional Memorial Plaques:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran memorial plaques</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Memorial service tributes</li><li class=\"text-gray-900\">Corporate memorial displays</li><li class=\"text-gray-900\">Academic achievement recognition</li><li class=\"text-gray-900\">Military promotion gifts</li><li class=\"text-gray-900\">Christmas family plaques</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">2D Plaque Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Medium size for prominent display</li><li class=\"text-gray-900\">2D laser engraving (photo-quality clarity)</li><li class=\"text-gray-900\">Both vertical and horizontal options</li><li class=\"text-gray-900\">Affordable memorial option</li><li class=\"text-gray-900\">Professional presentation quality</li><li class=\"text-gray-900\">Optional light bases available</li><li class=\"text-gray-900\">Custom text engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Over 3D:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sharper facial features and details</li><li class=\"text-gray-900\">Better for very detailed photos</li><li class=\"text-gray-900\">Clearer text and insignias</li><li class=\"text-gray-900\">More affordable pricing</li><li class=\"text-gray-900\">Traditional memorial aesthetic</li><li class=\"text-gray-900\">Photograph-like quality</li></ul><p class=\"mb-4\"> These medium plaques strike an excellent balance between size and affordability—large enough to command presence in displays but priced accessibly for broader audiences. At $169, they offer significant value for families seeking professional memorial pieces without luxury pricing. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial service giveaways</li><li class=\"text-gray-900\">Funeral program tributes</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Corporate memorial walls</li><li class=\"text-gray-900\">Academic memorial displays</li><li class=\"text-gray-900\">Christmas family traditions</li><li class=\"text-gray-900\">Veteran organization tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, and service information</li><li class=\"text-gray-900\">Military rank, branch, and insignia</li><li class=\"text-gray-900\">Memorial verses and epitaphs</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">Custom text placement</li></ul><p class=\"mb-4\"> The medium size makes these plaques versatile for various display locations—substantial enough for mantel centerpieces yet appropriate for office desks, bedside tables, or memorial shelves. Many organizations purchase multiple plaques to create tribute walls honoring multiple veterans or service members. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Pair with wooden or LED light bases</li><li class=\"text-gray-900\">Create memorial groupings with multiple plaques</li><li class=\"text-gray-900\">Mix vertical and horizontal orientations for visual interest</li><li class=\"text-gray-900\">Combine with other memorial pieces for comprehensive displays</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Affordability Advantage:</h4><p class=\"mb-4\"> At $169, these medium plaques provide professional quality memorial gifts at prices accessible to broader audiences. This makes them ideal for: </p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Multiple family member purchases</li><li class=\"text-gray-900\">Organizational memorial projects</li><li class=\"text-gray-900\">Funeral service commemorative gifts</li><li class=\"text-gray-900\">Christmas gift exchanges</li><li class=\"text-gray-900\">Budget-conscious memorial tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Quality Without Compromise:</h4><p class=\"mb-4\"> While more affordable than our premium offerings, these 2D medium plaques maintain professional quality standards. The 2D engraving is sharp and permanent, the crystal is premium quality, and the overall presentation is dignified and appropriate for any memorial occasion. </p>",
-    "images": [
-      {
-        "src": "/img/products/cockpit3d/449/cockpit3d_449_2D_Medium_Plaque_Horizontal.jpg",
-        "isMain": true
-      }
-    ],
-    "options": [],
-    "requiresImage": true,
-    "lightBases": [
-      {
-        "id": "none",
-        "name": "No Base",
-        "price": null
-      }
-    ],
-    "backgroundOptions": [
-      {
-        "id": "rm",
-        "name": "Remove Backdrop",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "2d",
-        "name": "2D Backdrop",
-        "price": 8,
-        "cockpit3d_option_id": "154"
-      },
-      {
-        "id": "3d",
-        "name": "3D Backdrop",
-        "price": 12,
-        "cockpit3d_option_id": "155"
-      }
-    ],
-    "textOptions": [
-      {
-        "id": "none",
-        "name": "No Text",
-        "price": 0,
-        "cockpit3d_option_id": null
-      },
-      {
-        "id": "customText",
-        "name": "Custom Text",
-        "price": 9.5,
-        "cockpit3d_option_id": "199"
-      }
-    ],
-    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png",
-    "occasions": [
-      "graduation",
-      "pet",
-      "wedding",
-      "birthday",
-      "baby",
-      "anniversary",
-      "memorial",
-      "retirement"
-    ],
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z",
-    "cost": 49.75
+    "maskImageUrl": "/img/masks/heart-mask.png"
   },
   {
     "id": "453",
@@ -3116,20 +1709,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/rectangle-vertical-mask.png",
-    "cost": 134.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:54:18.684Z",
-    "occasions": [
-      "holiday",
-      "wedding",
-      "graduation",
-      "anniversary"
-    ]
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 79.75
   },
   {
     "id": "454",
@@ -3226,19 +1811,15 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
     "maskImageUrl": "/img/masks/cat-shape-large-mask.png",
-    "cost": 89.75,
+    "featured": true,
     "edited": true,
-    "editedAt": "2026-01-30T23:51:43.324Z",
-    "occasions": [
-      "pet",
-      "holiday",
-      "memorial"
-    ]
+    "editedAt": "2026-07-18T03:27:24.681Z",
+    "cost": 89.75
   },
   {
     "id": "456",
@@ -3266,49 +1847,43 @@
         "id": "1954",
         "name": "Wooden Premium Base Mini",
         "price": null,
-        "cockpit3d_id": "1954",
-        "enabled": false
+        "cockpit3d_id": "1954"
       },
       {
         "id": "1955",
         "name": "Lightbase Wood Small",
         "price": null,
-        "cockpit3d_id": "1955",
-        "enabled": false
+        "cockpit3d_id": "1955"
       },
       {
         "id": "1956",
         "name": "Rotating LED Lightbase",
         "price": null,
-        "cockpit3d_id": "1956",
-        "enabled": false
+        "cockpit3d_id": "1956"
       },
       {
         "id": "1957",
         "name": "Lightbase Wood Long",
         "price": null,
-        "cockpit3d_id": "1957",
-        "enabled": false
+        "cockpit3d_id": "1957"
       },
       {
         "id": "1958",
         "name": "Lightbase Wood Medium",
         "price": null,
-        "cockpit3d_id": "1958",
-        "enabled": false
+        "cockpit3d_id": "1958"
       },
       {
         "id": "1959",
         "name": "Lightbase Square",
-        "price": 25,
+        "price": null,
         "cockpit3d_id": "1959"
       },
       {
         "id": "1960",
         "name": "Lightbase Rectangle",
         "price": null,
-        "cockpit3d_id": "1960",
-        "enabled": false
+        "cockpit3d_id": "1960"
       }
     ],
     "backgroundOptions": [
@@ -3341,15 +1916,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3CRS-portrait-mask.png",
-    "visible": false,
-    "cost": 89.75,
-    "edited": true,
-    "editedAt": "2026-01-29T20:43:17.990Z"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 89.75
   },
   {
     "id": "467",
@@ -3464,23 +2036,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-monument_o.png",
-    "cost": 99.75,
-    "edited": true,
-    "editedAt": "2026-01-30T23:51:56.100Z",
-    "occasions": [
-      "wedding",
-      "birthday",
-      "baby",
-      "holiday",
-      "graduation",
-      "memorial",
-      "anniversary"
-    ]
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 99.75
   },
   {
     "id": "468",
@@ -3544,8 +2105,7 @@
         "id": "2036",
         "name": "Concave Lightbase",
         "price": 39,
-        "cockpit3d_id": "2036",
-        "enabled": false
+        "cockpit3d_id": "2036"
       }
     ],
     "backgroundOptions": [
@@ -3578,24 +2138,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png",
-    "cost": 74.75,
-    "occasions": [
-      "memorial",
-      "anniversary",
-      "graduation",
-      "retirement",
-      "wedding",
-      "pet",
-      "baby",
-      "holiday"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 74.75
   },
   {
     "id": "469",
@@ -3712,20 +2260,12 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/globe-mask.png",
-    "cost": 49.75,
-    "occasions": [
-      "anniversary",
-      "retirement",
-      "pet",
-      "birthday"
-    ],
-    "edited": true,
-    "editedAt": "2025-12-20T21:50:34.724Z"
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 49.75
   },
   {
     "id": "472",
@@ -3828,19 +2368,1746 @@
       {
         "id": "customText",
         "name": "Custom Text",
-        "price": 9.5,
+        "price": 5,
         "cockpit3d_option_id": "199"
       }
     ],
-    "maskImageUrl": "/img/masks/3d-crystal-oval_mask.png",
-    "cost": 89.75,
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png",
+    "cost": 89.75
+  },
+  {
+    "id": "483",
+    "name": "3d crystal Dog Bone Tag ",
+    "slug": "3d-crystal-dog-bone-tag",
+    "sku": "Dog_Bone_Tag_Bundle",
+    "basePrice": 49,
+    "description": "3d crystal Dog Bone Tag ",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/483/cockpit3d_483_3d_crystal_Dog_Bone_Tag.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/dogbone-vertical-mask.png"
+  },
+  {
+    "id": "494",
+    "name": "3D Crystal Tapered Rectangle Tall ",
+    "slug": "3d-crystal-tapered-rectangle-tall",
+    "sku": "3D_Crystal_Tapered_Rectangle_Tall",
+    "basePrice": 279,
+    "description": "3D Crystal Tapered Rectangle Tall ",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/494/cockpit3d_494_3D_Crystal_Tapered_Rectangle_Tall.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2433",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2433"
+      },
+      {
+        "id": "2434",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2434"
+      },
+      {
+        "id": "2435",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2435"
+      },
+      {
+        "id": "2436",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2436"
+      },
+      {
+        "id": "2437",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2437"
+      },
+      {
+        "id": "2438",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "2438"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-rectangle-tall-mask.png"
+  },
+  {
+    "id": "495",
+    "name": "3D Crystal Tapered Rectangle Wide",
+    "slug": "3d-crystal-tapered-rectangle-wide",
+    "sku": "3D_Crystal_Tapered_Rectangle_Wide",
+    "basePrice": 279,
+    "description": "3D Crystal Tapered Rectangle Wide",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/495/cockpit3d_495_3D_Crystal_Tapered_Rectangle_Wide.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2467",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "2467"
+      },
+      {
+        "id": "2468",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2468"
+      },
+      {
+        "id": "2469",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2469"
+      },
+      {
+        "id": "2470",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2470"
+      },
+      {
+        "id": "2471",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2471"
+      },
+      {
+        "id": "2472",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2472"
+      },
+      {
+        "id": "2473",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2473"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/rectangle-horizontal-mask.png",
+    "featured": true,
     "edited": true,
-    "editedAt": "2026-01-30T23:52:08.222Z",
-    "occasions": [
-      "birthday",
-      "memorial",
-      "retirement",
-      "holiday"
-    ]
+    "editedAt": "2026-07-18T03:27:24.681Z"
+  },
+  {
+    "id": "496",
+    "name": "3D Crystal Tapered Square ",
+    "slug": "3d-crystal-tapered-square",
+    "sku": "3D_Crystal_Tapered_Square",
+    "basePrice": 209,
+    "description": "3D Crystal Tapered Square ",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/496/cockpit3d_496_3D_Crystal_Tapered_Square.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2502",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2502"
+      },
+      {
+        "id": "2503",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2503"
+      },
+      {
+        "id": "2504",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2504"
+      },
+      {
+        "id": "2505",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2505"
+      },
+      {
+        "id": "2506",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2506"
+      },
+      {
+        "id": "2507",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2507"
+      },
+      {
+        "id": "2508",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "2508"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "497",
+    "name": "3D Crystal Slim Square ",
+    "slug": "3d-crystal-slim-square",
+    "sku": "3D_Crystal_Slim_Square",
+    "basePrice": 109,
+    "description": "3D Crystal Slim Square ",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/497/cockpit3d_497_3D_Crystal_Slim_Square.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "2536",
+        "name": "Slim Square Small 4\" x 4 x 1.25 / 100 x 100 x 30 mm",
+        "price": 109,
+        "cockpit3d_id": "2536"
+      },
+      {
+        "id": "2537",
+        "name": "Slim Square Medium 5\" x 5 x 1.25 / 125 x 125 x 30 mm",
+        "price": 109,
+        "cockpit3d_id": "2537"
+      },
+      {
+        "id": "2538",
+        "name": "Slim Square Large 6\" x 6 x 1.25 / 150 x 150 x 30 mm ",
+        "price": 109,
+        "cockpit3d_id": "2538"
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2540",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2540"
+      },
+      {
+        "id": "2541",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2541"
+      },
+      {
+        "id": "2542",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2542"
+      },
+      {
+        "id": "2543",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2543"
+      },
+      {
+        "id": "2544",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2544"
+      },
+      {
+        "id": "2545",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2545"
+      },
+      {
+        "id": "2546",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "2546"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "498",
+    "name": "3D Crystal Cube",
+    "slug": "3d-crystal-cube",
+    "sku": "3D_Crystal_Cube",
+    "basePrice": 129,
+    "description": "3D Crystal Cube",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/498/cockpit3d_498_3D_Crystal_Cube.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "2572",
+        "name": "Cube Medium 2.4\" x 2.4 x 2.4 / 60 x 60 x 60 mm",
+        "price": 129,
+        "cockpit3d_id": "2572"
+      },
+      {
+        "id": "2573",
+        "name": "Cube Large 3\" x 3 x 3 / 80 x 80 x 80 mm",
+        "price": 129,
+        "cockpit3d_id": "2573"
+      },
+      {
+        "id": "2574",
+        "name": "Cube XLarge 4\" x 4 x 4 / 100 x 100 x 100 mm",
+        "price": 129,
+        "cockpit3d_id": "2574"
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2576",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2576"
+      },
+      {
+        "id": "2577",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2577"
+      },
+      {
+        "id": "2578",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2578"
+      },
+      {
+        "id": "2579",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2579"
+      },
+      {
+        "id": "2580",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2580"
+      },
+      {
+        "id": "2581",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2581"
+      },
+      {
+        "id": "2582",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "2582"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "501",
+    "name": "3D Crystal Earch Globe",
+    "slug": "3d-crystal-earch-globe",
+    "sku": "3d-earth-globe-crystal",
+    "basePrice": 90,
+    "description": "3D Crystal Earch Globe",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/501/cockpit3d_501_3D_Crystal_Earch_Globe.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2643",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2643"
+      },
+      {
+        "id": "2644",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2644"
+      },
+      {
+        "id": "2645",
+        "name": "Lightbase Square",
+        "price": null,
+        "cockpit3d_id": "2645"
+      },
+      {
+        "id": "2646",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2646"
+      },
+      {
+        "id": "2647",
+        "name": "Lightbase Wood Medium",
+        "price": null,
+        "cockpit3d_id": "2647"
+      },
+      {
+        "id": "2648",
+        "name": "Rotating LED Lightbase",
+        "price": null,
+        "cockpit3d_id": "2648"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/globe-mask.png"
+  },
+  {
+    "id": "502",
+    "name": "3D Crystal Half Moon",
+    "slug": "3d-crystal-half-moon",
+    "sku": "3d-half_moon_crystal",
+    "basePrice": 120,
+    "description": "3D Crystal Half Moon",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/502/cockpit3d_502_3D_Crystal_Half_Moon.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "2611",
+        "name": "Lightbase Rectangle",
+        "price": null,
+        "cockpit3d_id": "2611"
+      },
+      {
+        "id": "2612",
+        "name": "Lightbase Wood Small",
+        "price": null,
+        "cockpit3d_id": "2612"
+      },
+      {
+        "id": "2635",
+        "name": "Lightbase Wood Long",
+        "price": null,
+        "cockpit3d_id": "2635"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "266",
+    "name": "Notched Crystal Wide",
+    "slug": "notched-crystal-wide",
+    "sku": "notched_crystal_wide",
+    "basePrice": 259,
+    "description": "Notched Crystal Wide",
+    "longDescription": "<p class=\"mb-4\">Capture life's most important moments in landscape orientation with our Rectangle Horizontal Crystal, designed specifically for family groups, military units, and wide-format photographs. Available in 8 sizes from small (6x4cm) to presidential (27x18cm), this horizontal crystal orientation is perfect for commemorating group photos, military formations, family gatherings, and scenic memorial tributes.</p><p class=\"mb-4\">The landscape format makes this crystal ideal for photographs that tell broader stories—military units standing together, families gathered for holidays, veterans with their brothers-in-arms, or scenic locations that held special meaning. Our 3D laser engraving captures every person, every detail, creating memorial pieces that honor not just individuals but the relationships and bonds that defined their lives.</p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/266/cockpit3d_266_Notched_Crystal_Wide.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "898",
+        "name": "2D Notched Small Crystal Wide 6x4x1.2” / 15x10x3cm",
+        "price": 169,
+        "cockpit3d_id": "898"
+      },
+      {
+        "id": "899",
+        "name": "3D Notched Small Crystal Wide 6x4x1.2” / 15x10x3cm",
+        "price": 169,
+        "cockpit3d_id": "899"
+      },
+      {
+        "id": "744",
+        "name": "2D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
+        "price": 259,
+        "cockpit3d_id": "744",
+        "cost": 95
+      },
+      {
+        "id": "743",
+        "name": "3D Notched Crystal Wide 7x5x1.2\" / 18x13x3cm",
+        "price": 259,
+        "cockpit3d_id": "743",
+        "cost": 95
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "741",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "cockpit3d_id": "741"
+      },
+      {
+        "id": "740",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "cockpit3d_id": "740"
+      },
+      {
+        "id": "1436",
+        "name": "Wooden Light Base with Keepsake Drawer",
+        "price": null,
+        "cockpit3d_id": "1436"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/notched-vertical-mask.png",
+    "cost": 95
+  },
+  {
+    "id": "262",
+    "name": "Notched Crystal Tall",
+    "slug": "notched-crystal-tall",
+    "sku": "notched_crystal_tall_bundle",
+    "basePrice": 259,
+    "description": "Notched Crystal Tall",
+    "longDescription": "<p class=\"mb-4\">Our advanced 3D laser engraving technology captures incredible depth and detail, making every memory vivid and lifelike. Whether you're commemorating a fallen soldier, celebrating a milestone, or creating a meaningful Christmas ornament, this vertical rectangle crystal provides a timeless way to preserve life's most precious moments.</p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/262/cockpit3d_262_Notched_Crystal_Tall.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "901",
+        "name": "2D Notched Small Crystal Tall 6x4x1.2” / 15x10x3cm",
+        "price": 169,
+        "cockpit3d_id": "901"
+      },
+      {
+        "id": "900",
+        "name": "3D Notched Small Crystal Tall 6x4x1.2” / 15x10x3cm",
+        "price": 169,
+        "cockpit3d_id": "900"
+      },
+      {
+        "id": "727",
+        "name": "2D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
+        "price": 259,
+        "cockpit3d_id": "727",
+        "cost": 95
+      },
+      {
+        "id": "726",
+        "name": "3D Notched Crystal Tall  7x5x1.2\" / 18x13x3cm",
+        "price": 259,
+        "cockpit3d_id": "726",
+        "cost": 95
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "719",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "cockpit3d_id": "719"
+      },
+      {
+        "id": "957",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "cockpit3d_id": "957"
+      },
+      {
+        "id": "718",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "cockpit3d_id": "718"
+      },
+      {
+        "id": "897",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "897"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/notched-vertical-mask.png",
+    "cost": 95
+  },
+  {
+    "id": "171",
+    "name": "New Wide Heart",
+    "slug": "new-wide-heart",
+    "sku": "New_Wide_Heart",
+    "basePrice": 119,
+    "description": "New Wide Heart",
+    "longDescription": "",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/171/cockpit3d_171_New_Wide_Heart.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "717",
+        "name": "Wide Heart small (80x70x40)",
+        "price": 89,
+        "cockpit3d_id": "717",
+        "cost": 39.75
+      },
+      {
+        "id": "527",
+        "name": "Wide Heart Medium (100x90x50)",
+        "price": 119,
+        "cockpit3d_id": "527",
+        "cost": 69.75
+      },
+      {
+        "id": "528",
+        "name": "Wide Heart Large (125x110x60)",
+        "price": 149,
+        "cockpit3d_id": "528",
+        "cost": 89.75
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "531",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "cockpit3d_id": "531"
+      },
+      {
+        "id": "532",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "cockpit3d_id": "532"
+      },
+      {
+        "id": "774",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "cockpit3d_id": "774"
+      },
+      {
+        "id": "775",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "775"
+      },
+      {
+        "id": "530",
+        "name": "Lightbase Square",
+        "price": 25,
+        "cockpit3d_id": "530"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/heart-mask.png",
+    "featured": true,
+    "edited": true,
+    "editedAt": "2026-07-18T03:27:48.530Z",
+    "cost": 69.75
+  },
+  {
+    "id": "448",
+    "name": "2D Medium Plaque Vertical",
+    "slug": "2d-medium-plaque-vertical",
+    "sku": "2D_Medium_Plaque_Vertical_bundle",
+    "basePrice": 169,
+    "description": "Portrait orientation perfect for individual photos, military headshots, formal portraits, and vertical compositions. The upright format creates elegant displays suitable for mantels, desks, and memorial shelves.",
+    "longDescription": "<p class=\"mb-4\"> Create professional memorial tributes without premium pricing through our <span class=\"font-semibold\">2D Medium Plaque Crystal</span> collection, offering both vertical and horizontal orientations for versatile display options. These medium-sized crystals provide the perfect balance of visibility, affordability, and professional presentation—ideal for memorial gifts, veteran tributes, and Christmas keepsakes that honor memories without straining budgets. </p><p class=\"mb-4\"> Our 2D laser engraving technology delivers photograph-quality clarity in these plaques, creating sharp, detailed images that capture faces, uniforms, and special moments with precision. While 3D engraving offers depth perception, 2D engraving provides crisp, clear imagery that many prefer for formal portraits, military photos, and situations where facial clarity takes priority. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Professional Memorial Plaques:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran memorial plaques</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Memorial service tributes</li><li class=\"text-gray-900\">Corporate memorial displays</li><li class=\"text-gray-900\">Academic achievement recognition</li><li class=\"text-gray-900\">Military promotion gifts</li><li class=\"text-gray-900\">Christmas family plaques</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">2D Plaque Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Medium size for prominent display</li><li class=\"text-gray-900\">2D laser engraving (photo-quality clarity)</li><li class=\"text-gray-900\">Both vertical and horizontal options</li><li class=\"text-gray-900\">Affordable memorial option</li><li class=\"text-gray-900\">Professional presentation quality</li><li class=\"text-gray-900\">Optional light bases available</li><li class=\"text-gray-900\">Custom text engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Over 3D:</h4><p class=\"mb-4\"> While 3D engraving creates depth perception and dimensional effects, 2D engraving offers advantages for certain applications: </p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sharper facial features and details</li><li class=\"text-gray-900\">Better for very detailed photos</li><li class=\"text-gray-900\">Clearer text and insignias</li><li class=\"text-gray-900\">More affordable pricing</li><li class=\"text-gray-900\">Traditional memorial aesthetic</li><li class=\"text-gray-900\">Photograph-like quality</li></ul><p class=\"mb-4\"> These medium plaques strike an excellent balance between size and affordability—large enough to command presence in displays but priced accessibly for broader audiences. At $169, they offer significant value for families seeking professional memorial pieces without luxury pricing. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial service giveaways</li><li class=\"text-gray-900\">Funeral program tributes</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Corporate memorial walls</li><li class=\"text-gray-900\">Academic memorial displays</li><li class=\"text-gray-900\">Christmas family traditions</li><li class=\"text-gray-900\">Veteran organization tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, and service information</li><li class=\"text-gray-900\">Military rank, branch, and insignia</li><li class=\"text-gray-900\">Memorial verses and epitaphs</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">Custom text placement</li></ul><p class=\"mb-4\"> The medium size makes these plaques versatile for various display locations—substantial enough for mantel centerpieces yet appropriate for office desks, bedside tables, or memorial shelves. Many organizations purchase multiple plaques to create tribute walls honoring multiple veterans or service members. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Pair with wooden or LED light bases</li><li class=\"text-gray-900\">Create memorial groupings with multiple plaques</li><li class=\"text-gray-900\">Mix vertical and horizontal orientations for visual interest</li><li class=\"text-gray-900\">Combine with other memorial pieces for comprehensive displays</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Affordability Advantage:</h4><p class=\"mb-4\"> The medium plaque is professional quality memorial gifts at prices accessible to broader audiences. This makes them ideal for:</p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Multiple family member purchases</li><li class=\"text-gray-900\">Organizational memorial projects</li><li class=\"text-gray-900\">Funeral service commemorative gifts</li><li class=\"text-gray-900\">Christmas gift exchanges</li><li class=\"text-gray-900\">Budget-conscious memorial tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Quality Without Compromise:</h4><p class=\"mb-4\"> While more affordable than our premium offerings, these 2D medium plaques maintain professional quality standards. The 2D engraving is sharp and permanent, the crystal is premium quality, and the overall presentation is dignified and appropriate for any memorial occasion. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/448/cockpit3d_448_2D_Medium_Plaque_Vertical.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "449",
+    "name": "2D Medium Plaque Horizontal",
+    "slug": "2d-medium-plaque-horizontal",
+    "sku": "2D_Medium_Plaque_Horizontal_bundle",
+    "basePrice": 169,
+    "description": "Landscape orientation ideal for group photos, family gatherings, military units, and horizontal compositions. The wide format suits modern display aesthetics and contemporary memorial presentations.",
+    "longDescription": "<p class=\"mb-4\"> Create professional memorial tributes without premium pricing through our <span class=\"font-semibold\">2D Medium Plaque Crystal</span> collection, offering both vertical and horizontal orientations for versatile display options. These medium-sized crystals provide the perfect balance of visibility, affordability, and professional presentation—ideal for memorial gifts, veteran tributes, and Christmas keepsakes that honor memories without straining budgets. </p><p class=\"mb-4\"> Our 2D laser engraving technology delivers photograph-quality clarity in these plaques, creating sharp, detailed images that capture faces, uniforms, and special moments with precision. While 3D engraving offers depth perception, 2D engraving provides crisp, clear imagery that many prefer for formal portraits, military photos, and situations where facial clarity takes priority. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Professional Memorial Plaques:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran memorial plaques</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Memorial service tributes</li><li class=\"text-gray-900\">Corporate memorial displays</li><li class=\"text-gray-900\">Academic achievement recognition</li><li class=\"text-gray-900\">Military promotion gifts</li><li class=\"text-gray-900\">Christmas family plaques</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">2D Plaque Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Medium size for prominent display</li><li class=\"text-gray-900\">2D laser engraving (photo-quality clarity)</li><li class=\"text-gray-900\">Both vertical and horizontal options</li><li class=\"text-gray-900\">Affordable memorial option</li><li class=\"text-gray-900\">Professional presentation quality</li><li class=\"text-gray-900\">Optional light bases available</li><li class=\"text-gray-900\">Custom text engraving included</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Over 3D:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sharper facial features and details</li><li class=\"text-gray-900\">Better for very detailed photos</li><li class=\"text-gray-900\">Clearer text and insignias</li><li class=\"text-gray-900\">More affordable pricing</li><li class=\"text-gray-900\">Traditional memorial aesthetic</li><li class=\"text-gray-900\">Photograph-like quality</li></ul><p class=\"mb-4\"> These medium plaques strike an excellent balance between size and affordability—large enough to command presence in displays but priced accessibly for broader audiences. At $169, they offer significant value for families seeking professional memorial pieces without luxury pricing. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial service giveaways</li><li class=\"text-gray-900\">Funeral program tributes</li><li class=\"text-gray-900\">Retirement ceremony gifts</li><li class=\"text-gray-900\">Corporate memorial walls</li><li class=\"text-gray-900\">Academic memorial displays</li><li class=\"text-gray-900\">Christmas family traditions</li><li class=\"text-gray-900\">Veteran organization tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, and service information</li><li class=\"text-gray-900\">Military rank, branch, and insignia</li><li class=\"text-gray-900\">Memorial verses and epitaphs</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">Custom text placement</li></ul><p class=\"mb-4\"> The medium size makes these plaques versatile for various display locations—substantial enough for mantel centerpieces yet appropriate for office desks, bedside tables, or memorial shelves. Many organizations purchase multiple plaques to create tribute walls honoring multiple veterans or service members. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Display Recommendations:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Pair with wooden or LED light bases</li><li class=\"text-gray-900\">Create memorial groupings with multiple plaques</li><li class=\"text-gray-900\">Mix vertical and horizontal orientations for visual interest</li><li class=\"text-gray-900\">Combine with other memorial pieces for comprehensive displays</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Affordability Advantage:</h4><p class=\"mb-4\"> At $169, these medium plaques provide professional quality memorial gifts at prices accessible to broader audiences. This makes them ideal for: </p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Multiple family member purchases</li><li class=\"text-gray-900\">Organizational memorial projects</li><li class=\"text-gray-900\">Funeral service commemorative gifts</li><li class=\"text-gray-900\">Christmas gift exchanges</li><li class=\"text-gray-900\">Budget-conscious memorial tributes</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Quality Without Compromise:</h4><p class=\"mb-4\"> While more affordable than our premium offerings, these 2D medium plaques maintain professional quality standards. The 2D engraving is sharp and permanent, the crystal is premium quality, and the overall presentation is dignified and appropriate for any memorial occasion. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/449/cockpit3d_449_2D_Medium_Plaque_Horizontal.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/3d-crystal-rectangle-wide-mask.png"
+  },
+  {
+    "id": "118",
+    "name": "Prestige Crystal",
+    "slug": "prestige-crystal",
+    "sku": "Prestige_Crystal",
+    "basePrice": 199,
+    "description": "Premium Prestige 3D crystal - elegant memorial gift for distinguished veterans and VIP tributes. Three sizes available. Museum-quality engraving.",
+    "longDescription": "<p class=\"mb-4\"> Present the ultimate tribute with our <span class=\"font-semibold\">Prestige Crystal</span>, a distinguished memorial piece designed for honoring high-ranking veterans, significant life achievements, and VIP commemorations. This premium crystal represents our finest craftsmanship, combining elegant design with museum-quality 3D laser engraving that befits prestigious occasions and important memorial tributes. </p><p class=\"mb-4\"> The Prestige Crystal features a sophisticated architectural design that commands respect and attention. Available in three substantial sizes, this crystal is perfect for executive gifts, military retirement ceremonies, memorial services for distinguished individuals, and occasions where only the finest tribute will do. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestigious Memorial Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">High-ranking military veteran tributes</li><li class=\"text-gray-900\">Executive retirement gifts</li><li class=\"text-gray-900\">Distinguished service awards</li><li class=\"text-gray-900\">Memorial services for VIPs</li><li class=\"text-gray-900\">Presidential and congressional gifts</li><li class=\"text-gray-900\">Significant lifetime achievement recognition</li><li class=\"text-gray-900\">Museum and institution memorials</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Prestige Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Elegant architectural design</li><li class=\"text-gray-900\">Three substantial sizes (13x9cm, 16x13cm, 19x15cm)</li><li class=\"text-gray-900\">Museum-quality 3D laser engraving</li><li class=\"text-gray-900\">Premium crystal clarity and weight</li><li class=\"text-gray-900\">Sophisticated presentation</li><li class=\"text-gray-900\">Multiple luxury light base options</li><li class=\"text-gray-900\">Suitable for formal displays</li></ul><p class=\"mb-4\"> The larger size options make this crystal ideal for prominent display in corporate offices, memorial halls, military installations, or home libraries where significant tributes deserve prominent placement. The weight and clarity of the crystal immediately communicate quality and importance. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">General and Admiral retirements</li><li class=\"text-gray-900\">Congressional Medal of Honor recipients</li><li class=\"text-gray-900\">Presidential tributes</li><li class=\"text-gray-900\">CEO and executive memorials</li><li class=\"text-gray-900\">University and institution honors</li><li class=\"text-gray-900\">Significant anniversary celebrations</li><li class=\"text-gray-900\">High-profile memorial services</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization for Prestige:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Formal portraits and official photos</li><li class=\"text-gray-900\">Military rank, awards, and insignia</li><li class=\"text-gray-900\">Service records and achievements</li><li class=\"text-gray-900\">Formal epitaphs and citations</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Premium custom text placement</li><li class=\"text-gray-900\">Background removal service</li></ul><p class=\"mb-4\"> This Prestige Crystal is frequently chosen for military change-of-command ceremonies, retirement celebrations for senior officers, and memorial services where the individual's significance merits exceptional recognition. The crystal's substantial presence and elegant design communicate respect, honor, and lasting appreciation. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Investment in Honor:</h4><p class=\"mb-4\"> Starting at $235, the Prestige Crystal represents a significant investment appropriate for significant individuals and occasions. This is not a casual gift—it's a statement of profound respect and lasting tribute that reflects the importance of the person being honored. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/118/cockpit3d_118_Prestige_Crystal.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "sizes": [
+      {
+        "id": "367",
+        "name": "Prestige Small (13x9cm)",
+        "price": 149,
+        "cockpit3d_id": "367",
+        "cost": 69.75
+      },
+      {
+        "id": "368",
+        "name": "Prestige Medium (16x13cm)",
+        "price": 199,
+        "cockpit3d_id": "368",
+        "cost": 99.75
+      },
+      {
+        "id": "369",
+        "name": "Prestige Large (19x15cm)",
+        "price": 399,
+        "cockpit3d_id": "369",
+        "cost": 124.75
+      }
+    ],
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      },
+      {
+        "id": "371",
+        "name": "Lightbase Square",
+        "price": 25,
+        "cockpit3d_id": "371"
+      },
+      {
+        "id": "373",
+        "name": "Lightbase Wood Medium",
+        "price": 45,
+        "cockpit3d_id": "373"
+      },
+      {
+        "id": "374",
+        "name": "Lightbase Wood Long",
+        "price": 35,
+        "cockpit3d_id": "374"
+      },
+      {
+        "id": "478",
+        "name": "Rotating LED Lightbase",
+        "price": 19.99,
+        "cockpit3d_id": "478"
+      },
+      {
+        "id": "844",
+        "name": "Lightbase Wood Small",
+        "price": 35,
+        "cockpit3d_id": "844"
+      },
+      {
+        "id": "845",
+        "name": "Wooden Premium Base Mini",
+        "price": null,
+        "cockpit3d_id": "845"
+      },
+      {
+        "id": "370",
+        "name": "Lightbase Rectangle",
+        "price": 25,
+        "cockpit3d_id": "370"
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/prestige-mask.png",
+    "featured": true,
+    "edited": true,
+    "editedAt": "2026-07-18T03:27:42.748Z",
+    "cost": 99.75
+  },
+  {
+    "id": "251",
+    "name": "3D Crystal Urn / Candles",
+    "slug": "3d-crystal-urn-candles",
+    "sku": "Urn_candles",
+    "basePrice": 256,
+    "description": "Large 3D crystal urn for memorial tributes. Premium keepsake for veteran and loved one memorials. Sophisticated remembrance display piece.",
+    "longDescription": "<p class=\"mb-4\">Honor life's most precious memories with our Premium 3D Crystal Urn, the ultimate memorial tribute for celebrating the lives of veterans, loved ones, and those who made lasting impacts on our hearts. This substantial crystal memorial piece combines artistic beauty with profound meaning, creating a centerpiece for remembrance that commands attention and respect.</p><p class=\"mb-4\">This is our most substantial memorial offering—designed for those seeking a prominent, dignified tribute that serves as a focal point in memorial displays, celebration of life services, or permanent home memorials. The urn shape has been used for centuries to honor the deceased, and our modern crystal interpretation brings timeless tradition into stunning contemporary design.</p><p class=\"mb-4\">Premium Memorial Tribute:</p><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">- Veteran and military memorial centerpieces</li><li class=\"text-gray-900\">- Celebration of life displays</li><li class=\"text-gray-900\">- Funeral service commemorations</li><li class=\"text-gray-900\">- Memorial service keepsakes</li><li class=\"text-gray-900\">- Home memorial displays</li><li class=\"text-gray-900\">- Cemetery memorial alternatives</li><li class=\"text-gray-900\">- Significant tribute gifts</li></ul><strong>Crystal Urn Features:</strong><p class=\"mb-4\">- Large, substantial size commands presence - Museum-quality 3D laser engraving - Captures incredible depth and detail - Urn symbolism honors memorial traditions - Can include service photos, portraits, or scenes - Optional custom text and epitaphs - 2D or 3D backdrop enhancement available The 3D laser engraving technology used in this urn creates remarkable depth perception, making photographs appear almost holographic within the crystal. This is particularly effective for capturing military uniforms, medals, and formal portraits—details that matter in memorial tributes for veterans and service members.</p><strong>Ideal For:</strong><p class=\"mb-4\">- Veteran funeral services - Military retirement memorials - Significant life tributes - Cremation memorials - Alternative to traditional urns - Memorial sanctuary displays - Prominent remembrance gifts</p><strong>Customization Options:</strong><p class=\"mb-4\">- Full name, rank, and service dates - Military branch and insignia - Epitaphs and memorial verses - Service photos or formal portraits - 2D or 3D backdrop options - Background removal service - Custom text placement This crystal urn memorial is often chosen by families who want a visible, beautiful tribute that doesn't hide away in a cemetery but instead remains part of daily life at home. Unlike traditional urns, this crystal memorial celebrates life with light, transparency, and beauty—reflecting the spirit of those we remember rather than the sadness of loss. Many customers place these memorials in home sanctuaries, on mantels, or in dedicated memorial spaces where they can be appreciated daily. The crystal catches light beautifully, creating changing displays throughout the day as sunlight moves through your home.</p><strong>Investment Memorial:</strong><p class=\"mb-4\">At $360, this is a significant memorial investment, but customers consistently tell us it's worth every penny for the quality, presence, and emotional impact it provides. This is a museum-quality memorial piece that will be cherished and passed down through generations.</p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/251/cockpit3d_251_3D_Crystal_Urn_Candles.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [
+      {
+        "id": "none",
+        "name": "No Base",
+        "price": null
+      }
+    ],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/crystal-urn-large-mask.png",
+    "featured": true,
+    "edited": true,
+    "editedAt": "2026-07-18T03:27:24.681Z",
+    "cost": 109.75
+  },
+  {
+    "id": "173",
+    "name": "Rectangle Necklace 2D",
+    "slug": "rectangle-necklace-2d",
+    "sku": "Rectangle_Necklace_2D",
+    "basePrice": 75,
+    "description": "2D crystal photo necklaces - wearable memorial jewelry for veterans and loved ones. Heart and rectangle designs. Carry memories close to your heart daily.",
+    "longDescription": "<p class=\"mb-4\"> The traditional rectangular pendant offers classic elegance and maximum photo display area. Perfect for formal portraits, military photos, and designs where clear facial features take priority over shaped aesthetics. </p><p class=\"mb-4\"> Transform cherished photographs into elegant wearable art with our collection of <span class=\"font-semibold\">2D Crystal Photo Necklaces</span>. These memorial jewelry pieces allow you to carry images of veterans, loved ones, and precious memories close to your heart—literally. Unlike traditional lockets or engraved jewelry, our crystal necklaces feature actual photographs laser-engraved with clarity and precision. </p><p class=\"mb-4\"> Each necklace becomes more than jewelry—it's a statement of love, a memorial tribute, and a conversation piece that allows you to share stories about those who matter most. The crystal pendants catch light beautifully, creating subtle sparkle that draws attention while maintaining elegance appropriate for any occasion. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/173/cockpit3d_173_Rectangle_Necklace_2D.png",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/rectangle-necklace-mask.png"
+  },
+  {
+    "id": "444",
+    "name": "2D Crystal Cat Necklace",
+    "slug": "2d-crystal-cat-necklace",
+    "sku": "Cat_Necklace_bundle",
+    "basePrice": 49,
+    "description": "Celebrate feline companions with this adorable cat-shaped crystal pendant. Perfect for cat lovers, pet memorial jewelry, and honoring beloved cats who crossed the rainbow bridge.",
+    "longDescription": "<p class=\"mb-4\"> Transform cherished photographs into elegant wearable art with our collection of <span class=\"font-semibold\">2D Crystal Photo Necklaces</span>. These memorial jewelry pieces allow you to carry images of veterans, loved ones, and precious memories close to your heart—literally. Unlike traditional lockets or engraved jewelry, our crystal necklaces feature actual photographs laser-engraved with clarity and precision. </p><p class=\"mb-4\"> Each necklace becomes more than jewelry—it's a <span class=\"italic\">statement of love</span>, a <span class=\"italic\">memorial tribute</span>, and a <span class=\"italic\">conversation piece</span> that allows you to share stories about those who matter most. The crystal pendants catch light beautifully, creating subtle sparkle that draws attention while maintaining elegance appropriate for any occasion.</p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/444/cockpit3d_444_2D_Crystal_Cat_Necklace.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/cat-shape-large-mask.png"
+  },
+  {
+    "id": "166",
+    "name": "Ornament Crystal",
+    "slug": "ornament-crystal",
+    "sku": "Ornament_Crystal",
+    "basePrice": 35,
+    "description": "3D crystal Christmas ornament with personalized photo engraving. Perfect memorial gift for veterans and loved ones. Beautiful holiday keepsake that lasts forever.",
+    "longDescription": "<p class=\"mb-4\"> Transform your Christmas tree into a gallery of cherished memories with our <span class=\"font-semibold\">3D Crystal Christmas Ornament</span>. This personalized photo ornament is more than decoration—it's a heartfelt memorial gift that honors veterans, celebrates family, and preserves your most treasured moments in stunning laser-engraved crystal. </p><p class=\"mb-4\"> Each ornament is carefully crafted using state-of-the-art 3D laser engraving technology, capturing your photograph with remarkable depth and clarity. Whether you're commemorating a loved one who served, celebrating baby's first Christmas, or creating a memorial tribute, this crystal ornament becomes a meaningful tradition that grows more precious with each passing year. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Christmas & Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran and military memorial ornaments</li><li class=\"text-gray-900\">Family photo Christmas decorations</li><li class=\"text-gray-900\">Memorial tribute for loved ones passed</li><li class=\"text-gray-900\">Baby's first Christmas keepsake</li><li class=\"text-gray-900\">Pet memorial ornaments</li><li class=\"text-gray-900\">Wedding and anniversary commemorations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose Our Crystal Ornaments:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Unbreakable memories: Unlike glass, crystal is durable and long-lasting</li><li class=\"text-gray-900\">Professional 3D engraving captures incredible detail</li><li class=\"text-gray-900\">Optional custom text for personalization</li><li class=\"text-gray-900\">2D or 3D backdrop options available</li><li class=\"text-gray-900\">Comes ready to hang with premium ribbon</li><li class=\"text-gray-900\">Makes a thoughtful sympathy or memorial gift</li></ul><p class=\"mb-4\"> Our crystal ornaments are designed to be displayed year-round, not just during holidays. Many families create memorial displays featuring loved ones or military service members, making these ornaments a centerpiece of remembrance and celebration. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, or special messages</li><li class=\"text-gray-900\">Background removal for clean, professional look</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Custom text engraving</li></ul>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/166/cockpit3d_166_Ornament_Crystal.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/ornament-mask.png",
+    "cost": 19.75
+  },
+  {
+    "id": "440",
+    "name": "2D Crystal Heart Ornament",
+    "slug": "2d-crystal-heart-ornament",
+    "sku": "Heart_Ornament_bundle",
+    "basePrice": 45,
+    "description": "2D heart crystal Christmas ornament with personalized photo. Elegant memorial gift for veterans and loved ones. Affordable keepsake ornament.",
+    "longDescription": "<p class=\"mb-4\"> Celebrate love and honor memories with our <span class=\"font-semibold\">2D Crystal Heart Ornament</span>, an affordable yet elegant way to transform your Christmas tree into a memorial of cherished moments. This heart-shaped crystal ornament is perfect for honoring veterans, remembering loved ones, or celebrating life's precious milestones during the holiday season and beyond. </p><p class=\"mb-4\"> Our 2D laser engraving process creates beautifully detailed images on high-quality crystal, offering exceptional clarity at an accessible price point. The heart shape makes this ornament ideal for expressing <span class=\"italic\">love, remembrance, and gratitude</span>—whether you're commemorating military service, celebrating family, or creating a memorial tribute. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Ornament For:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Veteran Christmas memorial ornaments</li><li class=\"text-gray-900\">\"In Loving Memory\" holiday tributes</li><li class=\"text-gray-900\">First Christmas as a family</li><li class=\"text-gray-900\">Memorial gifts for loss and sympathy</li><li class=\"text-gray-900\">Pet memorial ornaments</li><li class=\"text-gray-900\">Grandparent photo gifts</li><li class=\"text-gray-900\">Military family Christmas traditions</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Why Choose 2D Heart Ornament:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Budget-friendly memorial gift option</li><li class=\"text-gray-900\">Classic 2D engraving with sharp, clear detail</li><li class=\"text-gray-900\">Heart design conveys love and remembrance</li><li class=\"text-gray-900\">Durable crystal construction</li><li class=\"text-gray-900\">Ready to hang with premium attachment</li><li class=\"text-gray-900\">Personalization available with custom text</li><li class=\"text-gray-900\">Makes meaningful stocking stuffer</li></ul><p class=\"mb-4\"> This 2D heart ornament is part of our ornament collection designed specifically for those seeking affordable memorial gifts without compromising quality. While our 3D ornaments offer depth perception, this 2D version provides crisp, photograph-quality engraving that beautifully captures faces, insignias, and special moments. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Custom text engraving (names, dates, service branch)</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Background removal for clean presentation</li><li class=\"text-gray-900\">Optional special messages</li></ul><p class=\"mb-4\"> Many families create ornament collections featuring different loved ones or military service members, making each Christmas tree a celebration of family history and military heritage. This ornament also makes a thoughtful sympathy gift or memorial present for those experiencing loss. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/440/cockpit3d_440_2D_Crystal_Heart_Ornament.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/heart-mask.png"
+  },
+  {
+    "id": "441",
+    "name": "2D Crystal Flower Ornament",
+    "slug": "2d-crystal-flower-ornament",
+    "sku": "Flower_Ornament_bundle",
+    "basePrice": 45,
+    "description": "Flower-shaped 2D crystal ornament with custom photo engraving. Unique memorial gift for Christmas and remembrance. Elegant floral keepsake design.",
+    "longDescription": "<p class=\"mb-4\"> Honor loved ones with the beauty of nature through our <span class=\"font-semibold\">2D Crystal Flower Ornament</span>, a unique memorial keepsake that combines elegant floral design with personalized photo engraving. This distinctive flower-shaped crystal ornament is perfect for memorial tributes, veteran commemorations, and Christmas celebrations that honor life's most precious memories. </p><p class=\"mb-4\"> The flower symbolizes <span class=\"italic\">life, growth, and eternal beauty</span>—making this ornament especially meaningful for memorial gifts, sympathy presents, and tributes to those who have passed. Our precision 2D laser engraving captures your photograph with exceptional clarity, creating a touching remembrance piece that blooms with memories year after year. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Ideal Memorial & Gift Occasions:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Memorial Christmas ornaments for loved ones</li><li class=\"text-gray-900\">Veteran and military tribute ornaments</li><li class=\"text-gray-900\">Sympathy and bereavement gifts</li><li class=\"text-gray-900\">Garden and nature lovers</li><li class=\"text-gray-900\">Mother's Day memorial gifts</li><li class=\"text-gray-900\">Celebration of life ceremonies</li><li class=\"text-gray-900\">Spring and holiday decorations</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Flower Ornament Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Unique flower-shaped design stands out on any tree</li><li class=\"text-gray-900\">High-quality 2D crystal engraving</li><li class=\"text-gray-900\">Affordable memorial gift option</li><li class=\"text-gray-900\">Durable, long-lasting crystal construction</li><li class=\"text-gray-900\">Personalization with custom text available</li><li class=\"text-gray-900\">2D or 3D backdrop options</li><li class=\"text-gray-900\">Comes with hanging attachment</li></ul><p class=\"mb-4\"> The flower design offers a softer, more nature-inspired alternative to traditional ornaments, making it particularly appropriate for those who loved gardening, nature, or simply appreciated life's natural beauty. Many customers choose this ornament to honor mothers, grandmothers, or beloved family members who brought beauty into their lives. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Available:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add names, dates, or memorial messages</li><li class=\"text-gray-900\">Background removal service</li><li class=\"text-gray-900\">2D or 3D backdrop enhancement</li><li class=\"text-gray-900\">Special inscriptions and quotes</li></ul><p class=\"mb-4\"> This flower ornament also makes an excellent addition to memorial displays, celebration of life services, or as part of a memory tree dedicated to honoring those who have passed. Its unique shape and meaningful symbolism create conversations and provide comfort to those remembering loved ones. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/441/cockpit3d_441_2D_Crystal_Flower_Ornament.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/2d-ornament-mask.png"
+  },
+  {
+    "id": "442",
+    "name": "2D Crystal Cat Ornament",
+    "slug": "2d-crystal-cat-ornament",
+    "sku": "Cat_Ornament_bundle",
+    "basePrice": 45,
+    "description": "Cat-shaped 2D crystal ornament with pet photo engraving. Perfect pet memorial gift and Christmas ornament. Honor your beloved feline friend forever.",
+    "longDescription": "<p class=\"mb-4\"> Celebrate your beloved feline companion with our <span class=\"font-semibold\">2D Crystal Cat Ornament</span>, a heartwarming pet memorial keepsake designed specifically for cat lovers. This adorable cat-shaped crystal ornament transforms your favorite pet photo into a permanent tribute that honors the unconditional love and joy your cat brought to your life. </p><p class=\"mb-4\"> Whether your furry friend is still purring by your side or has crossed the rainbow bridge, this crystal cat ornament makes a touching memorial gift for <span class=\"italic\">Christmas</span>, <span class=\"italic\">sympathy occasions</span>, or any time you want to celebrate the special bond between human and cat. Our <span class=\"font-medium\">2D laser engraving</span> captures every whisker, every expression, creating a crystal-clear memory you'll treasure forever. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Perfect Pet Memorial Gift:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Cat memorial Christmas ornaments</li><li class=\"text-gray-900\">Rainbow Bridge sympathy gifts</li><li class=\"text-gray-900\">Pet loss and bereavement presents</li><li class=\"text-gray-900\">Cat lover holiday decorations</li><li class=\"text-gray-900\">Veterinarian thank-you gifts</li><li class=\"text-gray-900\">Pet adoption celebrations</li><li class=\"text-gray-900\">Cat's first Christmas keepsake</li></ul><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Cat Ornament Features:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Adorable cat-shaped crystal design</li><li class=\"text-gray-900\">Professional 2D photo engraving</li><li class=\"text-gray-900\">Captures pet personality and details</li><li class=\"text-gray-900\">Durable crystal construction</li><li class=\"text-gray-900\">Personalization with pet's name available</li><li class=\"text-gray-900\">2D or 3D backdrop options</li><li class=\"text-gray-900\">Includes premium hanging attachment</li></ul><p class=\"mb-4\"> Many pet owners create <span class=\"italic\">memorial displays</span> or \"<span class=\"italic\">Pet Memory Trees</span>\" featuring crystal ornaments of current and past pets, making this cat ornament part of a larger tribute to the animals who have enriched their lives. This ornament is equally meaningful whether celebrating a living cat's presence or honoring a cat's memory. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Customization Options:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Add your cat's name and dates</li><li class=\"text-gray-900\">Include memorial verse or message</li><li class=\"text-gray-900\">Background removal for clean look</li><li class=\"text-gray-900\">Optional \"In Loving Memory\" text</li></ul><p class=\"mb-4\"> The cat-shaped design makes this ornament instantly recognizable and particularly special for feline enthusiasts. Unlike photos that fade or frames that break, this <span class=\"font-medium\">crystal cat ornament</span> preserves your pet's image permanently in beautiful, light-catching crystal. </p><h4 class=\"text-lg font-semibold text-gray-900 mt-4 mb-2\">Thoughtful Gift Ideas:</h4><ul class=\"list-disc pl-6 mb-4 space-y-2\"><li class=\"text-gray-900\">Sympathy gift for pet loss</li><li class=\"text-gray-900\">Christmas gift for cat owners</li><li class=\"text-gray-900\">Memorial service keepsake</li><li class=\"text-gray-900\">Cat adoption celebration</li><li class=\"text-gray-900\">Veterinary clinic thank-you</li><li class=\"text-gray-900\">Cat café or rescue support</li></ul><p class=\"mb-4\"> Your cat gave you years of love, companionship, and memories. Our <span class=\"font-semibold\">crystal cat ornament</span> ensures those memories shine bright for years to come. </p>",
+    "images": [
+      {
+        "src": "/img/products/cockpit3d/442/cockpit3d_442_2D_Crystal_Cat_Ornament.jpg",
+        "isMain": true
+      }
+    ],
+    "options": [],
+    "requiresImage": true,
+    "lightBases": [],
+    "backgroundOptions": [
+      {
+        "id": "rm",
+        "name": "Remove Backdrop",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "2d",
+        "name": "2D Backdrop",
+        "price": 8,
+        "cockpit3d_option_id": "154"
+      },
+      {
+        "id": "3d",
+        "name": "3D Backdrop",
+        "price": 12,
+        "cockpit3d_option_id": "155"
+      }
+    ],
+    "textOptions": [
+      {
+        "id": "none",
+        "name": "No Text",
+        "price": 0,
+        "cockpit3d_option_id": null
+      },
+      {
+        "id": "customText",
+        "name": "Custom Text",
+        "price": 5,
+        "cockpit3d_option_id": "199"
+      }
+    ],
+    "maskImageUrl": "/img/masks/2d-ornament-mask.png"
   }
 ]

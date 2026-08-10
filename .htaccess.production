@@ -42,6 +42,9 @@
 # Disable directory browsing
 Options -Indexes
 
+# Crystal Keepsakes is a static export, so the site root must prefer index.html.
+DirectoryIndex index.html index.php
+
 # Set default charset
 AddDefaultCharset UTF-8
 

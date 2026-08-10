@@ -99,7 +99,7 @@ $config = [
         ],
     ],
     'cockpit3d' => [
-        'api_url' => getEnvVar('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com',
+        'api_url' => getEnvVar('COCKPIT3D_API_URL') ?: getEnvVar('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com',
         'username' => [
             'value' => maskValue(getEnvVar('COCKPIT3D_USERNAME')),
             'status' => validateKeyFormat(getEnvVar('COCKPIT3D_USERNAME'), 'email'),
@@ -147,7 +147,7 @@ switch ($action) {
         
     case 'test-cockpit':
         // Test Cockpit3D API connection (without submitting order)
-        $apiUrl = getEnvVar('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com';
+        $apiUrl = getEnvVar('COCKPIT3D_API_URL') ?: getEnvVar('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com';
         $username = getEnvVar('COCKPIT3D_USERNAME');
         $password = getEnvVar('COCKPIT3D_PASSWORD');
         
@@ -160,20 +160,21 @@ switch ($action) {
             break;
         }
         
-        // Try to authenticate (GET request to check auth)
-        $testUrl = rtrim($apiUrl, '/') . '/rest/V2/orders'; // We'll just check if we can connect
-        $auth = base64_encode($username . ':' . $password);
+        // Authenticate without submitting an order.
+        $testUrl = rtrim($apiUrl, '/') . (getEnvVar('COCKPIT3D_LOGIN_PATH') ?: '/rest/V2/login');
         
         $ch = curl_init($testUrl);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Authorization: Basic ' . $auth
+                'Content-Type: application/json'
             ],
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode([
+                'username' => $username,
+                'password' => $password,
+            ]),
             CURLOPT_TIMEOUT => 10,
-            CURLOPT_NOBODY => false, // We want to see the response
-            CURLOPT_CUSTOMREQUEST => 'GET', // GET to check endpoint exists
         ]);
         
         $result = curl_exec($ch);
@@ -183,16 +184,16 @@ switch ($action) {
         curl_close($ch);
         
         $response = [
-            'success' => !$curlError && $httpCode < 500,
+            'success' => !$curlError && $httpCode >= 200 && $httpCode < 300,
             'test_url' => $testUrl,
             'http_code' => $httpCode,
             'curl_error' => $curlError ?: null,
-            'response_preview' => substr($result, 0, 500),
-            'interpretation' => $httpCode === 401 ? 'Auth failed - check username/password' 
-                : ($httpCode === 404 ? 'Endpoint not found - check API URL'
-                : ($httpCode === 200 ? 'Connection OK!'
-                : ($httpCode === 405 ? 'Endpoint exists (Method Not Allowed is expected for GET)'
-                : "HTTP $httpCode"))),
+            'token_received' => !$curlError && $httpCode >= 200 && $httpCode < 300 && strlen(trim((string) $result, "\" \t\n\r\0\x0B")) > 0,
+            'response_preview' => $httpCode >= 200 && $httpCode < 300 ? '[token hidden]' : substr($result, 0, 500),
+            'interpretation' => $httpCode >= 200 && $httpCode < 300 ? 'Login OK - bearer token received'
+                : ($httpCode === 401 ? 'Auth failed - check username/password'
+                : ($httpCode === 404 ? 'Login endpoint not found - check API URL/login path'
+                : "HTTP $httpCode")),
             'config_used' => [
                 'api_url' => $apiUrl,
                 'username' => maskValue($username),
@@ -331,7 +332,7 @@ switch ($action) {
                 '1. Stripe webhook received checkout.session.completed',
                 '2. Load cart data from /api/order-data/' . $orderNumber . '.json',
                 '3. Build Cockpit3D payload with customer address from Stripe',
-                '4. Submit to ' . (getEnvVar('COCKPIT3D_API_URL') ?: 'https://profit.cockpit3d.com') . '/rest/V2/orders',
+                '4. Submit to ' . (getEnvVar('COCKPIT3D_API_URL') ?: getEnvVar('COCKPIT3D_BASE_URL') ?: 'https://profit.cockpit3d.com') . '/rest/V2/orders',
             ],
             'tip' => 'Use ?action=view-order&order=' . $orderNumber . ' to see the payload that would be sent',
         ];
